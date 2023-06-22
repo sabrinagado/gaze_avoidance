@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2023.1.1),
-    on Thu Jun 22 23:23:11 2023
+    on Juni 22, 2023, at 23:37
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -73,7 +73,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expInfo['participant'], expNa
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='/Users/sabrinagado/Documents/Forschung/Promotion/Projects/GCA/gaze_avoidance/gca_lastrun.py',
+    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gaze_avoidance\\gca_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -171,6 +171,9 @@ textSpacePain = visual.TextStim(win=win, name='textSpacePain',
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-4.0);
+portShock1Pain = parallel.ParallelPort(address='0x0378')
+portShock2Pain = parallel.ParallelPort(address='0x0378')
+portShock3Pain = parallel.ParallelPort(address='0x0378')
 spacePain = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startRecord" ---
@@ -217,6 +220,7 @@ gazeCursor = visual.ShapeStim(
     ori=0.0, pos=[0,0], anchor='center',
     lineWidth=1.0,     colorSpace='rgb',  lineColor=None, fillColor='white',
     opacity=1.0, depth=-3.0, interpolate=True)
+portImage = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "feedback" ---
 textPoints = visual.TextStim(win=win, name='textPoints',
@@ -256,6 +260,9 @@ gazeCursor_Feedback = visual.ShapeStim(
 soundFeedback = sound.Sound('A', secs=0.5, stereo=True, hamming=True,
     name='soundFeedback')
 soundFeedback.setVolume(1.0)
+portShock1 = parallel.ParallelPort(address='0x0378')
+portShock2 = parallel.ParallelPort(address='0x0378')
+portShock3 = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "stimRating" ---
 textRateStim = visual.TextStim(win=win, name='textRateStim',
@@ -320,6 +327,7 @@ imageTest = visual.ImageStim(
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=0.0)
+portTestImage = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "stimRating" ---
 textRateStim = visual.TextStim(win=win, name='textRateStim',
@@ -499,7 +507,7 @@ spacePain.keys = []
 spacePain.rt = []
 _spacePain_allKeys = []
 # keep track of which components have finished
-painRatingComponents = [textRate, text_noPain, text_highPain, sliderPain, textSpacePain, spacePain]
+painRatingComponents = [textRate, text_noPain, text_highPain, sliderPain, textSpacePain, portShock1Pain, portShock2Pain, portShock3Pain, spacePain]
 for thisComponent in painRatingComponents:
     thisComponent.tStart = None
     thisComponent.tStop = None
@@ -621,6 +629,90 @@ while continueRoutine:
     if textSpacePain.status == STARTED:
         # update params
         pass
+    # *portShock1Pain* updates
+    
+    # if portShock1Pain is starting this frame...
+    if portShock1Pain.status == NOT_STARTED and t >= 3-frameTolerance:
+        # keep track of start time/frame for later
+        portShock1Pain.frameNStart = frameN  # exact frame index
+        portShock1Pain.tStart = t  # local t and not account for scr refresh
+        portShock1Pain.tStartRefresh = tThisFlipGlobal  # on global time
+        win.timeOnFlip(portShock1Pain, 'tStartRefresh')  # time at next scr refresh
+        # add timestamp to datafile
+        thisExp.addData('portShock1Pain.started', t)
+        # update status
+        portShock1Pain.status = STARTED
+        portShock1Pain.status = STARTED
+        win.callOnFlip(portShock1Pain.setData, int(128))
+    
+    # if portShock1Pain is stopping this frame...
+    if portShock1Pain.status == STARTED:
+        # is it time to stop? (based on global clock, using actual start)
+        if tThisFlipGlobal > portShock1Pain.tStartRefresh + 0.005-frameTolerance:
+            # keep track of stop time/frame for later
+            portShock1Pain.tStop = t  # not accounting for scr refresh
+            portShock1Pain.frameNStop = frameN  # exact frame index
+            # add timestamp to datafile
+            thisExp.addData('portShock1Pain.stopped', t)
+            # update status
+            portShock1Pain.status = FINISHED
+            win.callOnFlip(portShock1Pain.setData, int(0))
+    # *portShock2Pain* updates
+    
+    # if portShock2Pain is starting this frame...
+    if portShock2Pain.status == NOT_STARTED and t >= 3.05-frameTolerance:
+        # keep track of start time/frame for later
+        portShock2Pain.frameNStart = frameN  # exact frame index
+        portShock2Pain.tStart = t  # local t and not account for scr refresh
+        portShock2Pain.tStartRefresh = tThisFlipGlobal  # on global time
+        win.timeOnFlip(portShock2Pain, 'tStartRefresh')  # time at next scr refresh
+        # add timestamp to datafile
+        thisExp.addData('portShock2Pain.started', t)
+        # update status
+        portShock2Pain.status = STARTED
+        portShock2Pain.status = STARTED
+        win.callOnFlip(portShock2Pain.setData, int(128))
+    
+    # if portShock2Pain is stopping this frame...
+    if portShock2Pain.status == STARTED:
+        # is it time to stop? (based on global clock, using actual start)
+        if tThisFlipGlobal > portShock2Pain.tStartRefresh + 0.005-frameTolerance:
+            # keep track of stop time/frame for later
+            portShock2Pain.tStop = t  # not accounting for scr refresh
+            portShock2Pain.frameNStop = frameN  # exact frame index
+            # add timestamp to datafile
+            thisExp.addData('portShock2Pain.stopped', t)
+            # update status
+            portShock2Pain.status = FINISHED
+            win.callOnFlip(portShock2Pain.setData, int(0))
+    # *portShock3Pain* updates
+    
+    # if portShock3Pain is starting this frame...
+    if portShock3Pain.status == NOT_STARTED and t >= 3.1-frameTolerance:
+        # keep track of start time/frame for later
+        portShock3Pain.frameNStart = frameN  # exact frame index
+        portShock3Pain.tStart = t  # local t and not account for scr refresh
+        portShock3Pain.tStartRefresh = tThisFlipGlobal  # on global time
+        win.timeOnFlip(portShock3Pain, 'tStartRefresh')  # time at next scr refresh
+        # add timestamp to datafile
+        thisExp.addData('portShock3Pain.started', t)
+        # update status
+        portShock3Pain.status = STARTED
+        portShock3Pain.status = STARTED
+        win.callOnFlip(portShock3Pain.setData, int(128))
+    
+    # if portShock3Pain is stopping this frame...
+    if portShock3Pain.status == STARTED:
+        # is it time to stop? (based on global clock, using actual start)
+        if tThisFlipGlobal > portShock3Pain.tStartRefresh + 0.005-frameTolerance:
+            # keep track of stop time/frame for later
+            portShock3Pain.tStop = t  # not accounting for scr refresh
+            portShock3Pain.frameNStop = frameN  # exact frame index
+            # add timestamp to datafile
+            thisExp.addData('portShock3Pain.stopped', t)
+            # update status
+            portShock3Pain.status = FINISHED
+            win.callOnFlip(portShock3Pain.setData, int(0))
     
     # *spacePain* updates
     waitOnFlip = False
@@ -675,6 +767,12 @@ for thisComponent in painRatingComponents:
         thisComponent.setAutoDraw(False)
 thisExp.addData('sliderPain.response', sliderPain.getRating())
 thisExp.addData('sliderPain.rt', sliderPain.getRT())
+if portShock1Pain.status == STARTED:
+    win.callOnFlip(portShock1Pain.setData, int(0))
+if portShock2Pain.status == STARTED:
+    win.callOnFlip(portShock2Pain.setData, int(0))
+if portShock3Pain.status == STARTED:
+    win.callOnFlip(portShock3Pain.setData, int(0))
 # check responses
 if spacePain.keys in ['', [], None]:  # No response was made
     spacePain.keys = None
@@ -808,6 +906,8 @@ for thisBlock in blocks:
         # --- Prepare to start Routine "cross" ---
         continueRoutine = True
         # update component parameters for each repeat
+        # Run 'Begin Routine' code from codeFixate
+        logging.log(level=logging.INFO, msg=f'FixationCross')
         # keep track of which components have finished
         crossComponents = [fixationCross]
         for thisComponent in crossComponents:
@@ -986,13 +1086,13 @@ for thisBlock in blocks:
         looked_at = False
         cursorcolor="white"
         
-        logging.log(level=logging.INFO, msg=f'ImageOnset{trialtype}')
+        logging.log(level=logging.INFO, msg=f'ImageOnset_{trialtype}')
         image.setPos(position)
         image.setImage(eval(trialtype))
         # clear any previous roi data
         roi.reset()
         # keep track of which components have finished
-        trialComponents = [image, roi, gazeCursor]
+        trialComponents = [image, roi, gazeCursor, portImage]
         for thisComponent in trialComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -1129,6 +1229,34 @@ for thisBlock in blocks:
                     # update status
                     gazeCursor.status = FINISHED
                     gazeCursor.setAutoDraw(False)
+            # *portImage* updates
+            
+            # if portImage is starting this frame...
+            if portImage.status == NOT_STARTED and t >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                portImage.frameNStart = frameN  # exact frame index
+                portImage.tStart = t  # local t and not account for scr refresh
+                portImage.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(portImage, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.addData('portImage.started', t)
+                # update status
+                portImage.status = STARTED
+                portImage.status = STARTED
+                win.callOnFlip(portImage.setData, int(1))
+            
+            # if portImage is stopping this frame...
+            if portImage.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > portImage.tStartRefresh + 0.005-frameTolerance:
+                    # keep track of stop time/frame for later
+                    portImage.tStop = t  # not accounting for scr refresh
+                    portImage.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.addData('portImage.stopped', t)
+                    # update status
+                    portImage.status = FINISHED
+                    win.callOnFlip(portImage.setData, int(0))
             
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -1161,7 +1289,7 @@ for thisBlock in blocks:
             cursorcolor="red"
             feedback_audio = "audio/error.wav"
             port_msg = 128 + 4  # Shock1
-            log_msg = "lookedAtCS+"
+            log_msg = "lookedat_cs_plus"
             points = 0
             feedback_points = ""
             feedback_score = ""
@@ -1171,7 +1299,7 @@ for thisBlock in blocks:
             cursorcolor="green"
             feedback_audio = "audio/win.wav"
             port_msg = 8  # Reward
-            log_msg = "lookedAtCS-"
+            log_msg = "lookedat_cs_minus"
             points = 5
             score += points
             feedback_points = f"+ {points}"
@@ -1181,7 +1309,7 @@ for thisBlock in blocks:
             feedback_opacity = 0
             feedback_audio = "audio/silence.wav"
             port_msg = 16  # No Feedback
-            log_msg = "noLook"
+            log_msg = "no_look"
             points = 0
             feedback_points = ""
             feedback_score = ""
@@ -1202,6 +1330,8 @@ for thisBlock in blocks:
         else:
            trials.addData('roi.timesOn', "")
            trials.addData('roi.timesOff', "")
+        if portImage.status == STARTED:
+            win.callOnFlip(portImage.setData, int(0))
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
         if routineForceEnded:
             routineTimer.reset()
@@ -1218,10 +1348,10 @@ for thisBlock in blocks:
         imageFeedback.setImage(eval(trialtype))
         soundFeedback.setSound(feedback_audio, secs=0.5, hamming=True)
         soundFeedback.setVolume(1.0, log=False)
-        # Run 'Begin Routine' code from code
+        # Run 'Begin Routine' code from codeFeedback
         logging.log(level=logging.INFO, msg=f'FeedbackOnset{log_msg}')
         # keep track of which components have finished
-        feedbackComponents = [textPoints, textScore, polygon, imageFeedback, gazeCursor_Feedback, soundFeedback]
+        feedbackComponents = [textPoints, textScore, polygon, imageFeedback, gazeCursor_Feedback, soundFeedback, portShock1, portShock2, portShock3]
         for thisComponent in feedbackComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -1424,6 +1554,90 @@ for thisBlock in blocks:
                     # update status
                     soundFeedback.status = FINISHED
                     soundFeedback.stop()
+            # *portShock1* updates
+            
+            # if portShock1 is starting this frame...
+            if portShock1.status == NOT_STARTED and t >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                portShock1.frameNStart = frameN  # exact frame index
+                portShock1.tStart = t  # local t and not account for scr refresh
+                portShock1.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(portShock1, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.addData('portShock1.started', t)
+                # update status
+                portShock1.status = STARTED
+                portShock1.status = STARTED
+                win.callOnFlip(portShock1.setData, int(port_msg))
+            
+            # if portShock1 is stopping this frame...
+            if portShock1.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > portShock1.tStartRefresh + 0.005-frameTolerance:
+                    # keep track of stop time/frame for later
+                    portShock1.tStop = t  # not accounting for scr refresh
+                    portShock1.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.addData('portShock1.stopped', t)
+                    # update status
+                    portShock1.status = FINISHED
+                    win.callOnFlip(portShock1.setData, int(0))
+            # *portShock2* updates
+            
+            # if portShock2 is starting this frame...
+            if portShock2.status == NOT_STARTED and t >= 0.05-frameTolerance:
+                # keep track of start time/frame for later
+                portShock2.frameNStart = frameN  # exact frame index
+                portShock2.tStart = t  # local t and not account for scr refresh
+                portShock2.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(portShock2, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.addData('portShock2.started', t)
+                # update status
+                portShock2.status = STARTED
+                portShock2.status = STARTED
+                win.callOnFlip(portShock2.setData, int(128 if port_msg == 132 else 0))
+            
+            # if portShock2 is stopping this frame...
+            if portShock2.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > portShock2.tStartRefresh + 0.005-frameTolerance:
+                    # keep track of stop time/frame for later
+                    portShock2.tStop = t  # not accounting for scr refresh
+                    portShock2.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.addData('portShock2.stopped', t)
+                    # update status
+                    portShock2.status = FINISHED
+                    win.callOnFlip(portShock2.setData, int(0))
+            # *portShock3* updates
+            
+            # if portShock3 is starting this frame...
+            if portShock3.status == NOT_STARTED and t >= 0.1-frameTolerance:
+                # keep track of start time/frame for later
+                portShock3.frameNStart = frameN  # exact frame index
+                portShock3.tStart = t  # local t and not account for scr refresh
+                portShock3.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(portShock3, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.addData('portShock3.started', t)
+                # update status
+                portShock3.status = STARTED
+                portShock3.status = STARTED
+                win.callOnFlip(portShock3.setData, int(128 if port_msg == 132 else 0))
+            
+            # if portShock3 is stopping this frame...
+            if portShock3.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > portShock3.tStartRefresh + 0.005-frameTolerance:
+                    # keep track of stop time/frame for later
+                    portShock3.tStop = t  # not accounting for scr refresh
+                    portShock3.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.addData('portShock3.stopped', t)
+                    # update status
+                    portShock3.status = FINISHED
+                    win.callOnFlip(portShock3.setData, int(0))
             
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -1450,6 +1664,12 @@ for thisBlock in blocks:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
         soundFeedback.stop()  # ensure sound has stopped at end of routine
+        if portShock1.status == STARTED:
+            win.callOnFlip(portShock1.setData, int(0))
+        if portShock2.status == STARTED:
+            win.callOnFlip(portShock2.setData, int(0))
+        if portShock3.status == STARTED:
+            win.callOnFlip(portShock3.setData, int(0))
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
         if routineForceEnded:
             routineTimer.reset()
@@ -1712,6 +1932,8 @@ for thisBlock in blocks:
         # --- Prepare to start Routine "cross" ---
         continueRoutine = True
         # update component parameters for each repeat
+        # Run 'Begin Routine' code from codeFixate
+        logging.log(level=logging.INFO, msg=f'FixationCross')
         # keep track of which components have finished
         crossComponents = [fixationCross]
         for thisComponent in crossComponents:
@@ -1803,9 +2025,9 @@ for thisBlock in blocks:
         imageTest.setImage(eval(stimtype))
         # Run 'Begin Routine' code from codeTesttrial
         from psychopy import logging
-        logging.log(level=logging.INFO, msg=f'TestImageOnset{stimtype}')
+        logging.log(level=logging.INFO, msg=f'TestImageOnset_{stimtype}')
         # keep track of which components have finished
-        testtrialComponents = [imageTest]
+        testtrialComponents = [imageTest, portTestImage]
         for thisComponent in testtrialComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -1860,6 +2082,34 @@ for thisBlock in blocks:
                     # update status
                     imageTest.status = FINISHED
                     imageTest.setAutoDraw(False)
+            # *portTestImage* updates
+            
+            # if portTestImage is starting this frame...
+            if portTestImage.status == NOT_STARTED and t >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                portTestImage.frameNStart = frameN  # exact frame index
+                portTestImage.tStart = t  # local t and not account for scr refresh
+                portTestImage.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(portTestImage, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.addData('portTestImage.started', t)
+                # update status
+                portTestImage.status = STARTED
+                portTestImage.status = STARTED
+                win.callOnFlip(portTestImage.setData, int(2))
+            
+            # if portTestImage is stopping this frame...
+            if portTestImage.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > portTestImage.tStartRefresh + 0.005-frameTolerance:
+                    # keep track of stop time/frame for later
+                    portTestImage.tStop = t  # not accounting for scr refresh
+                    portTestImage.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.addData('portTestImage.stopped', t)
+                    # update status
+                    portTestImage.status = FINISHED
+                    win.callOnFlip(portTestImage.setData, int(0))
             
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -1885,6 +2135,8 @@ for thisBlock in blocks:
         for thisComponent in testtrialComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        if portTestImage.status == STARTED:
+            win.callOnFlip(portTestImage.setData, int(0))
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
         if routineForceEnded:
             routineTimer.reset()
