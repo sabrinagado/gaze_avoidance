@@ -1,8 +1,8 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-This experiment was created using PsychoPy3 Experiment Builder (v2023.1.0),
-    on Juni 21, 2023, at 11:57
+This experiment was created using PsychoPy3 Experiment Builder (v2023.1.1),
+    on Juni 22, 2023, at 11:57
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -30,18 +30,27 @@ import sys  # to get file system encoding
 import psychopy.iohub as io
 from psychopy.hardware import keyboard
 
-# Run 'Before Experiment' code from code_feedback
+# Run 'Before Experiment' code from code_trial
 feedback_color = "grey"
+feedback_opacity = 0
 feedback_audio = "audio/silence.wav"
 cursorcolor="white"
-rectsize = (0.15, 0.19)
+digitimer_msg = 0
+biopac_feedback_msg = 0
+
+rectsize = (0.2, 0.2)
+imagesize_test = [0.2, 0.2]
+imagesize_rating = [0.2, 0.2]
+
+score = 0
+points = 0
 
 
 # Ensure that relative paths start from the same directory as this script
 _thisDir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(_thisDir)
 # Store info about the experiment session
-psychopyVersion = '2023.1.0'
+psychopyVersion = '2023.1.1'
 expName = 'gca'  # from the Builder filename that created this script
 expInfo = {
     'participant': '',
@@ -78,7 +87,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 win = visual.Window(
     size=[2194, 1234], fullscr=True, screen=0, 
     winType='pyglet', allowStencil=False,
-    monitor='testMonitor', color=[0,0,0], colorSpace='rgb',
+    monitor='officeMonitor', color=[0,0,0], colorSpace='rgb',
     backgroundImage='', backgroundFit='none',
     blendMode='avg', useFBO=True, 
     units='height')
@@ -196,29 +205,42 @@ image = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=0.0)
+    texRes=128.0, interpolate=True, depth=-1.0)
 roi = visual.ROI(win, name='roi', device=eyetracker,
     debug=False,
     shape='rectangle',
-    pos=[0,0], size=1.0, 
-    anchor='center', ori=0.0, depth=-1
+    pos=[0,0], size=[image.size], 
+    anchor='center', ori=0.0, depth=-2
     )
 gazeCursor = visual.ShapeStim(
     win=win, name='gazeCursor', vertices='star7',
     size=(0.02, 0.02),
     ori=0.0, pos=[0,0], anchor='center',
     lineWidth=1.0,     colorSpace='rgb',  lineColor=None, fillColor='white',
-    opacity=None, depth=-2.0, interpolate=True)
-# Run 'Begin Experiment' code from code_feedback
-win.mouseVisible = False
+    opacity=0.0, depth=-3.0, interpolate=True)
+Biopac_ImageOnset = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "feedback" ---
+textPoints = visual.TextStim(win=win, name='textPoints',
+    text='',
+    font='Open Sans',
+    pos=(0, 0.3), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=0.0);
+textScore = visual.TextStim(win=win, name='textScore',
+    text='',
+    font='Open Sans',
+    pos=(0, 0.24), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-1.0);
 polygon = visual.Rect(
     win=win, name='polygon',
     width=[1.0, 1.0][0], height=[1.0, 1.0][1],
     ori=0.0, pos=[0,0], anchor='center',
     lineWidth=1.0,     colorSpace='rgb',  lineColor=feedback_color, fillColor='white',
-    opacity=None, depth=0.0, interpolate=True)
+    opacity=1.0, depth=-2.0, interpolate=True)
 imageFeedback = visual.ImageStim(
     win=win,
     name='imageFeedback', 
@@ -226,19 +248,20 @@ imageFeedback = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-3.0)
 gazeCursor_Feedback = visual.ShapeStim(
     win=win, name='gazeCursor_Feedback', vertices='star7',
     size=(0.02, 0.02),
     ori=0.0, pos=[0,0], anchor='center',
     lineWidth=1.0,     colorSpace='rgb',  lineColor=None, fillColor='white',
-    opacity=None, depth=-2.0, interpolate=True)
+    opacity=1.0, depth=-4.0, interpolate=True)
 soundFeedback = sound.Sound('A', secs=0.5, stereo=True, hamming=True,
     name='soundFeedback')
 soundFeedback.setVolume(1.0)
-Shock1 = parallel.ParallelPort(address='0x0378')
-Shock2 = parallel.ParallelPort(address='0x0378')
-Shock3 = parallel.ParallelPort(address='0x0378')
+Digitimer_Shock1 = parallel.ParallelPort(address='0x0378')
+Digitimer_Shock2 = parallel.ParallelPort(address='0x0378')
+Digitimer_Shock3 = parallel.ParallelPort(address='0x0378')
+Biopac_Feedback = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "stimRating" ---
 textRateStim = visual.TextStim(win=win, name='textRateStim',
@@ -252,7 +275,7 @@ imageRating = visual.ImageStim(
     win=win,
     name='imageRating', 
     image='default.png', mask=None, anchor='center',
-    ori=0.0, pos=[0,0], size=None,
+    ori=0.0, pos=[0,0], size=1.0,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-1.0)
@@ -294,24 +317,16 @@ fixateStart = visual.ShapeStim(
     lineWidth=1.0,     colorSpace='rgb',  lineColor='white', fillColor='white',
     opacity=None, depth=0.0, interpolate=True)
 
-# --- Initialize components for Routine "blank" ---
-blank_screen = visual.TextStim(win=win, name='blank_screen',
-    text=None,
-    font='Open Sans',
-    pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
-    color='white', colorSpace='rgb', opacity=None, 
-    languageStyle='LTR',
-    depth=0.0);
-
 # --- Initialize components for Routine "testtrial" ---
 imageTest = visual.ImageStim(
     win=win,
     name='imageTest', 
     image='default.png', mask=None, anchor='center',
-    ori=0.0, pos=[0,0], size=None,
+    ori=0.0, pos=[0,0], size=1.0,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=0.0)
+Biopac_TestImageOnset = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "stimRating" ---
 textRateStim = visual.TextStim(win=win, name='textRateStim',
@@ -325,7 +340,7 @@ imageRating = visual.ImageStim(
     win=win,
     name='imageRating', 
     image='default.png', mask=None, anchor='center',
-    ori=0.0, pos=[0,0], size=None,
+    ori=0.0, pos=[0,0], size=1.0,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-1.0)
@@ -452,6 +467,8 @@ while continueRoutine:
     # check for quit (typically the Esc key)
     if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
         core.quit()
+        if eyetracker:
+            eyetracker.setConnectionState(False)
     
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -726,6 +743,8 @@ while continueRoutine:
     # check for quit (typically the Esc key)
     if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
         core.quit()
+        if eyetracker:
+            eyetracker.setConnectionState(False)
     
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -818,6 +837,8 @@ while continueRoutine:
     # check for quit (typically the Esc key)
     if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
         core.quit()
+        if eyetracker:
+            eyetracker.setConnectionState(False)
     
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -944,6 +965,8 @@ for thisBlock in blocks:
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
+                if eyetracker:
+                    eyetracker.setConnectionState(False)
             
             # check if all components have finished
             if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -1029,6 +1052,8 @@ for thisBlock in blocks:
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
+                if eyetracker:
+                    eyetracker.setConnectionState(False)
             
             # check if all components have finished
             if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -1054,16 +1079,15 @@ for thisBlock in blocks:
         # --- Prepare to start Routine "trial" ---
         continueRoutine = True
         # update component parameters for each repeat
-        image.setPos(position)
-        image.setImage(eval(trialtype))
-        roi.setSize([image.size])
-        # clear any previous roi data
-        roi.reset()
-        # Run 'Begin Routine' code from code_feedback
+        # Run 'Begin Routine' code from code_trial
         looked_at = False
         cursorcolor="white"
+        image.setPos(position)
+        image.setImage(eval(trialtype))
+        # clear any previous roi data
+        roi.reset()
         # keep track of which components have finished
-        trialComponents = [image, roi, gazeCursor]
+        trialComponents = [image, roi, gazeCursor, Biopac_ImageOnset]
         for thisComponent in trialComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -1085,6 +1109,11 @@ for thisBlock in blocks:
             tThisFlipGlobal = win.getFutureFlipTime(clock=None)
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
+            # Run 'Each Frame' code from code_trial
+            if roi.isLookedIn:
+                looked_at = True
+                continueRoutine = False
+            
             
             # *image* updates
             
@@ -1198,15 +1227,40 @@ for thisBlock in blocks:
                     # update status
                     gazeCursor.status = FINISHED
                     gazeCursor.setAutoDraw(False)
-            # Run 'Each Frame' code from code_feedback
-            if roi.isLookedIn:
-                looked_at = True
-                continueRoutine = False
+            # *Biopac_ImageOnset* updates
             
+            # if Biopac_ImageOnset is starting this frame...
+            if Biopac_ImageOnset.status == NOT_STARTED and t >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                Biopac_ImageOnset.frameNStart = frameN  # exact frame index
+                Biopac_ImageOnset.tStart = t  # local t and not account for scr refresh
+                Biopac_ImageOnset.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(Biopac_ImageOnset, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.addData('Biopac_ImageOnset.started', t)
+                # update status
+                Biopac_ImageOnset.status = STARTED
+                Biopac_ImageOnset.status = STARTED
+                win.callOnFlip(Biopac_ImageOnset.setData, int(1))
+            
+            # if Biopac_ImageOnset is stopping this frame...
+            if Biopac_ImageOnset.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > Biopac_ImageOnset.tStartRefresh + 1.0-frameTolerance:
+                    # keep track of stop time/frame for later
+                    Biopac_ImageOnset.tStop = t  # not accounting for scr refresh
+                    Biopac_ImageOnset.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.addData('Biopac_ImageOnset.stopped', t)
+                    # update status
+                    Biopac_ImageOnset.status = FINISHED
+                    win.callOnFlip(Biopac_ImageOnset.setData, int(0))
             
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
+                if eyetracker:
+                    eyetracker.setConnectionState(False)
             
             # check if all components have finished
             if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -1226,6 +1280,47 @@ for thisBlock in blocks:
         for thisComponent in trialComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        # Run 'End Routine' code from code_trial
+        if looked_at & ("plus" in trialtype):
+            feedback_color = "red"
+            feedback_opacity = 1
+            cursorcolor="red"
+            feedback_audio = "audio/error.wav"
+            digitimer_msg = 128
+            biopac_feedback_msg = 2  # Error
+            points = 0
+            feedback_points = ""
+            feedback_score = ""
+        elif looked_at & ("minus" in trialtype):
+            feedback_color = "green"
+            feedback_opacity = 1
+            cursorcolor="green"
+            feedback_audio = "audio/win.wav"
+            digitimer_msg = 0
+            biopac_feedback_msg = 3  # Reward
+            points = 5
+            score += points
+            feedback_points = f"+ {points}"
+            feedback_score = f"Score: {score}"
+        else:
+            feedback_color = "grey"
+            feedback_opacity = 0
+            feedback_audio = "audio/silence.wav"
+            digitimer_msg = 0
+            biopac_feedback_msg = 4  # None
+            points = 0
+            feedback_points = ""
+            feedback_score = ""
+        
+        rectsize = [item * 1.05 for item in image.size]
+        
+        image_w = image.size[0]
+        image_h = image.size[1]
+        image_h_spec_rating = 0.3
+        imagesize_rating = [image_w * image_h_spec_rating / image_h, image_h_spec_rating]
+        
+        image_h_spec_test = 0.5
+        imagesize_test = [image_w * image_h_spec_test / image_h, image_h_spec_test]
         trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
            trials.addData('roi.timesOn', roi.timesOn)
@@ -1233,20 +1328,8 @@ for thisBlock in blocks:
         else:
            trials.addData('roi.timesOn', "")
            trials.addData('roi.timesOff', "")
-        # Run 'End Routine' code from code_feedback
-        if looked_at & ("plus" in trialtype):
-            feedback_color = "red"
-            cursorcolor="red"
-            feedback_audio = "audio/error.wav"
-        elif looked_at & ("minus" in trialtype):
-            feedback_color = "green"
-            cursorcolor="green"
-            feedback_audio = "audio/win.wav"
-        else:
-            feedback_color = "grey"
-            feedback_audio = "audio/silence.wav"
-            
-        rectsize = [item * 1.1 for item in image.size]
+        if Biopac_ImageOnset.status == STARTED:
+            win.callOnFlip(Biopac_ImageOnset.setData, int(0))
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
         if routineForceEnded:
             routineTimer.reset()
@@ -1257,13 +1340,15 @@ for thisBlock in blocks:
         continueRoutine = True
         # update component parameters for each repeat
         polygon.setFillColor(feedback_color)
+        polygon.setOpacity(feedback_opacity)
         polygon.setPos(position)
         imageFeedback.setPos(position)
         imageFeedback.setImage(eval(trialtype))
+        gazeCursor_Feedback.setOpacity(0.0)
         soundFeedback.setSound(feedback_audio, secs=0.5, hamming=True)
         soundFeedback.setVolume(1.0, log=False)
         # keep track of which components have finished
-        feedbackComponents = [polygon, imageFeedback, gazeCursor_Feedback, soundFeedback, Shock1, Shock2, Shock3]
+        feedbackComponents = [textPoints, textScore, polygon, imageFeedback, gazeCursor_Feedback, soundFeedback, Digitimer_Shock1, Digitimer_Shock2, Digitimer_Shock3, Biopac_Feedback]
         for thisComponent in feedbackComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -1285,6 +1370,72 @@ for thisBlock in blocks:
             tThisFlipGlobal = win.getFutureFlipTime(clock=None)
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
+            
+            # *textPoints* updates
+            
+            # if textPoints is starting this frame...
+            if textPoints.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
+                # keep track of start time/frame for later
+                textPoints.frameNStart = frameN  # exact frame index
+                textPoints.tStart = t  # local t and not account for scr refresh
+                textPoints.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(textPoints, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'textPoints.started')
+                # update status
+                textPoints.status = STARTED
+                textPoints.setAutoDraw(True)
+            
+            # if textPoints is active this frame...
+            if textPoints.status == STARTED:
+                # update params
+                textPoints.setText(feedback_points, log=False)
+            
+            # if textPoints is stopping this frame...
+            if textPoints.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > textPoints.tStartRefresh + 3-frameTolerance:
+                    # keep track of stop time/frame for later
+                    textPoints.tStop = t  # not accounting for scr refresh
+                    textPoints.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'textPoints.stopped')
+                    # update status
+                    textPoints.status = FINISHED
+                    textPoints.setAutoDraw(False)
+            
+            # *textScore* updates
+            
+            # if textScore is starting this frame...
+            if textScore.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
+                # keep track of start time/frame for later
+                textScore.frameNStart = frameN  # exact frame index
+                textScore.tStart = t  # local t and not account for scr refresh
+                textScore.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(textScore, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'textScore.started')
+                # update status
+                textScore.status = STARTED
+                textScore.setAutoDraw(True)
+            
+            # if textScore is active this frame...
+            if textScore.status == STARTED:
+                # update params
+                textScore.setText(feedback_score, log=False)
+            
+            # if textScore is stopping this frame...
+            if textScore.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > textScore.tStartRefresh + 3-frameTolerance:
+                    # keep track of stop time/frame for later
+                    textScore.tStop = t  # not accounting for scr refresh
+                    textScore.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'textScore.stopped')
+                    # update status
+                    textScore.status = FINISHED
+                    textScore.setAutoDraw(False)
             
             # *polygon* updates
             
@@ -1411,94 +1562,124 @@ for thisBlock in blocks:
                     # update status
                     soundFeedback.status = FINISHED
                     soundFeedback.stop()
-            # *Shock1* updates
+            # *Digitimer_Shock1* updates
             
-            # if Shock1 is starting this frame...
-            if Shock1.status == NOT_STARTED and t >= 0-frameTolerance:
+            # if Digitimer_Shock1 is starting this frame...
+            if Digitimer_Shock1.status == NOT_STARTED and t >= 0-frameTolerance:
                 # keep track of start time/frame for later
-                Shock1.frameNStart = frameN  # exact frame index
-                Shock1.tStart = t  # local t and not account for scr refresh
-                Shock1.tStartRefresh = tThisFlipGlobal  # on global time
-                win.timeOnFlip(Shock1, 'tStartRefresh')  # time at next scr refresh
+                Digitimer_Shock1.frameNStart = frameN  # exact frame index
+                Digitimer_Shock1.tStart = t  # local t and not account for scr refresh
+                Digitimer_Shock1.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(Digitimer_Shock1, 'tStartRefresh')  # time at next scr refresh
                 # add timestamp to datafile
-                thisExp.addData('Shock1.started', t)
+                thisExp.addData('Digitimer_Shock1.started', t)
                 # update status
-                Shock1.status = STARTED
-                Shock1.status = STARTED
-                win.callOnFlip(Shock1.setData, int(128))
+                Digitimer_Shock1.status = STARTED
+                Digitimer_Shock1.status = STARTED
+                win.callOnFlip(Digitimer_Shock1.setData, int(digitimer_msg))
             
-            # if Shock1 is stopping this frame...
-            if Shock1.status == STARTED:
+            # if Digitimer_Shock1 is stopping this frame...
+            if Digitimer_Shock1.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > Shock1.tStartRefresh + 0.002-frameTolerance:
+                if tThisFlipGlobal > Digitimer_Shock1.tStartRefresh + 0.002-frameTolerance:
                     # keep track of stop time/frame for later
-                    Shock1.tStop = t  # not accounting for scr refresh
-                    Shock1.frameNStop = frameN  # exact frame index
+                    Digitimer_Shock1.tStop = t  # not accounting for scr refresh
+                    Digitimer_Shock1.frameNStop = frameN  # exact frame index
                     # add timestamp to datafile
-                    thisExp.addData('Shock1.stopped', t)
+                    thisExp.addData('Digitimer_Shock1.stopped', t)
                     # update status
-                    Shock1.status = FINISHED
-                    win.callOnFlip(Shock1.setData, int(0))
-            # *Shock2* updates
+                    Digitimer_Shock1.status = FINISHED
+                    win.callOnFlip(Digitimer_Shock1.setData, int(0))
+            # *Digitimer_Shock2* updates
             
-            # if Shock2 is starting this frame...
-            if Shock2.status == NOT_STARTED and t >= 0.05-frameTolerance:
+            # if Digitimer_Shock2 is starting this frame...
+            if Digitimer_Shock2.status == NOT_STARTED and t >= 0.05-frameTolerance:
                 # keep track of start time/frame for later
-                Shock2.frameNStart = frameN  # exact frame index
-                Shock2.tStart = t  # local t and not account for scr refresh
-                Shock2.tStartRefresh = tThisFlipGlobal  # on global time
-                win.timeOnFlip(Shock2, 'tStartRefresh')  # time at next scr refresh
+                Digitimer_Shock2.frameNStart = frameN  # exact frame index
+                Digitimer_Shock2.tStart = t  # local t and not account for scr refresh
+                Digitimer_Shock2.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(Digitimer_Shock2, 'tStartRefresh')  # time at next scr refresh
                 # add timestamp to datafile
-                thisExp.addData('Shock2.started', t)
+                thisExp.addData('Digitimer_Shock2.started', t)
                 # update status
-                Shock2.status = STARTED
-                Shock2.status = STARTED
-                win.callOnFlip(Shock2.setData, int(128))
+                Digitimer_Shock2.status = STARTED
+                Digitimer_Shock2.status = STARTED
+                win.callOnFlip(Digitimer_Shock2.setData, int(digitimer_msg))
             
-            # if Shock2 is stopping this frame...
-            if Shock2.status == STARTED:
+            # if Digitimer_Shock2 is stopping this frame...
+            if Digitimer_Shock2.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > Shock2.tStartRefresh + 0.002-frameTolerance:
+                if tThisFlipGlobal > Digitimer_Shock2.tStartRefresh + 0.002-frameTolerance:
                     # keep track of stop time/frame for later
-                    Shock2.tStop = t  # not accounting for scr refresh
-                    Shock2.frameNStop = frameN  # exact frame index
+                    Digitimer_Shock2.tStop = t  # not accounting for scr refresh
+                    Digitimer_Shock2.frameNStop = frameN  # exact frame index
                     # add timestamp to datafile
-                    thisExp.addData('Shock2.stopped', t)
+                    thisExp.addData('Digitimer_Shock2.stopped', t)
                     # update status
-                    Shock2.status = FINISHED
-                    win.callOnFlip(Shock2.setData, int(0))
-            # *Shock3* updates
+                    Digitimer_Shock2.status = FINISHED
+                    win.callOnFlip(Digitimer_Shock2.setData, int(0))
+            # *Digitimer_Shock3* updates
             
-            # if Shock3 is starting this frame...
-            if Shock3.status == NOT_STARTED and t >= 0.1-frameTolerance:
+            # if Digitimer_Shock3 is starting this frame...
+            if Digitimer_Shock3.status == NOT_STARTED and t >= 0.1-frameTolerance:
                 # keep track of start time/frame for later
-                Shock3.frameNStart = frameN  # exact frame index
-                Shock3.tStart = t  # local t and not account for scr refresh
-                Shock3.tStartRefresh = tThisFlipGlobal  # on global time
-                win.timeOnFlip(Shock3, 'tStartRefresh')  # time at next scr refresh
+                Digitimer_Shock3.frameNStart = frameN  # exact frame index
+                Digitimer_Shock3.tStart = t  # local t and not account for scr refresh
+                Digitimer_Shock3.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(Digitimer_Shock3, 'tStartRefresh')  # time at next scr refresh
                 # add timestamp to datafile
-                thisExp.addData('Shock3.started', t)
+                thisExp.addData('Digitimer_Shock3.started', t)
                 # update status
-                Shock3.status = STARTED
-                Shock3.status = STARTED
-                win.callOnFlip(Shock3.setData, int(128))
+                Digitimer_Shock3.status = STARTED
+                Digitimer_Shock3.status = STARTED
+                win.callOnFlip(Digitimer_Shock3.setData, int(digitimer_msg))
             
-            # if Shock3 is stopping this frame...
-            if Shock3.status == STARTED:
+            # if Digitimer_Shock3 is stopping this frame...
+            if Digitimer_Shock3.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > Shock3.tStartRefresh + 0.002-frameTolerance:
+                if tThisFlipGlobal > Digitimer_Shock3.tStartRefresh + 0.002-frameTolerance:
                     # keep track of stop time/frame for later
-                    Shock3.tStop = t  # not accounting for scr refresh
-                    Shock3.frameNStop = frameN  # exact frame index
+                    Digitimer_Shock3.tStop = t  # not accounting for scr refresh
+                    Digitimer_Shock3.frameNStop = frameN  # exact frame index
                     # add timestamp to datafile
-                    thisExp.addData('Shock3.stopped', t)
+                    thisExp.addData('Digitimer_Shock3.stopped', t)
                     # update status
-                    Shock3.status = FINISHED
-                    win.callOnFlip(Shock3.setData, int(0))
+                    Digitimer_Shock3.status = FINISHED
+                    win.callOnFlip(Digitimer_Shock3.setData, int(0))
+            # *Biopac_Feedback* updates
+            
+            # if Biopac_Feedback is starting this frame...
+            if Biopac_Feedback.status == NOT_STARTED and t >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                Biopac_Feedback.frameNStart = frameN  # exact frame index
+                Biopac_Feedback.tStart = t  # local t and not account for scr refresh
+                Biopac_Feedback.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(Biopac_Feedback, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.addData('Biopac_Feedback.started', t)
+                # update status
+                Biopac_Feedback.status = STARTED
+                Biopac_Feedback.status = STARTED
+                win.callOnFlip(Biopac_Feedback.setData, int(biopac_feedback_msg))
+            
+            # if Biopac_Feedback is stopping this frame...
+            if Biopac_Feedback.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > Biopac_Feedback.tStartRefresh + 1.0-frameTolerance:
+                    # keep track of stop time/frame for later
+                    Biopac_Feedback.tStop = t  # not accounting for scr refresh
+                    Biopac_Feedback.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.addData('Biopac_Feedback.stopped', t)
+                    # update status
+                    Biopac_Feedback.status = FINISHED
+                    win.callOnFlip(Biopac_Feedback.setData, int(0))
             
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
+                if eyetracker:
+                    eyetracker.setConnectionState(False)
             
             # check if all components have finished
             if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -1519,12 +1700,14 @@ for thisBlock in blocks:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
         soundFeedback.stop()  # ensure sound has stopped at end of routine
-        if Shock1.status == STARTED:
-            win.callOnFlip(Shock1.setData, int(0))
-        if Shock2.status == STARTED:
-            win.callOnFlip(Shock2.setData, int(0))
-        if Shock3.status == STARTED:
-            win.callOnFlip(Shock3.setData, int(0))
+        if Digitimer_Shock1.status == STARTED:
+            win.callOnFlip(Digitimer_Shock1.setData, int(0))
+        if Digitimer_Shock2.status == STARTED:
+            win.callOnFlip(Digitimer_Shock2.setData, int(0))
+        if Digitimer_Shock3.status == STARTED:
+            win.callOnFlip(Digitimer_Shock3.setData, int(0))
+        if Biopac_Feedback.status == STARTED:
+            win.callOnFlip(Biopac_Feedback.setData, int(0))
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
         if routineForceEnded:
             routineTimer.reset()
@@ -1557,7 +1740,7 @@ for thisBlock in blocks:
         # --- Prepare to start Routine "stimRating" ---
         continueRoutine = True
         # update component parameters for each repeat
-        imageRating.setPos((0, 0.2))
+        imageRating.setPos((0, 0.1))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()
         spaceStim.keys = []
@@ -1625,7 +1808,7 @@ for thisBlock in blocks:
             # if imageRating is active this frame...
             if imageRating.status == STARTED:
                 # update params
-                pass
+                imageRating.setSize(imagesize_rating, log=False)
             
             # *text_unpleasant* updates
             
@@ -1737,6 +1920,8 @@ for thisBlock in blocks:
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
+                if eyetracker:
+                    eyetracker.setConnectionState(False)
             
             # check if all components have finished
             if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -1853,6 +2038,8 @@ for thisBlock in blocks:
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
+                if eyetracker:
+                    eyetracker.setConnectionState(False)
             
             # check if all components have finished
             if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -1875,98 +2062,13 @@ for thisBlock in blocks:
         # the Routine "cross" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         
-        # --- Prepare to start Routine "blank" ---
-        continueRoutine = True
-        # update component parameters for each repeat
-        # keep track of which components have finished
-        blankComponents = [blank_screen]
-        for thisComponent in blankComponents:
-            thisComponent.tStart = None
-            thisComponent.tStop = None
-            thisComponent.tStartRefresh = None
-            thisComponent.tStopRefresh = None
-            if hasattr(thisComponent, 'status'):
-                thisComponent.status = NOT_STARTED
-        # reset timers
-        t = 0
-        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
-        frameN = -1
-        
-        # --- Run Routine "blank" ---
-        routineForceEnded = not continueRoutine
-        while continueRoutine:
-            # get current time
-            t = routineTimer.getTime()
-            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
-            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
-            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
-            # update/draw components on each frame
-            
-            # *blank_screen* updates
-            
-            # if blank_screen is starting this frame...
-            if blank_screen.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-                # keep track of start time/frame for later
-                blank_screen.frameNStart = frameN  # exact frame index
-                blank_screen.tStart = t  # local t and not account for scr refresh
-                blank_screen.tStartRefresh = tThisFlipGlobal  # on global time
-                win.timeOnFlip(blank_screen, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'blank_screen.started')
-                # update status
-                blank_screen.status = STARTED
-                blank_screen.setAutoDraw(True)
-            
-            # if blank_screen is active this frame...
-            if blank_screen.status == STARTED:
-                # update params
-                pass
-            
-            # if blank_screen is stopping this frame...
-            if blank_screen.status == STARTED:
-                # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > blank_screen.tStartRefresh + 1.0 + random()-frameTolerance:
-                    # keep track of stop time/frame for later
-                    blank_screen.tStop = t  # not accounting for scr refresh
-                    blank_screen.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'blank_screen.stopped')
-                    # update status
-                    blank_screen.status = FINISHED
-                    blank_screen.setAutoDraw(False)
-            
-            # check for quit (typically the Esc key)
-            if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
-                core.quit()
-            
-            # check if all components have finished
-            if not continueRoutine:  # a component has requested a forced-end of Routine
-                routineForceEnded = True
-                break
-            continueRoutine = False  # will revert to True if at least one component still running
-            for thisComponent in blankComponents:
-                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
-                    continueRoutine = True
-                    break  # at least one component has not yet finished
-            
-            # refresh the screen
-            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
-                win.flip()
-        
-        # --- Ending Routine "blank" ---
-        for thisComponent in blankComponents:
-            if hasattr(thisComponent, "setAutoDraw"):
-                thisComponent.setAutoDraw(False)
-        # the Routine "blank" was not non-slip safe, so reset the non-slip timer
-        routineTimer.reset()
-        
         # --- Prepare to start Routine "testtrial" ---
         continueRoutine = True
         # update component parameters for each repeat
         imageTest.setPos((0, 0))
         imageTest.setImage(eval(stimtype))
         # keep track of which components have finished
-        testtrialComponents = [imageTest]
+        testtrialComponents = [imageTest, Biopac_TestImageOnset]
         for thisComponent in testtrialComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -1981,7 +2083,7 @@ for thisBlock in blocks:
         
         # --- Run Routine "testtrial" ---
         routineForceEnded = not continueRoutine
-        while continueRoutine and routineTimer.getTime() < 20.0:
+        while continueRoutine and routineTimer.getTime() < 6.0:
             # get current time
             t = routineTimer.getTime()
             tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -2007,12 +2109,12 @@ for thisBlock in blocks:
             # if imageTest is active this frame...
             if imageTest.status == STARTED:
                 # update params
-                pass
+                imageTest.setSize(imagesize_test, log=False)
             
             # if imageTest is stopping this frame...
             if imageTest.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > imageTest.tStartRefresh + 20-frameTolerance:
+                if tThisFlipGlobal > imageTest.tStartRefresh + 6-frameTolerance:
                     # keep track of stop time/frame for later
                     imageTest.tStop = t  # not accounting for scr refresh
                     imageTest.frameNStop = frameN  # exact frame index
@@ -2021,10 +2123,40 @@ for thisBlock in blocks:
                     # update status
                     imageTest.status = FINISHED
                     imageTest.setAutoDraw(False)
+            # *Biopac_TestImageOnset* updates
+            
+            # if Biopac_TestImageOnset is starting this frame...
+            if Biopac_TestImageOnset.status == NOT_STARTED and t >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                Biopac_TestImageOnset.frameNStart = frameN  # exact frame index
+                Biopac_TestImageOnset.tStart = t  # local t and not account for scr refresh
+                Biopac_TestImageOnset.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(Biopac_TestImageOnset, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.addData('Biopac_TestImageOnset.started', t)
+                # update status
+                Biopac_TestImageOnset.status = STARTED
+                Biopac_TestImageOnset.status = STARTED
+                win.callOnFlip(Biopac_TestImageOnset.setData, int(5))
+            
+            # if Biopac_TestImageOnset is stopping this frame...
+            if Biopac_TestImageOnset.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > Biopac_TestImageOnset.tStartRefresh + 1.0-frameTolerance:
+                    # keep track of stop time/frame for later
+                    Biopac_TestImageOnset.tStop = t  # not accounting for scr refresh
+                    Biopac_TestImageOnset.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.addData('Biopac_TestImageOnset.stopped', t)
+                    # update status
+                    Biopac_TestImageOnset.status = FINISHED
+                    win.callOnFlip(Biopac_TestImageOnset.setData, int(0))
             
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
+                if eyetracker:
+                    eyetracker.setConnectionState(False)
             
             # check if all components have finished
             if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -2044,11 +2176,13 @@ for thisBlock in blocks:
         for thisComponent in testtrialComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        if Biopac_TestImageOnset.status == STARTED:
+            win.callOnFlip(Biopac_TestImageOnset.setData, int(0))
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
         if routineForceEnded:
             routineTimer.reset()
         else:
-            routineTimer.addTime(-20.000000)
+            routineTimer.addTime(-6.000000)
         thisExp.nextEntry()
         
     # completed 2.0 repeats of 'testtrials'
@@ -2076,7 +2210,7 @@ for thisBlock in blocks:
         # --- Prepare to start Routine "stimRating" ---
         continueRoutine = True
         # update component parameters for each repeat
-        imageRating.setPos((0, 0.2))
+        imageRating.setPos((0, 0.1))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()
         spaceStim.keys = []
@@ -2144,7 +2278,7 @@ for thisBlock in blocks:
             # if imageRating is active this frame...
             if imageRating.status == STARTED:
                 # update params
-                pass
+                imageRating.setSize(imagesize_rating, log=False)
             
             # *text_unpleasant* updates
             
@@ -2256,6 +2390,8 @@ for thisBlock in blocks:
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
+                if eyetracker:
+                    eyetracker.setConnectionState(False)
             
             # check if all components have finished
             if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -2342,6 +2478,8 @@ while continueRoutine:
     # check for quit (typically the Esc key)
     if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
         core.quit()
+        if eyetracker:
+            eyetracker.setConnectionState(False)
     
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
