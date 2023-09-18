@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2023.1.1),
-    on Juli 12, 2023, at 08:14
+    on September 18, 2023, at 11:28
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -58,7 +58,6 @@ psychopyVersion = '2023.1.1'
 expName = 'gca'  # from the Builder filename that created this script
 expInfo = {
     'participant': '',
-    'session': '001',
     'group': ['A', 'B', 'C', 'D'],
 }
 # --- Show participant info dialog --
@@ -75,7 +74,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expInfo['participant'], expNa
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\Public\\Documents\\Projects\\GCA\\gaze_avoidance\\gca_lastrun.py',
+    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gaze_avoidance\\gca_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -89,7 +88,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 
 # --- Setup the Window ---
 win = visual.Window(
-    size=[2194, 1234], fullscr=True, screen=1, 
+    size=[2560, 1440], fullscr=True, screen=1, 
     winType='pyglet', allowStencil=False,
     monitor='labMonitor', color=[0,0,0], colorSpace='rgb',
     backgroundImage='', backgroundFit='none',
@@ -129,7 +128,7 @@ defaultKeyboard = keyboard.Keyboard(backend='iohub')
 
 # --- Initialize components for Routine "welcome" ---
 textStart = visual.TextStim(win=win, name='textStart',
-    text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\nvielen Dank für Ihre Teilnahme an unserem Experiment.\n\nBitte drücken Sie die Leertaste um zu starten.',
+    text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\nvielen Dank für Ihre Teilnahme an unserem Experiment.\n\nBitte drücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -139,7 +138,7 @@ spaceStart = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startPainThreshold" ---
 textPainThreshold = visual.TextStim(win=win, name='textPainThreshold',
-    text='Wir möchten zuerst den elektrischen Reiz richtig einstellen.\n\nBitte drücken Sie die Leertaste um zu starten.',
+    text='Wir möchten zuerst den elektrischen Reiz richtig einstellen.\n\nBitte drücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -201,7 +200,7 @@ fixcrossT = visual.TextStim(win=win, name='fixcrossT',
 
 # --- Initialize components for Routine "startETCalibration" ---
 text_ETCalibration = visual.TextStim(win=win, name='text_ETCalibration',
-    text='Wir machen nun mit der Kalibrierung des Eye-Trackers weiter.\n\nBitte drücken Sie wieder die Leertaste um zu starten.',
+    text='Wir machen nun mit der Kalibrierung des Eye-Trackers weiter.\n\nBitte drücken Sie wieder die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -211,7 +210,7 @@ spaceETCalibration = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startExp" ---
 textStartExp = visual.TextStim(win=win, name='textStartExp',
-    text='Die Kalibrierung ist nun abgeschlossen.\n\nSie werden in unserem Experiment unterschiedliche Bilder in den vier Ecken des Bildschirms präsentiert bekommen.\nVersuchen Sie Ihren Score zu maximieren.\n\nBitte drücken Sie die Leertaste um zu starten.',
+    text='Die Kalibrierung ist nun abgeschlossen.\n\nSie werden in unserem Experiment unterschiedliche Bilder in den vier Ecken des Bildschirms präsentiert bekommen. Unter manchen Umständen werden Sie eine Belohnung oder jedoch einen elektrischen Reiz erhalten. \nVersuchen Sie Ihren Belohnungsscore zu maximieren.\n\nBitte fixieren Sie immer das Fixationskreuz am Anfang jedes Trials.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -413,7 +412,7 @@ spaceStim = keyboard.Keyboard()
 
 # --- Initialize components for Routine "testInstr" ---
 textTestInstr = visual.TextStim(win=win, name='textTestInstr',
-    text='Im nächsten Block sehen Sie noch einmal die unterschiedlichen Bilder.\n\nBitte drücken Sie die Leertaste um zu starten.',
+    text='Im nächsten Block sehen Sie noch einmal die unterschiedlichen Bilder.\n\nBitte drücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -1894,10 +1893,10 @@ for thisBlock in blocks:
             feedback_audio = "audio/error.wav"
             port_msg = 128 + 4  # Shock1
             log_msg = "lookedat_cs_plus"
-            points = 5
-            score -= points
-            feedback_points = f"- {points}"
-            feedback_score = f"Score: {score}"
+            points = 0  # 5
+            # score -= points
+            feedback_points = ""  # f"- {points}"
+            feedback_score = ""  # f"Score: {score}"
         elif looked_at & ("minus" in trialtype):
             feedback_color = "green"
             feedback_opacity = 1
