@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" ?>
-<PsychoPy2experiment encoding="utf-8" version="2023.1.1">
+<PsychoPy2experiment encoding="utf-8" version="2022.2.4">
   <Settings>
     <Param val="use prefs" valType="str" updates="None" name="Audio latency priority"/>
-    <Param val="use prefs" valType="str" updates="None" name="Audio lib"/>
+    <Param val="ptb" valType="str" updates="None" name="Audio lib"/>
     <Param val="" valType="str" updates="None" name="Completed URL"/>
     <Param val="auto" valType="str" updates="None" name="Data file delimiter"/>
     <Param val="u'data/%s_%s_%s' % (expInfo['participant'], expName, expInfo['date'])" valType="code" updates="None" name="Data filename"/>
@@ -68,7 +68,7 @@
   </Settings>
   <Routines>
     <Routine name="trial">
-      <CodeComponent name="codeTrial" plugin="None">
+      <CodeComponent name="codeTrial">
         <Param val="feedback_color = (0,0,0)&amp;#10;feedback_opacity = 0&amp;#10;feedback_audio = &quot;audio/silence.wav&quot;&amp;#10;cursorcolor=&quot;white&quot;&amp;#10;port_msg = 0&amp;#10;log_msg = &quot;&quot;&amp;#10;&amp;#10;rectsize = (0.2, 0.2)&amp;#10;imagesize_test = [0.2, 0.2]&amp;#10;imagesize_rating = [0.2, 0.2]&amp;#10;&amp;#10;score = 0&amp;#10;points = 0&amp;#10;&amp;#10;looked_at = False" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -85,7 +85,7 @@
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="codeTrial" valType="code" updates="None" name="name"/>
       </CodeComponent>
-      <ImageComponent name="image" plugin="None">
+      <ImageComponent name="image">
         <Param val="center" valType="str" updates="constant" name="anchor"/>
         <Param val="$[1,1,1]" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
@@ -112,7 +112,7 @@
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
       </ImageComponent>
-      <RegionOfInterestComponent name="roi" plugin="None">
+      <RegionOfInterestComponent name="roi">
         <Param val="center" valType="str" updates="constant" name="anchor"/>
         <Param val="False" valType="bool" updates="None" name="debug"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -137,7 +137,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
       </RegionOfInterestComponent>
-      <PolygonComponent name="gazeCursor" plugin="None">
+      <PolygonComponent name="gazeCursor">
         <Param val="center" valType="str" updates="constant" name="anchor"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -164,7 +164,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
       </PolygonComponent>
-      <ParallelOutComponent name="portImage" plugin="None">
+      <ParallelOutComponent name="portImage">
         <Param val="0x0378" valType="str" updates="None" name="address"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
@@ -183,7 +183,7 @@
       </ParallelOutComponent>
     </Routine>
     <Routine name="feedback">
-      <CodeComponent name="codeFeedback" plugin="None">
+      <CodeComponent name="codeFeedback">
         <Param val="soundFeedback = sound.Sound('A', secs=1, stereo=True, hamming=True, name='soundFeedback')" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -200,7 +200,7 @@
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="codeFeedback" valType="code" updates="None" name="name"/>
       </CodeComponent>
-      <TextComponent name="textPoints" plugin="None">
+      <TextComponent name="textPoints">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -225,7 +225,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <TextComponent name="textScore" plugin="None">
+      <TextComponent name="textScore">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -250,7 +250,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <PolygonComponent name="polygon" plugin="None">
+      <PolygonComponent name="polygon">
         <Param val="center" valType="str" updates="constant" name="anchor"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -277,7 +277,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
       </PolygonComponent>
-      <ImageComponent name="imageFeedback" plugin="None">
+      <ImageComponent name="imageFeedback">
         <Param val="center" valType="str" updates="constant" name="anchor"/>
         <Param val="$[1,1,1]" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
@@ -304,7 +304,7 @@
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
       </ImageComponent>
-      <PolygonComponent name="gazeCursor_Feedback" plugin="None">
+      <PolygonComponent name="gazeCursor_Feedback">
         <Param val="center" valType="str" updates="constant" name="anchor"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -331,7 +331,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
       </PolygonComponent>
-      <SoundComponent name="soundFeedback" plugin="None">
+      <SoundComponent name="soundFeedback">
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
         <Param val="True" valType="bool" updates="constant" name="hamming"/>
@@ -346,7 +346,7 @@
         <Param val="False" valType="bool" updates="constant" name="syncScreenRefresh"/>
         <Param val="1" valType="num" updates="constant" name="volume"/>
       </SoundComponent>
-      <ParallelOutComponent name="portShock1" plugin="None">
+      <ParallelOutComponent name="portShock1">
         <Param val="0x0378" valType="str" updates="None" name="address"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
@@ -363,7 +363,7 @@
         <Param val="True" valType="bool" updates="constant" name="syncScreen"/>
         <Param val="False" valType="bool" updates="None" name="syncScreenRefresh"/>
       </ParallelOutComponent>
-      <ParallelOutComponent name="portShock2" plugin="None">
+      <ParallelOutComponent name="portShock2">
         <Param val="0x0378" valType="str" updates="None" name="address"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
@@ -380,7 +380,7 @@
         <Param val="True" valType="bool" updates="constant" name="syncScreen"/>
         <Param val="False" valType="bool" updates="None" name="syncScreenRefresh"/>
       </ParallelOutComponent>
-      <ParallelOutComponent name="portShock3" plugin="None">
+      <ParallelOutComponent name="portShock3">
         <Param val="0x0378" valType="str" updates="None" name="address"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
@@ -399,7 +399,7 @@
       </ParallelOutComponent>
     </Routine>
     <Routine name="cross">
-      <CodeComponent name="codeFixate" plugin="None">
+      <CodeComponent name="codeFixate">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -416,7 +416,7 @@
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="codeFixate" valType="code" updates="None" name="name"/>
       </CodeComponent>
-      <TextComponent name="fixcross" plugin="None">
+      <TextComponent name="fixcross">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -443,7 +443,7 @@
       </TextComponent>
     </Routine>
     <Routine name="blank">
-      <TextComponent name="blankScreen" plugin="None">
+      <TextComponent name="blankScreen">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -470,7 +470,7 @@
       </TextComponent>
     </Routine>
     <Routine name="welcome">
-      <TextComponent name="textStart" plugin="None">
+      <TextComponent name="textStart">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -495,7 +495,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <KeyboardComponent name="spaceStart" plugin="None">
+      <KeyboardComponent name="spaceStart">
         <Param val="'space', 'enter'" valType="list" updates="constant" name="allowedKeys"/>
         <Param val="" valType="str" updates="constant" name="correctAns"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -514,7 +514,7 @@
         <Param val="False" valType="bool" updates="constant" name="storeCorrect"/>
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
-      <CodeComponent name="codeWelcome" plugin="None">
+      <CodeComponent name="codeWelcome">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -533,7 +533,7 @@
       </CodeComponent>
     </Routine>
     <Routine name="end">
-      <TextComponent name="textEnd" plugin="None">
+      <TextComponent name="textEnd">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -560,7 +560,7 @@
       </TextComponent>
     </Routine>
     <Routine name="painRating">
-      <TextComponent name="textRate" plugin="None">
+      <TextComponent name="textRate">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -585,7 +585,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <TextComponent name="text_noPain" plugin="None">
+      <TextComponent name="text_noPain">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -610,7 +610,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <TextComponent name="text_slightPain" plugin="None">
+      <TextComponent name="text_slightPain">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -635,7 +635,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <TextComponent name="text_highPain" plugin="None">
+      <TextComponent name="text_highPain">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -660,7 +660,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <SliderComponent name="sliderPain" plugin="None">
+      <SliderComponent name="sliderPain">
         <Param val="White" valType="color" updates="constant" name="borderColor"/>
         <Param val="White" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
@@ -696,7 +696,7 @@
         <Param val="(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)" valType="list" updates="constant" name="ticks"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
       </SliderComponent>
-      <TextComponent name="textSpacePain" plugin="None">
+      <TextComponent name="textSpacePain">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -721,7 +721,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <KeyboardComponent name="spacePain" plugin="None">
+      <KeyboardComponent name="spacePain">
         <Param val="'space', 'enter'" valType="list" updates="constant" name="allowedKeys"/>
         <Param val="" valType="str" updates="constant" name="correctAns"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -740,7 +740,7 @@
         <Param val="False" valType="bool" updates="constant" name="storeCorrect"/>
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
-      <CodeComponent name="codePainRating" plugin="None">
+      <CodeComponent name="codePainRating">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -759,7 +759,7 @@
       </CodeComponent>
     </Routine>
     <Routine name="stimRating">
-      <TextComponent name="textRateStim" plugin="None">
+      <TextComponent name="textRateStim">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -784,7 +784,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <ImageComponent name="imageRating" plugin="None">
+      <ImageComponent name="imageRating">
         <Param val="center" valType="str" updates="constant" name="anchor"/>
         <Param val="$[1,1,1]" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
@@ -811,7 +811,7 @@
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
       </ImageComponent>
-      <TextComponent name="textUnpleasant" plugin="None">
+      <TextComponent name="textUnpleasant">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -836,7 +836,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <TextComponent name="textPleasant" plugin="None">
+      <TextComponent name="textPleasant">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -861,7 +861,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <SliderComponent name="sliderStim" plugin="None">
+      <SliderComponent name="sliderStim">
         <Param val="White" valType="color" updates="constant" name="borderColor"/>
         <Param val="White" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
@@ -897,7 +897,7 @@
         <Param val="(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)" valType="list" updates="constant" name="ticks"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
       </SliderComponent>
-      <TextComponent name="textSpaceStim" plugin="None">
+      <TextComponent name="textSpaceStim">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -922,7 +922,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <KeyboardComponent name="spaceStim" plugin="None">
+      <KeyboardComponent name="spaceStim">
         <Param val="'space', 'enter'" valType="list" updates="constant" name="allowedKeys"/>
         <Param val="" valType="str" updates="constant" name="correctAns"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -941,7 +941,7 @@
         <Param val="False" valType="bool" updates="constant" name="storeCorrect"/>
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
-      <CodeComponent name="codeStimRating" plugin="None">
+      <CodeComponent name="codeStimRating">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -960,7 +960,7 @@
       </CodeComponent>
     </Routine>
     <Routine name="testtrial">
-      <ImageComponent name="imageTest" plugin="None">
+      <ImageComponent name="imageTest">
         <Param val="center" valType="str" updates="constant" name="anchor"/>
         <Param val="$[1,1,1]" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
@@ -987,7 +987,7 @@
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
       </ImageComponent>
-      <ParallelOutComponent name="portTestImage" plugin="None">
+      <ParallelOutComponent name="portTestImage">
         <Param val="0x0378" valType="str" updates="None" name="address"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
@@ -1004,7 +1004,7 @@
         <Param val="True" valType="bool" updates="constant" name="syncScreen"/>
         <Param val="False" valType="bool" updates="None" name="syncScreenRefresh"/>
       </ParallelOutComponent>
-      <CodeComponent name="codeTesttrial" plugin="None">
+      <CodeComponent name="codeTesttrial">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -1023,7 +1023,7 @@
       </CodeComponent>
     </Routine>
     <Routine name="painThreshold">
-      <TextComponent name="textRateT" plugin="None">
+      <TextComponent name="textRateT">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1048,7 +1048,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <TextComponent name="text_noPainT" plugin="None">
+      <TextComponent name="text_noPainT">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1073,7 +1073,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <TextComponent name="text_slightPainT" plugin="None">
+      <TextComponent name="text_slightPainT">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1098,7 +1098,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <TextComponent name="text_highPainT" plugin="None">
+      <TextComponent name="text_highPainT">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1123,7 +1123,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <SliderComponent name="sliderPainT" plugin="None">
+      <SliderComponent name="sliderPainT">
         <Param val="White" valType="color" updates="constant" name="borderColor"/>
         <Param val="White" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
@@ -1159,7 +1159,7 @@
         <Param val="(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)" valType="list" updates="constant" name="ticks"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
       </SliderComponent>
-      <KeyboardComponent name="keys_PainT" plugin="None">
+      <KeyboardComponent name="keys_PainT">
         <Param val="'s', 'g'" valType="list" updates="constant" name="allowedKeys"/>
         <Param val="" valType="str" updates="constant" name="correctAns"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -1178,7 +1178,7 @@
         <Param val="False" valType="bool" updates="constant" name="storeCorrect"/>
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
-      <CodeComponent name="codePainRatingT" plugin="None">
+      <CodeComponent name="codePainRatingT">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="skipShock = False" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -1197,7 +1197,7 @@
       </CodeComponent>
     </Routine>
     <Routine name="shock">
-      <CodeComponent name="code" plugin="None">
+      <CodeComponent name="code">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -1214,7 +1214,7 @@
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="code" valType="code" updates="None" name="name"/>
       </CodeComponent>
-      <ParallelOutComponent name="portShock1T" plugin="None">
+      <ParallelOutComponent name="portShock1T">
         <Param val="0x0378" valType="str" updates="None" name="address"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
@@ -1231,7 +1231,7 @@
         <Param val="True" valType="bool" updates="constant" name="syncScreen"/>
         <Param val="False" valType="bool" updates="None" name="syncScreenRefresh"/>
       </ParallelOutComponent>
-      <ParallelOutComponent name="portShock2T" plugin="None">
+      <ParallelOutComponent name="portShock2T">
         <Param val="0x0378" valType="str" updates="None" name="address"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
@@ -1248,7 +1248,7 @@
         <Param val="True" valType="bool" updates="constant" name="syncScreen"/>
         <Param val="False" valType="bool" updates="None" name="syncScreenRefresh"/>
       </ParallelOutComponent>
-      <ParallelOutComponent name="portShock3T" plugin="None">
+      <ParallelOutComponent name="portShock3T">
         <Param val="0x0378" valType="str" updates="None" name="address"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
@@ -1265,7 +1265,7 @@
         <Param val="True" valType="bool" updates="constant" name="syncScreen"/>
         <Param val="False" valType="bool" updates="None" name="syncScreenRefresh"/>
       </ParallelOutComponent>
-      <TextComponent name="fixcrossT" plugin="None">
+      <TextComponent name="fixcrossT">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1292,7 +1292,7 @@
       </TextComponent>
     </Routine>
     <Routine name="testInstr">
-      <TextComponent name="textTestInstr" plugin="None">
+      <TextComponent name="textTestInstr">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1317,7 +1317,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <KeyboardComponent name="spaceTestInstr" plugin="None">
+      <KeyboardComponent name="spaceTestInstr">
         <Param val="'space', 'enter'" valType="list" updates="constant" name="allowedKeys"/>
         <Param val="" valType="str" updates="constant" name="correctAns"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -1336,7 +1336,7 @@
         <Param val="False" valType="bool" updates="constant" name="storeCorrect"/>
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
-      <CodeComponent name="codeTestInstruction" plugin="None">
+      <CodeComponent name="codeTestInstruction">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -1355,7 +1355,7 @@
       </CodeComponent>
     </Routine>
     <Routine name="startExp">
-      <TextComponent name="textStartExp" plugin="None">
+      <TextComponent name="textStartExp">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1376,11 +1376,11 @@
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
         <Param val="" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
-        <Param val="Die Kalibrierung ist nun abgeschlossen und wir starten nun mit dem Experiment.&amp;#10;&amp;#10;Sie werden nun in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Unter manchen Umständen werden Sie eine Belohnung oder jedoch einen elektrischen Reiz erhalten.&amp;#10;Versuchen Sie Ihren Belohnungsscore zu maximieren.&amp;#10;&amp;#10;Bitte fixieren Sie am Anfang immer das Fixationskreuz.&amp;#10;&amp;#10;Drücken Sie die Leertaste, um zu starten." valType="str" updates="constant" name="text"/>
+        <Param val="Die Kalibrierung ist abgeschlossen und wir starten nun mit dem Experiment.&amp;#10;&amp;#10;Sie werden in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Unter manchen Umständen werden Sie eine Belohnung oder jedoch einen elektrischen Reiz erhalten.&amp;#10;Versuchen Sie Ihren Belohnungsscore zu maximieren.&amp;#10;&amp;#10;Bitte fixieren Sie am Anfang immer das Fixationskreuz.&amp;#10;&amp;#10;Drücken Sie die Leertaste, um zu starten." valType="str" updates="constant" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <KeyboardComponent name="spaceStartExp" plugin="None">
+      <KeyboardComponent name="spaceStartExp">
         <Param val="'space', 'enter'" valType="list" updates="constant" name="allowedKeys"/>
         <Param val="" valType="str" updates="constant" name="correctAns"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -1399,7 +1399,7 @@
         <Param val="False" valType="bool" updates="constant" name="storeCorrect"/>
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
-      <CodeComponent name="codeStartExperiment" plugin="None">
+      <CodeComponent name="codeStartExperiment">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -1418,7 +1418,7 @@
       </CodeComponent>
     </Routine>
     <Routine name="startPainThreshold">
-      <TextComponent name="textPainThreshold" plugin="None">
+      <TextComponent name="textPainThreshold">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1443,7 +1443,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <KeyboardComponent name="spacePainThreshold" plugin="None">
+      <KeyboardComponent name="spacePainThreshold">
         <Param val="'space', 'enter'" valType="list" updates="constant" name="allowedKeys"/>
         <Param val="" valType="str" updates="constant" name="correctAns"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -1462,7 +1462,7 @@
         <Param val="False" valType="bool" updates="constant" name="storeCorrect"/>
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
-      <CodeComponent name="codeStartPainThreshold" plugin="None">
+      <CodeComponent name="codeStartPainThreshold">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -1481,7 +1481,7 @@
       </CodeComponent>
     </Routine>
     <Routine name="startETCalibration">
-      <TextComponent name="text_ETCalibration" plugin="None">
+      <TextComponent name="text_ETCalibration">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1506,7 +1506,7 @@
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
-      <KeyboardComponent name="spaceETCalibration" plugin="None">
+      <KeyboardComponent name="spaceETCalibration">
         <Param val="'space', 'enter'" valType="list" updates="constant" name="allowedKeys"/>
         <Param val="" valType="str" updates="constant" name="correctAns"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -1525,7 +1525,7 @@
         <Param val="False" valType="bool" updates="constant" name="storeCorrect"/>
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
-      <CodeComponent name="codeStartETCalibration" plugin="None">
+      <CodeComponent name="codeStartETCalibration">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -1544,7 +1544,7 @@
       </CodeComponent>
     </Routine>
     <Routine name="crossEnd">
-      <CodeComponent name="code_end" plugin="None">
+      <CodeComponent name="code_end">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
@@ -1561,7 +1561,7 @@
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="code_end" valType="code" updates="None" name="name"/>
       </CodeComponent>
-      <TextComponent name="fixcrossE" plugin="None">
+      <TextComponent name="fixcrossE">
         <Param val="white" valType="color" updates="constant" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
@@ -1587,13 +1587,13 @@
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
     </Routine>
-    <EyetrackerCalibrationRoutine name="calibration">
+    <EyetrackerCalibrationRoutine name="ETCalibration">
       <Param name="borderColor" updates="None" val="black" valType="color"/>
       <Param name="borderWidth" updates="None" val="2" valType="num"/>
       <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
       <Param name="disabled" updates="None" val="False" valType="bool"/>
       <Param name="expandDur" updates="None" val="1" valType="num"/>
-      <Param name="expandScale" updates="None" val="1.5" valType="num"/>
+      <Param name="expandScale" updates="None" val="1.2" valType="num"/>
       <Param name="fillColor" updates="None" val="" valType="color"/>
       <Param name="innerBorderColor" updates="None" val="black" valType="color"/>
       <Param name="innerBorderWidth" updates="None" val="2" valType="num"/>
@@ -1601,24 +1601,24 @@
       <Param name="innerRadius" updates="None" val="0.0035" valType="num"/>
       <Param name="movementAnimation" updates="None" val="True" valType="bool"/>
       <Param name="movementDur" updates="None" val="1.0" valType="num"/>
-      <Param name="name" updates="None" val="calibration" valType="code"/>
+      <Param name="name" updates="None" val="ETCalibration" valType="code"/>
       <Param name="outerRadius" updates="None" val="0.01" valType="num"/>
       <Param name="progressMode" updates="None" val="time" valType="str"/>
       <Param name="randomisePos" updates="None" val="True" valType="bool"/>
       <Param name="targetDelay" updates="None" val="1.0" valType="num"/>
-      <Param name="targetDur" updates="None" val="1.5" valType="num"/>
+      <Param name="targetDur" updates="None" val="1" valType="num"/>
       <Param name="targetLayout" updates="None" val="NINE_POINTS" valType="str"/>
       <Param name="textColor" updates="None" val="white" valType="color"/>
       <Param name="units" updates="None" val="from exp settings" valType="str"/>
     </EyetrackerCalibrationRoutine>
-    <EyetrackerValidationRoutine name="validation">
+    <EyetrackerValidationRoutine name="ETValidation">
       <Param name="borderColor" updates="None" val="black" valType="color"/>
       <Param name="borderWidth" updates="None" val="2" valType="num"/>
       <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
       <Param name="cursorFillColor" updates="None" val="white" valType="color"/>
-      <Param name="disabled" updates="None" val="False" valType="bool"/>
+      <Param name="disabled" updates="None" val="True" valType="bool"/>
       <Param name="expandDur" updates="None" val="1" valType="num"/>
-      <Param name="expandScale" updates="None" val="1.5" valType="num"/>
+      <Param name="expandScale" updates="None" val="1.2" valType="num"/>
       <Param name="fillColor" updates="None" val="" valType="color"/>
       <Param name="innerBorderColor" updates="None" val="black" valType="color"/>
       <Param name="innerBorderWidth" updates="None" val="2" valType="num"/>
@@ -1626,14 +1626,14 @@
       <Param name="innerRadius" updates="None" val="0.0035" valType="num"/>
       <Param name="movementAnimation" updates="None" val="True" valType="bool"/>
       <Param name="movementDur" updates="None" val="1.0" valType="num"/>
-      <Param name="name" updates="None" val="validation" valType="code"/>
+      <Param name="name" updates="None" val="ETValidation" valType="code"/>
       <Param name="outerRadius" updates="None" val="0.01" valType="num"/>
       <Param name="progressMode" updates="None" val="time" valType="str"/>
       <Param name="randomisePos" updates="None" val="True" valType="bool"/>
-      <Param name="saveAsImg" updates="None" val="False" valType="bool"/>
-      <Param name="showResults" updates="None" val="True" valType="bool"/>
+      <Param name="saveAsImg" updates="None" val="True" valType="bool"/>
+      <Param name="showResults" updates="None" val="False" valType="bool"/>
       <Param name="targetDelay" updates="None" val="1.0" valType="num"/>
-      <Param name="targetDur" updates="None" val="1.5" valType="num"/>
+      <Param name="targetDur" updates="None" val="1" valType="num"/>
       <Param name="targetLayout" updates="None" val="NINE_POINTS" valType="str"/>
       <Param name="targetPositions" updates="None" val="NINE_POINTS" valType="list"/>
       <Param name="textColor" updates="None" val="auto" valType="color"/>
@@ -1658,8 +1658,8 @@
     <Routine name="shock"/>
     <LoopTerminator name="trials_threshold"/>
     <Routine name="startETCalibration"/>
-    <EyetrackerCalibrationRoutine name="calibration"/>
-    <EyetrackerValidationRoutine name="validation"/>
+    <EyetrackerCalibrationRoutine name="ETCalibration"/>
+    <EyetrackerValidationRoutine name="ETValidation"/>
     <Routine name="startExp"/>
     <Routine name="blank"/>
     <LoopInitiator loopType="TrialHandler" name="blocks">
