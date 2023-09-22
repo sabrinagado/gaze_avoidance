@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on September 21, 2023, at 17:50
+    on September 22, 2023, at 14:07
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -68,7 +68,7 @@ expInfo['expName'] = expName
 expInfo['psychopyVersion'] = psychopyVersion
 
 # Data file name stem = absolute path + name; later add .psyexp, .csv, .log, etc
-filename = _thisDir + os.sep + u'data/%s_%s' % (expName, expInfo['participant'])
+filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant'], expInfo['date'])
 
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
@@ -743,7 +743,13 @@ for thisTrials_threshold in trials_threshold:
     _keys_PainT_allKeys = []
     # Run 'Begin Routine' code from codePainRatingT
     logging.log(level=logging.INFO, msg=f'PainThreshold')
-    print("Press 's' to administer shock. Press 'g' to continue when pain threshold was found.")
+    
+    if trials_threshold.thisN == 0:
+        print("Press 's' to administer shock.")
+    else:
+        print(f"Press 's' to administer shock. Press 'g' to continue when pain threshold was found.")
+    
+    values = [None]
     # keep track of which components have finished
     painThresholdComponents = [textRateT, text_noPainT, text_slightPainT, text_highPainT, sliderPainT, keys_PainT]
     for thisComponent in painThresholdComponents:
@@ -850,6 +856,10 @@ for thisTrials_threshold in trials_threshold:
             continueRoutine = False
             trials_threshold.finished = True
             skipShock = True
+            
+        if sliderPainT.getRating() != values[-1]:
+            values.append(sliderPainT.getRating())
+            print(f"Value: {values[-1]}")
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -1375,11 +1385,11 @@ for thisBlock in blocks:
         eyetracker.setRecordingState(True)
         
         if currentLoop.name == "trials":
-            eyetracker.sendMessage(trialtype)
+            eyetracker.sendMessage("Trial " + str(trials.thisN+1) + ", Condition " + trialtype)
             print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+1, trialtype))
             
         if currentLoop.name == "testtrials":
-            eyetracker.sendMessage(stimtype)
+            eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1) + ", Condition " + stimtype)
             print("VP %s TESTTRIALID %d CONDITION %s"%(expInfo['participant'], testtrials.thisN+1, stimtype))
         # keep track of which components have finished
         crossComponents = [fixcross]
@@ -2085,6 +2095,8 @@ for thisBlock in blocks:
     # Run 'Begin Routine' code from codePainRating
     logging.log(level=logging.INFO, msg=f'PainRating')
     print("Pain Rating. Press Space to continue.")
+    
+    values = [None]
     # keep track of which components have finished
     painRatingComponents = [textRate, text_noPain, text_slightPain, text_highPain, sliderPain, textSpacePain, spacePain]
     for thisComponent in painRatingComponents:
@@ -2197,6 +2209,10 @@ for thisBlock in blocks:
                 spacePain.rt = _spacePain_allKeys[-1].rt
                 # a response ends the routine
                 continueRoutine = False
+        # Run 'Each Frame' code from codePainRating
+        if sliderPainT.getRating() != values[-1]:
+            values.append(sliderPainT.getRating())
+            print(f"Value: {values[-1]}")
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -2262,6 +2278,7 @@ for thisBlock in blocks:
         _spaceStim_allKeys = []
         # Run 'Begin Routine' code from codeStimRating
         logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
+        print("Rating of Stimulus: %s"%(stimtype))
         # keep track of which components have finished
         stimRatingComponents = [textRateStim, imageRating, textUnpleasant, textPleasant, sliderStim, textSpaceStim, spaceStim]
         for thisComponent in stimRatingComponents:
@@ -2532,11 +2549,11 @@ for thisBlock in blocks:
         eyetracker.setRecordingState(True)
         
         if currentLoop.name == "trials":
-            eyetracker.sendMessage(trialtype)
+            eyetracker.sendMessage("Trial " + str(trials.thisN+1) + ", Condition " + trialtype)
             print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+1, trialtype))
             
         if currentLoop.name == "testtrials":
-            eyetracker.sendMessage(stimtype)
+            eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1) + ", Condition " + stimtype)
             print("VP %s TESTTRIALID %d CONDITION %s"%(expInfo['participant'], testtrials.thisN+1, stimtype))
         # keep track of which components have finished
         crossComponents = [fixcross]
@@ -2825,6 +2842,7 @@ for thisBlock in blocks:
         _spaceStim_allKeys = []
         # Run 'Begin Routine' code from codeStimRating
         logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
+        print("Rating of Stimulus: %s"%(stimtype))
         # keep track of which components have finished
         stimRatingComponents = [textRateStim, imageRating, textUnpleasant, textPleasant, sliderStim, textSpaceStim, spaceStim]
         for thisComponent in stimRatingComponents:
@@ -2990,7 +3008,7 @@ _timeToFirstFrame = win.getFutureFlipTime(clock="now")
 frameN = -1
 
 # --- Run Routine "end" ---
-while continueRoutine and routineTimer.getTime() < 10.0:
+while continueRoutine and routineTimer.getTime() < 5.0:
     # get current time
     t = routineTimer.getTime()
     tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -3008,7 +3026,7 @@ while continueRoutine and routineTimer.getTime() < 10.0:
         textEnd.setAutoDraw(True)
     if textEnd.status == STARTED:
         # is it time to stop? (based on global clock, using actual start)
-        if tThisFlipGlobal > textEnd.tStartRefresh + 10-frameTolerance:
+        if tThisFlipGlobal > textEnd.tStartRefresh + 5-frameTolerance:
             # keep track of stop time/frame for later
             textEnd.tStop = t  # not accounting for scr refresh
             textEnd.frameNStop = frameN  # exact frame index
@@ -3036,11 +3054,13 @@ while continueRoutine and routineTimer.getTime() < 10.0:
 for thisComponent in endComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
+# Run 'End Routine' code from codeEnd
+print("----------- END -----------")
 # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
 if routineForceEnded:
     routineTimer.reset()
 else:
-    routineTimer.addTime(-10.000000)
+    routineTimer.addTime(-5.000000)
 
 # --- End experiment ---
 # Flip one final time so any remaining win.callOnFlip() 

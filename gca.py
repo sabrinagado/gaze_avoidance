@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on September 21, 2023, at 16:33
+    on September 22, 2023, at 11:40
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -68,7 +68,7 @@ expInfo['expName'] = expName
 expInfo['psychopyVersion'] = psychopyVersion
 
 # Data file name stem = absolute path + name; later add .psyexp, .csv, .log, etc
-filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expInfo['participant'], expName, expInfo['date'])
+filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant'], expInfo['date'])
 
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
@@ -91,7 +91,7 @@ win = visual.Window(
     winType='pyglet', allowStencil=False,
     monitor='labMonitor', color=[0,0,0], colorSpace='rgb',
     blendMode='avg', useFBO=True, 
-    units='height')
+    units='norm')
 win.mouseVisible = False
 # store frame rate of monitor if we can measure it
 expInfo['frameRate'] = win.getActualFrameRate()
@@ -140,7 +140,7 @@ defaultKeyboard = keyboard.Keyboard(backend='iohub')
 textStart = visual.TextStim(win=win, name='textStart',
     text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\nvielen Dank für Ihre Teilnahme an unserem Experiment.\n\nBitte drücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
-    pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
@@ -150,7 +150,7 @@ spaceStart = keyboard.Keyboard()
 textPainThreshold = visual.TextStim(win=win, name='textPainThreshold',
     text='Wir möchten zuerst den elektrischen Reiz richtig einstellen.\n\nBitte drücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
-    pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
@@ -160,37 +160,37 @@ spacePainThreshold = keyboard.Keyboard()
 textRateT = visual.TextStim(win=win, name='textRateT',
     text='Wie unangenehm fanden Sie den elektrischen Reiz?',
     font='Open Sans',
-    pos=(0, 0.3), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
 text_noPainT = visual.TextStim(win=win, name='text_noPainT',
     text='nichts\ngespürt',
     font='Open Sans',
-    pos=(-0.5, 0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(-0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
 text_slightPainT = visual.TextStim(win=win, name='text_slightPainT',
     text='eben \nwahrnehmbarer\nSchmerz',
     font='Open Sans',
-    pos=(-0.1, 0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(-0.1, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-2.0);
 text_highPainT = visual.TextStim(win=win, name='text_highPainT',
     text='unerträglicher\nSchmerz',
     font='Open Sans',
-    pos=(0.5, 0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-3.0);
 sliderPainT = visual.Slider(win=win, name='sliderPainT',
-    startValue=None, size=(1.0, 0.05), pos=(0, 0), units=None,
+    startValue=None, size=(1.0, 0.1), pos=(0, 0), units=None,
     labels=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), ticks=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), granularity=1.0,
     style='rating', styleTweaks=('labels45',), opacity=None,
     labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
-    font='Open Sans', labelHeight=0.02,
+    font='Open Sans', labelHeight=0.03,
     flip=False, ori=0.0, depth=-4, readOnly=False)
 keys_PainT = keyboard.Keyboard()
 # Run 'Begin Experiment' code from codePainRatingT
@@ -203,7 +203,7 @@ portShock3T = parallel.ParallelPort(address='0x0378')
 fixcrossT = visual.TextStim(win=win, name='fixcrossT',
     text='+',
     font='Open Sans',
-    pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-4.0);
@@ -212,7 +212,7 @@ fixcrossT = visual.TextStim(win=win, name='fixcrossT',
 text_ETCalibration = visual.TextStim(win=win, name='text_ETCalibration',
     text='Wir machen nun mit der Kalibrierung des Eye-Trackers weiter.\n\nBitte drücken Sie wieder die Leertaste, um diese zu starten.',
     font='Open Sans',
-    pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
@@ -222,7 +222,7 @@ spaceETCalibration = keyboard.Keyboard()
 textStartExp = visual.TextStim(win=win, name='textStartExp',
     text='Die Kalibrierung ist abgeschlossen und wir starten nun mit dem Experiment.\n\nSie werden in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Unter manchen Umständen werden Sie eine Belohnung oder jedoch einen elektrischen Reiz erhalten.\nVersuchen Sie Ihren Belohnungsscore zu maximieren.\n\nBitte fixieren Sie am Anfang immer das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
-    pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
@@ -241,7 +241,7 @@ blankScreen = visual.TextStim(win=win, name='blankScreen',
 fixcross = visual.TextStim(win=win, name='fixcross',
     text='+',
     font='Open Sans',
-    pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
@@ -322,7 +322,7 @@ portShock3 = parallel.ParallelPort(address='0x0378')
 fixcrossE = visual.TextStim(win=win, name='fixcrossE',
     text='+',
     font='Open Sans',
-    pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
@@ -331,42 +331,42 @@ fixcrossE = visual.TextStim(win=win, name='fixcrossE',
 textRate = visual.TextStim(win=win, name='textRate',
     text='Wie unangenehm fanden Sie den letzten elektrischen Reiz?',
     font='Open Sans',
-    pos=(0, 0.3), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
 text_noPain = visual.TextStim(win=win, name='text_noPain',
     text='nichts\ngespürt',
     font='Open Sans',
-    pos=(-0.5, 0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(-0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
 text_slightPain = visual.TextStim(win=win, name='text_slightPain',
     text='eben \nwahrnehmbarer\nSchmerz',
     font='Open Sans',
-    pos=(-0.1, 0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(-0.1, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-2.0);
 text_highPain = visual.TextStim(win=win, name='text_highPain',
     text='unerträglicher\nSchmerz',
     font='Open Sans',
-    pos=(0.5, 0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-3.0);
 sliderPain = visual.Slider(win=win, name='sliderPain',
-    startValue=None, size=(1.0, 0.05), pos=(0, 0), units=None,
+    startValue=None, size=(1.0, 0.1), pos=(0, 0), units=None,
     labels=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), ticks=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), granularity=1.0,
     style='rating', styleTweaks=('labels45',), opacity=None,
     labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
-    font='Open Sans', labelHeight=0.02,
+    font='Open Sans', labelHeight=0.03,
     flip=False, ori=0.0, depth=-4, readOnly=False)
 textSpacePain = visual.TextStim(win=win, name='textSpacePain',
     text='Bitte drücken Sie die Leertaste, um die Antwort zu bestätigen.',
     font='Open Sans',
-    pos=(0, -0.3), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, -0.3), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-5.0);
@@ -376,7 +376,7 @@ spacePain = keyboard.Keyboard()
 textRateStim = visual.TextStim(win=win, name='textRateStim',
     text='Wie wohl fühlen Sie sich bei der Betrachtung des Bildes?',
     font='Open Sans',
-    pos=(0, 0.4), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
@@ -391,28 +391,28 @@ imageRating = visual.ImageStim(
 textUnpleasant = visual.TextStim(win=win, name='textUnpleasant',
     text='sehr \nunwohl',
     font='Open Sans',
-    pos=(-0.5, -0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(-0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-2.0);
 textPleasant = visual.TextStim(win=win, name='textPleasant',
     text='sehr\nwohl',
     font='Open Sans',
-    pos=(0.5, -0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-3.0);
 sliderStim = visual.Slider(win=win, name='sliderStim',
-    startValue=None, size=(1.0, 0.05), pos=(0, -0.2), units=None,
+    startValue=None, size=(1.0, 0.1), pos=(0, -0.3), units=None,
     labels=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), ticks=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), granularity=1.0,
-    style='rating', styleTweaks=(), opacity=None,
+    style='rating', styleTweaks=('labels45',), opacity=None,
     labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
-    font='Open Sans', labelHeight=0.02,
+    font='Open Sans', labelHeight=0.03,
     flip=False, ori=0.0, depth=-4, readOnly=False)
 textSpaceStim = visual.TextStim(win=win, name='textSpaceStim',
     text='Bitte drücken Sie die Leertaste, um die Antwort zu bestätigen.',
     font='Open Sans',
-    pos=(0, -0.4), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, -0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-5.0);
@@ -422,7 +422,7 @@ spaceStim = keyboard.Keyboard()
 textTestInstr = visual.TextStim(win=win, name='textTestInstr',
     text='Im nächsten Block sehen Sie noch einmal die unterschiedlichen Bilder.\n\nBitte drücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
-    pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
@@ -432,7 +432,7 @@ spaceTestInstr = keyboard.Keyboard()
 fixcross = visual.TextStim(win=win, name='fixcross',
     text='+',
     font='Open Sans',
-    pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
@@ -445,14 +445,14 @@ imageTest = visual.ImageStim(
     ori=0.0, pos=[0,0], size=1.0,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=0.0)
+    texRes=128.0, interpolate=True, depth=-1.0)
 portTestImage = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "crossEnd" ---
 fixcrossE = visual.TextStim(win=win, name='fixcrossE',
     text='+',
     font='Open Sans',
-    pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
@@ -461,7 +461,7 @@ fixcrossE = visual.TextStim(win=win, name='fixcrossE',
 textRateStim = visual.TextStim(win=win, name='textRateStim',
     text='Wie wohl fühlen Sie sich bei der Betrachtung des Bildes?',
     font='Open Sans',
-    pos=(0, 0.4), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
@@ -476,28 +476,28 @@ imageRating = visual.ImageStim(
 textUnpleasant = visual.TextStim(win=win, name='textUnpleasant',
     text='sehr \nunwohl',
     font='Open Sans',
-    pos=(-0.5, -0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(-0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-2.0);
 textPleasant = visual.TextStim(win=win, name='textPleasant',
     text='sehr\nwohl',
     font='Open Sans',
-    pos=(0.5, -0.1), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-3.0);
 sliderStim = visual.Slider(win=win, name='sliderStim',
-    startValue=None, size=(1.0, 0.05), pos=(0, -0.2), units=None,
+    startValue=None, size=(1.0, 0.1), pos=(0, -0.3), units=None,
     labels=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), ticks=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), granularity=1.0,
-    style='rating', styleTweaks=(), opacity=None,
+    style='rating', styleTweaks=('labels45',), opacity=None,
     labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
-    font='Open Sans', labelHeight=0.02,
+    font='Open Sans', labelHeight=0.03,
     flip=False, ori=0.0, depth=-4, readOnly=False)
 textSpaceStim = visual.TextStim(win=win, name='textSpaceStim',
     text='Bitte drücken Sie die Leertaste, um die Antwort zu bestätigen.',
     font='Open Sans',
-    pos=(0, -0.4), height=0.05, wrapWidth=None, ori=0.0, 
+    pos=(0, -0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-5.0);
@@ -507,7 +507,7 @@ spaceStim = keyboard.Keyboard()
 textEnd = visual.TextStim(win=win, name='textEnd',
     text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\nvielen Dank für Ihre Teilnahme an unserem Experiment.\n\nDas Experiment ist beendet. \nSie können der Versuchsleitung Bescheid sagen.',
     font='Open Sans',
-    pos=(0, 0), height=0.03, wrapWidth=None, ori=0.0, 
+    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
@@ -1348,9 +1348,9 @@ for thisBlock in blocks:
             exec('{} = thisBlock[paramName]'.format(paramName))
     
     # set up handler to look after randomisation of conditions etc
-    trials = data.TrialHandler(nReps=5.0, method='random', 
+    trials = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(posFile),
+        trialList=data.importConditions(posFile, selection='0, 5, 10, 15'),
         seed=None, name='trials')
     thisExp.addLoop(trials)  # add the loop to the experiment
     thisTrial = trials.trialList[0]  # so we can initialise stimuli with some values
@@ -1375,11 +1375,11 @@ for thisBlock in blocks:
         eyetracker.setRecordingState(True)
         
         if currentLoop.name == "trials":
-            eyetracker.sendMessage("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+1, trialtype))
+            eyetracker.sendMessage("Trial " + str(trials.thisN+1) + ", Condition " + trialtype)
             print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+1, trialtype))
             
         if currentLoop.name == "testtrials":
-            eyetracker.sendMessage("VP %s TESTTRIALID %d CONDITION %s"%(expInfo['participant'], testtrials.thisN+1, stimtype))
+            eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1) + ", Condition " + stimtype)
             print("VP %s TESTTRIALID %d CONDITION %s"%(expInfo['participant'], testtrials.thisN+1, stimtype))
         # keep track of which components have finished
         crossComponents = [fixcross]
@@ -1533,6 +1533,8 @@ for thisBlock in blocks:
         cursorcolor="white"
         
         logging.log(level=logging.INFO, msg=f'ImageOnset_{trialtype}')
+        ioServer.sendMessageEvent(text='ImageOnset')
+        eyetracker.sendMessage('ImageOnset')
         image.setPos(position)
         image.setImage(eval(trialtype))
         # clear any previous roi data
@@ -1720,10 +1722,13 @@ for thisBlock in blocks:
         image_w = image.size[0]
         image_h = image.size[1]
         image_h_spec_rating = 0.3
-        imagesize_rating = [image_w * image_h_spec_rating / image_h, image_h_spec_rating]
+        # imagesize_rating = [image_w * image_h_spec_rating / image_h, image_h_spec_rating]
+        imagesize_rating = [image_w * 1, image_h * 1]
         
         image_h_spec_test = 0.5
-        imagesize_test = [image_w * image_h_spec_test / image_h, image_h_spec_test]
+        # imagesize_test = [image_w * image_h_spec_test / image_h, image_h_spec_test]
+        imagesize_test = [image_w * 1.2, image_h * 1.2]
+        
         trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
            trials.addData('roi.timesOn', roi.timesOn)
@@ -1745,6 +1750,8 @@ for thisBlock in blocks:
         # update component parameters for each repeat
         # Run 'Begin Routine' code from codeFeedback
         logging.log(level=logging.INFO, msg=f'FeedbackOnset_{log_msg}')
+        ioServer.sendMessageEvent(text='FeedbackOnset')
+        eyetracker.sendMessage('FeedbackOnset')
         polygon.setOpacity(feedback_opacity)
         polygon.setPos(position)
         polygon.setLineColor(feedback_color)
@@ -2064,7 +2071,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 5.0 repeats of 'trials'
+    # completed 1.0 repeats of 'trials'
     
     
     # --- Prepare to start Routine "painRating" ---
@@ -2247,7 +2254,7 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
-        imageRating.setPos((0, 0.1))
+        imageRating.setPos((0, 0.2))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()
         spaceStim.keys = []
@@ -2498,9 +2505,9 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    testtrials = data.TrialHandler(nReps=10.0, method='random', 
+    testtrials = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(stimFile),
+        trialList=data.importConditions(stimFile, selection='0:3'),
         seed=None, name='testtrials')
     thisExp.addLoop(testtrials)  # add the loop to the experiment
     thisTesttrial = testtrials.trialList[0]  # so we can initialise stimuli with some values
@@ -2525,11 +2532,11 @@ for thisBlock in blocks:
         eyetracker.setRecordingState(True)
         
         if currentLoop.name == "trials":
-            eyetracker.sendMessage("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+1, trialtype))
+            eyetracker.sendMessage("Trial " + str(trials.thisN+1) + ", Condition " + trialtype)
             print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+1, trialtype))
             
         if currentLoop.name == "testtrials":
-            eyetracker.sendMessage("VP %s TESTTRIALID %d CONDITION %s"%(expInfo['participant'], testtrials.thisN+1, stimtype))
+            eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1) + ", Condition " + stimtype)
             print("VP %s TESTTRIALID %d CONDITION %s"%(expInfo['participant'], testtrials.thisN+1, stimtype))
         # keep track of which components have finished
         crossComponents = [fixcross]
@@ -2606,11 +2613,13 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
-        imageTest.setPos((0, 0))
-        imageTest.setImage(eval(stimtype))
         # Run 'Begin Routine' code from codeTesttrial
         from psychopy import logging
         logging.log(level=logging.INFO, msg=f'TestImageOnset_{stimtype}')
+        ioServer.sendMessageEvent(text='TestImageOnset')
+        eyetracker.sendMessage('TestImageOnset')
+        imageTest.setPos((0, 0))
+        imageTest.setImage(eval(stimtype))
         # keep track of which components have finished
         testtrialComponents = [imageTest, portTestImage]
         for thisComponent in testtrialComponents:
@@ -2782,7 +2791,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 10.0 repeats of 'testtrials'
+    # completed 1.0 repeats of 'testtrials'
     
     
     # set up handler to look after randomisation of conditions etc
@@ -2808,7 +2817,7 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
-        imageRating.setPos((0, 0.1))
+        imageRating.setPos((0, 0.2))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()
         spaceStim.keys = []
@@ -2981,7 +2990,7 @@ _timeToFirstFrame = win.getFutureFlipTime(clock="now")
 frameN = -1
 
 # --- Run Routine "end" ---
-while continueRoutine and routineTimer.getTime() < 10.0:
+while continueRoutine and routineTimer.getTime() < 5.0:
     # get current time
     t = routineTimer.getTime()
     tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -2999,7 +3008,7 @@ while continueRoutine and routineTimer.getTime() < 10.0:
         textEnd.setAutoDraw(True)
     if textEnd.status == STARTED:
         # is it time to stop? (based on global clock, using actual start)
-        if tThisFlipGlobal > textEnd.tStartRefresh + 10-frameTolerance:
+        if tThisFlipGlobal > textEnd.tStartRefresh + 5-frameTolerance:
             # keep track of stop time/frame for later
             textEnd.tStop = t  # not accounting for scr refresh
             textEnd.frameNStop = frameN  # exact frame index
@@ -3031,7 +3040,7 @@ for thisComponent in endComponents:
 if routineForceEnded:
     routineTimer.reset()
 else:
-    routineTimer.addTime(-10.000000)
+    routineTimer.addTime(-5.000000)
 
 # --- End experiment ---
 # Flip one final time so any remaining win.callOnFlip() 
