@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on September 22, 2023, at 11:40
+    on Oktober 05, 2023, at 14:07
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -38,8 +38,8 @@ port_msg = 0
 log_msg = ""
 
 rectsize = (0.2, 0.2)
-imagesize_test = [0.2, 0.2]
-imagesize_rating = [0.2, 0.2]
+imagesize_test = [1, 1]
+imagesize_rating = [1, 1]
 
 score = 0
 points = 0
@@ -148,7 +148,7 @@ spaceStart = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startPainThreshold" ---
 textPainThreshold = visual.TextStim(win=win, name='textPainThreshold',
-    text='Wir möchten zuerst den elektrischen Reiz richtig einstellen.\n\nBitte drücken Sie die Leertaste, um zu starten.',
+    text='Wir möchten zuerst den elektrischen Reiz kalibrieren.\n\nBitte drücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -158,7 +158,7 @@ spacePainThreshold = keyboard.Keyboard()
 
 # --- Initialize components for Routine "painThreshold" ---
 textRateT = visual.TextStim(win=win, name='textRateT',
-    text='Wie unangenehm fanden Sie den elektrischen Reiz?',
+    text='Wie schmerzhaft fanden Sie den elektrischen Reiz?',
     font='Open Sans',
     pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -220,13 +220,69 @@ spaceETCalibration = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startExp" ---
 textStartExp = visual.TextStim(win=win, name='textStartExp',
-    text='Die Kalibrierung ist abgeschlossen und wir starten nun mit dem Experiment.\n\nSie werden in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Unter manchen Umständen werden Sie eine Belohnung oder jedoch einen elektrischen Reiz erhalten.\nVersuchen Sie Ihren Belohnungsscore zu maximieren.\n\nBitte fixieren Sie am Anfang immer das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
+    text='Die Kalibrierung ist abgeschlossen.\n\nSie werden während des Experiments mehrere Bilder sehen.\nBitte geben Sie nun an, wie Sie sich bei der Betrachtung der Bilder fühlen.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=0.0);
 spaceStartExp = keyboard.Keyboard()
+
+# --- Initialize components for Routine "stimRating" ---
+textRateStim = visual.TextStim(win=win, name='textRateStim',
+    text='Wie fühlen Sie sich bei der Betrachtung des Bildes?',
+    font='Open Sans',
+    pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=0.0);
+imageRating = visual.ImageStim(
+    win=win,
+    name='imageRating', 
+    image='sin', mask=None, anchor='center',
+    ori=0.0, pos=[0,0], size=1.0,
+    color=[1,1,1], colorSpace='rgb', opacity=None,
+    flipHoriz=False, flipVert=False,
+    texRes=128.0, interpolate=True, depth=-1.0)
+textUnpleasant = visual.TextStim(win=win, name='textUnpleasant',
+    text='sehr \nunwohl',
+    font='Open Sans',
+    pos=(-0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-2.0);
+textPleasant = visual.TextStim(win=win, name='textPleasant',
+    text='sehr\nwohl',
+    font='Open Sans',
+    pos=(0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-3.0);
+sliderStim = visual.Slider(win=win, name='sliderStim',
+    startValue=None, size=(1.0, 0.1), pos=(0, -0.3), units=None,
+    labels=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), ticks=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), granularity=1.0,
+    style='rating', styleTweaks=('labels45',), opacity=None,
+    labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
+    font='Open Sans', labelHeight=0.03,
+    flip=False, ori=0.0, depth=-4, readOnly=False)
+textSpaceStim = visual.TextStim(win=win, name='textSpaceStim',
+    text='Bitte drücken Sie die Leertaste, um die Antwort zu bestätigen.',
+    font='Open Sans',
+    pos=(0, -0.6), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-5.0);
+spaceStim = keyboard.Keyboard()
+
+# --- Initialize components for Routine "startTask" ---
+textStartTask = visual.TextStim(win=win, name='textStartTask',
+    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Unter manchen Umständen können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines elektrischen Reizes. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren und herauszufinden, wie Sie Punkte erhalten und den elektrischen Reiz vermeiden können.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
+    font='Open Sans',
+    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=0.0);
+spaceStartTask = keyboard.Keyboard()
 
 # --- Initialize components for Routine "blank" ---
 blankScreen = visual.TextStim(win=win, name='blankScreen',
@@ -277,6 +333,11 @@ gazeCursor = visual.ShapeStim(
 portImage = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "feedback" ---
+# Run 'Begin Experiment' code from codeFeedback
+image_w = image.size[0]
+image_h = image.size[1]
+imagesize_rating = [image_w * 1, image_h * 1]
+imagesize_test = [image_w * 1.2, image_h * 1.2]
 textPoints = visual.TextStim(win=win, name='textPoints',
     text='',
     font='Open Sans',
@@ -329,7 +390,7 @@ fixcrossE = visual.TextStim(win=win, name='fixcrossE',
 
 # --- Initialize components for Routine "painRating" ---
 textRate = visual.TextStim(win=win, name='textRate',
-    text='Wie unangenehm fanden Sie den letzten elektrischen Reiz?',
+    text='Wie schmerzhaft fanden Sie den elektrischen Reiz?',
     font='Open Sans',
     pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -374,7 +435,7 @@ spacePain = keyboard.Keyboard()
 
 # --- Initialize components for Routine "stimRating" ---
 textRateStim = visual.TextStim(win=win, name='textRateStim',
-    text='Wie wohl fühlen Sie sich bei der Betrachtung des Bildes?',
+    text='Wie fühlen Sie sich bei der Betrachtung des Bildes?',
     font='Open Sans',
     pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -459,7 +520,7 @@ fixcrossE = visual.TextStim(win=win, name='fixcrossE',
 
 # --- Initialize components for Routine "stimRating" ---
 textRateStim = visual.TextStim(win=win, name='textRateStim',
-    text='Wie wohl fühlen Sie sich bei der Betrachtung des Bildes?',
+    text='Wie fühlen Sie sich bei der Betrachtung des Bildes?',
     font='Open Sans',
     pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -743,7 +804,13 @@ for thisTrials_threshold in trials_threshold:
     _keys_PainT_allKeys = []
     # Run 'Begin Routine' code from codePainRatingT
     logging.log(level=logging.INFO, msg=f'PainThreshold')
-    print("Press 's' to administer shock. Press 'g' to continue when pain threshold was found.")
+    
+    if trials_threshold.thisN == 0:
+        print("Press 's' to administer shock.")
+    else:
+        print(f"Press 's' to administer shock. Press 'g' to continue when pain threshold was found.")
+    
+    values = [None]
     # keep track of which components have finished
     painThresholdComponents = [textRateT, text_noPainT, text_slightPainT, text_highPainT, sliderPainT, keys_PainT]
     for thisComponent in painThresholdComponents:
@@ -850,6 +917,10 @@ for thisTrials_threshold in trials_threshold:
             continueRoutine = False
             trials_threshold.finished = True
             skipShock = True
+            
+        if sliderPainT.getRating() != values[-1]:
+            values.append(sliderPainT.getRating())
+            print(f"Value: {values[-1]}")
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -1157,177 +1228,6 @@ defaultKeyboard.clearEvents()
 # the Routine "ETCalibration" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 
-# --- Prepare to start Routine "startExp" ---
-continueRoutine = True
-routineForceEnded = False
-# update component parameters for each repeat
-spaceStartExp.keys = []
-spaceStartExp.rt = []
-_spaceStartExp_allKeys = []
-# Run 'Begin Routine' code from codeStartExperiment
-print("Start Experiment Screen. Press Space to continue.")
-# keep track of which components have finished
-startExpComponents = [textStartExp, spaceStartExp]
-for thisComponent in startExpComponents:
-    thisComponent.tStart = None
-    thisComponent.tStop = None
-    thisComponent.tStartRefresh = None
-    thisComponent.tStopRefresh = None
-    if hasattr(thisComponent, 'status'):
-        thisComponent.status = NOT_STARTED
-# reset timers
-t = 0
-_timeToFirstFrame = win.getFutureFlipTime(clock="now")
-frameN = -1
-
-# --- Run Routine "startExp" ---
-while continueRoutine:
-    # get current time
-    t = routineTimer.getTime()
-    tThisFlip = win.getFutureFlipTime(clock=routineTimer)
-    tThisFlipGlobal = win.getFutureFlipTime(clock=None)
-    frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
-    # update/draw components on each frame
-    
-    # *textStartExp* updates
-    if textStartExp.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-        # keep track of start time/frame for later
-        textStartExp.frameNStart = frameN  # exact frame index
-        textStartExp.tStart = t  # local t and not account for scr refresh
-        textStartExp.tStartRefresh = tThisFlipGlobal  # on global time
-        win.timeOnFlip(textStartExp, 'tStartRefresh')  # time at next scr refresh
-        # add timestamp to datafile
-        thisExp.timestampOnFlip(win, 'textStartExp.started')
-        textStartExp.setAutoDraw(True)
-    
-    # *spaceStartExp* updates
-    waitOnFlip = False
-    if spaceStartExp.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-        # keep track of start time/frame for later
-        spaceStartExp.frameNStart = frameN  # exact frame index
-        spaceStartExp.tStart = t  # local t and not account for scr refresh
-        spaceStartExp.tStartRefresh = tThisFlipGlobal  # on global time
-        win.timeOnFlip(spaceStartExp, 'tStartRefresh')  # time at next scr refresh
-        # add timestamp to datafile
-        thisExp.timestampOnFlip(win, 'spaceStartExp.started')
-        spaceStartExp.status = STARTED
-        # keyboard checking is just starting
-        waitOnFlip = True
-        win.callOnFlip(spaceStartExp.clock.reset)  # t=0 on next screen flip
-        win.callOnFlip(spaceStartExp.clearEvents, eventType='keyboard')  # clear events on next screen flip
-    if spaceStartExp.status == STARTED and not waitOnFlip:
-        theseKeys = spaceStartExp.getKeys(keyList=['space', 'enter'], waitRelease=False)
-        _spaceStartExp_allKeys.extend(theseKeys)
-        if len(_spaceStartExp_allKeys):
-            spaceStartExp.keys = _spaceStartExp_allKeys[-1].name  # just the last key pressed
-            spaceStartExp.rt = _spaceStartExp_allKeys[-1].rt
-            # a response ends the routine
-            continueRoutine = False
-    
-    # check for quit (typically the Esc key)
-    if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
-        core.quit()
-    
-    # check if all components have finished
-    if not continueRoutine:  # a component has requested a forced-end of Routine
-        routineForceEnded = True
-        break
-    continueRoutine = False  # will revert to True if at least one component still running
-    for thisComponent in startExpComponents:
-        if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
-            continueRoutine = True
-            break  # at least one component has not yet finished
-    
-    # refresh the screen
-    if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
-        win.flip()
-
-# --- Ending Routine "startExp" ---
-for thisComponent in startExpComponents:
-    if hasattr(thisComponent, "setAutoDraw"):
-        thisComponent.setAutoDraw(False)
-# check responses
-if spaceStartExp.keys in ['', [], None]:  # No response was made
-    spaceStartExp.keys = None
-thisExp.addData('spaceStartExp.keys',spaceStartExp.keys)
-if spaceStartExp.keys != None:  # we had a response
-    thisExp.addData('spaceStartExp.rt', spaceStartExp.rt)
-thisExp.nextEntry()
-# the Routine "startExp" was not non-slip safe, so reset the non-slip timer
-routineTimer.reset()
-
-# --- Prepare to start Routine "blank" ---
-continueRoutine = True
-routineForceEnded = False
-# update component parameters for each repeat
-# keep track of which components have finished
-blankComponents = [blankScreen]
-for thisComponent in blankComponents:
-    thisComponent.tStart = None
-    thisComponent.tStop = None
-    thisComponent.tStartRefresh = None
-    thisComponent.tStopRefresh = None
-    if hasattr(thisComponent, 'status'):
-        thisComponent.status = NOT_STARTED
-# reset timers
-t = 0
-_timeToFirstFrame = win.getFutureFlipTime(clock="now")
-frameN = -1
-
-# --- Run Routine "blank" ---
-while continueRoutine:
-    # get current time
-    t = routineTimer.getTime()
-    tThisFlip = win.getFutureFlipTime(clock=routineTimer)
-    tThisFlipGlobal = win.getFutureFlipTime(clock=None)
-    frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
-    # update/draw components on each frame
-    
-    # *blankScreen* updates
-    if blankScreen.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-        # keep track of start time/frame for later
-        blankScreen.frameNStart = frameN  # exact frame index
-        blankScreen.tStart = t  # local t and not account for scr refresh
-        blankScreen.tStartRefresh = tThisFlipGlobal  # on global time
-        win.timeOnFlip(blankScreen, 'tStartRefresh')  # time at next scr refresh
-        # add timestamp to datafile
-        thisExp.timestampOnFlip(win, 'blankScreen.started')
-        blankScreen.setAutoDraw(True)
-    if blankScreen.status == STARTED:
-        # is it time to stop? (based on global clock, using actual start)
-        if tThisFlipGlobal > blankScreen.tStartRefresh + 1.0 + random()-frameTolerance:
-            # keep track of stop time/frame for later
-            blankScreen.tStop = t  # not accounting for scr refresh
-            blankScreen.frameNStop = frameN  # exact frame index
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'blankScreen.stopped')
-            blankScreen.setAutoDraw(False)
-    
-    # check for quit (typically the Esc key)
-    if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
-        core.quit()
-    
-    # check if all components have finished
-    if not continueRoutine:  # a component has requested a forced-end of Routine
-        routineForceEnded = True
-        break
-    continueRoutine = False  # will revert to True if at least one component still running
-    for thisComponent in blankComponents:
-        if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
-            continueRoutine = True
-            break  # at least one component has not yet finished
-    
-    # refresh the screen
-    if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
-        win.flip()
-
-# --- Ending Routine "blank" ---
-for thisComponent in blankComponents:
-    if hasattr(thisComponent, "setAutoDraw"):
-        thisComponent.setAutoDraw(False)
-# the Routine "blank" was not non-slip safe, so reset the non-slip timer
-routineTimer.reset()
-
 # set up handler to look after randomisation of conditions etc
 blocks = data.TrialHandler(nReps=1.0, method='random', 
     extraInfo=expInfo, originPath=-1,
@@ -1346,6 +1246,451 @@ for thisBlock in blocks:
     if thisBlock != None:
         for paramName in thisBlock:
             exec('{} = thisBlock[paramName]'.format(paramName))
+    
+    # --- Prepare to start Routine "startExp" ---
+    continueRoutine = True
+    routineForceEnded = False
+    # update component parameters for each repeat
+    spaceStartExp.keys = []
+    spaceStartExp.rt = []
+    _spaceStartExp_allKeys = []
+    # Run 'Begin Routine' code from codeStartExp
+    print("Start Experiment Screen. Press Space to continue.")
+    # keep track of which components have finished
+    startExpComponents = [textStartExp, spaceStartExp]
+    for thisComponent in startExpComponents:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "startExp" ---
+    while continueRoutine:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *textStartExp* updates
+        if textStartExp.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            textStartExp.frameNStart = frameN  # exact frame index
+            textStartExp.tStart = t  # local t and not account for scr refresh
+            textStartExp.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textStartExp, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'textStartExp.started')
+            textStartExp.setAutoDraw(True)
+        
+        # *spaceStartExp* updates
+        waitOnFlip = False
+        if spaceStartExp.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            spaceStartExp.frameNStart = frameN  # exact frame index
+            spaceStartExp.tStart = t  # local t and not account for scr refresh
+            spaceStartExp.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(spaceStartExp, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'spaceStartExp.started')
+            spaceStartExp.status = STARTED
+            # keyboard checking is just starting
+            waitOnFlip = True
+            win.callOnFlip(spaceStartExp.clock.reset)  # t=0 on next screen flip
+            win.callOnFlip(spaceStartExp.clearEvents, eventType='keyboard')  # clear events on next screen flip
+        if spaceStartExp.status == STARTED and not waitOnFlip:
+            theseKeys = spaceStartExp.getKeys(keyList=['space', 'enter'], waitRelease=False)
+            _spaceStartExp_allKeys.extend(theseKeys)
+            if len(_spaceStartExp_allKeys):
+                spaceStartExp.keys = _spaceStartExp_allKeys[-1].name  # just the last key pressed
+                spaceStartExp.rt = _spaceStartExp_allKeys[-1].rt
+                # a response ends the routine
+                continueRoutine = False
+        
+        # check for quit (typically the Esc key)
+        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+            core.quit()
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in startExpComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "startExp" ---
+    for thisComponent in startExpComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # check responses
+    if spaceStartExp.keys in ['', [], None]:  # No response was made
+        spaceStartExp.keys = None
+    thisExp.addData('spaceStartExp.keys',spaceStartExp.keys)
+    if spaceStartExp.keys != None:  # we had a response
+        thisExp.addData('spaceStartExp.rt', spaceStartExp.rt)
+    thisExp.nextEntry()
+    # the Routine "startExp" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+    
+    # set up handler to look after randomisation of conditions etc
+    ratingtrials1 = data.TrialHandler(nReps=1.0, method='random', 
+        extraInfo=expInfo, originPath=-1,
+        trialList=data.importConditions(stimFile),
+        seed=None, name='ratingtrials1')
+    thisExp.addLoop(ratingtrials1)  # add the loop to the experiment
+    thisRatingtrials1 = ratingtrials1.trialList[0]  # so we can initialise stimuli with some values
+    # abbreviate parameter names if possible (e.g. rgb = thisRatingtrials1.rgb)
+    if thisRatingtrials1 != None:
+        for paramName in thisRatingtrials1:
+            exec('{} = thisRatingtrials1[paramName]'.format(paramName))
+    
+    for thisRatingtrials1 in ratingtrials1:
+        currentLoop = ratingtrials1
+        # abbreviate parameter names if possible (e.g. rgb = thisRatingtrials1.rgb)
+        if thisRatingtrials1 != None:
+            for paramName in thisRatingtrials1:
+                exec('{} = thisRatingtrials1[paramName]'.format(paramName))
+        
+        # --- Prepare to start Routine "stimRating" ---
+        continueRoutine = True
+        routineForceEnded = False
+        # update component parameters for each repeat
+        imageRating.setPos((0, 0.2))
+        imageRating.setImage(eval(stimtype))
+        sliderStim.reset()
+        spaceStim.keys = []
+        spaceStim.rt = []
+        _spaceStim_allKeys = []
+        # Run 'Begin Routine' code from codeStimRating
+        logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
+        print("Rating of Stimulus: %s"%(stimtype))
+        # keep track of which components have finished
+        stimRatingComponents = [textRateStim, imageRating, textUnpleasant, textPleasant, sliderStim, textSpaceStim, spaceStim]
+        for thisComponent in stimRatingComponents:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "stimRating" ---
+        while continueRoutine:
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            
+            # *textRateStim* updates
+            if textRateStim.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                textRateStim.frameNStart = frameN  # exact frame index
+                textRateStim.tStart = t  # local t and not account for scr refresh
+                textRateStim.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(textRateStim, 'tStartRefresh')  # time at next scr refresh
+                textRateStim.setAutoDraw(True)
+            
+            # *imageRating* updates
+            if imageRating.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
+                # keep track of start time/frame for later
+                imageRating.frameNStart = frameN  # exact frame index
+                imageRating.tStart = t  # local t and not account for scr refresh
+                imageRating.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(imageRating, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'imageRating.started')
+                imageRating.setAutoDraw(True)
+            if imageRating.status == STARTED:  # only update if drawing
+                imageRating.setSize(imagesize_rating, log=False)
+            
+            # *textUnpleasant* updates
+            if textUnpleasant.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                textUnpleasant.frameNStart = frameN  # exact frame index
+                textUnpleasant.tStart = t  # local t and not account for scr refresh
+                textUnpleasant.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(textUnpleasant, 'tStartRefresh')  # time at next scr refresh
+                textUnpleasant.setAutoDraw(True)
+            
+            # *textPleasant* updates
+            if textPleasant.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                textPleasant.frameNStart = frameN  # exact frame index
+                textPleasant.tStart = t  # local t and not account for scr refresh
+                textPleasant.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(textPleasant, 'tStartRefresh')  # time at next scr refresh
+                textPleasant.setAutoDraw(True)
+            
+            # *sliderStim* updates
+            if sliderStim.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                sliderStim.frameNStart = frameN  # exact frame index
+                sliderStim.tStart = t  # local t and not account for scr refresh
+                sliderStim.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(sliderStim, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'sliderStim.started')
+                sliderStim.setAutoDraw(True)
+            
+            # *textSpaceStim* updates
+            if textSpaceStim.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                textSpaceStim.frameNStart = frameN  # exact frame index
+                textSpaceStim.tStart = t  # local t and not account for scr refresh
+                textSpaceStim.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(textSpaceStim, 'tStartRefresh')  # time at next scr refresh
+                textSpaceStim.setAutoDraw(True)
+            
+            # *spaceStim* updates
+            waitOnFlip = False
+            if spaceStim.status == NOT_STARTED and sliderStim.rating:
+                # keep track of start time/frame for later
+                spaceStim.frameNStart = frameN  # exact frame index
+                spaceStim.tStart = t  # local t and not account for scr refresh
+                spaceStim.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(spaceStim, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'spaceStim.started')
+                spaceStim.status = STARTED
+                # keyboard checking is just starting
+                waitOnFlip = True
+                win.callOnFlip(spaceStim.clock.reset)  # t=0 on next screen flip
+                win.callOnFlip(spaceStim.clearEvents, eventType='keyboard')  # clear events on next screen flip
+            if spaceStim.status == STARTED and not waitOnFlip:
+                theseKeys = spaceStim.getKeys(keyList=['space', 'enter'], waitRelease=False)
+                _spaceStim_allKeys.extend(theseKeys)
+                if len(_spaceStim_allKeys):
+                    spaceStim.keys = _spaceStim_allKeys[-1].name  # just the last key pressed
+                    spaceStim.rt = _spaceStim_allKeys[-1].rt
+                    # a response ends the routine
+                    continueRoutine = False
+            
+            # check for quit (typically the Esc key)
+            if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+                core.quit()
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in stimRatingComponents:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "stimRating" ---
+        for thisComponent in stimRatingComponents:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        ratingtrials1.addData('sliderStim.response', sliderStim.getRating())
+        ratingtrials1.addData('sliderStim.rt', sliderStim.getRT())
+        # check responses
+        if spaceStim.keys in ['', [], None]:  # No response was made
+            spaceStim.keys = None
+        ratingtrials1.addData('spaceStim.keys',spaceStim.keys)
+        if spaceStim.keys != None:  # we had a response
+            ratingtrials1.addData('spaceStim.rt', spaceStim.rt)
+        # the Routine "stimRating" was not non-slip safe, so reset the non-slip timer
+        routineTimer.reset()
+        thisExp.nextEntry()
+        
+    # completed 1.0 repeats of 'ratingtrials1'
+    
+    
+    # --- Prepare to start Routine "startTask" ---
+    continueRoutine = True
+    routineForceEnded = False
+    # update component parameters for each repeat
+    spaceStartTask.keys = []
+    spaceStartTask.rt = []
+    _spaceStartTask_allKeys = []
+    # Run 'Begin Routine' code from codeStartTask
+    print("Start Task Screen. Press Space to continue.")
+    # keep track of which components have finished
+    startTaskComponents = [textStartTask, spaceStartTask]
+    for thisComponent in startTaskComponents:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "startTask" ---
+    while continueRoutine:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *textStartTask* updates
+        if textStartTask.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            textStartTask.frameNStart = frameN  # exact frame index
+            textStartTask.tStart = t  # local t and not account for scr refresh
+            textStartTask.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textStartTask, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'textStartTask.started')
+            textStartTask.setAutoDraw(True)
+        
+        # *spaceStartTask* updates
+        waitOnFlip = False
+        if spaceStartTask.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            spaceStartTask.frameNStart = frameN  # exact frame index
+            spaceStartTask.tStart = t  # local t and not account for scr refresh
+            spaceStartTask.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(spaceStartTask, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'spaceStartTask.started')
+            spaceStartTask.status = STARTED
+            # keyboard checking is just starting
+            waitOnFlip = True
+            win.callOnFlip(spaceStartTask.clock.reset)  # t=0 on next screen flip
+            win.callOnFlip(spaceStartTask.clearEvents, eventType='keyboard')  # clear events on next screen flip
+        if spaceStartTask.status == STARTED and not waitOnFlip:
+            theseKeys = spaceStartTask.getKeys(keyList=['space', 'enter'], waitRelease=False)
+            _spaceStartTask_allKeys.extend(theseKeys)
+            if len(_spaceStartTask_allKeys):
+                spaceStartTask.keys = _spaceStartTask_allKeys[-1].name  # just the last key pressed
+                spaceStartTask.rt = _spaceStartTask_allKeys[-1].rt
+                # a response ends the routine
+                continueRoutine = False
+        
+        # check for quit (typically the Esc key)
+        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+            core.quit()
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in startTaskComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "startTask" ---
+    for thisComponent in startTaskComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # check responses
+    if spaceStartTask.keys in ['', [], None]:  # No response was made
+        spaceStartTask.keys = None
+    blocks.addData('spaceStartTask.keys',spaceStartTask.keys)
+    if spaceStartTask.keys != None:  # we had a response
+        blocks.addData('spaceStartTask.rt', spaceStartTask.rt)
+    # the Routine "startTask" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+    
+    # --- Prepare to start Routine "blank" ---
+    continueRoutine = True
+    routineForceEnded = False
+    # update component parameters for each repeat
+    # keep track of which components have finished
+    blankComponents = [blankScreen]
+    for thisComponent in blankComponents:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "blank" ---
+    while continueRoutine:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *blankScreen* updates
+        if blankScreen.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            blankScreen.frameNStart = frameN  # exact frame index
+            blankScreen.tStart = t  # local t and not account for scr refresh
+            blankScreen.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(blankScreen, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'blankScreen.started')
+            blankScreen.setAutoDraw(True)
+        if blankScreen.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > blankScreen.tStartRefresh + 1.0 + random()-frameTolerance:
+                # keep track of stop time/frame for later
+                blankScreen.tStop = t  # not accounting for scr refresh
+                blankScreen.frameNStop = frameN  # exact frame index
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'blankScreen.stopped')
+                blankScreen.setAutoDraw(False)
+        
+        # check for quit (typically the Esc key)
+        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+            core.quit()
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in blankComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "blank" ---
+    for thisComponent in blankComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # the Routine "blank" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
     trials = data.TrialHandler(nReps=1.0, method='random', 
@@ -1721,12 +2066,7 @@ for thisBlock in blocks:
         
         image_w = image.size[0]
         image_h = image.size[1]
-        image_h_spec_rating = 0.3
-        # imagesize_rating = [image_w * image_h_spec_rating / image_h, image_h_spec_rating]
         imagesize_rating = [image_w * 1, image_h * 1]
-        
-        image_h_spec_test = 0.5
-        # imagesize_test = [image_w * image_h_spec_test / image_h, image_h_spec_test]
         imagesize_test = [image_w * 1.2, image_h * 1.2]
         
         trials.addData('roi.numLooks', roi.numLooks)
@@ -2085,6 +2425,8 @@ for thisBlock in blocks:
     # Run 'Begin Routine' code from codePainRating
     logging.log(level=logging.INFO, msg=f'PainRating')
     print("Pain Rating. Press Space to continue.")
+    
+    values = [None]
     # keep track of which components have finished
     painRatingComponents = [textRate, text_noPain, text_slightPain, text_highPain, sliderPain, textSpacePain, spacePain]
     for thisComponent in painRatingComponents:
@@ -2197,6 +2539,10 @@ for thisBlock in blocks:
                 spacePain.rt = _spacePain_allKeys[-1].rt
                 # a response ends the routine
                 continueRoutine = False
+        # Run 'Each Frame' code from codePainRating
+        if sliderPainT.getRating() != values[-1]:
+            values.append(sliderPainT.getRating())
+            print(f"Value: {values[-1]}")
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -2232,23 +2578,23 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    ratingstrials = data.TrialHandler(nReps=1.0, method='random', 
+    ratingtrials2 = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=data.importConditions(stimFile),
-        seed=None, name='ratingstrials')
-    thisExp.addLoop(ratingstrials)  # add the loop to the experiment
-    thisRatingstrial = ratingstrials.trialList[0]  # so we can initialise stimuli with some values
-    # abbreviate parameter names if possible (e.g. rgb = thisRatingstrial.rgb)
-    if thisRatingstrial != None:
-        for paramName in thisRatingstrial:
-            exec('{} = thisRatingstrial[paramName]'.format(paramName))
+        seed=None, name='ratingtrials2')
+    thisExp.addLoop(ratingtrials2)  # add the loop to the experiment
+    thisRatingtrials2 = ratingtrials2.trialList[0]  # so we can initialise stimuli with some values
+    # abbreviate parameter names if possible (e.g. rgb = thisRatingtrials2.rgb)
+    if thisRatingtrials2 != None:
+        for paramName in thisRatingtrials2:
+            exec('{} = thisRatingtrials2[paramName]'.format(paramName))
     
-    for thisRatingstrial in ratingstrials:
-        currentLoop = ratingstrials
-        # abbreviate parameter names if possible (e.g. rgb = thisRatingstrial.rgb)
-        if thisRatingstrial != None:
-            for paramName in thisRatingstrial:
-                exec('{} = thisRatingstrial[paramName]'.format(paramName))
+    for thisRatingtrials2 in ratingtrials2:
+        currentLoop = ratingtrials2
+        # abbreviate parameter names if possible (e.g. rgb = thisRatingtrials2.rgb)
+        if thisRatingtrials2 != None:
+            for paramName in thisRatingtrials2:
+                exec('{} = thisRatingtrials2[paramName]'.format(paramName))
         
         # --- Prepare to start Routine "stimRating" ---
         continueRoutine = True
@@ -2262,6 +2608,7 @@ for thisBlock in blocks:
         _spaceStim_allKeys = []
         # Run 'Begin Routine' code from codeStimRating
         logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
+        print("Rating of Stimulus: %s"%(stimtype))
         # keep track of which components have finished
         stimRatingComponents = [textRateStim, imageRating, textUnpleasant, textPleasant, sliderStim, textSpaceStim, spaceStim]
         for thisComponent in stimRatingComponents:
@@ -2391,19 +2738,19 @@ for thisBlock in blocks:
         for thisComponent in stimRatingComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
-        ratingstrials.addData('sliderStim.response', sliderStim.getRating())
-        ratingstrials.addData('sliderStim.rt', sliderStim.getRT())
+        ratingtrials2.addData('sliderStim.response', sliderStim.getRating())
+        ratingtrials2.addData('sliderStim.rt', sliderStim.getRT())
         # check responses
         if spaceStim.keys in ['', [], None]:  # No response was made
             spaceStim.keys = None
-        ratingstrials.addData('spaceStim.keys',spaceStim.keys)
+        ratingtrials2.addData('spaceStim.keys',spaceStim.keys)
         if spaceStim.keys != None:  # we had a response
-            ratingstrials.addData('spaceStim.rt', spaceStim.rt)
+            ratingtrials2.addData('spaceStim.rt', spaceStim.rt)
         # the Routine "stimRating" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 1.0 repeats of 'ratingstrials'
+    # completed 1.0 repeats of 'ratingtrials2'
     
     
     # --- Prepare to start Routine "testInstr" ---
@@ -2795,23 +3142,23 @@ for thisBlock in blocks:
     
     
     # set up handler to look after randomisation of conditions etc
-    ratingstrials2 = data.TrialHandler(nReps=1.0, method='random', 
+    ratingtrials3 = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=data.importConditions(stimFile),
-        seed=None, name='ratingstrials2')
-    thisExp.addLoop(ratingstrials2)  # add the loop to the experiment
-    thisRatingstrials2 = ratingstrials2.trialList[0]  # so we can initialise stimuli with some values
-    # abbreviate parameter names if possible (e.g. rgb = thisRatingstrials2.rgb)
-    if thisRatingstrials2 != None:
-        for paramName in thisRatingstrials2:
-            exec('{} = thisRatingstrials2[paramName]'.format(paramName))
+        seed=None, name='ratingtrials3')
+    thisExp.addLoop(ratingtrials3)  # add the loop to the experiment
+    thisRatingtrials3 = ratingtrials3.trialList[0]  # so we can initialise stimuli with some values
+    # abbreviate parameter names if possible (e.g. rgb = thisRatingtrials3.rgb)
+    if thisRatingtrials3 != None:
+        for paramName in thisRatingtrials3:
+            exec('{} = thisRatingtrials3[paramName]'.format(paramName))
     
-    for thisRatingstrials2 in ratingstrials2:
-        currentLoop = ratingstrials2
-        # abbreviate parameter names if possible (e.g. rgb = thisRatingstrials2.rgb)
-        if thisRatingstrials2 != None:
-            for paramName in thisRatingstrials2:
-                exec('{} = thisRatingstrials2[paramName]'.format(paramName))
+    for thisRatingtrials3 in ratingtrials3:
+        currentLoop = ratingtrials3
+        # abbreviate parameter names if possible (e.g. rgb = thisRatingtrials3.rgb)
+        if thisRatingtrials3 != None:
+            for paramName in thisRatingtrials3:
+                exec('{} = thisRatingtrials3[paramName]'.format(paramName))
         
         # --- Prepare to start Routine "stimRating" ---
         continueRoutine = True
@@ -2825,6 +3172,7 @@ for thisBlock in blocks:
         _spaceStim_allKeys = []
         # Run 'Begin Routine' code from codeStimRating
         logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
+        print("Rating of Stimulus: %s"%(stimtype))
         # keep track of which components have finished
         stimRatingComponents = [textRateStim, imageRating, textUnpleasant, textPleasant, sliderStim, textSpaceStim, spaceStim]
         for thisComponent in stimRatingComponents:
@@ -2954,19 +3302,19 @@ for thisBlock in blocks:
         for thisComponent in stimRatingComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
-        ratingstrials2.addData('sliderStim.response', sliderStim.getRating())
-        ratingstrials2.addData('sliderStim.rt', sliderStim.getRT())
+        ratingtrials3.addData('sliderStim.response', sliderStim.getRating())
+        ratingtrials3.addData('sliderStim.rt', sliderStim.getRT())
         # check responses
         if spaceStim.keys in ['', [], None]:  # No response was made
             spaceStim.keys = None
-        ratingstrials2.addData('spaceStim.keys',spaceStim.keys)
+        ratingtrials3.addData('spaceStim.keys',spaceStim.keys)
         if spaceStim.keys != None:  # we had a response
-            ratingstrials2.addData('spaceStim.rt', spaceStim.rt)
+            ratingtrials3.addData('spaceStim.rt', spaceStim.rt)
         # the Routine "stimRating" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 1.0 repeats of 'ratingstrials2'
+    # completed 1.0 repeats of 'ratingtrials3'
     
 # completed 1.0 repeats of 'blocks'
 
@@ -3036,6 +3384,8 @@ while continueRoutine and routineTimer.getTime() < 5.0:
 for thisComponent in endComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
+# Run 'End Routine' code from codeEnd
+print("----------- END -----------")
 # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
 if routineForceEnded:
     routineTimer.reset()
