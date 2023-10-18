@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on Oktober 05, 2023, at 14:07
+    on Oktober 18, 2023, at 09:04
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -39,7 +39,6 @@ log_msg = ""
 
 rectsize = (0.2, 0.2)
 imagesize_test = [1, 1]
-imagesize_rating = [1, 1]
 
 score = 0
 points = 0
@@ -73,7 +72,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gaze_avoidance\\gca.py',
+    originPath='C:\\Users\\Public\\Documents\\Projects\\GCA\\gaze_avoidance\\gca.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -87,7 +86,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 
 # --- Setup the Window ---
 win = visual.Window(
-    size=[2560, 1440], fullscr=True, screen=1, 
+    size=[1680, 1050], fullscr=True, screen=1, 
     winType='pyglet', allowStencil=False,
     monitor='labMonitor', color=[0,0,0], colorSpace='rgb',
     blendMode='avg', useFBO=True, 
@@ -235,48 +234,48 @@ textRateStim = visual.TextStim(win=win, name='textRateStim',
     pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=0.0);
+    depth=-1.0);
 imageRating = visual.ImageStim(
     win=win,
     name='imageRating', 
     image='sin', mask=None, anchor='center',
-    ori=0.0, pos=[0,0], size=1.0,
+    ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-2.0)
 textUnpleasant = visual.TextStim(win=win, name='textUnpleasant',
     text='sehr \nunwohl',
     font='Open Sans',
     pos=(-0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-2.0);
+    depth=-3.0);
 textPleasant = visual.TextStim(win=win, name='textPleasant',
     text='sehr\nwohl',
     font='Open Sans',
     pos=(0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-3.0);
+    depth=-4.0);
 sliderStim = visual.Slider(win=win, name='sliderStim',
     startValue=None, size=(1.0, 0.1), pos=(0, -0.3), units=None,
     labels=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), ticks=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), granularity=1.0,
     style='rating', styleTweaks=('labels45',), opacity=None,
     labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
     font='Open Sans', labelHeight=0.03,
-    flip=False, ori=0.0, depth=-4, readOnly=False)
+    flip=False, ori=0.0, depth=-5, readOnly=False)
 textSpaceStim = visual.TextStim(win=win, name='textSpaceStim',
     text='Bitte drücken Sie die Leertaste, um die Antwort zu bestätigen.',
     font='Open Sans',
     pos=(0, -0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-5.0);
+    depth=-6.0);
 spaceStim = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startTask" ---
 textStartTask = visual.TextStim(win=win, name='textStartTask',
-    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Unter manchen Umständen können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines elektrischen Reizes. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren und herauszufinden, wie Sie Punkte erhalten und den elektrischen Reiz vermeiden können.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
+    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Sie wählen ein Bild aus, indem Sie es anblicken. Über das Auswählen eines Bildes können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines elektrischen Reizes. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren und herauszufinden, wie Sie Punkte erhalten und den elektrischen Reiz vermeiden können.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -323,7 +322,7 @@ image = visual.ImageStim(
 roi = visual.ROI(win, name='roi', device=eyetracker,
     debug=False,
     shape='rectangle',
-    pos=[0,0], size=[image.size], anchor='center', ori=0.0)
+    pos=[0,0], size=1.0, anchor='center', ori=0.0)
 gazeCursor = visual.ShapeStim(
     win=win, name='gazeCursor', vertices='star7',
     size=(0.02, 0.02),
@@ -333,11 +332,6 @@ gazeCursor = visual.ShapeStim(
 portImage = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "feedback" ---
-# Run 'Begin Experiment' code from codeFeedback
-image_w = image.size[0]
-image_h = image.size[1]
-imagesize_rating = [image_w * 1, image_h * 1]
-imagesize_test = [image_w * 1.2, image_h * 1.2]
 textPoints = visual.TextStim(win=win, name='textPoints',
     text='',
     font='Open Sans',
@@ -440,43 +434,43 @@ textRateStim = visual.TextStim(win=win, name='textRateStim',
     pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=0.0);
+    depth=-1.0);
 imageRating = visual.ImageStim(
     win=win,
     name='imageRating', 
     image='sin', mask=None, anchor='center',
-    ori=0.0, pos=[0,0], size=1.0,
+    ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-2.0)
 textUnpleasant = visual.TextStim(win=win, name='textUnpleasant',
     text='sehr \nunwohl',
     font='Open Sans',
     pos=(-0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-2.0);
+    depth=-3.0);
 textPleasant = visual.TextStim(win=win, name='textPleasant',
     text='sehr\nwohl',
     font='Open Sans',
     pos=(0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-3.0);
+    depth=-4.0);
 sliderStim = visual.Slider(win=win, name='sliderStim',
     startValue=None, size=(1.0, 0.1), pos=(0, -0.3), units=None,
     labels=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), ticks=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), granularity=1.0,
     style='rating', styleTweaks=('labels45',), opacity=None,
     labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
     font='Open Sans', labelHeight=0.03,
-    flip=False, ori=0.0, depth=-4, readOnly=False)
+    flip=False, ori=0.0, depth=-5, readOnly=False)
 textSpaceStim = visual.TextStim(win=win, name='textSpaceStim',
     text='Bitte drücken Sie die Leertaste, um die Antwort zu bestätigen.',
     font='Open Sans',
     pos=(0, -0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-5.0);
+    depth=-6.0);
 spaceStim = keyboard.Keyboard()
 
 # --- Initialize components for Routine "testInstr" ---
@@ -525,43 +519,43 @@ textRateStim = visual.TextStim(win=win, name='textRateStim',
     pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=0.0);
+    depth=-1.0);
 imageRating = visual.ImageStim(
     win=win,
     name='imageRating', 
     image='sin', mask=None, anchor='center',
-    ori=0.0, pos=[0,0], size=1.0,
+    ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-2.0)
 textUnpleasant = visual.TextStim(win=win, name='textUnpleasant',
     text='sehr \nunwohl',
     font='Open Sans',
     pos=(-0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-2.0);
+    depth=-3.0);
 textPleasant = visual.TextStim(win=win, name='textPleasant',
     text='sehr\nwohl',
     font='Open Sans',
     pos=(0.5, -0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-3.0);
+    depth=-4.0);
 sliderStim = visual.Slider(win=win, name='sliderStim',
     startValue=None, size=(1.0, 0.1), pos=(0, -0.3), units=None,
     labels=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), ticks=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), granularity=1.0,
     style='rating', styleTweaks=('labels45',), opacity=None,
     labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
     font='Open Sans', labelHeight=0.03,
-    flip=False, ori=0.0, depth=-4, readOnly=False)
+    flip=False, ori=0.0, depth=-5, readOnly=False)
 textSpaceStim = visual.TextStim(win=win, name='textSpaceStim',
     text='Bitte drücken Sie die Leertaste, um die Antwort zu bestätigen.',
     font='Open Sans',
     pos=(0, -0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-5.0);
+    depth=-6.0);
 spaceStim = keyboard.Keyboard()
 
 # --- Initialize components for Routine "end" ---
@@ -1206,27 +1200,6 @@ if spaceETCalibration.keys != None:  # we had a response
 thisExp.nextEntry()
 # the Routine "startETCalibration" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
-# define target for ETCalibration
-ETCalibrationTarget = visual.TargetStim(win, 
-    name='ETCalibrationTarget',
-    radius=0.01, fillColor='', borderColor='black', lineWidth=2.0,
-    innerRadius=0.0035, innerFillColor='white', innerBorderColor='black', innerLineWidth=2.0,
-    colorSpace='rgb', units=None
-)
-# define parameters for ETCalibration
-ETCalibration = hardware.eyetracker.EyetrackerCalibration(win, 
-    eyetracker, ETCalibrationTarget,
-    units=None, colorSpace='rgb',
-    progressMode='time', targetDur=1.0, expandScale=1.2,
-    targetLayout='NINE_POINTS', randomisePos=True, textColor='white',
-    movementAnimation=True, targetDelay=1.0
-)
-# run calibration
-ETCalibration.run()
-# clear any keypresses from during ETCalibration so they don't interfere with the experiment
-defaultKeyboard.clearEvents()
-# the Routine "ETCalibration" was not non-slip safe, so reset the non-slip timer
-routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
 blocks = data.TrialHandler(nReps=1.0, method='random', 
@@ -1339,10 +1312,9 @@ for thisBlock in blocks:
     # check responses
     if spaceStartExp.keys in ['', [], None]:  # No response was made
         spaceStartExp.keys = None
-    thisExp.addData('spaceStartExp.keys',spaceStartExp.keys)
+    blocks.addData('spaceStartExp.keys',spaceStartExp.keys)
     if spaceStartExp.keys != None:  # we had a response
-        thisExp.addData('spaceStartExp.rt', spaceStartExp.rt)
-    thisExp.nextEntry()
+        blocks.addData('spaceStartExp.rt', spaceStartExp.rt)
     # the Routine "startExp" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -1369,15 +1341,15 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
+        # Run 'Begin Routine' code from codeStimRating
+        logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
+        print("Rating of Stimulus: %s"%(stimtype))
         imageRating.setPos((0, 0.2))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()
         spaceStim.keys = []
         spaceStim.rt = []
         _spaceStim_allKeys = []
-        # Run 'Begin Routine' code from codeStimRating
-        logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
-        print("Rating of Stimulus: %s"%(stimtype))
         # keep track of which components have finished
         stimRatingComponents = [textRateStim, imageRating, textUnpleasant, textPleasant, sliderStim, textSpaceStim, spaceStim]
         for thisComponent in stimRatingComponents:
@@ -1420,8 +1392,6 @@ for thisBlock in blocks:
                 # add timestamp to datafile
                 thisExp.timestampOnFlip(win, 'imageRating.started')
                 imageRating.setAutoDraw(True)
-            if imageRating.status == STARTED:  # only update if drawing
-                imageRating.setSize(imagesize_rating, log=False)
             
             # *textUnpleasant* updates
             if textUnpleasant.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
@@ -1880,6 +1850,9 @@ for thisBlock in blocks:
         logging.log(level=logging.INFO, msg=f'ImageOnset_{trialtype}')
         ioServer.sendMessageEvent(text='ImageOnset')
         eyetracker.sendMessage('ImageOnset')
+        
+        imagesize = image.size
+        imageposition = image.pos
         image.setPos(position)
         image.setImage(eval(trialtype))
         # clear any previous roi data
@@ -1937,6 +1910,8 @@ for thisBlock in blocks:
                 roi.tStart = t  # local t and not account for scr refresh
                 roi.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(roi, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'roi.started')
                 roi.status = STARTED
             if roi.status == STARTED:
                 # check whether roi has been looked in
@@ -1960,6 +1935,8 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     roi.tStop = t  # not accounting for scr refresh
                     roi.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'roi.stopped')
                     roi.status = FINISHED
             
             # *gazeCursor* updates
@@ -2062,13 +2039,13 @@ for thisBlock in blocks:
             feedback_points = ""
             feedback_score = ""
         
-        rectsize = [item * 1.05 for item in image.size]
+        rectsize = [item * 1.02 for item in image.size]
         
         image_w = image.size[0]
         image_h = image.size[1]
-        imagesize_rating = [image_w * 1, image_h * 1]
         imagesize_test = [image_w * 1.2, image_h * 1.2]
         
+        print("ROI size: " + str(roi.size) + ", ROI position: " + str(roi.pos))
         trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
            trials.addData('roi.timesOn', roi.timesOn)
@@ -2600,15 +2577,15 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
+        # Run 'Begin Routine' code from codeStimRating
+        logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
+        print("Rating of Stimulus: %s"%(stimtype))
         imageRating.setPos((0, 0.2))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()
         spaceStim.keys = []
         spaceStim.rt = []
         _spaceStim_allKeys = []
-        # Run 'Begin Routine' code from codeStimRating
-        logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
-        print("Rating of Stimulus: %s"%(stimtype))
         # keep track of which components have finished
         stimRatingComponents = [textRateStim, imageRating, textUnpleasant, textPleasant, sliderStim, textSpaceStim, spaceStim]
         for thisComponent in stimRatingComponents:
@@ -2651,8 +2628,6 @@ for thisBlock in blocks:
                 # add timestamp to datafile
                 thisExp.timestampOnFlip(win, 'imageRating.started')
                 imageRating.setAutoDraw(True)
-            if imageRating.status == STARTED:  # only update if drawing
-                imageRating.setSize(imagesize_rating, log=False)
             
             # *textUnpleasant* updates
             if textUnpleasant.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
@@ -3164,15 +3139,15 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
+        # Run 'Begin Routine' code from codeStimRating
+        logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
+        print("Rating of Stimulus: %s"%(stimtype))
         imageRating.setPos((0, 0.2))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()
         spaceStim.keys = []
         spaceStim.rt = []
         _spaceStim_allKeys = []
-        # Run 'Begin Routine' code from codeStimRating
-        logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
-        print("Rating of Stimulus: %s"%(stimtype))
         # keep track of which components have finished
         stimRatingComponents = [textRateStim, imageRating, textUnpleasant, textPleasant, sliderStim, textSpaceStim, spaceStim]
         for thisComponent in stimRatingComponents:
@@ -3215,8 +3190,6 @@ for thisBlock in blocks:
                 # add timestamp to datafile
                 thisExp.timestampOnFlip(win, 'imageRating.started')
                 imageRating.setAutoDraw(True)
-            if imageRating.status == STARTED:  # only update if drawing
-                imageRating.setSize(imagesize_rating, log=False)
             
             # *textUnpleasant* updates
             if textUnpleasant.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on Oktober 05, 2023, at 14:40
+    on Oktober 18, 2023, at 09:41
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -72,7 +72,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gaze_avoidance\\gca_lastrun.py',
+    originPath='C:\\Users\\Public\\Documents\\Projects\\GCA\\gaze_avoidance\\gca_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -86,7 +86,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 
 # --- Setup the Window ---
 win = visual.Window(
-    size=[2560, 1440], fullscr=True, screen=1, 
+    size=[1680, 1050], fullscr=True, screen=1, 
     winType='pyglet', allowStencil=False,
     monitor='labMonitor', color=[0,0,0], colorSpace='rgb',
     blendMode='avg', useFBO=True, 
@@ -275,7 +275,7 @@ spaceStim = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startTask" ---
 textStartTask = visual.TextStim(win=win, name='textStartTask',
-    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Unter manchen Umständen können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines elektrischen Reizes. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren und herauszufinden, wie Sie Punkte erhalten und den elektrischen Reiz vermeiden können.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
+    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Sie wählen ein Bild aus, indem Sie es anblicken. Über das Auswählen eines Bildes können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines elektrischen Reizes. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren und herauszufinden, wie Sie Punkte erhalten und den elektrischen Reiz vermeiden können.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -322,7 +322,7 @@ image = visual.ImageStim(
 roi = visual.ROI(win, name='roi', device=eyetracker,
     debug=False,
     shape='rectangle',
-    pos=[0,0], size=[image.size], anchor='center', ori=0.0)
+    pos=[0,0], size=1.0, anchor='center', ori=0.0)
 gazeCursor = visual.ShapeStim(
     win=win, name='gazeCursor', vertices='star7',
     size=(0.02, 0.02),
@@ -501,6 +501,10 @@ imageTest = visual.ImageStim(
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-1.0)
+roiTest = visual.ROI(win, name='roiTest', device=eyetracker,
+    debug=False,
+    shape='rectangle',
+    pos=(0, 0), size=1.0, anchor='center', ori=0.0)
 portTestImage = parallel.ParallelPort(address='0x0378')
 
 # --- Initialize components for Routine "crossEnd" ---
@@ -1365,6 +1369,7 @@ for thisBlock in blocks:
         # Run 'Begin Routine' code from codeStimRating
         logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
         print("Rating of Stimulus: %s"%(stimtype))
+        win.mouseVisible = True
         imageRating.setPos((0, 0.2))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()
@@ -1522,6 +1527,7 @@ for thisBlock in blocks:
     _spaceStartTask_allKeys = []
     # Run 'Begin Routine' code from codeStartTask
     print("Start Task Screen. Press Space to continue.")
+    win.mouseVisible = False
     # keep track of which components have finished
     startTaskComponents = [textStartTask, spaceStartTask]
     for thisComponent in startTaskComponents:
@@ -1873,6 +1879,8 @@ for thisBlock in blocks:
         eyetracker.sendMessage('ImageOnset')
         image.setPos(position)
         image.setImage(eval(trialtype))
+        roi.setPos(position)
+        roi.setSize([image.size])
         # clear any previous roi data
         roi.reset()
         # keep track of which components have finished
@@ -1898,6 +1906,9 @@ for thisBlock in blocks:
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
             # Run 'Each Frame' code from codeTrial
+            roi.size = image.size
+            roi.pos = position
+            
             if roi.isLookedIn:
                 looked_at = True
                 continueRoutine = False
@@ -1928,6 +1939,8 @@ for thisBlock in blocks:
                 roi.tStart = t  # local t and not account for scr refresh
                 roi.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(roi, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'roi.started')
                 roi.status = STARTED
             if roi.status == STARTED:
                 # check whether roi has been looked in
@@ -1951,6 +1964,8 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     roi.tStop = t  # not accounting for scr refresh
                     roi.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'roi.stopped')
                     roi.status = FINISHED
             
             # *gazeCursor* updates
@@ -2053,7 +2068,7 @@ for thisBlock in blocks:
             feedback_points = ""
             feedback_score = ""
         
-        rectsize = [item * 1.05 for item in image.size]
+        rectsize = [item * 1.02 for item in image.size]
         
         image_w = image.size[0]
         image_h = image.size[1]
@@ -2416,6 +2431,8 @@ for thisBlock in blocks:
     print("Pain Rating. Press Space to continue.")
     
     values = [None]
+    
+    win.mouseVisible = True
     # keep track of which components have finished
     painRatingComponents = [textRate, text_noPain, text_slightPain, text_highPain, sliderPain, textSpacePain, spacePain]
     for thisComponent in painRatingComponents:
@@ -2592,6 +2609,7 @@ for thisBlock in blocks:
         # Run 'Begin Routine' code from codeStimRating
         logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
         print("Rating of Stimulus: %s"%(stimtype))
+        win.mouseVisible = True
         imageRating.setPos((0, 0.2))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()
@@ -2749,6 +2767,7 @@ for thisBlock in blocks:
     _spaceTestInstr_allKeys = []
     # Run 'Begin Routine' code from codeTestInstruction
     print("Start Test Phase. Press Space to continue.")
+    win.mouseVisible = False
     # keep track of which components have finished
     testInstrComponents = [textTestInstr, spaceTestInstr]
     for thisComponent in testInstrComponents:
@@ -2954,8 +2973,11 @@ for thisBlock in blocks:
         eyetracker.sendMessage('TestImageOnset')
         imageTest.setPos((0, 0))
         imageTest.setImage(eval(stimtype))
+        roiTest.setSize([imageTest.size])
+        # clear any previous roi data
+        roiTest.reset()
         # keep track of which components have finished
-        testtrialComponents = [imageTest, portTestImage]
+        testtrialComponents = [imageTest, roiTest, portTestImage]
         for thisComponent in testtrialComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -2976,6 +2998,8 @@ for thisBlock in blocks:
             tThisFlipGlobal = win.getFutureFlipTime(clock=None)
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
+            # Run 'Each Frame' code from codeTesttrial
+            roiTest.size = imageTest.size
             
             # *imageTest* updates
             if imageTest.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
@@ -2998,6 +3022,40 @@ for thisBlock in blocks:
                     imageTest.setAutoDraw(False)
             if imageTest.status == STARTED:  # only update if drawing
                 imageTest.setSize(imagesize_test, log=False)
+            if roiTest.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                roiTest.frameNStart = frameN  # exact frame index
+                roiTest.tStart = t  # local t and not account for scr refresh
+                roiTest.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(roiTest, 'tStartRefresh')  # time at next scr refresh
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'roiTest.started')
+                roiTest.status = STARTED
+            if roiTest.status == STARTED:
+                # check whether roiTest has been looked in
+                if roiTest.isLookedIn:
+                    if not roiTest.wasLookedIn:
+                        roiTest.timesOn.append(routineTimer.getTime()) # store time of first look
+                        roiTest.timesOff.append(routineTimer.getTime()) # store time looked until
+                    else:
+                        roiTest.timesOff[-1] = routineTimer.getTime() # update time looked until
+                    roiTest.wasLookedIn = True  # if roiTest is still looked at next frame, it is not a new look
+                else:
+                    if roiTest.wasLookedIn:
+                        roiTest.timesOff[-1] = routineTimer.getTime() # update time looked until
+                    roiTest.wasLookedIn = False  # if roiTest is looked at next frame, it is a new look
+            else:
+                roiTest.clock.reset() # keep clock at 0 if roi hasn't started / has finished
+                roiTest.wasLookedIn = False  # if roiTest is looked at next frame, it is a new look
+            if roiTest.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > roiTest.tStartRefresh + 10-frameTolerance:
+                    # keep track of stop time/frame for later
+                    roiTest.tStop = t  # not accounting for scr refresh
+                    roiTest.frameNStop = frameN  # exact frame index
+                    # add timestamp to datafile
+                    thisExp.timestampOnFlip(win, 'roiTest.stopped')
+                    roiTest.status = FINISHED
             # *portTestImage* updates
             if portTestImage.status == NOT_STARTED and t >= 0.0-frameTolerance:
                 # keep track of start time/frame for later
@@ -3042,6 +3100,13 @@ for thisBlock in blocks:
         for thisComponent in testtrialComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        testtrials.addData('roiTest.numLooks', roiTest.numLooks)
+        if roiTest.numLooks:
+           testtrials.addData('roiTest.timesOn', roiTest.timesOn)
+           testtrials.addData('roiTest.timesOff', roiTest.timesOff)
+        else:
+           testtrials.addData('roiTest.timesOn', "")
+           testtrials.addData('roiTest.timesOff', "")
         if portTestImage.status == STARTED:
             win.callOnFlip(portTestImage.setData, int(0))
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
@@ -3154,6 +3219,7 @@ for thisBlock in blocks:
         # Run 'Begin Routine' code from codeStimRating
         logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')
         print("Rating of Stimulus: %s"%(stimtype))
+        win.mouseVisible = True
         imageRating.setPos((0, 0.2))
         imageRating.setImage(eval(stimtype))
         sliderStim.reset()

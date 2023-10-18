@@ -26,7 +26,7 @@
     <Param val="False" valType="bool" updates="None" name="Show mouse"/>
     <Param val="norm" valType="str" updates="None" name="Units"/>
     <Param val="" valType="str" updates="None" name="Use version"/>
-    <Param val="[2560, 1440]" valType="list" updates="None" name="Window size (pixels)"/>
+    <Param val="[1680, 1050]" valType="list" updates="None" name="Window size (pixels)"/>
     <Param val="none" valType="str" updates="None" name="backgroundFit"/>
     <Param val="" valType="str" updates="None" name="backgroundImg"/>
     <Param val="avg" valType="str" updates="None" name="blendMode"/>
@@ -76,12 +76,12 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
         <Param val="looked_at = False&amp;#10;cursorcolor=&quot;white&quot;&amp;#10;&amp;#10;logging.log(level=logging.INFO, msg=f'ImageOnset_{trialtype}')&amp;#10;ioServer.sendMessageEvent(text='ImageOnset')&amp;#10;eyetracker.sendMessage('ImageOnset')" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
-        <Param val="if roi.isLookedIn:&amp;#10;    looked_at = True&amp;#10;    continueRoutine = False&amp;#10;" valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="roi.size = image.size&amp;#10;roi.pos = position&amp;#10;&amp;#10;if roi.isLookedIn:&amp;#10;    looked_at = True&amp;#10;    continueRoutine = False&amp;#10;" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Routine"/>
-        <Param val="if looked_at &amp; (&quot;plus&quot; in trialtype):&amp;#10;    feedback_color = &quot;red&quot;&amp;#10;    feedback_opacity = 1&amp;#10;    cursorcolor=&quot;red&quot;&amp;#10;    feedback_audio = &quot;audio/error.wav&quot;&amp;#10;    port_msg = 128 + 4  # Shock1&amp;#10;    log_msg = &quot;lookedat_cs_plus&quot;&amp;#10;    points = 0  # 5&amp;#10;    # score -= points&amp;#10;    feedback_points = &quot;&quot;  # f&quot;- {points}&quot;&amp;#10;    feedback_score = &quot;&quot;  # f&quot;Score: {score}&quot;&amp;#10;elif looked_at &amp; (&quot;minus&quot; in trialtype):&amp;#10;    feedback_color = &quot;green&quot;&amp;#10;    feedback_opacity = 1&amp;#10;    cursorcolor=&quot;green&quot;&amp;#10;    feedback_audio = &quot;audio/win.wav&quot;&amp;#10;    port_msg = 8  # Reward&amp;#10;    log_msg = &quot;lookedat_cs_minus&quot;&amp;#10;    points = 5&amp;#10;    score += points&amp;#10;    feedback_points = f&quot;+ {points}&quot;&amp;#10;    feedback_score = f&quot;Score: {score}&quot;&amp;#10;else:&amp;#10;    feedback_color = (0,0,0)&amp;#10;    feedback_opacity = 0&amp;#10;    feedback_audio = &quot;audio/silence.wav&quot;&amp;#10;    port_msg = 16  # No Feedback&amp;#10;    log_msg = &quot;no_look&quot;&amp;#10;    points = 0&amp;#10;    feedback_points = &quot;&quot;&amp;#10;    feedback_score = &quot;&quot;&amp;#10;&amp;#10;rectsize = [item * 1.05 for item in image.size]&amp;#10;&amp;#10;image_w = image.size[0]&amp;#10;image_h = image.size[1]&amp;#10;imagesize_test = [image_w * 1.2, image_h * 1.2]" valType="extendedCode" updates="constant" name="End Routine"/>
+        <Param val="if looked_at &amp; (&quot;plus&quot; in trialtype):&amp;#10;    feedback_color = &quot;red&quot;&amp;#10;    feedback_opacity = 1&amp;#10;    cursorcolor=&quot;red&quot;&amp;#10;    feedback_audio = &quot;audio/error.wav&quot;&amp;#10;    port_msg = 128 + 4  # Shock1&amp;#10;    log_msg = &quot;lookedat_cs_plus&quot;&amp;#10;    points = 0  # 5&amp;#10;    # score -= points&amp;#10;    feedback_points = &quot;&quot;  # f&quot;- {points}&quot;&amp;#10;    feedback_score = &quot;&quot;  # f&quot;Score: {score}&quot;&amp;#10;elif looked_at &amp; (&quot;minus&quot; in trialtype):&amp;#10;    feedback_color = &quot;green&quot;&amp;#10;    feedback_opacity = 1&amp;#10;    cursorcolor=&quot;green&quot;&amp;#10;    feedback_audio = &quot;audio/win.wav&quot;&amp;#10;    port_msg = 8  # Reward&amp;#10;    log_msg = &quot;lookedat_cs_minus&quot;&amp;#10;    points = 5&amp;#10;    score += points&amp;#10;    feedback_points = f&quot;+ {points}&quot;&amp;#10;    feedback_score = f&quot;Score: {score}&quot;&amp;#10;else:&amp;#10;    feedback_color = (0,0,0)&amp;#10;    feedback_opacity = 0&amp;#10;    feedback_audio = &quot;audio/silence.wav&quot;&amp;#10;    port_msg = 16  # No Feedback&amp;#10;    log_msg = &quot;no_look&quot;&amp;#10;    points = 0&amp;#10;    feedback_points = &quot;&quot;&amp;#10;    feedback_score = &quot;&quot;&amp;#10;&amp;#10;rectsize = [item * 1.02 for item in image.size]&amp;#10;&amp;#10;image_w = image.size[0]&amp;#10;image_h = image.size[1]&amp;#10;imagesize_test = [image_w * 1.2, image_h * 1.2]" valType="extendedCode" updates="constant" name="End Routine"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="codeTrial" valType="code" updates="None" name="name"/>
       </CodeComponent>
@@ -122,11 +122,11 @@
         <Param val="4" valType="int" updates="constant" name="nVertices"/>
         <Param val="roi" valType="code" updates="None" name="name"/>
         <Param val="0" valType="num" updates="constant" name="ori"/>
-        <Param val="position" valType="list" updates="set every frame" name="pos"/>
+        <Param val="position" valType="list" updates="set every repeat" name="pos"/>
         <Param val="every look" valType="str" updates="None" name="save"/>
-        <Param val="False" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="True" valType="bool" updates="None" name="saveStartStop"/>
         <Param val="rectangle" valType="str" updates="None" name="shape"/>
-        <Param val="image.size" valType="list" updates="constant" name="size"/>
+        <Param val="image.size" valType="list" updates="set every repeat" name="size"/>
         <Param val="" valType="code" updates="None" name="startEstim"/>
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
@@ -763,7 +763,7 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="logging.log(level=logging.INFO, msg=f'PainRating')&amp;#10;print(&quot;Pain Rating. Press Space to continue.&quot;)&amp;#10;&amp;#10;values = [None]" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="logging.log(level=logging.INFO, msg=f'PainRating')&amp;#10;print(&quot;Pain Rating. Press Space to continue.&quot;)&amp;#10;&amp;#10;values = [None]&amp;#10;&amp;#10;win.mouseVisible = True" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="if sliderPainT.getRating() != values[-1]:&amp;#10;    values.append(sliderPainT.getRating())&amp;#10;    print(f&quot;Value: {values[-1]}&quot;)" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
@@ -782,7 +782,7 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')&amp;#10;print(&quot;Rating of Stimulus: %s&quot;%(stimtype))" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="logging.log(level=logging.INFO, msg=f'StimRating_{stimtype}')&amp;#10;print(&quot;Rating of Stimulus: %s&quot;%(stimtype))&amp;#10;win.mouseVisible = True" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
@@ -985,7 +985,7 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
         <Param val="from psychopy import logging&amp;#10;logging.log(level=logging.INFO, msg=f'TestImageOnset_{stimtype}')&amp;#10;ioServer.sendMessageEvent(text='TestImageOnset')&amp;#10;eyetracker.sendMessage('TestImageOnset')" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
-        <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="roiTest.size = imageTest.size" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
@@ -1021,6 +1021,31 @@
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
       </ImageComponent>
+      <RegionOfInterestComponent name="roiTest">
+        <Param val="center" valType="str" updates="constant" name="anchor"/>
+        <Param val="False" valType="bool" updates="None" name="debug"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="" valType="code" updates="None" name="durationEstim"/>
+        <Param val="none" valType="str" updates="None" name="endRoutineOn"/>
+        <Param val="0.1" valType="num" updates="None" name="lookDur"/>
+        <Param val="4" valType="int" updates="constant" name="nVertices"/>
+        <Param val="roiTest" valType="code" updates="None" name="name"/>
+        <Param val="0" valType="num" updates="constant" name="ori"/>
+        <Param val="(0, 0)" valType="list" updates="constant" name="pos"/>
+        <Param val="every look" valType="str" updates="None" name="save"/>
+        <Param val="True" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="rectangle" valType="str" updates="None" name="shape"/>
+        <Param val="imageTest.size" valType="list" updates="set every repeat" name="size"/>
+        <Param val="" valType="code" updates="None" name="startEstim"/>
+        <Param val="time (s)" valType="str" updates="None" name="startType"/>
+        <Param val="0.0" valType="code" updates="None" name="startVal"/>
+        <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
+        <Param val="10" valType="code" updates="constant" name="stopVal"/>
+        <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
+        <Param val="routine" valType="str" updates="constant" name="timeRelativeTo"/>
+        <Param val="from exp settings" valType="str" updates="None" name="units"/>
+        <Param val="" valType="list" updates="constant" name="vertices"/>
+      </RegionOfInterestComponent>
       <ParallelOutComponent name="portTestImage">
         <Param val="0x0378" valType="str" updates="None" name="address"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
@@ -1359,7 +1384,7 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="print(&quot;Start Test Phase. Press Space to continue.&quot;)" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="print(&quot;Start Test Phase. Press Space to continue.&quot;)&amp;#10;win.mouseVisible = False" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
@@ -1541,30 +1566,6 @@
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
     </Routine>
-    <EyetrackerCalibrationRoutine name="ETCalibration">
-      <Param name="borderColor" updates="None" val="black" valType="color"/>
-      <Param name="borderWidth" updates="None" val="2" valType="num"/>
-      <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
-      <Param name="disabled" updates="None" val="False" valType="bool"/>
-      <Param name="expandDur" updates="None" val="1" valType="num"/>
-      <Param name="expandScale" updates="None" val="1.2" valType="num"/>
-      <Param name="fillColor" updates="None" val="" valType="color"/>
-      <Param name="innerBorderColor" updates="None" val="black" valType="color"/>
-      <Param name="innerBorderWidth" updates="None" val="2" valType="num"/>
-      <Param name="innerFillColor" updates="None" val="white" valType="color"/>
-      <Param name="innerRadius" updates="None" val="0.0035" valType="num"/>
-      <Param name="movementAnimation" updates="None" val="True" valType="bool"/>
-      <Param name="movementDur" updates="None" val="1.0" valType="num"/>
-      <Param name="name" updates="None" val="ETCalibration" valType="code"/>
-      <Param name="outerRadius" updates="None" val="0.01" valType="num"/>
-      <Param name="progressMode" updates="None" val="time" valType="str"/>
-      <Param name="randomisePos" updates="None" val="True" valType="bool"/>
-      <Param name="targetDelay" updates="None" val="1.0" valType="num"/>
-      <Param name="targetDur" updates="None" val="1" valType="num"/>
-      <Param name="targetLayout" updates="None" val="NINE_POINTS" valType="str"/>
-      <Param name="textColor" updates="None" val="white" valType="color"/>
-      <Param name="units" updates="None" val="from exp settings" valType="str"/>
-    </EyetrackerCalibrationRoutine>
     <EyetrackerValidationRoutine name="ETValidation">
       <Param name="borderColor" updates="None" val="black" valType="color"/>
       <Param name="borderWidth" updates="None" val="2" valType="num"/>
@@ -1644,7 +1645,7 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="print(&quot;Start Task Screen. Press Space to continue.&quot;)" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="print(&quot;Start Task Screen. Press Space to continue.&quot;)&amp;#10;win.mouseVisible = False" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
@@ -1719,6 +1720,30 @@
         <Param val="codeStartExp" valType="code" updates="None" name="name"/>
       </CodeComponent>
     </Routine>
+    <EyetrackerCalibrationRoutine name="ETCalibration">
+      <Param name="borderColor" updates="None" val="black" valType="color"/>
+      <Param name="borderWidth" updates="None" val="2" valType="num"/>
+      <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
+      <Param name="disabled" updates="None" val="False" valType="bool"/>
+      <Param name="expandDur" updates="None" val="1" valType="num"/>
+      <Param name="expandScale" updates="None" val="1.2" valType="num"/>
+      <Param name="fillColor" updates="None" val="" valType="color"/>
+      <Param name="innerBorderColor" updates="None" val="black" valType="color"/>
+      <Param name="innerBorderWidth" updates="None" val="2" valType="num"/>
+      <Param name="innerFillColor" updates="None" val="white" valType="color"/>
+      <Param name="innerRadius" updates="None" val="0.0035" valType="num"/>
+      <Param name="movementAnimation" updates="None" val="True" valType="bool"/>
+      <Param name="movementDur" updates="None" val="1.0" valType="num"/>
+      <Param name="name" updates="None" val="ETCalibration" valType="code"/>
+      <Param name="outerRadius" updates="None" val="0.01" valType="num"/>
+      <Param name="progressMode" updates="None" val="time" valType="str"/>
+      <Param name="randomisePos" updates="None" val="True" valType="bool"/>
+      <Param name="targetDelay" updates="None" val="1.0" valType="num"/>
+      <Param name="targetDur" updates="None" val="1" valType="num"/>
+      <Param name="targetLayout" updates="None" val="NINE_POINTS" valType="str"/>
+      <Param name="textColor" updates="None" val="white" valType="color"/>
+      <Param name="units" updates="None" val="from exp settings" valType="str"/>
+    </EyetrackerCalibrationRoutine>
   </Routines>
   <Flow>
     <Routine name="welcome"/>
@@ -1768,13 +1793,13 @@
     <Routine name="startTask"/>
     <Routine name="blank"/>
     <LoopInitiator loopType="TrialHandler" name="trials">
-      <Param name="Selected rows" updates="None" val="0, 5, 10, 15" valType="str"/>
+      <Param name="Selected rows" updates="None" val="" valType="str"/>
       <Param name="conditions" updates="None" val="None" valType="str"/>
       <Param name="conditionsFile" updates="None" val="$posFile" valType="file"/>
       <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
       <Param name="isTrials" updates="None" val="True" valType="bool"/>
       <Param name="loopType" updates="None" val="random" valType="str"/>
-      <Param name="nReps" updates="None" val="1" valType="num"/>
+      <Param name="nReps" updates="None" val="5" valType="num"/>
       <Param name="name" updates="None" val="trials" valType="code"/>
       <Param name="random seed" updates="None" val="" valType="code"/>
     </LoopInitiator>
@@ -1800,13 +1825,13 @@
     <LoopTerminator name="ratingtrials2"/>
     <Routine name="testInstr"/>
     <LoopInitiator loopType="TrialHandler" name="testtrials">
-      <Param name="Selected rows" updates="None" val="0:3" valType="str"/>
+      <Param name="Selected rows" updates="None" val="" valType="str"/>
       <Param name="conditions" updates="None" val="None" valType="str"/>
       <Param name="conditionsFile" updates="None" val="$stimFile" valType="file"/>
       <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
       <Param name="isTrials" updates="None" val="True" valType="bool"/>
       <Param name="loopType" updates="None" val="random" valType="str"/>
-      <Param name="nReps" updates="None" val="1" valType="num"/>
+      <Param name="nReps" updates="None" val="10" valType="num"/>
       <Param name="name" updates="None" val="testtrials" valType="code"/>
       <Param name="random seed" updates="None" val="" valType="code"/>
     </LoopInitiator>
