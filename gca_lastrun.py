@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on Oktober 18, 2023, at 09:41
+    on Oktober 31, 2023, at 14:19
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -44,6 +44,7 @@ score = 0
 points = 0
 
 looked_at = False
+paused = False
 # Run 'Before Experiment' code from codeFeedback
 soundFeedback = sound.Sound('A', secs=1, stereo=True, hamming=True, name='soundFeedback')
 
@@ -72,7 +73,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\Public\\Documents\\Projects\\GCA\\gaze_avoidance\\gca_lastrun.py',
+    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gaze_avoidance\\gca_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -86,7 +87,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 
 # --- Setup the Window ---
 win = visual.Window(
-    size=[1680, 1050], fullscr=True, screen=1, 
+    size=[2560, 1440], fullscr=True, screen=1, 
     winType='pyglet', allowStencil=False,
     monitor='labMonitor', color=[0,0,0], colorSpace='rgb',
     blendMode='avg', useFBO=True, 
@@ -275,7 +276,7 @@ spaceStim = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startTask" ---
 textStartTask = visual.TextStim(win=win, name='textStartTask',
-    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Sie wählen ein Bild aus, indem Sie es anblicken. Über das Auswählen eines Bildes können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines elektrischen Reizes. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren und herauszufinden, wie Sie Punkte erhalten und den elektrischen Reiz vermeiden können.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
+    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines elektrischen Reizes. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren und die elektrischen Reize zu vermeiden.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -1690,9 +1691,9 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    trials = data.TrialHandler(nReps=1.0, method='random', 
+    trials = data.TrialHandler(nReps=5.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(posFile, selection='0, 5, 10, 15'),
+        trialList=data.importConditions(posFile),
         seed=None, name='trials')
     thisExp.addLoop(trials)  # add the loop to the experiment
     thisTrial = trials.trialList[0]  # so we can initialise stimuli with some values
@@ -1912,7 +1913,16 @@ for thisBlock in blocks:
             if roi.isLookedIn:
                 looked_at = True
                 continueRoutine = False
-            
+                
+            if event.getKeys(keyList=["p"]) and not paused:
+                print("Experiment Paused - Press 'p' to continue.")
+                paused = True
+                event.waitKeys(keyList=["p"], clearEvents=True)
+                
+                print("Experiment Continued")
+                paused = False
+                event.clearEvents(eventType="keyboard")
+                
             
             # *image* updates
             if image.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
@@ -2415,7 +2425,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 1.0 repeats of 'trials'
+    # completed 5.0 repeats of 'trials'
     
     
     # --- Prepare to start Routine "painRating" ---
@@ -2858,9 +2868,9 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    testtrials = data.TrialHandler(nReps=1.0, method='random', 
+    testtrials = data.TrialHandler(nReps=10.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(stimFile, selection='0:3'),
+        trialList=data.importConditions(stimFile),
         seed=None, name='testtrials')
     thisExp.addLoop(testtrials)  # add the loop to the experiment
     thisTesttrial = testtrials.trialList[0]  # so we can initialise stimuli with some values
@@ -3000,6 +3010,14 @@ for thisBlock in blocks:
             # update/draw components on each frame
             # Run 'Each Frame' code from codeTesttrial
             roiTest.size = imageTest.size
+            
+            if defaultKeyboard.getKeys(keyList=["p"]) and not paused:
+                print("Experiment Paused - Press 'p' to continue.")
+                paused = True
+                event.waitKeys()
+            if defaultKeyboard.getKeys(keyList=["p"]) and paused:
+                print("Experiment Continued")
+                paused = False
             
             # *imageTest* updates
             if imageTest.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
@@ -3190,7 +3208,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 1.0 repeats of 'testtrials'
+    # completed 10.0 repeats of 'testtrials'
     
     
     # set up handler to look after randomisation of conditions etc
