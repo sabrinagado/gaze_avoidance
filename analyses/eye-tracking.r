@@ -1,3 +1,9 @@
+###############################################################################
+# Gaze Contingent Avoidance Project
+# Sabrina Gado & Yannik Stegmann
+# Code adapted from Mario Reutter & Janna Teigeler
+###############################################################################
+
 if(!require(tidyverse)) install.packages("tidyverse"); library(tidyverse)
 
 requirePackage = function(name, load=T) {
