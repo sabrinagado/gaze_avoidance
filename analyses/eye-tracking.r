@@ -22,8 +22,6 @@ requirePackage = function(name, load=T) {
   requirePackage("ez", load=F)
   requirePackage("TOSTER", load=F)
   requirePackage("psych", load=F)
-  requirePackage("ggforce", load=F) #for drawing circles
-  requirePackage("png") #for reading png
   requirePackage("DescTools")
 }
 
@@ -67,8 +65,8 @@ requirePackage = function(name, load=T) {
   usePointDistance = T #use point (vector) distance instead of coordinates independently?
   
   # #ROI analysis
-  # validFixTime.trial = .5 #percentage of valid fixation time within trial in order to analyze trial
-  # validFixTime.subj = .5 #percentage of trials with sufficient valid fixation time in order to analyze subject
+  validFixTime.trial = .5 #percentage of valid fixation time within trial in order to analyze trial
+  validFixTime.subj = .5 #percentage of trials with sufficient valid fixation time in order to analyze subject
   # diagnosticDwell = .5 #percentage of trials per subject that need at least one fixation towards the diagnostic ROI
   # showTrialPlots = F
   # unifyRois = T
@@ -99,7 +97,7 @@ files.log.extension = ".log"
 files.rating.prefix = "gca_"
 files.rating.extension = ".csv"
 
-path.eye = file.path(path, "data",) #eye tracking data
+path.eye = file.path(path, "data") #eye tracking data
 path.pupil = file.path(path, "data") #pupil data
 path.plots = file.path(path, "plots")
 
@@ -572,7 +570,6 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
     return(result_list)
   }
   
-  
   loadRois = function(files.roi.path) {
     roi <- data.frame(
       subject = integer(0),
@@ -626,7 +623,6 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
 }
 
 
-# baseline validation --------------------------------------------------------------------
 conditions = loadConditions(files.log) # condition
 ratings = loadRatings(files.rating, files.log) # ratings
 rois = loadRois(files.rating) # rois
@@ -650,6 +646,9 @@ saccades = loadSaccades(file.path(path.eye, "saccades.txt"), screen.height) %>%
             by=c("subject", "trial")) %>% arrange(subject, trial)
 vpn.eye = fixations$subject %>% unique() %>% setdiff(exclusions.eye.num) %>% sort()
 
+###############################################################################
+# Acquisition
+###############################################################################
 #determine valid acquisition trials by fixation time (invalid trials need not be evaluated by their baseline)
 eye.valid.trial = fixations %>% filter(grepl("acquisition", phase)) %>% # filter for acq trials
   mutate(feedbackOnset = feedbackOnset - picOnset, # realign such that 0 = picture onset
@@ -669,13 +668,14 @@ baseline.acq.validation = validateBaselines(fixations.acq.valid, messages, exclu
 baseline.acq.summary <- baseline.acq.validation$baseline.summary
 baseline.acq.trials <- baseline.acq.validation$baseline.trials
 
-baselines.acq.summary = baselines.acq.summary %>% 
+baseline.acq.summary = baseline.acq.summary %>% 
   mutate(included = invalid <= outlierLimit.eye & range_x <= maxSpread & range_y <= maxSpread)
-with(baselines.acq.summary, hist(invalid, breaks=max(ntrials), main=paste0("Valid Baselines"))); abline(v = outlierLimit.eye, col="red", lwd=2, lty=2)
+with(baseline.acq.summary, hist(invalid, breaks=max(ntrials), main=paste0("Valid Baselines"))); abline(v = outlierLimit.eye, col="red", lwd=2, lty=2)
 
-baselines.acq.summary %>% summarise(totalN = n(), includedN = sum(included), includedP = mean(included))
-baselines.acq.summary %>% group_by(subject) %>% summarise(invalid = mean(invalid)) %>% arrange(desc(invalid))
+baseline.acq.summary %>% summarise(totalN = n(), includedN = sum(included), includedP = mean(included))
+baseline.acq.summary %>% group_by(subject) %>% summarise(invalid = mean(invalid)) %>% arrange(desc(invalid))
 
+### FIXATIONS
 fixations.acq.valid <- fixations.acq.valid %>% 
   left_join(baseline.acq.trials %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial"))
 
@@ -683,7 +683,6 @@ fixations.acq.valid = fixations.acq.valid %>%
   mutate(feedbackOnset = feedbackOnset - picOnset, # realign such that 0 = picture onset
          start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
          start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
-         # end = ifelse(end > feedbackOnset + 200, feedbackOnset + 200, end), # discard fraction of fixation after feedback onset
          picOnset = picOnset - picOnset,
          dur = end - start) %>% filter(dur > 0)
 
@@ -695,6 +694,17 @@ fixations.acq.valid <- fixations.acq.valid %>%
          y_corr = y - y_divergence,
          ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
 
+fixations.acq.valid = fixations.acq.valid %>% filter(0 < start & start < feedbackOnset + 200)
+
+# Proportion of fixations on the stimuli
+fixations.acq.valid = fixations.acq.valid %>% filter(blok)
+
+fixations.acq.valid %>% 
+  # filter (trial > 32) %>% 
+  group_by(subject, condition) %>%
+  summarise(relative_frequency = mean(ROI))
+
+### SACCADES
 saccades = loadSaccades(file.path(path.eye, "saccades.txt"), screen.height) %>% 
   left_join(conditions, by=c("subject", "trial")) %>% # get conditions & other variables
   left_join(messages %>% filter(grepl("ImageOnset", event)) %>% # get image onset
@@ -711,7 +721,6 @@ saccades.acq.valid = saccades.acq.valid %>%
   mutate(feedbackOnset = feedbackOnset - picOnset, # realign such that 0 = picture onset
          start_time = start_time - picOnset, end_time = end_time - picOnset, # realign such that 0 = picture onset
          start_time = ifelse(start_time < 0, 0, start_time), # discard fraction of fixation before stimulus
-         # end = ifelse(end > feedbackOnset + 200, feedbackOnset + 200, end), # discard fraction of fixation after feedback onset
          picOnset = picOnset - picOnset,
          dur = end_time - start_time) %>% filter(dur > 0)
 
@@ -725,23 +734,26 @@ saccades.acq.valid <- saccades.acq.valid %>%
          start_y_corr = start_y - y_divergence, end_y_corr = end_y - y_divergence,  
          ROI = checkRoi(end_x_corr, end_y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
 
+# Percentage of saccades going towards the stimuli
 saccades.acq.valid = saccades.acq.valid %>% filter(start_time < feedbackOnset)
 saccades.acq.valid = saccades.acq.valid %>% filter(blok)
+saccades.acq.valid = saccades.acq.valid %>% filter(!contains_blink)
 
-# Percentage of saccades going to the stimuli
 saccades.acq.valid %>% 
   # filter (trial > 32) %>% 
   group_by(subject, condition) %>%
   summarise(relative_frequency = mean(ROI))
 
-
+###############################################################################
+# Test
+###############################################################################
 # Determine valid test trials by fixation time (invalid trials need not be evaluated by their baseline)
-end.testtrial = 1100
+end.testtrial = 11000
 eye.valid.trial = fixations  %>% filter(grepl("test", phase)) %>% # filter for test trials
   mutate(end.testtrial = end.testtrial - picOnset, # realign such that 0 = picture onset
          start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
          start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
-         end = ifelse(end > end.testtrial, end.testtrial, end), # discard fraction of fixation after feedback onset
+         end = ifelse(end > end.testtrial, end.testtrial, end), # discard fraction of fixation after end
          dur = end - start) %>% filter(dur > 0) %>% 
   group_by(subject, trial) %>% summarise(valid = sum(dur) / mean(end.testtrial))
 with(eye.valid.trial, hist(valid, breaks=seq(0, 1, length.out=20+1), main=paste0("Valid Fixation Time"))); abline(v=validFixTime.trial, col="red", lwd=3, lty=2)
@@ -755,20 +767,22 @@ baseline.test.validation = validateBaselines(fixations.test.valid, messages, exc
 baseline.test.summary <- baseline.test.validation$baseline.summary
 baseline.test.trials <- baseline.test.validation$baseline.trials
 
-baselines.test.summary = baselines.test.summary %>% 
+baseline.test.summary = baseline.test.summary %>% 
   mutate(included = invalid <= outlierLimit.eye & range_x <= maxSpread & range_y <= maxSpread)
-with(baselines.test.summary, hist(invalid, breaks=max(ntrials), main=paste0("Valid Baselines"))); abline(v = outlierLimit.eye, col="red", lwd=2, lty=2)
+with(baseline.test.summary, hist(invalid, breaks=max(ntrials), main=paste0("Valid Baselines"))); abline(v = outlierLimit.eye, col="red", lwd=2, lty=2)
 
-baselines.test.summary %>% summarise(totalN = n(), includedN = sum(included), includedP = mean(included))
-baselines.test.summary %>% group_by(subject) %>% summarise(invalid = mean(invalid)) %>% arrange(desc(invalid))
+### FIXATIONS
+baseline.test.summary %>% summarise(totalN = n(), includedN = sum(included), includedP = mean(included))
+baseline.test.summary %>% group_by(subject) %>% summarise(invalid = mean(invalid)) %>% arrange(desc(invalid))
 
 fixations.test.valid <- fixations.test.valid %>% 
   left_join(baseline.test.trials %>% mutate(trial = trial + 112) %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial"))
 
 fixations.test.valid = fixations.test.valid %>%
-  mutate(start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
+  mutate(end.testtrial = end.testtrial - picOnset,
+         start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
          start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
-         # end = ifelse(end > feedbackOnset + 200, feedbackOnset + 200, end), # discard fraction of fixation after feedback onset
+         end = ifelse(end > end.testtrial, end.testtrial, end), # discard fraction of fixation after end
          picOnset = picOnset - picOnset,
          dur = end - start) %>% filter(dur > 0)
 
@@ -780,14 +794,23 @@ fixations.test.valid <- fixations.test.valid %>%
          y_corr = y - y_divergence,
          ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
 
+# Dwell time of fixations on the stimuli
+fixations.test.valid = fixations.test.valid %>% filter(blok)
+
+fixations.test.valid %>% 
+  # filter (trial > 32) %>% 
+  group_by(subject, condition, ROI) %>%
+  summarise(duration = sum(dur) / 1000)
+
+### SACCADES
 saccades.test.valid <- saccades %>% 
   left_join(baseline.test.trials %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial"))
 
 saccades.test.valid = saccades.test.valid %>%
-  mutate(feedbackOnset = feedbackOnset - picOnset, # realign such that 0 = picture onset
+  mutate(end.testtrial = end.testtrial - picOnset, # realign such that 0 = picture onset
          start_time = start_time - picOnset, end_time = end_time - picOnset, # realign such that 0 = picture onset
          start_time = ifelse(start_time < 0, 0, start_time), # discard fraction of fixation before stimulus
-         # end = ifelse(end > feedbackOnset + 200, feedbackOnset + 200, end), # discard fraction of fixation after feedback onset
+         end_time = ifelse(end_time > end.testtrial, end.testtrial, end_time), # discard fraction of fixation after end
          picOnset = picOnset - picOnset,
          dur = end_time - start_time) %>% filter(dur > 0)
 
@@ -799,10 +822,11 @@ saccades.test.valid <- saccades.test.valid %>%
          start_y = start_y - y_divergence, end_y = end_y - y_divergence,  
          ROI = checkRoi(end_x, end_y, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
 
+# Percentage of saccades going towards the stimuli
 saccades.test.valid = saccades.test.valid %>% filter(blok)
+saccades.test.valid = saccades.test.valid %>% filter(!contains_blink)
 saccades.test.valid <- na.omit(saccades.test.valid, cols = c("ROI"))
 
-# Percentage of saccades going to the stimuli
 saccades.test.valid %>% 
   # filter (trial > 32) %>% 
   group_by(subject, condition) %>%
