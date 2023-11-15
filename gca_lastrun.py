@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 09, 2023, at 12:00
+    on November 15, 2023, at 22:44
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -1818,9 +1818,9 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    learning_trials = data.TrialHandler(nReps=1.0, method='random', 
+    learning_trials = data.TrialHandler(nReps=2.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(posFile, selection='0, 5, 10, 15'),
+        trialList=data.importConditions(posFile),
         seed=None, name='learning_trials')
     thisExp.addLoop(learning_trials)  # add the loop to the experiment
     thisLearning_trial = learning_trials.trialList[0]  # so we can initialise stimuli with some values
@@ -2214,6 +2214,8 @@ for thisBlock in blocks:
         image_w = image.size[0]
         image_h = image.size[1]
         imagesize_test = [image_w * 1.2, image_h * 1.2]
+        
+        print(image.pos)
         learning_trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
            learning_trials.addData('roi.timesOn', roi.timesOn)
@@ -2556,7 +2558,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 1.0 repeats of 'learning_trials'
+    # completed 2.0 repeats of 'learning_trials'
     
     
     # --- Prepare to start Routine "repeatTask" ---
@@ -3127,6 +3129,8 @@ for thisBlock in blocks:
         image_w = image.size[0]
         image_h = image.size[1]
         imagesize_test = [image_w * 1.2, image_h * 1.2]
+        
+        print(image.pos)
         trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
            trials.addData('roi.timesOn', roi.timesOn)
