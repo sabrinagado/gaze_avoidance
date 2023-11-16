@@ -73,9 +73,9 @@ requirePackage = function(name, load=T) {
   # binResolution = 500 #resolution of temporal bins in ms
   # bins = seq(0, trialEnd, binResolution) #bins for temporal dynamic analysis (in ms)
   # 
-  # wsx <- 1920 ; wsy <- 1080 #screen resolution (24" ASUS VG248QE)
-  # pixsize <- 0.27675  # Pixel size in mm
-  # distance <- 560 # Distance Camera - Eye 560 mm (chin rest with remote tracking)
+  wsx <- 1920 ; wsy <- 1080 #screen resolution (24" ASUS VG248QE)
+  pixsize <- 0.27675  # Pixel size in mm
+  distance <- 560 # Distance Camera - Eye 560 mm (chin rest with remote tracking)
   # 
   # #statistical analysis
   # z.max = 2 #winsorize dependent variables to a z value of 2
@@ -265,6 +265,10 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
   distfix <- function(x,y,distance) {
     distcalc <- sqrt(x^2+y^2+distance^2)
     return(distcalc)
+  }
+  
+  euclideanDistance <- function(vect1, vect2){
+    reutnr(sqrt(sum((vect1 - vect2)^2)))
   }
   
   # Calculate angle between 2 vectors (to compute scanpath)
@@ -577,7 +581,11 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
       roi.xleft = integer(0),
       roi.xright = integer(0),
       roi.ybottom = integer(0),
-      roi.ytop = integer(0)
+      roi.ytop = integer(0),
+      quadrant.xleft = integer(0),
+      quadrant.xright = integer(0),
+      quadrant.ybottom = integer(0),
+      quadrant.ytop = integer(0)
     )
     for (file.roi.path in files.roi.path) {
       # file.roi.path = files.roi.path[1]
@@ -595,11 +603,15 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
                roi.xleft = x_position - image.acq.width / 2,
                roi.xright = x_position + image.acq.width / 2,
                roi.ytop = y_position - image.acq.height / 2,
-               roi.ybottom = y_position + image.acq.height / 2,)
+               roi.ybottom = y_position + image.acq.height / 2,
+               quadrant.xleft = ifelse(x_position_norm < 0, 0, screen.width / 2),
+               quadrant.xright = ifelse(x_position_norm < 0, screen.width / 2, screen.width),
+               quadrant.ytop = ifelse(y_position_norm < 0, 0, screen.height / 2),
+               quadrant.ybottom = ifelse(y_position_norm < 0, screen.height / 2, screen.height))
       roi_acq <- roi_acq %>% 
         mutate(subject = file.roi.path %>% sub(".*gca_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
       roi_acq <- roi_acq %>%
-        select(subject, trial, roi.xleft, roi.xright, roi.ybottom, roi.ytop)
+        select(subject, trial, roi.xleft, roi.xright, roi.ybottom, roi.ytop, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop)
       
       roi <- rbind(roi, roi_acq)
       
@@ -609,7 +621,11 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
         roi.xleft = rep(screen.width / 2 - image.test.width / 2, 40),
         roi.xright = rep(screen.width / 2 + image.test.width / 2, 40),
         roi.ytop = rep(screen.height / 2 - image.test.height / 2, 40),
-        roi.ybottom = rep(screen.height / 2 + image.test.height / 2, 40))
+        roi.ybottom = rep(screen.height / 2 + image.test.height / 2, 40),
+        quadrant.xleft = NA,
+        quadrant.xright = NA,
+        quadrant.ytop = NA,
+        quadrant.ybottom = NA)
       
       roi <- rbind(roi, roi_test)
     }
@@ -620,6 +636,8 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
   checkRoi <- function(x, y, rect_xleft, rect_xright, rect_ybottom, rect_ytop) {
     return(x >= rect_xleft & x <= rect_xright & y <= rect_ybottom & y >= rect_ytop)
   }
+  
+  
 }
 
 
@@ -692,7 +710,8 @@ fixations.acq.valid <- fixations.acq.valid %>%
 fixations.acq.valid <- fixations.acq.valid %>% 
   mutate(x_corr = x - x_divergence,
          y_corr = y - y_divergence,
-         ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
+         ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop),
+         Quadrant = checkRoi(x_corr, y_corr, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop))
 
 fixations.acq.valid = fixations.acq.valid %>% filter(0 < start & start < feedbackOnset + 200)
 
@@ -702,7 +721,14 @@ fixations.acq.valid = fixations.acq.valid %>% filter(blok)
 fixations.acq.valid %>% 
   # filter (trial > 32) %>% 
   group_by(subject, condition) %>%
-  summarise(relative_frequency = mean(ROI))
+  summarise(relative_frequency_ROI = mean(ROI), relative_frequency_Quadrant = mean(Quadrant))
+
+# Dwell time of fixations on the stimuli
+fixations.acq.valid %>% 
+  # filter (trial > 32) %>% 
+  group_by(subject, condition, Quadrant) %>%
+  summarise(duration = sum(dur) / 1000)
+
 
 ### SACCADES
 saccades = loadSaccades(file.path(path.eye, "saccades.txt"), screen.height) %>% 
@@ -732,7 +758,11 @@ saccades.acq.valid <- saccades.acq.valid %>%
 saccades.acq.valid <- saccades.acq.valid %>% 
   mutate(start_x_corr = start_x - x_divergence, end_x_corr = end_x - x_divergence,
          start_y_corr = start_y - y_divergence, end_y_corr = end_y - y_divergence,  
-         ROI = checkRoi(end_x_corr, end_y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
+         ROI = checkRoi(end_x_corr, end_y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop),
+         Quadrant = checkRoi(end_x_corr, end_y_corr, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop))
+
+saccades.acq.valid = saccades.acq.valid %>% 
+  rowwise() %>% mutate(angle = angle(c(start_x_corr, start_y_corr), c(end_x_corr, end_y_corr)))
 
 # Percentage of saccades going towards the stimuli
 saccades.acq.valid = saccades.acq.valid %>% filter(start_time < feedbackOnset)
@@ -742,7 +772,7 @@ saccades.acq.valid = saccades.acq.valid %>% filter(!contains_blink)
 saccades.acq.valid %>% 
   # filter (trial > 32) %>% 
   group_by(subject, condition) %>%
-  summarise(relative_frequency = mean(ROI))
+  summarise(relative_frequency_ROI = mean(ROI), relative_frequency_Quadrant = mean(Quadrant))
 
 ###############################################################################
 # Test
