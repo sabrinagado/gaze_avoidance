@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 15, 2023, at 22:44
+    on November 16, 2023, at 11:06
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -29,6 +29,10 @@ import sys  # to get file system encoding
 import psychopy.iohub as io
 from psychopy.hardware import keyboard
 
+# Run 'Before Experiment' code from codeBlank
+iti = 1.5
+# Run 'Before Experiment' code from codeBlank
+iti = 1.5
 # Run 'Before Experiment' code from codeTrial
 feedback_color = (0,0,0)
 feedback_opacity = 0
@@ -47,6 +51,10 @@ looked_at = False
 paused = False
 # Run 'Before Experiment' code from codeFeedback
 soundFeedback = sound.Sound('A', secs=1, stereo=True, hamming=True, name='soundFeedback')
+# Run 'Before Experiment' code from codeBlank
+iti = 1.5
+# Run 'Before Experiment' code from codeBlank
+iti = 1.5
 # Run 'Before Experiment' code from codeTrial
 feedback_color = (0,0,0)
 feedback_opacity = 0
@@ -1332,27 +1340,6 @@ if spaceETCalibration.keys != None:  # we had a response
 thisExp.nextEntry()
 # the Routine "startETCalibration" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
-# define target for ETCalibration
-ETCalibrationTarget = visual.TargetStim(win, 
-    name='ETCalibrationTarget',
-    radius=0.01, fillColor='', borderColor='black', lineWidth=2.0,
-    innerRadius=0.0035, innerFillColor='white', innerBorderColor='black', innerLineWidth=2.0,
-    colorSpace='rgb', units=None
-)
-# define parameters for ETCalibration
-ETCalibration = hardware.eyetracker.EyetrackerCalibration(win, 
-    eyetracker, ETCalibrationTarget,
-    units=None, colorSpace='rgb',
-    progressMode='time', targetDur=1.0, expandScale=1.2,
-    targetLayout='NINE_POINTS', randomisePos=True, textColor='white',
-    movementAnimation=True, targetDelay=1.0
-)
-# run calibration
-ETCalibration.run()
-# clear any keypresses from during ETCalibration so they don't interfere with the experiment
-defaultKeyboard.clearEvents()
-# the Routine "ETCalibration" was not non-slip safe, so reset the non-slip timer
-routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
 blocks = data.TrialHandler(nReps=1.0, method='random', 
@@ -1749,6 +1736,9 @@ for thisBlock in blocks:
     continueRoutine = True
     routineForceEnded = False
     # update component parameters for each repeat
+    blankScreen.setText('')
+    # Run 'Begin Routine' code from codeBlank
+    iti = 1.0 + random()
     # keep track of which components have finished
     blankComponents = [blankScreen]
     for thisComponent in blankComponents:
@@ -1784,7 +1774,7 @@ for thisBlock in blocks:
             blankScreen.setAutoDraw(True)
         if blankScreen.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > blankScreen.tStartRefresh + 1.0 + random()-frameTolerance:
+            if tThisFlipGlobal > blankScreen.tStartRefresh + iti-frameTolerance:
                 # keep track of stop time/frame for later
                 blankScreen.tStop = t  # not accounting for scr refresh
                 blankScreen.frameNStop = frameN  # exact frame index
@@ -1814,6 +1804,8 @@ for thisBlock in blocks:
     for thisComponent in blankComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
+    # Run 'End Routine' code from codeBlank
+    print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
     # the Routine "blank" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -1930,6 +1922,9 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
+        blankScreen.setText('')
+        # Run 'Begin Routine' code from codeBlank
+        iti = 1.0 + random()
         # keep track of which components have finished
         blankComponents = [blankScreen]
         for thisComponent in blankComponents:
@@ -1965,7 +1960,7 @@ for thisBlock in blocks:
                 blankScreen.setAutoDraw(True)
             if blankScreen.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > blankScreen.tStartRefresh + 1.0 + random()-frameTolerance:
+                if tThisFlipGlobal > blankScreen.tStartRefresh + iti-frameTolerance:
                     # keep track of stop time/frame for later
                     blankScreen.tStop = t  # not accounting for scr refresh
                     blankScreen.frameNStop = frameN  # exact frame index
@@ -1995,6 +1990,8 @@ for thisBlock in blocks:
         for thisComponent in blankComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        # Run 'End Routine' code from codeBlank
+        print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
         # the Routine "blank" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         
@@ -2214,8 +2211,6 @@ for thisBlock in blocks:
         image_w = image.size[0]
         image_h = image.size[1]
         imagesize_test = [image_w * 1.2, image_h * 1.2]
-        
-        print(image.pos)
         learning_trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
            learning_trials.addData('roi.timesOn', roi.timesOn)
@@ -2664,6 +2659,9 @@ for thisBlock in blocks:
     continueRoutine = True
     routineForceEnded = False
     # update component parameters for each repeat
+    blankScreen.setText('')
+    # Run 'Begin Routine' code from codeBlank
+    iti = 1.0 + random()
     # keep track of which components have finished
     blankComponents = [blankScreen]
     for thisComponent in blankComponents:
@@ -2699,7 +2697,7 @@ for thisBlock in blocks:
             blankScreen.setAutoDraw(True)
         if blankScreen.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > blankScreen.tStartRefresh + 1.0 + random()-frameTolerance:
+            if tThisFlipGlobal > blankScreen.tStartRefresh + iti-frameTolerance:
                 # keep track of stop time/frame for later
                 blankScreen.tStop = t  # not accounting for scr refresh
                 blankScreen.frameNStop = frameN  # exact frame index
@@ -2729,6 +2727,8 @@ for thisBlock in blocks:
     for thisComponent in blankComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
+    # Run 'End Routine' code from codeBlank
+    print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
     # the Routine "blank" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -2845,6 +2845,9 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
+        blankScreen.setText('')
+        # Run 'Begin Routine' code from codeBlank
+        iti = 1.0 + random()
         # keep track of which components have finished
         blankComponents = [blankScreen]
         for thisComponent in blankComponents:
@@ -2880,7 +2883,7 @@ for thisBlock in blocks:
                 blankScreen.setAutoDraw(True)
             if blankScreen.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > blankScreen.tStartRefresh + 1.0 + random()-frameTolerance:
+                if tThisFlipGlobal > blankScreen.tStartRefresh + iti-frameTolerance:
                     # keep track of stop time/frame for later
                     blankScreen.tStop = t  # not accounting for scr refresh
                     blankScreen.frameNStop = frameN  # exact frame index
@@ -2910,6 +2913,8 @@ for thisBlock in blocks:
         for thisComponent in blankComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        # Run 'End Routine' code from codeBlank
+        print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
         # the Routine "blank" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         
@@ -3129,8 +3134,6 @@ for thisBlock in blocks:
         image_w = image.size[0]
         image_h = image.size[1]
         imagesize_test = [image_w * 1.2, image_h * 1.2]
-        
-        print(image.pos)
         trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
            trials.addData('roi.timesOn', roi.timesOn)
