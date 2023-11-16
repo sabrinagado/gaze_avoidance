@@ -48,7 +48,7 @@ requirePackage = function(name, load=T) {
   image.test.height = 450 * 1.2 # height of picture in test phase in px
   image.test.width = 426 * 1.2 # width of picture in test phase in px
   
-  vps = vps <- seq(1, 8)
+  vps = vps <- seq(1, 14)
   exclusions.eye.num = c() %>% c(exclusions) #a priori exclusions, e.g. calibration not successful
   # numToEye = function(nums) return(nums %>% formatC(width=2, format="d", flag="0") %>% paste0("gca_", .)) #add leading zeros and prefix "vp"
   # exclusions.eye = exclusions.eye.num %>% numToEye()
@@ -73,8 +73,9 @@ requirePackage = function(name, load=T) {
   # binResolution = 500 #resolution of temporal bins in ms
   # bins = seq(0, trialEnd, binResolution) #bins for temporal dynamic analysis (in ms)
   # 
-  wsx <- 1920 ; wsy <- 1080 #screen resolution (24" ASUS VG248QE)
-  pixsize <- 0.27675  # Pixel size in mm
+  screen.width <- 1920; screen.height <- 1080 #screen resolution (24" ASUS VG248QE)
+  screen.width.cm <- 53.136; screen.height.cm <- 29.889
+  pixsize_in_cm <- screen.width.cm / screen.width  # Pixel size in cm
   distance <- 560 # Distance Camera - Eye 560 mm (chin rest with remote tracking)
   # 
   # #statistical analysis
@@ -191,10 +192,6 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
     return(insample==1)
   }
   
-  pointDistance = function(x1, y1, x2, y2) {
-    return(sqrt((x1 - x2)^2 + (y1 - y2)^2))
-  }
-  
   outlier_remove_point = function(x, y, z=3, insample=NULL) {
     if (length(x) != length(y)) warning("outlier_remove_point: x- and y-coordinates of unequal length.")
     if (is.null(insample)) insample = T %>% rep(min(c(length(x), length(y))))
@@ -249,16 +246,20 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
     return(distance*tan(angle*pi/180))
   }
   
+  cmToDeg = function(cm, distance) {
+    return(tan(cm/distance)*180/pi)
+  }
+  
   degToPix = function(angle, distance, resolution, screenSize) {
     return(degToCm(angle, distance) * resolution / screenSize)
   }
   
-  cmToPix = function(cm, resolution, screenSize) {
-    return(cm * resolution / screenSize)
+  cmToPix <- function(point_in_cm, screenSize_px, screenSize_cm) {
+    return(point_in_cm * screenSize_px / screenSize_cm)
   }
   
-  cmToDeg = function(cm, distance) {
-    return(tan(cm/distance)*180/pi)
+  pixToCm <- function(point_in_pixels, screenSize_px, screenSize_cm) {
+    return(point_in_pixels * screenSize_cm / screenSize_px)
   }
   
   # Calculate distance to monitor for deflected fixations
@@ -267,19 +268,29 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
     return(distcalc)
   }
   
-  euclideanDistance <- function(vect1, vect2){
-    reutnr(sqrt(sum((vect1 - vect2)^2)))
+  # Calculate angle between 2 points
+  # https://www.sr-research.com/eye-tracking-blog/background/visual-angle/
+  pointDistance = function(x1, y1, x2, y2) {
+    return(sqrt((x1 - x2)^2 + (y1 - y2)^2))
   }
   
-  # Calculate angle between 2 vectors (to compute scanpath)
-  angle <- function(x,y){
-    dot.prod <- x%*%y 
-    norm.x <- norm(x,type="2")
-    norm.y <- norm(y,type="2")
-    theta <- acos(dot.prod / (norm.x * norm.y))
+  visangle <- function(x1, y1, x2, y2, screen.distance){
+    # x1 = 27.79677; x2 = 9.287730; y1 = 14.28584; y2 = 23.695335
+    size <- pointDistance(x1, y1, x2, y2)
+    theta <- atan(size/screen.distance)
     theta.deg <- theta/pi*180
     as.numeric(theta.deg)
   }
+  
+  # # Calculate angle between 2 vectors (to compute scanpath)
+  # angle <- function(x,y){
+  #   dot.prod <- x%*%y 
+  #   norm.x <- norm(x,type="2")
+  #   norm.y <- norm(y,type="2")
+  #   theta <- acos(dot.prod / (norm.x * norm.y))
+  #   theta.deg <- theta/pi*180
+  #   as.numeric(theta.deg)
+  # }
   
   loadConditions = function(files.log.path) {
     conds <- data.frame(
@@ -636,8 +647,6 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
   checkRoi <- function(x, y, rect_xleft, rect_xright, rect_ybottom, rect_ytop) {
     return(x >= rect_xleft & x <= rect_xright & y <= rect_ybottom & y >= rect_ytop)
   }
-  
-  
 }
 
 
@@ -685,6 +694,9 @@ fixations.acq.valid = eye.valid.trial %>% filter(valid > validFixTime.trial) %>%
 baseline.acq.validation = validateBaselines(fixations.acq.valid, messages, exclusions, maxDeviation_rel, maxSpread, saveBaselinePlots, postfix="acq")
 baseline.acq.summary <- baseline.acq.validation$baseline.summary
 baseline.acq.trials <- baseline.acq.validation$baseline.trials
+baseline.acq.trials <- baseline.acq.trials %>% 
+  left_join(baseline.acq.summary %>% select(subject, invalid) %>% mutate(subject = subject %>% as.numeric())) %>% 
+  mutate(blok = ifelse(invalid > outlierLimit.eye, FALSE, blok))
 
 baseline.acq.summary = baseline.acq.summary %>% 
   mutate(included = invalid <= outlierLimit.eye & range_x <= maxSpread & range_y <= maxSpread)
@@ -692,42 +704,6 @@ with(baseline.acq.summary, hist(invalid, breaks=max(ntrials), main=paste0("Valid
 
 baseline.acq.summary %>% summarise(totalN = n(), includedN = sum(included), includedP = mean(included))
 baseline.acq.summary %>% group_by(subject) %>% summarise(invalid = mean(invalid)) %>% arrange(desc(invalid))
-
-### FIXATIONS
-fixations.acq.valid <- fixations.acq.valid %>% 
-  left_join(baseline.acq.trials %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial"))
-
-fixations.acq.valid = fixations.acq.valid %>%
-  mutate(feedbackOnset = feedbackOnset - picOnset, # realign such that 0 = picture onset
-         start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
-         start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
-         picOnset = picOnset - picOnset,
-         dur = end - start) %>% filter(dur > 0)
-
-fixations.acq.valid <- fixations.acq.valid %>% 
-  left_join(rois, by=c("subject", "trial"))
-
-fixations.acq.valid <- fixations.acq.valid %>% 
-  mutate(x_corr = x - x_divergence,
-         y_corr = y - y_divergence,
-         ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop),
-         Quadrant = checkRoi(x_corr, y_corr, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop))
-
-fixations.acq.valid = fixations.acq.valid %>% filter(0 < start & start < feedbackOnset + 200)
-
-# Proportion of fixations on the stimuli
-fixations.acq.valid = fixations.acq.valid %>% filter(blok)
-
-fixations.acq.valid %>% 
-  # filter (trial > 32) %>% 
-  group_by(subject, condition) %>%
-  summarise(relative_frequency_ROI = mean(ROI), relative_frequency_Quadrant = mean(Quadrant))
-
-# Dwell time of fixations on the stimuli
-fixations.acq.valid %>% 
-  # filter (trial > 32) %>% 
-  group_by(subject, condition, Quadrant) %>%
-  summarise(duration = sum(dur) / 1000)
 
 
 ### SACCADES
@@ -761,18 +737,215 @@ saccades.acq.valid <- saccades.acq.valid %>%
          ROI = checkRoi(end_x_corr, end_y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop),
          Quadrant = checkRoi(end_x_corr, end_y_corr, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop))
 
-saccades.acq.valid = saccades.acq.valid %>% 
-  rowwise() %>% mutate(angle = angle(c(start_x_corr, start_y_corr), c(end_x_corr, end_y_corr)))
+saccades.acq.valid <- saccades.acq.valid %>% 
+  mutate(outcome_corr = ifelse(ROI & str_detect(condition, "plus"), "shock", ifelse(ROI & str_detect(condition, "minus"), "reward", NA)))
+
+saccades.acq.valid <- saccades.acq.valid %>% 
+  group_by(subject) %>%
+  arrange(trial, match(ROI, c(TRUE, FALSE))) %>% 
+  distinct(trial, .keep_all = TRUE) %>% 
+  arrange(subject, trial) %>% 
+  ungroup
+
+saccades.acq.valid <- saccades.acq.valid %>% 
+  mutate(outcome = coalesce(outcome, "none")) %>% 
+  mutate(outcome_corr = coalesce(outcome_corr, "none")) %>%
+  mutate(outcomeok = ifelse(outcome == outcome_corr, TRUE, FALSE))
+
+saccades.acq.analysis = saccades.acq.valid %>% 
+  mutate(start_x_corr_cm = pixToCm(start_x_corr, screen.width, screen.width.cm),
+         end_x_corr_cm = pixToCm(end_x_corr, screen.width, screen.width.cm),
+         start_y_corr_cm = pixToCm(start_y_corr, screen.height, screen.height.cm),
+         end_y_corr_cm = pixToCm(end_y_corr, screen.height, screen.height.cm)) %>% 
+  mutate(angle = visangle(start_x_corr_cm, start_y_corr_cm, end_x_corr_cm, end_y_corr_cm, distance)) 
 
 # Percentage of saccades going towards the stimuli
-saccades.acq.valid = saccades.acq.valid %>% filter(start_time < feedbackOnset)
-saccades.acq.valid = saccades.acq.valid %>% filter(blok)
-saccades.acq.valid = saccades.acq.valid %>% filter(!contains_blink)
+saccades.acq.prop <- saccades.acq.analysis %>% 
+  filter (trial >= 32) %>%
+  filter(blok) %>% 
+  filter(outcomeok) %>%
+  filter(!contains_blink) %>%
+  summarise(absolute_frequency_ROI = sum(ROI & start_time < feedbackOnset & angle >= 1), relative_frequency_ROI = mean(ROI & start_time < feedbackOnset & angle >= 1), relative_frequency_Quadrant = mean(Quadrant & start_time < feedbackOnset & angle >= 1), .by=c(subject, condition)) 
+  
+saccades.acq.roi.summary <- saccades.acq.prop %>% 
+  summarise(Mean = mean(relative_frequency_ROI), SD = sd(relative_frequency_ROI), .by=condition)
 
-saccades.acq.valid %>% 
-  # filter (trial > 32) %>% 
-  group_by(subject, condition) %>%
-  summarise(relative_frequency_ROI = mean(ROI), relative_frequency_Quadrant = mean(Quadrant))
+ggplot(saccades.acq.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Proportion of Trials with a Saccade to the Stimulus", x = "Conditions", y = "Proportion") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "saccades_proportion_roi.png"), width=1800, height=3000, units="px")
+
+# Percentage of saccades going towards the quadrant
+saccades.acq.quad.summary <- saccades.acq.prop %>% 
+  summarise(Mean = mean(relative_frequency_Quadrant), SD = sd(relative_frequency_Quadrant), .by=condition)
+
+ggplot(saccades.acq.quad.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Proportion of Trials with a Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Proportion") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "saccades_proportion_quad.png"), width=1800, height=3000, units="px")
+
+# Latency to first saccade going towards the stimuli
+saccades.acq.lat.roi <- saccades.acq.analysis %>% 
+  filter (trial >= 32) %>%
+  filter(blok) %>% 
+  filter(outcomeok) %>%
+  filter(!contains_blink) %>%
+  filter(ROI & start_time < feedbackOnset & angle >= 1) %>% 
+  summarise(latency = start_time, .by=c(subject, condition)) 
+
+saccades.acq.lat.roi.summary <- saccades.acq.lat.roi %>% 
+  summarise(Mean = mean(latency), SD = sd(latency), .by=condition)
+
+ggplot(saccades.acq.lat.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Latency to first Saccade to the Stimulus", x = "Conditions", y = "Latency [ms]") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "saccades_latency_roi.png"), width=1800, height=3000, units="px")
+
+# Latency to first saccade going towards the quadrant of stimuli
+saccades.acq.lat.quad <- saccades.acq.analysis %>% 
+  filter (trial >= 32) %>%
+  filter(blok) %>% 
+  filter(outcomeok) %>%
+  filter(!contains_blink) %>%
+  filter(ROI & start_time < feedbackOnset & angle >= 1) %>% 
+  summarise(latency = start_time, .by=c(subject, condition)) 
+
+saccades.acq.lat.quad.summary <- saccades.acq.lat.quad %>% 
+  summarise(Mean = mean(latency), SD = sd(latency), .by=condition)
+
+ggplot(saccades.acq.lat.quad.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Latency to first Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Latency [ms]") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "saccades_latency_quad.png"), width=1800, height=3000, units="px")
+
+# Length of saccade going towards the stimuli
+saccades.acq.len.roi <- saccades.acq.analysis %>% 
+  filter (trial >= 32) %>%
+  filter(blok) %>% 
+  filter(outcomeok) %>%
+  filter(!contains_blink) %>%
+  filter(ROI & start_time < feedbackOnset & angle >= 1) %>% 
+  summarise(length = angle, .by=c(subject, condition)) 
+
+saccades.acq.len.roi.summary <- saccades.acq.len.roi %>% 
+  summarise(Mean = mean(length), SD = sd(length), .by=condition)
+
+ggplot(saccades.acq.len.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Length of Saccade to the Stimulus", x = "Conditions", y = "Length [degree visual angle]") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "saccades_length_roi.png"), width=1800, height=3000, units="px")
+
+# Latency to first saccade going towards the quadrant of stimuli
+saccades.acq.len.quad <- saccades.acq.analysis %>% 
+  filter (trial >= 32) %>%
+  filter(blok) %>% 
+  filter(outcomeok) %>%
+  filter(!contains_blink) %>%
+  filter(ROI & start_time < feedbackOnset & angle >= 1) %>% 
+  summarise(length = angle, .by=c(subject, condition)) 
+
+saccades.acq.len.quad.summary <- saccades.acq.len.quad %>% 
+  summarise(Mean = mean(length), SD = sd(length), .by=condition)
+
+ggplot(saccades.acq.len.quad.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Length of Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Length [degree visual angle]") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "saccades_length_quad.png"), width=1800, height=3000, units="px")
+
+# ### FIXATIONS
+# fixations.acq.valid <- fixations.acq.valid %>% 
+#   left_join(baseline.acq.trials %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial"))
+# 
+# fixations.acq.valid = fixations.acq.valid %>%
+#   mutate(feedbackOnset = feedbackOnset - picOnset, # realign such that 0 = picture onset
+#          start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
+#          start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
+#          picOnset = picOnset - picOnset,
+#          dur = end - start) %>% filter(dur > 0)
+# 
+# fixations.acq.valid <- fixations.acq.valid %>% 
+#   left_join(rois, by=c("subject", "trial"))
+# 
+# fixations.acq.valid <- fixations.acq.valid %>% 
+#   mutate(x_corr = x - x_divergence,
+#          y_corr = y - y_divergence,
+#          ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop),
+#          Quadrant = checkRoi(x_corr, y_corr, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop))
+# 
+# fixations.acq.valid <- fixations.acq.valid %>% 
+#   left_join(saccades.acq.valid %>% select("subject", "trial", "outcomeok"), by=c("subject", "trial")) %>% 
+#   mutate(outcomeok = coalesce(outcomeok, TRUE))
+# 
+# fixations.acq.valid = fixations.acq.valid %>% filter(0 < start & start < feedbackOnset + 200)
+# 
+# # Proportion of fixations on the stimuli
+# fixations.acq.valid %>% 
+#   # filter (trial > 32) %>% 
+#   filter(blok) %>% 
+#   filter(outcomeok) %>%
+#   group_by(subject, condition) %>%
+#   summarise(relative_frequency_ROI = mean(ROI), relative_frequency_Quadrant = mean(Quadrant))
+# 
+# # Dwell time of fixations in respective quadrant
+# fixations.acq.valid %>% 
+#   # filter (trial > 32) %>% 
+#   group_by(subject, condition, Quadrant) %>%
+#   summarise(duration = sum(dur) / 1000)
+
 
 ###############################################################################
 # Test
@@ -796,6 +969,9 @@ fixations.test.valid = eye.valid.trial %>% filter(valid > validFixTime.trial) %>
 baseline.test.validation = validateBaselines(fixations.test.valid, messages, exclusions, maxDeviation_rel, maxSpread, saveBaselinePlots, postfix="test")
 baseline.test.summary <- baseline.test.validation$baseline.summary
 baseline.test.trials <- baseline.test.validation$baseline.trials
+baseline.test.trials <- baseline.test.trials %>% 
+  left_join(baseline.test.summary %>% select(subject, invalid) %>% mutate(subject = subject %>% as.numeric())) %>% 
+  mutate(blok = ifelse(invalid > outlierLimit.eye, FALSE, blok))
 
 baseline.test.summary = baseline.test.summary %>% 
   mutate(included = invalid <= outlierLimit.eye & range_x <= maxSpread & range_y <= maxSpread)
@@ -822,15 +998,78 @@ fixations.test.valid <- fixations.test.valid %>%
 fixations.test.valid <- fixations.test.valid %>% 
   mutate(x_corr = x - x_divergence,
          y_corr = y - y_divergence,
-         ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
+         ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop)) %>% 
+  ungroup
 
-# Dwell time of fixations on the stimuli
-fixations.test.valid = fixations.test.valid %>% filter(blok)
+# Dwell Time On The Stimulus
+fixations.test.dwell <- fixations.test.valid %>% 
+  filter(blok) %>% 
+  filter(ROI) %>% 
+  summarise(dwell.time = sum(dur), .by=c(subject, condition)) 
 
-fixations.test.valid %>% 
-  # filter (trial > 32) %>% 
-  group_by(subject, condition, ROI) %>%
-  summarise(duration = sum(dur) / 1000)
+fixations.test.dwell.summary <- fixations.test.dwell %>% 
+  summarise(Mean = mean(dwell.time), SD = sd(dwell.time), .by=condition)
+
+ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Dwell Time On the Stimulus", x = "Conditions", y = "Dwell Time [ms]") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "fixations_dwell_time_on_test.png"), width=1800, height=3000, units="px")
+
+# Dwell Time Off The Stimulus
+fixations.test.dwell <- fixations.test.valid %>% 
+  filter(blok) %>% 
+  filter(!ROI) %>% 
+  summarise(dwell.time = sum(dur), .by=c(subject, condition)) 
+
+fixations.test.dwell.summary <- fixations.test.dwell %>% 
+  summarise(Mean = mean(dwell.time), SD = sd(dwell.time), .by=condition)
+
+ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Dwell Time Off the Stimulus", x = "Conditions", y = "Dwell Time [ms]") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "fixations_dwell_time_off_test.png"), width=1800, height=3000, units="px")
+
+# Percentage of fixation going towards the stimuli
+fixations.test.prop <- fixations.test.valid %>% 
+  filter(blok) %>%
+  summarise(absolute_frequency_ROI = sum(ROI), relative_frequency_ROI = mean(ROI), .by=c(subject, condition)) 
+
+
+fixations.test.roi.summary <- fixations.test.prop %>% 
+  summarise(Mean = mean(relative_frequency_ROI), SD = sd(relative_frequency_ROI), .by=condition)
+
+ggplot(fixations.test.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Proportion of Fixations on the Stimulus", x = "Conditions", y = "Proportion]") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "fixations_proportion_on_test.png"), width=1800, height=3000, units="px")
+
 
 ### SACCADES
 saccades.test.valid <- saccades %>% 
@@ -848,16 +1087,53 @@ saccades.test.valid <- saccades.test.valid %>%
   left_join(rois, by=c("subject", "trial"))
 
 saccades.test.valid <- saccades.test.valid %>% 
-  mutate(start_x = start_x - x_divergence, end_x = end_x - x_divergence,
-         start_y = start_y - y_divergence, end_y = end_y - y_divergence,  
-         ROI = checkRoi(end_x, end_y, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
+  mutate(start_x_corr = start_x - x_divergence, end_x_corr = end_x - x_divergence,
+         start_y_corr = start_y - y_divergence, end_y_corr = end_y - y_divergence,  
+         ROI = checkRoi(end_x_corr, end_y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
 
-# Percentage of saccades going towards the stimuli
-saccades.test.valid = saccades.test.valid %>% filter(blok)
-saccades.test.valid = saccades.test.valid %>% filter(!contains_blink)
-saccades.test.valid <- na.omit(saccades.test.valid, cols = c("ROI"))
+saccades.test.analysis = saccades.test.valid %>% 
+  mutate(start_x_corr_cm = pixToCm(start_x_corr, screen.width, screen.width.cm),
+         end_x_corr_cm = pixToCm(end_x_corr, screen.width, screen.width.cm),
+         start_y_corr_cm = pixToCm(start_y_corr, screen.height, screen.height.cm),
+         end_y_corr_cm = pixToCm(end_y_corr, screen.height, screen.height.cm)) %>% 
+  mutate(angle = visangle(start_x_corr_cm, start_y_corr_cm, end_x_corr_cm, end_y_corr_cm, distance)) 
 
-saccades.test.valid %>% 
-  # filter (trial > 32) %>% 
-  group_by(subject, condition) %>%
-  summarise(relative_frequency = mean(ROI))
+# Latency to first saccade going towards the quadrant of stimuli
+saccades.test.lat.roi <- saccades.test.analysis %>% 
+  group_by(subject, trial) %>%
+  filter(!ROI) %>%
+  distinct(ROI, .keep_all = TRUE) %>% 
+  ungroup %>%
+  filter(blok) %>% 
+  filter(!contains_blink) %>%
+  filter(!ROI & angle >= 1) %>% 
+  summarise(latency = start_time, .by=c(subject, condition)) 
+
+saccades.test.lat.roi.summary <- saccades.test.lat.roi %>% 
+  summarise(Mean = mean(latency), SD = sd(latency), .by=condition)
+
+ggplot(saccades.test.lat.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Latency to first Saccade Away from the Stimulus", x = "Conditions", y = "Latency [ms]") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "saccades_latency_off_test.png"), width=1800, height=3000, units="px")
+
+
+###############################################################################
+# Messages: Jitter Check
+###############################################################################
+messages_image <- messages %>% 
+  filter(grepl("ImageOnset", event)) %>% 
+  filter(!grepl("Test", event))
+with(messages_image, hist(time, main=paste0("Image Onset")))
+
+
+
