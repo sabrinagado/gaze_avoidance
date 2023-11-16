@@ -57,7 +57,7 @@ requirePackage = function(name, load=T) {
   #baseline validation
   baseline = c(700, 1000) #Baseline in ms relative to stimulus onset; min(baseline) = start; max(baseline) = end
   # useAllBaselines = list("83" = 2, "84" = 3) #manually allow all baselines of vp83 phase 2 (Gen1) & vp84 phase 3 (Gen2)
-  saveBaselinePlots = F
+  saveBaselinePlots = TRUE
   driftPlots = T #c("vp30", "vp33")
   maxDeviation_rel = 3 #max abs value of z-score
   outlierLimit.eye = .5 #maximum percentage of invalid baselines per subject
@@ -82,7 +82,6 @@ requirePackage = function(name, load=T) {
   # z.max = 2 #winsorize dependent variables to a z value of 2
   # q.max = pnorm(z.max * c(-1, 1)) #needed for DescTools::Winsorize function
   # q.max = c(0, 1) #switch off Winsorizing (comment out to switch on)
-  
 }
 
 # Paths -------------------------------------------------------------------
@@ -411,7 +410,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
   }
   
   validateBaselines = function(fixs, mess, exclusions, maxDeviation_rel, maxSpread, saveBaselinePlots=TRUE, postfix="") {
-    if (saveBaselinePlots) dir.create(paste0(file.path(path.plots, "BL plots")), showWarnings=FALSE)
+    if (saveBaselinePlots) dir.create(file.path(path.plots, "baseline"), showWarnings=FALSE)
     
     vpn = fixs$subject %>% unique() %>% sort() %>% as.character() #all subjects in fixations
     vpn = vpn[!(vpn %in% exclusions)] #minus a priori exclusions
@@ -515,7 +514,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
       
       #plot subject
       if (saveBaselinePlots==TRUE || code %in% saveBaselinePlots || as.character(code) %in% saveBaselinePlots) {
-        filename = file.path(path.plots, "BL plots", sprintf("gca_%s_%s.png", code, postfix))
+        filename = file.path(path.plots, "baseline", sprintf("gca_%s_%s.png", code, postfix))
           
         borders.rel.x = c(mean_x - maxDeviation_rel*sd_x, mean_x + maxDeviation_rel*sd_x)
         borders.rel.y = c(mean_y - maxDeviation_rel*sd_y, mean_y + maxDeviation_rel*sd_y)
