@@ -758,6 +758,31 @@ saccades.acq.analysis = saccades.acq.valid %>%
          end_y_corr_cm = pixToCm(end_y_corr, screen.height, screen.height.cm)) %>% 
   mutate(angle = visangle(start_x_corr_cm, start_y_corr_cm, end_x_corr_cm, end_y_corr_cm, distance)) 
 
+# Percentage of avoidance trials
+avoidance.acq.prop <- saccades.acq.analysis %>% 
+  filter (trial >= 32) %>%
+  filter(blok) %>% 
+  filter(outcomeok) %>%
+  summarise(absolute_frequency_av = sum(outcome_corr=="none"), relative_frequency_av = mean(outcome_corr=="none"), .by=c(subject, condition)) 
+
+avoidance.acq.prop.summary <- avoidance.acq.prop %>% 
+  summarise(Mean = mean(relative_frequency_av), SD = sd(relative_frequency_av), .by=condition)
+
+ggplot(avoidance.acq.prop.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25
+  ) +
+  labs(title = "Proportion of Avoidance-Trials", x = "Conditions", y = "Proportion") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d()
+
+ggsave(file.path(path, "plots", "avoidance_proportion_roi.png"), width=1800, height=3000, units="px")
+
+
 # Percentage of saccades going towards the stimuli
 saccades.acq.prop <- saccades.acq.analysis %>% 
   filter (trial >= 32) %>%
