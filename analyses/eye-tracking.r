@@ -402,7 +402,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
   
   loadMessages = function(filePath) {
     messages = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
-    names(messages) = c("subject","trial","time","event")
+    names(messages) = c("subject", "trial","time","event")
     messages = messages %>%
       mutate(subject = subject %>% sub("gca_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
              trial = trial %>% sub("Trial: ","", .) %>% as.numeric())
@@ -771,14 +771,17 @@ avoidance.acq.prop.summary <- avoidance.acq.prop %>%
 ggplot(avoidance.acq.prop.summary, aes(x = condition, y = Mean, fill = condition)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_errorbar(
-    aes(ymin = Mean - SD, ymax = Mean + SD),
+    aes(ymin = Mean - SD, ymax = Mean + SD), #ymin = Mean - SD, 
     position = position_dodge(width = 0.7),
     width = 0.25
   ) +
+  geom_line(data=avoidance.acq.prop, aes(y = relative_frequency_av, group = subject), alpha=0.2) +
+  geom_point(data=avoidance.acq.prop, aes(y = relative_frequency_av), size = 2, shape = 21, color = "black", alpha=0.5) + # , position=position_jitter(width=0.05)) +
   labs(title = "Proportion of Avoidance-Trials", x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "avoidance_proportion_roi.png"), width=1800, height=3000, units="px")
 
@@ -799,12 +802,13 @@ ggplot(saccades.acq.roi.summary, aes(x = condition, y = Mean, fill = condition))
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
+    width = 0.25) +
+  geom_point(data=saccades.acq.prop, aes(y = relative_frequency_ROI), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
   labs(title = "Proportion of Trials with a Saccade to the Stimulus", x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "saccades_proportion_roi.png"), width=1800, height=3000, units="px")
 
@@ -817,12 +821,13 @@ ggplot(saccades.acq.quad.summary, aes(x = condition, y = Mean, fill = condition)
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
+    width = 0.25) +
+  geom_point(data=saccades.acq.prop, aes(y = relative_frequency_Quadrant), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
   labs(title = "Proportion of Trials with a Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "saccades_proportion_quad.png"), width=1800, height=3000, units="px")
 
@@ -843,12 +848,13 @@ ggplot(saccades.acq.lat.roi.summary, aes(x = condition, y = Mean, fill = conditi
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
-  labs(title = "Latency to first Saccade to the Stimulus", x = "Conditions", y = "Latency [ms]") +
+    width = 0.25) +
+  geom_point(data=saccades.acq.lat.roi, aes(y = latency), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
+  labs(title = "Latency to First Saccade to the Stimulus", x = "Conditions", y = "Latency [ms]") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "saccades_latency_roi.png"), width=1800, height=3000, units="px")
 
@@ -869,12 +875,13 @@ ggplot(saccades.acq.lat.quad.summary, aes(x = condition, y = Mean, fill = condit
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
-  labs(title = "Latency to first Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Latency [ms]") +
+    width = 0.25) +
+  geom_point(data=saccades.acq.lat.quad, aes(y = latency), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
+  labs(title = "Latency to First Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Latency [ms]") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "saccades_latency_quad.png"), width=1800, height=3000, units="px")
 
@@ -895,12 +902,13 @@ ggplot(saccades.acq.len.roi.summary, aes(x = condition, y = Mean, fill = conditi
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
+    width = 0.25) +
+  geom_point(data=saccades.acq.len.roi, aes(y = length), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
   labs(title = "Length of Saccade to the Stimulus", x = "Conditions", y = "Length [degree visual angle]") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "saccades_length_roi.png"), width=1800, height=3000, units="px")
 
@@ -921,12 +929,13 @@ ggplot(saccades.acq.len.quad.summary, aes(x = condition, y = Mean, fill = condit
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
+    width = 0.25) +
+  geom_point(data=saccades.acq.len.quad, aes(y = length), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
   labs(title = "Length of Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Length [degree visual angle]") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "saccades_length_quad.png"), width=1800, height=3000, units="px")
 
@@ -1025,49 +1034,57 @@ fixations.test.valid <- fixations.test.valid %>%
          ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop)) %>% 
   ungroup
 
-# Dwell Time On The Stimulus
+# Proportional Dwell Time On The Stimulus
 fixations.test.dwell <- fixations.test.valid %>% 
   filter(blok) %>% 
-  filter(ROI) %>% 
-  summarise(dwell.time = sum(dur), .by=c(subject, condition)) 
+  mutate(dwell.time.total = sum(dur), .by=c(subject, condition)) %>% 
+  filter(ROI) %>%
+  mutate(dwell.time.roi = sum(dur), .by=c(subject, condition)) %>% 
+  # mutate(dwell.time.prop = dwell.time.roi/dwell.time.total)
+  summarise(dwell.time.prop = mean(dwell.time.roi/dwell.time.total), .by=c(subject, condition)) 
 
 fixations.test.dwell.summary <- fixations.test.dwell %>% 
-  summarise(Mean = mean(dwell.time), SD = sd(dwell.time), .by=condition)
+  summarise(Mean = mean(dwell.time.prop), SD = sd(dwell.time.prop), .by=condition)
 
 ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = condition)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
-  labs(title = "Dwell Time On the Stimulus", x = "Conditions", y = "Dwell Time [ms]") +
+    width = 0.25) +
+  geom_point(data=fixations.test.dwell, aes(y = dwell.time.prop), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
+  labs(title = "Proportional Dwell Time On the Stimulus", x = "Conditions", y = "Proportional Dwell Time") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "fixations_dwell_time_on_test.png"), width=1800, height=3000, units="px")
 
-# Dwell Time Off The Stimulus
+# Proportional Dwell Time Off The Stimulus
 fixations.test.dwell <- fixations.test.valid %>% 
   filter(blok) %>% 
-  filter(!ROI) %>% 
-  summarise(dwell.time = sum(dur), .by=c(subject, condition)) 
+  mutate(dwell.time.total = sum(dur), .by=c(subject, condition)) %>% 
+  filter(!ROI) %>%
+  mutate(dwell.time.roi = sum(dur), .by=c(subject, condition)) %>% 
+  # mutate(dwell.time.prop = dwell.time.roi/dwell.time.total)
+  summarise(dwell.time.prop = mean(dwell.time.roi/dwell.time.total), .by=c(subject, condition)) 
 
 fixations.test.dwell.summary <- fixations.test.dwell %>% 
-  summarise(Mean = mean(dwell.time), SD = sd(dwell.time), .by=condition)
+  summarise(Mean = mean(dwell.time.prop), SD = sd(dwell.time.prop), .by=condition)
 
 ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = condition)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
-  labs(title = "Dwell Time Off the Stimulus", x = "Conditions", y = "Dwell Time [ms]") +
+    width = 0.25) +
+  geom_point(data=fixations.test.dwell, aes(y = dwell.time.prop), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
+  labs(title = "Proportional Dwell Time Off the Stimulus", x = "Conditions", y = "Proportional Dwell Time") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "fixations_dwell_time_off_test.png"), width=1800, height=3000, units="px")
 
@@ -1075,7 +1092,6 @@ ggsave(file.path(path, "plots", "fixations_dwell_time_off_test.png"), width=1800
 fixations.test.prop <- fixations.test.valid %>% 
   filter(blok) %>%
   summarise(absolute_frequency_ROI = sum(ROI), relative_frequency_ROI = mean(ROI), .by=c(subject, condition)) 
-
 
 fixations.test.roi.summary <- fixations.test.prop %>% 
   summarise(Mean = mean(relative_frequency_ROI), SD = sd(relative_frequency_ROI), .by=condition)
@@ -1085,12 +1101,13 @@ ggplot(fixations.test.roi.summary, aes(x = condition, y = Mean, fill = condition
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
-  labs(title = "Proportion of Fixations on the Stimulus", x = "Conditions", y = "Proportion]") +
+    width = 0.25) +
+  geom_point(data=fixations.test.prop, aes(y = relative_frequency_ROI), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
+  labs(title = "Proportion of Fixations on the Stimulus", x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "fixations_proportion_on_test.png"), width=1800, height=3000, units="px")
 
@@ -1141,12 +1158,13 @@ ggplot(saccades.test.lat.roi.summary, aes(x = condition, y = Mean, fill = condit
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
-    width = 0.25
-  ) +
-  labs(title = "Latency to first Saccade Away from the Stimulus", x = "Conditions", y = "Latency [ms]") +
+    width = 0.25) +
+  geom_point(data=saccades.test.lat.roi, aes(y = latency), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
+  labs(title = "Latency to First Saccade Away from the Stimulus", x = "Conditions", y = "Latency [ms]") +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
 
 ggsave(file.path(path, "plots", "saccades_latency_off_test.png"), width=1800, height=3000, units="px")
 
@@ -1159,5 +1177,30 @@ messages_image <- messages %>%
   filter(!grepl("Test", event))
 with(messages_image, hist(time, main=paste0("Image Onset")))
 
-
+###############################################################################
+# Ratings
+###############################################################################
+for (p in c("Baseline", "Acquisition", "Test")) {
+  ratings.phase <- ratings %>% 
+    filter(phase == tolower(p))
+  
+  ratings.phase.summary <- ratings.phase %>% 
+    summarise(Mean = mean(rating), SD = sd(rating), .by=condition)
+  
+  ggplot(ratings.phase.summary, aes(x = condition, y = Mean, fill = condition)) +
+    geom_col(position = "dodge", width = 0.7) +
+    geom_errorbar(
+      aes(ymin = Mean - SD, ymax = Mean + SD),
+      position = position_dodge(width = 0.7),
+      width = 0.25) +
+    geom_line(data=ratings.phase, aes(y = rating, group = subject), alpha=0.2) +
+    geom_point(data=ratings.phase, aes(y = rating), size = 2, shape = 21, color = "black", alpha=0.5) + #, position=position_jitter(width=0.05)) +
+    labs(title = paste("Rating in ", p, "Phase", sep=" "), x = "Conditions", y = "Rating") +
+    theme_minimal() +
+    theme(legend.position = "none") +
+    scale_fill_viridis_d() + 
+    scale_color_viridis_d()
+  
+  ggsave(file.path(path, "plots", paste("ratings_", tolower(p), ".png")), width=1800, height=3000, units="px")
+}
 
