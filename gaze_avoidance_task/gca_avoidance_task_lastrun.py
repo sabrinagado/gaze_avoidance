@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 16, 2023, at 11:06
+    on November 21, 2023, at 16:11
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -30,9 +30,9 @@ import psychopy.iohub as io
 from psychopy.hardware import keyboard
 
 # Run 'Before Experiment' code from codeBlank
-iti = 1.5
+jittered_duration_blank = 1.5
 # Run 'Before Experiment' code from codeBlank
-iti = 1.5
+jittered_duration_blank = 1.5
 # Run 'Before Experiment' code from codeTrial
 feedback_color = (0,0,0)
 feedback_opacity = 0
@@ -51,10 +51,12 @@ looked_at = False
 paused = False
 # Run 'Before Experiment' code from codeFeedback
 soundFeedback = sound.Sound('A', secs=1, stereo=True, hamming=True, name='soundFeedback')
+# Run 'Before Experiment' code from code_end
+jittered_duration_cross = 3.5
 # Run 'Before Experiment' code from codeBlank
-iti = 1.5
+jittered_duration_blank = 1.5
 # Run 'Before Experiment' code from codeBlank
-iti = 1.5
+jittered_duration_blank = 1.5
 # Run 'Before Experiment' code from codeTrial
 feedback_color = (0,0,0)
 feedback_opacity = 0
@@ -73,6 +75,10 @@ looked_at = False
 paused = False
 # Run 'Before Experiment' code from codeFeedback
 soundFeedback = sound.Sound('A', secs=1, stereo=True, hamming=True, name='soundFeedback')
+# Run 'Before Experiment' code from code_end
+jittered_duration_cross = 3.5
+# Run 'Before Experiment' code from code_end
+jittered_duration_cross = 3.5
 
 
 # Ensure that relative paths start from the same directory as this script
@@ -317,7 +323,7 @@ blankScreen = visual.TextStim(win=win, name='blankScreen',
     pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=0.0);
+    depth=-1.0);
 
 # --- Initialize components for Routine "cross" ---
 fixcross = visual.TextStim(win=win, name='fixcross',
@@ -335,7 +341,7 @@ blankScreen = visual.TextStim(win=win, name='blankScreen',
     pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=0.0);
+    depth=-1.0);
 
 # --- Initialize components for Routine "trial" ---
 image = visual.ImageStim(
@@ -426,7 +432,7 @@ blankScreen = visual.TextStim(win=win, name='blankScreen',
     pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=0.0);
+    depth=-1.0);
 
 # --- Initialize components for Routine "cross" ---
 fixcross = visual.TextStim(win=win, name='fixcross',
@@ -444,7 +450,7 @@ blankScreen = visual.TextStim(win=win, name='blankScreen',
     pos=(0, 0), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=0.0);
+    depth=-1.0);
 
 # --- Initialize components for Routine "trial" ---
 image = visual.ImageStim(
@@ -700,7 +706,7 @@ spaceStim = keyboard.Keyboard()
 
 # --- Initialize components for Routine "end" ---
 textEnd = visual.TextStim(win=win, name='textEnd',
-    text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\nvielen Dank für Ihre Teilnahme an unserem Experiment.\n\nDas Experiment ist beendet. \nSie können der Versuchsleitung Bescheid sagen.',
+    text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\nder erste Teil des Experiments ist beendet. \n\nEs geht gleich weiter.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -1340,6 +1346,27 @@ if spaceETCalibration.keys != None:  # we had a response
 thisExp.nextEntry()
 # the Routine "startETCalibration" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
+# define target for ETCalibration
+ETCalibrationTarget = visual.TargetStim(win, 
+    name='ETCalibrationTarget',
+    radius=0.01, fillColor='', borderColor='black', lineWidth=2.0,
+    innerRadius=0.0035, innerFillColor='white', innerBorderColor='black', innerLineWidth=2.0,
+    colorSpace='rgb', units=None
+)
+# define parameters for ETCalibration
+ETCalibration = hardware.eyetracker.EyetrackerCalibration(win, 
+    eyetracker, ETCalibrationTarget,
+    units=None, colorSpace='rgb',
+    progressMode='time', targetDur=1.0, expandScale=1.2,
+    targetLayout='NINE_POINTS', randomisePos=True, textColor='white',
+    movementAnimation=True, targetDelay=1.0
+)
+# run calibration
+ETCalibration.run()
+# clear any keypresses from during ETCalibration so they don't interfere with the experiment
+defaultKeyboard.clearEvents()
+# the Routine "ETCalibration" was not non-slip safe, so reset the non-slip timer
+routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
 blocks = data.TrialHandler(nReps=1.0, method='random', 
@@ -1736,9 +1763,9 @@ for thisBlock in blocks:
     continueRoutine = True
     routineForceEnded = False
     # update component parameters for each repeat
-    blankScreen.setText('')
     # Run 'Begin Routine' code from codeBlank
-    iti = 1.0 + random()
+    jittered_duration_blank = 1.0 + random()
+    blankScreen.setText('')
     # keep track of which components have finished
     blankComponents = [blankScreen]
     for thisComponent in blankComponents:
@@ -1774,7 +1801,7 @@ for thisBlock in blocks:
             blankScreen.setAutoDraw(True)
         if blankScreen.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > blankScreen.tStartRefresh + iti-frameTolerance:
+            if tThisFlipGlobal > blankScreen.tStartRefresh + jittered_duration_blank-frameTolerance:
                 # keep track of stop time/frame for later
                 blankScreen.tStop = t  # not accounting for scr refresh
                 blankScreen.frameNStop = frameN  # exact frame index
@@ -1805,7 +1832,7 @@ for thisBlock in blocks:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
     # Run 'End Routine' code from codeBlank
-    print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
+    # print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
     # the Routine "blank" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -1922,9 +1949,9 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
-        blankScreen.setText('')
         # Run 'Begin Routine' code from codeBlank
-        iti = 1.0 + random()
+        jittered_duration_blank = 1.0 + random()
+        blankScreen.setText('')
         # keep track of which components have finished
         blankComponents = [blankScreen]
         for thisComponent in blankComponents:
@@ -1960,7 +1987,7 @@ for thisBlock in blocks:
                 blankScreen.setAutoDraw(True)
             if blankScreen.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > blankScreen.tStartRefresh + iti-frameTolerance:
+                if tThisFlipGlobal > blankScreen.tStartRefresh + jittered_duration_blank-frameTolerance:
                     # keep track of stop time/frame for later
                     blankScreen.tStop = t  # not accounting for scr refresh
                     blankScreen.frameNStop = frameN  # exact frame index
@@ -1991,7 +2018,7 @@ for thisBlock in blocks:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
         # Run 'End Routine' code from codeBlank
-        print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
+        # print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
         # the Routine "blank" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         
@@ -2484,6 +2511,7 @@ for thisBlock in blocks:
         # update component parameters for each repeat
         # Run 'Begin Routine' code from code_end
         eyetracker.setRecordingState(False)
+        jittered_duration_cross = 3.0 + random()
         # keep track of which components have finished
         crossEndComponents = [fixcrossE]
         for thisComponent in crossEndComponents:
@@ -2519,7 +2547,7 @@ for thisBlock in blocks:
                 fixcrossE.setAutoDraw(True)
             if fixcrossE.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > fixcrossE.tStartRefresh +  3 + random()-frameTolerance:
+                if tThisFlipGlobal > fixcrossE.tStartRefresh + jittered_duration_cross-frameTolerance:
                     # keep track of stop time/frame for later
                     fixcrossE.tStop = t  # not accounting for scr refresh
                     fixcrossE.frameNStop = frameN  # exact frame index
@@ -2659,9 +2687,9 @@ for thisBlock in blocks:
     continueRoutine = True
     routineForceEnded = False
     # update component parameters for each repeat
-    blankScreen.setText('')
     # Run 'Begin Routine' code from codeBlank
-    iti = 1.0 + random()
+    jittered_duration_blank = 1.0 + random()
+    blankScreen.setText('')
     # keep track of which components have finished
     blankComponents = [blankScreen]
     for thisComponent in blankComponents:
@@ -2697,7 +2725,7 @@ for thisBlock in blocks:
             blankScreen.setAutoDraw(True)
         if blankScreen.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > blankScreen.tStartRefresh + iti-frameTolerance:
+            if tThisFlipGlobal > blankScreen.tStartRefresh + jittered_duration_blank-frameTolerance:
                 # keep track of stop time/frame for later
                 blankScreen.tStop = t  # not accounting for scr refresh
                 blankScreen.frameNStop = frameN  # exact frame index
@@ -2728,7 +2756,7 @@ for thisBlock in blocks:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
     # Run 'End Routine' code from codeBlank
-    print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
+    # print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
     # the Routine "blank" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -2845,9 +2873,9 @@ for thisBlock in blocks:
         continueRoutine = True
         routineForceEnded = False
         # update component parameters for each repeat
-        blankScreen.setText('')
         # Run 'Begin Routine' code from codeBlank
-        iti = 1.0 + random()
+        jittered_duration_blank = 1.0 + random()
+        blankScreen.setText('')
         # keep track of which components have finished
         blankComponents = [blankScreen]
         for thisComponent in blankComponents:
@@ -2883,7 +2911,7 @@ for thisBlock in blocks:
                 blankScreen.setAutoDraw(True)
             if blankScreen.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > blankScreen.tStartRefresh + iti-frameTolerance:
+                if tThisFlipGlobal > blankScreen.tStartRefresh + jittered_duration_blank-frameTolerance:
                     # keep track of stop time/frame for later
                     blankScreen.tStop = t  # not accounting for scr refresh
                     blankScreen.frameNStop = frameN  # exact frame index
@@ -2914,7 +2942,7 @@ for thisBlock in blocks:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
         # Run 'End Routine' code from codeBlank
-        print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
+        # print(f"Start: {round(blankScreen.tStart, 3)}, End: {round(blankScreen.tStop, 3)}, Duration: {round(blankScreen.tStop - blankScreen.tStart, 3)}")
         # the Routine "blank" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         
@@ -3407,6 +3435,7 @@ for thisBlock in blocks:
         # update component parameters for each repeat
         # Run 'Begin Routine' code from code_end
         eyetracker.setRecordingState(False)
+        jittered_duration_cross = 3.0 + random()
         # keep track of which components have finished
         crossEndComponents = [fixcrossE]
         for thisComponent in crossEndComponents:
@@ -3442,7 +3471,7 @@ for thisBlock in blocks:
                 fixcrossE.setAutoDraw(True)
             if fixcrossE.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > fixcrossE.tStartRefresh +  3 + random()-frameTolerance:
+                if tThisFlipGlobal > fixcrossE.tStartRefresh + jittered_duration_cross-frameTolerance:
                     # keep track of stop time/frame for later
                     fixcrossE.tStop = t  # not accounting for scr refresh
                     fixcrossE.frameNStop = frameN  # exact frame index
@@ -4195,6 +4224,7 @@ for thisBlock in blocks:
         # update component parameters for each repeat
         # Run 'Begin Routine' code from code_end
         eyetracker.setRecordingState(False)
+        jittered_duration_cross = 3.0 + random()
         # keep track of which components have finished
         crossEndComponents = [fixcrossE]
         for thisComponent in crossEndComponents:
@@ -4230,7 +4260,7 @@ for thisBlock in blocks:
                 fixcrossE.setAutoDraw(True)
             if fixcrossE.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > fixcrossE.tStartRefresh +  3 + random()-frameTolerance:
+                if tThisFlipGlobal > fixcrossE.tStartRefresh + jittered_duration_cross-frameTolerance:
                     # keep track of stop time/frame for later
                     fixcrossE.tStop = t  # not accounting for scr refresh
                     fixcrossE.frameNStop = frameN  # exact frame index
