@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 21, 2023, at 16:10
+    on November 21, 2023, at 17:24
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -43,6 +43,7 @@ else:
     
 feedback = ""
 answer = ""
+correctness = ""
 # Run 'Before Experiment' code from code_end
 jittered_duration_cross = 1
 # Run 'Before Experiment' code from codeBlank
@@ -59,6 +60,7 @@ else:
     
 feedback = ""
 answer = ""
+correctness = ""
 # Run 'Before Experiment' code from code_end
 jittered_duration_cross = 1
 
@@ -87,7 +89,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gaze_discrimination\\gca_discrimination_lastrun.py',
+    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\gaze_discrimination_task\\gca_discrimination_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -999,6 +1001,7 @@ for thisBlock in blocks:
         _key_allKeys = []
         # Run 'Begin Routine' code from codeResponse
         answer = ""
+        correctness = "no answer"
         # keep track of which components have finished
         responseComponents = [key]
         for thisComponent in responseComponents:
@@ -1097,13 +1100,18 @@ for thisBlock in blocks:
         if condition == answer:
             feedback = "Richtig!"
             logging.log(level=logging.INFO, msg=f'AnswerCorrect')
+            correctness = "correct"
         else:
             if answer == "":
                 feedback = "Zu langsam!"
                 logging.log(level=logging.INFO, msg=f'NoAnswer')
+                correctness = "no answer"
             else:
                 feedback = "Falsch!"
                 logging.log(level=logging.INFO, msg=f'AnswerWrong')
+                correctness = "wrong"
+        
+        thisExp.addData('correctness', correctness)
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
         if routineForceEnded:
             routineTimer.reset()
@@ -1815,6 +1823,7 @@ for thisBlock in blocks:
         _key_allKeys = []
         # Run 'Begin Routine' code from codeResponse
         answer = ""
+        correctness = "no answer"
         # keep track of which components have finished
         responseComponents = [key]
         for thisComponent in responseComponents:
@@ -1913,13 +1922,18 @@ for thisBlock in blocks:
         if condition == answer:
             feedback = "Richtig!"
             logging.log(level=logging.INFO, msg=f'AnswerCorrect')
+            correctness = "correct"
         else:
             if answer == "":
                 feedback = "Zu langsam!"
                 logging.log(level=logging.INFO, msg=f'NoAnswer')
+                correctness = "no answer"
             else:
                 feedback = "Falsch!"
                 logging.log(level=logging.INFO, msg=f'AnswerWrong')
+                correctness = "wrong"
+        
+        thisExp.addData('correctness', correctness)
         # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
         if routineForceEnded:
             routineTimer.reset()

@@ -657,19 +657,19 @@
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
       <CodeComponent name="codeResponse">
-        <Param val="random_number = random()&amp;#10;&amp;#10;if random_number &gt; 0.5:&amp;#10;    same = 'ä'&amp;#10;    different = 'l'&amp;#10;else:&amp;#10;    same = 'l'&amp;#10;    different = 'ä'&amp;#10;    &amp;#10;feedback = &quot;&quot;&amp;#10;answer = &quot;&quot;" valType="extendedCode" updates="constant" name="Before Experiment"/>
+        <Param val="random_number = random()&amp;#10;&amp;#10;if random_number &gt; 0.5:&amp;#10;    same = 'ä'&amp;#10;    different = 'l'&amp;#10;else:&amp;#10;    same = 'l'&amp;#10;    different = 'ä'&amp;#10;    &amp;#10;feedback = &quot;&quot;&amp;#10;answer = &quot;&quot;&amp;#10;correctness = &quot;&quot;" valType="extendedCode" updates="constant" name="Before Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="answer = &quot;&quot;" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="answer = &quot;&quot;&amp;#10;correctness = &quot;no answer&quot;" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="if same[0] == key.keys:&amp;#10;    answer = &quot;same&quot;&amp;#10;elif different[0] == key.keys:&amp;#10;    answer = &quot;different&quot;" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Routine"/>
-        <Param val="if trialtype == comptype:&amp;#10;    condition = &quot;same&quot;&amp;#10;else:&amp;#10;    condition = &quot;different&quot;&amp;#10;&amp;#10;if condition == answer:&amp;#10;    feedback = &quot;Richtig!&quot;&amp;#10;    logging.log(level=logging.INFO, msg=f'AnswerCorrect')&amp;#10;else:&amp;#10;    if answer == &quot;&quot;:&amp;#10;        feedback = &quot;Zu langsam!&quot;&amp;#10;        logging.log(level=logging.INFO, msg=f'NoAnswer')&amp;#10;    else:&amp;#10;        feedback = &quot;Falsch!&quot;&amp;#10;        logging.log(level=logging.INFO, msg=f'AnswerWrong')" valType="extendedCode" updates="constant" name="End Routine"/>
+        <Param val="if trialtype == comptype:&amp;#10;    condition = &quot;same&quot;&amp;#10;else:&amp;#10;    condition = &quot;different&quot;&amp;#10;&amp;#10;if condition == answer:&amp;#10;    feedback = &quot;Richtig!&quot;&amp;#10;    logging.log(level=logging.INFO, msg=f'AnswerCorrect')&amp;#10;    correctness = &quot;correct&quot;&amp;#10;else:&amp;#10;    if answer == &quot;&quot;:&amp;#10;        feedback = &quot;Zu langsam!&quot;&amp;#10;        logging.log(level=logging.INFO, msg=f'NoAnswer')&amp;#10;        correctness = &quot;no answer&quot;&amp;#10;    else:&amp;#10;        feedback = &quot;Falsch!&quot;&amp;#10;        logging.log(level=logging.INFO, msg=f'AnswerWrong')&amp;#10;        correctness = &quot;wrong&quot;&amp;#10;&amp;#10;thisExp.addData('correctness', correctness)" valType="extendedCode" updates="constant" name="End Routine"/>
         <Param val="False" valType="bool" updates="None" name="disabled"/>
         <Param val="codeResponse" valType="code" updates="None" name="name"/>
       </CodeComponent>
