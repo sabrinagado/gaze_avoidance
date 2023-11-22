@@ -90,15 +90,15 @@ setwd('..')
 path = getwd()
 
 #load behavioral data (logs)
-path.logs = file.path(path, "data")
+path.logs = file.path(path, "gaze_avoidance_task", "data")
 files.log.prefix = "gca_"
 files.log.extension = ".log"
 
 files.rating.prefix = "gca_"
 files.rating.extension = ".csv"
 
-path.eye = file.path(path, "data") #eye tracking data
-path.pupil = file.path(path, "data") #pupil data
+path.eye = file.path(path, "gaze_avoidance_task", "data") #eye tracking data
+path.pupil = file.path(path, "gaze_avoidance_task", "data") #pupil data
 path.plots = file.path(path, "plots")
 
 # path.rois = "2 Material/Look At Me 3 Anx/Stimuli/mask/" %>% paste0(path2, .)
@@ -301,7 +301,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
       outcome = character()
     )
     for (file.log.path in files.log.path) {
-      # file.log.path = files.log.path[1]
+      # file.log.path = files.log[1]
       log = read_delim(file.log.path, delim="\t", col_names=F, locale=locale(decimal_mark=","), na=".", show_col_types=F)
       names(log) = c("time","type","log_message")
       log = log %>% filter(type == "INFO ")
@@ -783,7 +783,7 @@ ggplot(avoidance.acq.prop.summary, aes(x = condition, y = Mean, fill = condition
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "avoidance_proportion_roi.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "avoidance_proportion_roi.png"), width=1800, height=2400, units="px")
 
 
 # Percentage of saccades going towards the stimuli
@@ -810,7 +810,7 @@ ggplot(saccades.acq.roi.summary, aes(x = condition, y = Mean, fill = condition))
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_proportion_roi.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "saccades_proportion_roi.png"), width=1800, height=2400, units="px")
 
 # Percentage of saccades going towards the quadrant
 saccades.acq.quad.summary <- saccades.acq.prop %>% 
@@ -829,7 +829,7 @@ ggplot(saccades.acq.quad.summary, aes(x = condition, y = Mean, fill = condition)
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_proportion_quad.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "saccades_proportion_quad.png"), width=1800, height=2400, units="px")
 
 # Latency to first saccade going towards the stimuli
 saccades.acq.lat.roi <- saccades.acq.analysis %>% 
@@ -856,7 +856,7 @@ ggplot(saccades.acq.lat.roi.summary, aes(x = condition, y = Mean, fill = conditi
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_latency_roi.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "saccades_latency_roi.png"), width=1800, height=2400, units="px")
 
 # Latency to first saccade going towards the quadrant of stimuli
 saccades.acq.lat.quad <- saccades.acq.analysis %>% 
@@ -883,7 +883,7 @@ ggplot(saccades.acq.lat.quad.summary, aes(x = condition, y = Mean, fill = condit
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_latency_quad.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "saccades_latency_quad.png"), width=1800, height=2400, units="px")
 
 # Length of saccade going towards the stimuli
 saccades.acq.len.roi <- saccades.acq.analysis %>% 
@@ -910,7 +910,7 @@ ggplot(saccades.acq.len.roi.summary, aes(x = condition, y = Mean, fill = conditi
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_length_roi.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "saccades_length_roi.png"), width=1800, height=2400, units="px")
 
 # Latency to first saccade going towards the quadrant of stimuli
 saccades.acq.len.quad <- saccades.acq.analysis %>% 
@@ -937,7 +937,7 @@ ggplot(saccades.acq.len.quad.summary, aes(x = condition, y = Mean, fill = condit
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_length_quad.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "saccades_length_quad.png"), width=1800, height=2400, units="px")
 
 # ### FIXATIONS
 # fixations.acq.valid <- fixations.acq.valid %>% 
@@ -1059,7 +1059,7 @@ ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = conditi
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "fixations_dwell_time_on_test.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "fixations_dwell_time_on_test.png"), width=1800, height=2400, units="px")
 
 # Proportional Dwell Time Off The Stimulus
 fixations.test.dwell <- fixations.test.valid %>% 
@@ -1086,7 +1086,7 @@ ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = conditi
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "fixations_dwell_time_off_test.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "fixations_dwell_time_off_test.png"), width=1800, height=2400, units="px")
 
 # Percentage of fixation going towards the stimuli
 fixations.test.prop <- fixations.test.valid %>% 
@@ -1109,7 +1109,7 @@ ggplot(fixations.test.roi.summary, aes(x = condition, y = Mean, fill = condition
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "fixations_proportion_on_test.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "fixations_proportion_on_test.png"), width=1800, height=2400, units="px")
 
 
 ### SACCADES
@@ -1166,7 +1166,7 @@ ggplot(saccades.test.lat.roi.summary, aes(x = condition, y = Mean, fill = condit
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_latency_off_test.png"), width=1800, height=3000, units="px")
+ggsave(file.path(path, "plots", "saccades_latency_off_test.png"), width=1800, height=2400, units="px")
 
 
 ###############################################################################
@@ -1201,6 +1201,6 @@ for (p in c("Baseline", "Acquisition", "Test")) {
     scale_fill_viridis_d() + 
     scale_color_viridis_d()
   
-  ggsave(file.path(path, "plots", paste("ratings_", tolower(p), ".png")), width=1800, height=3000, units="px")
+  ggsave(file.path(path, "plots", paste("ratings_", tolower(p), ".png")), width=1800, height=2400, units="px")
 }
 
