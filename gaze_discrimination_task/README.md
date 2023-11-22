@@ -1,6 +1,8 @@
 # Gaze Contingent Avoidance Study
 
 ## Numbers of Blocks
-*nReps(trials) = 5, for Testing: Selected rows: 0, 5, 10, 15
+*nReps(learning_trials) = 1, Selected rows: 0:14
+
+*nReps(trials) = 1
 
 *nReps(blocks) = 1

@@ -189,7 +189,7 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="logging.log(level=logging.INFO, msg=f'FeedbackOnset_{log_msg}')&amp;#10;ioServer.sendMessageEvent(text='FeedbackOnset')&amp;#10;eyetracker.sendMessage('FeedbackOnset')" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="logging.log(level=logging.INFO, msg=f'FeedbackOnset_{log_msg}')&amp;#10;ioServer.sendMessageEvent(text='FeedbackOnset')&amp;#10;eyetracker.sendMessage('FeedbackOnset')&amp;#10;eyetracker.sendMessage(outcome)&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>

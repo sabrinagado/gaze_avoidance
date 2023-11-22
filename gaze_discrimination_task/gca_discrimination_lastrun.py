@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 21, 2023, at 17:24
+    on November 22, 2023, at 10:21
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -142,14 +142,44 @@ spaceStart = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startExp" ---
 # Run 'Begin Experiment' code from codeStartExp
-instruction_start = f"Bitte geben Sie an, ob die beiden Bilder, die Sie sehen gleich oder unterschiedlich sind.\nDrücken Sie die '{same.upper()}'-Taste, wenn die beiden Bilder gleich sind und die '{different.upper()}'-Taste, wenn die beiden Bilder unterschiedlich sind. \n\nFixieren Sie während des Experiments bitte stets das Fixationskreuz. \n\nDrücken Sie die Leertaste, um mit einer Übung zu starten."
+instruction_start = f"Bitte geben Sie an, ob die beiden Bilder, die Sie sehen gleich oder unterschiedlich sind.\nDrücken Sie die '{same.upper()}'-Taste, wenn die beiden Bilder gleich sind und die '{different.upper()}'-Taste, wenn die beiden Bilder unterschiedlich sind."
 textStartExp = visual.TextStim(win=win, name='textStartExp',
     text=instruction_start,
     font='Open Sans',
-    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
+    pos=(0, 0.4), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
+textExpImages = visual.TextStim(win=win, name='textExpImages',
+    text='Mögliche Bilder sind folgende:',
+    font='Open Sans',
+    pos=(0, 0.2), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-2.0);
+ImageLearning1 = visual.ImageStim(
+    win=win,
+    name='ImageLearning1', 
+    image='stimuli/test1.png', mask=None, anchor='center',
+    ori=0.0, pos=(-0.1, -0.1), size=None,
+    color=[1,1,1], colorSpace='rgb', opacity=None,
+    flipHoriz=False, flipVert=False,
+    texRes=128.0, interpolate=True, depth=-3.0)
+ImageLearning2 = visual.ImageStim(
+    win=win,
+    name='ImageLearning2', 
+    image='stimuli/test2.png', mask=None, anchor='center',
+    ori=0.0, pos=(0.1, -0.1), size=None,
+    color=[1,1,1], colorSpace='rgb', opacity=None,
+    flipHoriz=False, flipVert=False,
+    texRes=128.0, interpolate=True, depth=-4.0)
+textSpace = visual.TextStim(win=win, name='textSpace',
+    text='Fixieren Sie während des Experiments bitte stets das Fixationskreuz.\n\nDrücken Sie die Leertaste, um mit einer Übung zu starten.',
+    font='Open Sans',
+    pos=(0, -0.5), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-5.0);
 spaceStartExp = keyboard.Keyboard()
 
 # --- Initialize components for Routine "blank" ---
@@ -236,14 +266,60 @@ fixcrossEnd = visual.TextStim(win=win, name='fixcrossEnd',
 
 # --- Initialize components for Routine "startTask" ---
 # Run 'Begin Experiment' code from codeStartTask
-instruction_task = f"Bitte geben Sie auch im nächsten Block an, ob die beiden Bilder, die Sie sehen gleich oder unterschiedlich sind.\nDrücken Sie die '{same}'-Taste, wenn die beiden Bilder gleich sind und die '{different}'-Taste, wenn die beiden Bilder unterschiedlich sind. \n\nFixieren Sie während des Experiments bitte stets das Fixationskreuz. \n\nDrücken Sie die Leertaste, um zu starten."
+instruction_task = f"Bitte geben Sie auch im nächsten Block an, ob die beiden Bilder, die Sie sehen gleich oder unterschiedlich sind.\nDrücken Sie die '{same.upper()}'-Taste, wenn die beiden Bilder gleich sind und die '{different.upper()}'-Taste, wenn die beiden Bilder unterschiedlich sind."
 textStartTask = visual.TextStim(win=win, name='textStartTask',
     text=instruction_task,
     font='Open Sans',
-    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
+    pos=(0, 0.4), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
+textTaskImages = visual.TextStim(win=win, name='textTaskImages',
+    text='Mögliche Bilder sind folgende:',
+    font='Open Sans',
+    pos=(0, 0.2), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-2.0);
+ImageTask1 = visual.ImageStim(
+    win=win,
+    name='ImageTask1', 
+    image='stimuli/Social1.png', mask=None, anchor='center',
+    ori=0.0, pos=(-0.3, -0.1), size=None,
+    color=[1,1,1], colorSpace='rgb', opacity=None,
+    flipHoriz=False, flipVert=False,
+    texRes=128.0, interpolate=True, depth=-3.0)
+ImageTask2 = visual.ImageStim(
+    win=win,
+    name='ImageTask2', 
+    image='stimuli/Social2.png', mask=None, anchor='center',
+    ori=0.0, pos=(-0.1, -0.1), size=None,
+    color=[1,1,1], colorSpace='rgb', opacity=None,
+    flipHoriz=False, flipVert=False,
+    texRes=128.0, interpolate=True, depth=-4.0)
+ImageTask3 = visual.ImageStim(
+    win=win,
+    name='ImageTask3', 
+    image='stimuli/Nonsocial1.png', mask=None, anchor='center',
+    ori=0.0, pos=(0.1, -0.1), size=None,
+    color=[1,1,1], colorSpace='rgb', opacity=None,
+    flipHoriz=False, flipVert=False,
+    texRes=128.0, interpolate=True, depth=-5.0)
+ImageTask4 = visual.ImageStim(
+    win=win,
+    name='ImageTask4', 
+    image='stimuli/Nonsocial2.png', mask=None, anchor='center',
+    ori=0.0, pos=(0.3, -0.1), size=None,
+    color=[1,1,1], colorSpace='rgb', opacity=None,
+    flipHoriz=False, flipVert=False,
+    texRes=128.0, interpolate=True, depth=-6.0)
+textTaskSpace = visual.TextStim(win=win, name='textTaskSpace',
+    text='Fixieren Sie während des Experiments bitte stets das Fixationskreuz.\n\nDrücken Sie die Leertaste, um mit einer Übung zu starten.',
+    font='Open Sans',
+    pos=(0, -0.5), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-7.0);
 spaceStartTask = keyboard.Keyboard()
 
 # --- Initialize components for Routine "blank" ---
@@ -457,12 +533,16 @@ for thisBlock in blocks:
     # Run 'Begin Routine' code from codeStartExp
     print("Start Experiment Screen. Press Space to continue.")
     
+    image_height = ImageLearning1.size[0]
+    image_width = ImageLearning1.size[1]
+    print(f"Height: {image_height}, Width: {image_width}")
+    
     
     spaceStartExp.keys = []
     spaceStartExp.rt = []
     _spaceStartExp_allKeys = []
     # keep track of which components have finished
-    startExpComponents = [textStartExp, spaceStartExp]
+    startExpComponents = [textStartExp, textExpImages, ImageLearning1, ImageLearning2, textSpace, spaceStartExp]
     for thisComponent in startExpComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -494,6 +574,50 @@ for thisBlock in blocks:
             # add timestamp to datafile
             thisExp.timestampOnFlip(win, 'textStartExp.started')
             textStartExp.setAutoDraw(True)
+        
+        # *textExpImages* updates
+        if textExpImages.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            textExpImages.frameNStart = frameN  # exact frame index
+            textExpImages.tStart = t  # local t and not account for scr refresh
+            textExpImages.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textExpImages, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'textExpImages.started')
+            textExpImages.setAutoDraw(True)
+        
+        # *ImageLearning1* updates
+        if ImageLearning1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            ImageLearning1.frameNStart = frameN  # exact frame index
+            ImageLearning1.tStart = t  # local t and not account for scr refresh
+            ImageLearning1.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(ImageLearning1, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'ImageLearning1.started')
+            ImageLearning1.setAutoDraw(True)
+        
+        # *ImageLearning2* updates
+        if ImageLearning2.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            ImageLearning2.frameNStart = frameN  # exact frame index
+            ImageLearning2.tStart = t  # local t and not account for scr refresh
+            ImageLearning2.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(ImageLearning2, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'ImageLearning2.started')
+            ImageLearning2.setAutoDraw(True)
+        
+        # *textSpace* updates
+        if textSpace.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            textSpace.frameNStart = frameN  # exact frame index
+            textSpace.tStart = t  # local t and not account for scr refresh
+            textSpace.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textSpace, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'textSpace.started')
+            textSpace.setAutoDraw(True)
         
         # *spaceStartExp* updates
         waitOnFlip = False
@@ -630,7 +754,7 @@ for thisBlock in blocks:
     # set up handler to look after randomisation of conditions etc
     learning_trials = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(testFile, selection='0:14'),
+        trialList=data.importConditions(testFile, selection='0:4'),
         seed=None, name='learning_trials')
     thisExp.addLoop(learning_trials)  # add the loop to the experiment
     thisLearning_trial = learning_trials.trialList[0]  # so we can initialise stimuli with some values
@@ -1284,7 +1408,7 @@ for thisBlock in blocks:
     spaceStartTask.rt = []
     _spaceStartTask_allKeys = []
     # keep track of which components have finished
-    startTaskComponents = [textStartTask, spaceStartTask]
+    startTaskComponents = [textStartTask, textTaskImages, ImageTask1, ImageTask2, ImageTask3, ImageTask4, textTaskSpace, spaceStartTask]
     for thisComponent in startTaskComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -1316,6 +1440,72 @@ for thisBlock in blocks:
             # add timestamp to datafile
             thisExp.timestampOnFlip(win, 'textStartTask.started')
             textStartTask.setAutoDraw(True)
+        
+        # *textTaskImages* updates
+        if textTaskImages.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            textTaskImages.frameNStart = frameN  # exact frame index
+            textTaskImages.tStart = t  # local t and not account for scr refresh
+            textTaskImages.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textTaskImages, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'textTaskImages.started')
+            textTaskImages.setAutoDraw(True)
+        
+        # *ImageTask1* updates
+        if ImageTask1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            ImageTask1.frameNStart = frameN  # exact frame index
+            ImageTask1.tStart = t  # local t and not account for scr refresh
+            ImageTask1.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(ImageTask1, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'ImageTask1.started')
+            ImageTask1.setAutoDraw(True)
+        
+        # *ImageTask2* updates
+        if ImageTask2.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            ImageTask2.frameNStart = frameN  # exact frame index
+            ImageTask2.tStart = t  # local t and not account for scr refresh
+            ImageTask2.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(ImageTask2, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'ImageTask2.started')
+            ImageTask2.setAutoDraw(True)
+        
+        # *ImageTask3* updates
+        if ImageTask3.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            ImageTask3.frameNStart = frameN  # exact frame index
+            ImageTask3.tStart = t  # local t and not account for scr refresh
+            ImageTask3.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(ImageTask3, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'ImageTask3.started')
+            ImageTask3.setAutoDraw(True)
+        
+        # *ImageTask4* updates
+        if ImageTask4.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            ImageTask4.frameNStart = frameN  # exact frame index
+            ImageTask4.tStart = t  # local t and not account for scr refresh
+            ImageTask4.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(ImageTask4, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'ImageTask4.started')
+            ImageTask4.setAutoDraw(True)
+        
+        # *textTaskSpace* updates
+        if textTaskSpace.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            textTaskSpace.frameNStart = frameN  # exact frame index
+            textTaskSpace.tStart = t  # local t and not account for scr refresh
+            textTaskSpace.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textTaskSpace, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'textTaskSpace.started')
+            textTaskSpace.setAutoDraw(True)
         
         # *spaceStartTask* updates
         waitOnFlip = False
