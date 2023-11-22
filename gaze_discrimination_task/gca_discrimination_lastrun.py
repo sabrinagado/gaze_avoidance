@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 22, 2023, at 10:21
+    on November 22, 2023, at 10:46
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -161,7 +161,7 @@ ImageLearning1 = visual.ImageStim(
     win=win,
     name='ImageLearning1', 
     image='stimuli/test1.png', mask=None, anchor='center',
-    ori=0.0, pos=(-0.1, -0.1), size=None,
+    ori=0.0, pos=(-0.1, -0.1), size=(0.221875, 0.416667),
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-3.0)
@@ -169,7 +169,7 @@ ImageLearning2 = visual.ImageStim(
     win=win,
     name='ImageLearning2', 
     image='stimuli/test2.png', mask=None, anchor='center',
-    ori=0.0, pos=(0.1, -0.1), size=None,
+    ori=0.0, pos=(0.1, -0.1), size=(0.221875, 0.416667),
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-4.0)
@@ -285,7 +285,7 @@ ImageTask1 = visual.ImageStim(
     win=win,
     name='ImageTask1', 
     image='stimuli/Social1.png', mask=None, anchor='center',
-    ori=0.0, pos=(-0.3, -0.1), size=None,
+    ori=0.0, pos=(-0.3, -0.1), size=(0.221875, 0.416667),
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-3.0)
@@ -293,7 +293,7 @@ ImageTask2 = visual.ImageStim(
     win=win,
     name='ImageTask2', 
     image='stimuli/Social2.png', mask=None, anchor='center',
-    ori=0.0, pos=(-0.1, -0.1), size=None,
+    ori=0.0, pos=(-0.1, -0.1), size=(0.221875, 0.416667),
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-4.0)
@@ -301,7 +301,7 @@ ImageTask3 = visual.ImageStim(
     win=win,
     name='ImageTask3', 
     image='stimuli/Nonsocial1.png', mask=None, anchor='center',
-    ori=0.0, pos=(0.1, -0.1), size=None,
+    ori=0.0, pos=(0.1, -0.1), size=(0.221875, 0.416667),
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-5.0)
@@ -309,7 +309,7 @@ ImageTask4 = visual.ImageStim(
     win=win,
     name='ImageTask4', 
     image='stimuli/Nonsocial2.png', mask=None, anchor='center',
-    ori=0.0, pos=(0.3, -0.1), size=None,
+    ori=0.0, pos=(0.3, -0.1), size=(0.221875, 0.416667),
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-6.0)
@@ -532,12 +532,6 @@ for thisBlock in blocks:
     # update component parameters for each repeat
     # Run 'Begin Routine' code from codeStartExp
     print("Start Experiment Screen. Press Space to continue.")
-    
-    image_height = ImageLearning1.size[0]
-    image_width = ImageLearning1.size[1]
-    print(f"Height: {image_height}, Width: {image_width}")
-    
-    
     spaceStartExp.keys = []
     spaceStartExp.rt = []
     _spaceStartExp_allKeys = []
@@ -754,7 +748,7 @@ for thisBlock in blocks:
     # set up handler to look after randomisation of conditions etc
     learning_trials = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(testFile, selection='0:4'),
+        trialList=data.importConditions(testFile, selection='0:14'),
         seed=None, name='learning_trials')
     thisExp.addLoop(learning_trials)  # add the loop to the experiment
     thisLearning_trial = learning_trials.trialList[0]  # so we can initialise stimuli with some values
