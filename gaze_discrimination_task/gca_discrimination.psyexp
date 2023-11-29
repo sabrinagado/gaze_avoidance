@@ -428,7 +428,7 @@
         <Param val="instruction_start = f&quot;Bitte geben Sie an, ob die beiden Bilder, die Sie sehen gleich oder unterschiedlich sind.\nDrücken Sie die '{same.upper()}'-Taste, wenn die beiden Bilder gleich sind und die '{different.upper()}'-Taste, wenn die beiden Bilder unterschiedlich sind.&quot;" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="print(&quot;Start Experiment Screen. Press Space to continue.&quot;)" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="print(&quot;Start Experiment Screen. Press Space to continue.&quot;)&amp;#10;win.mouseVisible = False" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
