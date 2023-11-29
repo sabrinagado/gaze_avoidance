@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 22, 2023, at 14:29
+    on Wed Nov 22 15:21:13 2023
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -89,7 +89,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\gaze_discrimination_task\\gca_discrimination_lastrun.py',
+    originPath='/Users/sabrinagado/Documents/Forschung/Promotion/Projects/GCA/gaze_avoidance/gaze_discrimination_task/gca_discrimination_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -314,7 +314,7 @@ ImageTask4 = visual.ImageStim(
     flipHoriz=False, flipVert=False,
     texRes=128.0, interpolate=True, depth=-6.0)
 textTaskSpace = visual.TextStim(win=win, name='textTaskSpace',
-    text='Fixieren Sie während des Experiments bitte stets das Fixationskreuz.\n\nDrücken Sie die Leertaste, um mit einer Übung zu starten.',
+    text='Fixieren Sie während des Experiments bitte stets das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, -0.5), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -748,7 +748,7 @@ for thisBlock in blocks:
     # set up handler to look after randomisation of conditions etc
     learning_trials = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(testFile, selection='0:14'),
+        trialList=data.importConditions(testFile, selection='0:6'),
         seed=None, name='learning_trials')
     thisExp.addLoop(learning_trials)  # add the loop to the experiment
     thisLearning_trial = learning_trials.trialList[0]  # so we can initialise stimuli with some values
