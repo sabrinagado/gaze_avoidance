@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on Wed Nov 22 15:21:13 2023
+    on November 30, 2023, at 09:03
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -89,7 +89,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='/Users/sabrinagado/Documents/Forschung/Promotion/Projects/GCA/gaze_avoidance/gaze_discrimination_task/gca_discrimination_lastrun.py',
+    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\gaze_discrimination_task\\gca_discrimination_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -143,6 +143,7 @@ spaceStart = keyboard.Keyboard()
 # --- Initialize components for Routine "startExp" ---
 # Run 'Begin Experiment' code from codeStartExp
 instruction_start = f"Bitte geben Sie an, ob die beiden Bilder, die Sie sehen gleich oder unterschiedlich sind.\nDrücken Sie die '{same.upper()}'-Taste, wenn die beiden Bilder gleich sind und die '{different.upper()}'-Taste, wenn die beiden Bilder unterschiedlich sind."
+
 textStartExp = visual.TextStim(win=win, name='textStartExp',
     text=instruction_start,
     font='Open Sans',
@@ -532,6 +533,7 @@ for thisBlock in blocks:
     # update component parameters for each repeat
     # Run 'Begin Routine' code from codeStartExp
     print("Start Experiment Screen. Press Space to continue.")
+    win.mouseVisible = False
     spaceStartExp.keys = []
     spaceStartExp.rt = []
     _spaceStartExp_allKeys = []
@@ -748,7 +750,7 @@ for thisBlock in blocks:
     # set up handler to look after randomisation of conditions etc
     learning_trials = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(testFile, selection='0:6'),
+        trialList=data.importConditions(testFile, selection='0:14'),
         seed=None, name='learning_trials')
     thisExp.addLoop(learning_trials)  # add the loop to the experiment
     thisLearning_trial = learning_trials.trialList[0]  # so we can initialise stimuli with some values

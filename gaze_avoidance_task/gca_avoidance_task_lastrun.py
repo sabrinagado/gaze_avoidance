@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 21, 2023, at 16:11
+    on November 30, 2023, at 08:55
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -10,6 +10,10 @@ If you publish work using this script the most relevant publication is:
         https://doi.org/10.3758/s13428-018-01193-y
 
 """
+
+import psychopy
+psychopy.useVersion('2022.2.4')
+
 
 # --- Import packages ---
 from psychopy import locale_setup
@@ -49,6 +53,7 @@ points = 0
 
 looked_at = False
 paused = False
+outcome = ""
 # Run 'Before Experiment' code from codeFeedback
 soundFeedback = sound.Sound('A', secs=1, stereo=True, hamming=True, name='soundFeedback')
 # Run 'Before Experiment' code from code_end
@@ -73,6 +78,7 @@ points = 0
 
 looked_at = False
 paused = False
+outcome = ""
 # Run 'Before Experiment' code from codeFeedback
 soundFeedback = sound.Sound('A', secs=1, stereo=True, hamming=True, name='soundFeedback')
 # Run 'Before Experiment' code from code_end
@@ -86,7 +92,7 @@ _thisDir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(_thisDir)
 # Store info about the experiment session
 psychopyVersion = '2022.2.4'
-expName = 'gca'  # from the Builder filename that created this script
+expName = 'gca_avoidance_task'  # from the Builder filename that created this script
 expInfo = {
     'participant': '',
     'group': ['A', 'B', 'C', 'D'],
@@ -105,7 +111,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gaze_avoidance\\gca_lastrun.py',
+    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\gaze_avoidance_task\\gca_avoidance_task_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -162,7 +168,7 @@ ioConfig['Keyboard'] = dict(use_keymap='psychopy')
 ioSession = '1'
 if 'session' in expInfo:
     ioSession = str(expInfo['session'])
-ioServer = io.launchHubServer(window=win, experiment_code='gca', session_code=ioSession, datastore_name=filename, **ioConfig)
+ioServer = io.launchHubServer(window=win, experiment_code='gca_avoidance_task', session_code=ioSession, datastore_name=filename, **ioConfig)
 eyetracker = ioServer.getDevice('tracker')
 
 # create a default keyboard (e.g. to check for escape)
@@ -417,12 +423,35 @@ fixcrossE = visual.TextStim(win=win, name='fixcrossE',
 
 # --- Initialize components for Routine "repeatTask" ---
 textRepeatTask = visual.TextStim(win=win, name='textRepeatTask',
-    text='Kurze Pause\n\nIm nächsten Block ist Ihre Aufgabe weiterhin Ihren Belohnungsscore zu maximieren und die elektrischen Reize zu vermeiden. Den elektrischen Reiz können Sie vermeiden, in dem Sie das entsprechende Bild nicht anschauen.\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um weiterzumachen.',
+    text='Kurze Pause\n\nIm nächsten Block ist Ihre Aufgabe weiterhin Ihren Belohnungsscore zu maximieren und die elektrischen Reize zu vermeiden. ',
     font='Open Sans',
-    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
+    pos=(0, 0.3), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
+textboxRepeatInstruction = visual.TextBox2(
+     win, text='Den elektrischen Reiz können Sie vermeiden, in dem Sie das entsprechende Bild nicht anschauen.', font='Open Sans',
+     pos=(0, 0),     letterHeight=0.06,
+     size=(None, None), borderWidth=2.0,
+     color='white', colorSpace='rgb',
+     opacity=None,
+     bold=True, italic=False,
+     lineSpacing=1.0,
+     padding=0.0, alignment='center',
+     anchor='center',
+     fillColor=None, borderColor=None,
+     flipHoriz=False, flipVert=False, languageStyle='LTR',
+     editable=False,
+     name='textboxRepeatInstruction',
+     autoLog=True,
+)
+textRepeatSpace = visual.TextStim(win=win, name='textRepeatSpace',
+    text='Bitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um weiterzumachen.',
+    font='Open Sans',
+    pos=(0, -0.3), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-3.0);
 spaceRepeatTask = keyboard.Keyboard()
 
 # --- Initialize components for Routine "blank" ---
@@ -1837,9 +1866,9 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    learning_trials = data.TrialHandler(nReps=2.0, method='random', 
+    learning_trials = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(posFile),
+        trialList=data.importConditions(posFile, selection='0'),
         seed=None, name='learning_trials')
     thisExp.addLoop(learning_trials)  # add the loop to the experiment
     thisLearning_trial = learning_trials.trialList[0]  # so we can initialise stimuli with some values
@@ -2212,6 +2241,7 @@ for thisBlock in blocks:
             # score -= points
             feedback_points = ""  # f"- {points}"
             feedback_score = ""  # f"Score: {score}"
+            outcome = "shock"
         elif looked_at & ("minus" in trialtype):
             feedback_color = "green"
             feedback_opacity = 1
@@ -2223,6 +2253,7 @@ for thisBlock in blocks:
             score += points
             feedback_points = f"+ {points}"
             feedback_score = f"Score: {score}"
+            outcome = "reward"
         else:
             feedback_color = (0,0,0)
             feedback_opacity = 0
@@ -2232,12 +2263,17 @@ for thisBlock in blocks:
             points = 0
             feedback_points = ""
             feedback_score = ""
+            outcome = "none"
         
         rectsize = [item * 1.02 for item in image.size]
         
         image_w = image.size[0]
         image_h = image.size[1]
         imagesize_test = [image_w * 1.2, image_h * 1.2]
+        
+        thisExp.addData('score', score)
+        thisExp.addData('outcome', outcome)
+        
         learning_trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
            learning_trials.addData('roi.timesOn', roi.timesOn)
@@ -2261,6 +2297,8 @@ for thisBlock in blocks:
         logging.log(level=logging.INFO, msg=f'FeedbackOnset_{log_msg}')
         ioServer.sendMessageEvent(text='FeedbackOnset')
         eyetracker.sendMessage('FeedbackOnset')
+        eyetracker.sendMessage(outcome)
+        
         polygon.setOpacity(feedback_opacity)
         polygon.setPos(position)
         polygon.setLineColor(feedback_color)
@@ -2581,7 +2619,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 2.0 repeats of 'learning_trials'
+    # completed 1.0 repeats of 'learning_trials'
     
     
     # --- Prepare to start Routine "repeatTask" ---
@@ -2591,11 +2629,12 @@ for thisBlock in blocks:
     # Run 'Begin Routine' code from codeRepeatTask
     print("Second Instruction Screen. Press Space to continue.")
     win.mouseVisible = False
+    textboxRepeatInstruction.reset()
     spaceRepeatTask.keys = []
     spaceRepeatTask.rt = []
     _spaceRepeatTask_allKeys = []
     # keep track of which components have finished
-    repeatTaskComponents = [textRepeatTask, spaceRepeatTask]
+    repeatTaskComponents = [textRepeatTask, textboxRepeatInstruction, textRepeatSpace, spaceRepeatTask]
     for thisComponent in repeatTaskComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -2627,6 +2666,28 @@ for thisBlock in blocks:
             # add timestamp to datafile
             thisExp.timestampOnFlip(win, 'textRepeatTask.started')
             textRepeatTask.setAutoDraw(True)
+        
+        # *textboxRepeatInstruction* updates
+        if textboxRepeatInstruction.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            textboxRepeatInstruction.frameNStart = frameN  # exact frame index
+            textboxRepeatInstruction.tStart = t  # local t and not account for scr refresh
+            textboxRepeatInstruction.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textboxRepeatInstruction, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'textboxRepeatInstruction.started')
+            textboxRepeatInstruction.setAutoDraw(True)
+        
+        # *textRepeatSpace* updates
+        if textRepeatSpace.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            textRepeatSpace.frameNStart = frameN  # exact frame index
+            textRepeatSpace.tStart = t  # local t and not account for scr refresh
+            textRepeatSpace.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textRepeatSpace, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'textRepeatSpace.started')
+            textRepeatSpace.setAutoDraw(True)
         
         # *spaceRepeatTask* updates
         waitOnFlip = False
@@ -3136,6 +3197,7 @@ for thisBlock in blocks:
             # score -= points
             feedback_points = ""  # f"- {points}"
             feedback_score = ""  # f"Score: {score}"
+            outcome = "shock"
         elif looked_at & ("minus" in trialtype):
             feedback_color = "green"
             feedback_opacity = 1
@@ -3147,6 +3209,7 @@ for thisBlock in blocks:
             score += points
             feedback_points = f"+ {points}"
             feedback_score = f"Score: {score}"
+            outcome = "reward"
         else:
             feedback_color = (0,0,0)
             feedback_opacity = 0
@@ -3156,12 +3219,17 @@ for thisBlock in blocks:
             points = 0
             feedback_points = ""
             feedback_score = ""
+            outcome = "none"
         
         rectsize = [item * 1.02 for item in image.size]
         
         image_w = image.size[0]
         image_h = image.size[1]
         imagesize_test = [image_w * 1.2, image_h * 1.2]
+        
+        thisExp.addData('score', score)
+        thisExp.addData('outcome', outcome)
+        
         trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
            trials.addData('roi.timesOn', roi.timesOn)
@@ -3185,6 +3253,8 @@ for thisBlock in blocks:
         logging.log(level=logging.INFO, msg=f'FeedbackOnset_{log_msg}')
         ioServer.sendMessageEvent(text='FeedbackOnset')
         eyetracker.sendMessage('FeedbackOnset')
+        eyetracker.sendMessage(outcome)
+        
         polygon.setOpacity(feedback_opacity)
         polygon.setPos(position)
         polygon.setLineColor(feedback_color)
