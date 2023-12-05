@@ -189,7 +189,7 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="logging.log(level=logging.INFO, msg=f'FixationCross')" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="logging.log(level=logging.INFO, msg=f'FixationCross')&amp;#10;&amp;#10;if currentLoop.name == &quot;learning_trials&quot;:&amp;#10;    print(&quot;VP %s TEST-TRIALID %d CONDITION %s&quot;%(expInfo['participant'], learning_trials.thisN+1, trialtype))&amp;#10;&amp;#10;if currentLoop.name == &quot;trials&quot;:&amp;#10;    print(&quot;VP %s TRIALID %d CONDITION %s&quot;%(expInfo['participant'], trials.thisN+1, trialtype))" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
@@ -785,7 +785,7 @@
         <Param val="instruction_task = f&quot;Bitte geben Sie auch im nächsten Block an, ob die beiden Bilder, die Sie sehen gleich oder unterschiedlich sind.\nDrücken Sie die '{same.upper()}'-Taste, wenn die beiden Bilder gleich sind und die '{different.upper()}'-Taste, wenn die beiden Bilder unterschiedlich sind.&quot;" valType="extendedCode" updates="constant" name="Begin Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
-        <Param val="print(&quot;Start Experiment Screen. Press Space to continue.&quot;)&amp;#10;&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="print(&quot;Start Task Screen. Press Space to continue.&quot;)&amp;#10;&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
