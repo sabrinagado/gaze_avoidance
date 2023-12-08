@@ -28,9 +28,7 @@ requirePackage = function(name, load=T) {
 
 { # Variables ---------------------------------------------------------------
   # a priori exclusions for all variables
-  exclusions = c(
-    1, 2, 3, 4, 5, 6 #old paradigm
-  ) %>% unique() %>% sort()
+  exclusions = c() %>% unique() %>% sort()
   
   acq1End = 32 #no pain during first 20 trials
   acq2End = acq1End + 80 #acquisition for 40 trials
@@ -91,10 +89,10 @@ path = getwd()
 
 #load behavioral data (logs)
 path.logs = file.path(path, "gaze_avoidance_task", "data")
-files.log.prefix = "gca_"
+files.log.prefix = "gca_avoidance_task_"
 files.log.extension = ".log"
 
-files.rating.prefix = "gca_"
+files.rating.prefix = "gca_avoidance_task_"
 files.rating.extension = ".csv"
 
 path.eye = file.path(path, "gaze_avoidance_task", "data") #eye tracking data
@@ -334,7 +332,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
       log <- log %>% 
         mutate(look = if_else(str_detect(outcome, "lookedat"), 1, if_else(str_detect(outcome, "no_look"), 0, NA)))
       log <- log %>% 
-        mutate(subject = file.log.path %>% sub(".*gca_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
+        mutate(subject = file.log.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
       log <- log %>%
         select(subject, trial, phase, condition, look)
       log <- log %>% 
@@ -354,7 +352,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
       rating = numeric(0)
     )
     for (file.rating.path in files.rating.path) {
-      # file.rating.path = files.rating.path[1]
+      # file.rating.path = files.rating[1]
       rating = read_csv(file.rating.path)
       rating <- rating %>%
         select(stimtype, sliderStim.started, sliderStim.response)
@@ -369,7 +367,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
         mutate(phase = ifelse(timepoint==3, "test", phase))
       
       rating <- rating %>% 
-        mutate(subject = file.rating.path %>% sub(".*gca_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
+        mutate(subject = file.rating.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
       rating <- rating %>%
         select(subject, phase, stimtype, sliderStim.response)
       names(rating) = c("subject","phase","condition", "rating")
@@ -384,7 +382,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
     fixations = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
     names(fixations) = c("subject","trial","start","end","x","y", "eye")
     fixations = fixations %>%
-      mutate(subject = subject %>% sub("gca_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
+      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
              trial = trial %>% sub("Trial: ","", .) %>% as.numeric(),
              y = screen.height - y)
     return(fixations)
@@ -394,7 +392,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
     saccades = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
     names(saccades) = c("subject","trial","contains_blink", "start_time", "end_time", "start_x", "start_y","end_x","end_y")
     saccades = saccades %>%
-      mutate(subject = subject %>% sub("gca_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
+      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
              trial = trial %>% sub("Trial: ","", .) %>% as.numeric(),
              start_y = screen.height - start_y, end_y = screen.height - end_y)
     return(saccades)
@@ -404,7 +402,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
     messages = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
     names(messages) = c("subject", "trial","time","event")
     messages = messages %>%
-      mutate(subject = subject %>% sub("gca_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
+      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
              trial = trial %>% sub("Trial: ","", .) %>% as.numeric())
     return(messages)
   }
@@ -619,14 +617,14 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
                quadrant.ytop = ifelse(y_position_norm < 0, 0, screen.height / 2),
                quadrant.ybottom = ifelse(y_position_norm < 0, screen.height / 2, screen.height))
       roi_acq <- roi_acq %>% 
-        mutate(subject = file.roi.path %>% sub(".*gca_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
+        mutate(subject = file.roi.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
       roi_acq <- roi_acq %>%
         select(subject, trial, roi.xleft, roi.xright, roi.ybottom, roi.ytop, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop)
       
       roi <- rbind(roi, roi_acq)
       
       roi_test <- data.frame(
-        subject = rep(file.roi.path %>% sub(".*gca_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(), 40),
+        subject = rep(file.roi.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(), 40),
         trial = seq(113, 152),
         roi.xleft = rep(screen.width / 2 - image.test.width / 2, 40),
         roi.xright = rep(screen.width / 2 + image.test.width / 2, 40),
@@ -652,7 +650,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
 conditions = loadConditions(files.log) # condition
 ratings = loadRatings(files.rating, files.log) # ratings
 rois = loadRois(files.rating) # rois
-path.eye = file.path(path, "data") #eye tracking data
+path.eye = file.path(path, "gaze_avoidance_task", "data") #eye tracking data
 messages = loadMessages(file.path(path.eye, "messages.txt")) # %>% mutate(time = ifelse(time==0, 0, time + 1000)) #correct for duplicated pre-stimulus-baseline
 fixations = loadFixations(file.path(path.eye, "fixations.txt"), screen.height) %>% 
   left_join(conditions, by=c("subject", "trial")) %>% # get conditions & other variables
@@ -777,13 +775,13 @@ ggplot(avoidance.acq.prop.summary, aes(x = condition, y = Mean, fill = condition
   ) +
   geom_line(data=avoidance.acq.prop, aes(y = relative_frequency_av, group = subject), alpha=0.2) +
   geom_point(data=avoidance.acq.prop, aes(y = relative_frequency_av), size = 2, shape = 21, color = "black", alpha=0.5) + # , position=position_jitter(width=0.05)) +
-  labs(title = "Proportion of Avoidance-Trials", x = "Conditions", y = "Proportion") +
+  labs(title = paste("Proportion of Avoidance-Trials (N = ", n_distinct(avoidance.acq.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "avoidance_proportion_roi.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "avoidance_proportion_roi.png"), width=1800, height=2400, units="px")
 
 
 # Percentage of saccades going towards the stimuli
@@ -804,13 +802,13 @@ ggplot(saccades.acq.roi.summary, aes(x = condition, y = Mean, fill = condition))
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=saccades.acq.prop, aes(y = relative_frequency_ROI), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Proportion of Trials with a Saccade to the Stimulus", x = "Conditions", y = "Proportion") +
+  labs(title = paste("Proportion of Trials with a Saccade to the Stimulus (N = ", n_distinct(saccades.acq.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_proportion_roi.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_proportion_roi.png"), width=1800, height=2400, units="px")
 
 # Percentage of saccades going towards the quadrant
 saccades.acq.quad.summary <- saccades.acq.prop %>% 
@@ -823,13 +821,13 @@ ggplot(saccades.acq.quad.summary, aes(x = condition, y = Mean, fill = condition)
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=saccades.acq.prop, aes(y = relative_frequency_Quadrant), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Proportion of Trials with a Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Proportion") +
+  labs(title = paste("Proportion of Trials with a Saccade to the Quadrant of the Stimulus (N = ", n_distinct(saccades.acq.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_proportion_quad.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_proportion_quad.png"), width=1800, height=2400, units="px")
 
 # Latency to first saccade going towards the stimuli
 saccades.acq.lat.roi <- saccades.acq.analysis %>% 
@@ -850,13 +848,13 @@ ggplot(saccades.acq.lat.roi.summary, aes(x = condition, y = Mean, fill = conditi
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=saccades.acq.lat.roi, aes(y = latency), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Latency to First Saccade to the Stimulus", x = "Conditions", y = "Latency [ms]") +
+  labs(title = paste("Latency to First Saccade to the Stimulus (N = ", n_distinct(saccades.acq.lat.roi$subject), ")", sep=""), x = "Conditions", y = "Latency [ms]") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_latency_roi.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_latency_roi.png"), width=1800, height=2400, units="px")
 
 # Latency to first saccade going towards the quadrant of stimuli
 saccades.acq.lat.quad <- saccades.acq.analysis %>% 
@@ -877,13 +875,13 @@ ggplot(saccades.acq.lat.quad.summary, aes(x = condition, y = Mean, fill = condit
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=saccades.acq.lat.quad, aes(y = latency), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Latency to First Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Latency [ms]") +
+  labs(title = paste("Latency to First Saccade to the Quadrant of the Stimulus (N = ", n_distinct(saccades.acq.lat.quad$subject), ")", sep=""), x = "Conditions", y = "Latency [ms]") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_latency_quad.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_latency_quad.png"), width=1800, height=2400, units="px")
 
 # Length of saccade going towards the stimuli
 saccades.acq.len.roi <- saccades.acq.analysis %>% 
@@ -904,13 +902,13 @@ ggplot(saccades.acq.len.roi.summary, aes(x = condition, y = Mean, fill = conditi
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=saccades.acq.len.roi, aes(y = length), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Length of Saccade to the Stimulus", x = "Conditions", y = "Length [degree visual angle]") +
+  labs(title = paste("Length of Saccade to the Stimulus (N = ", n_distinct(saccades.acq.len.roi$subject), ")", sep=""), x = "Conditions", y = "Length [degree visual angle]") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_length_roi.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_length_roi.png"), width=1800, height=2400, units="px")
 
 # Latency to first saccade going towards the quadrant of stimuli
 saccades.acq.len.quad <- saccades.acq.analysis %>% 
@@ -931,13 +929,13 @@ ggplot(saccades.acq.len.quad.summary, aes(x = condition, y = Mean, fill = condit
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=saccades.acq.len.quad, aes(y = length), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Length of Saccade to the Quadrant of the Stimulus", x = "Conditions", y = "Length [degree visual angle]") +
+  labs(title = paste("Length of Saccade to the Quadrant of the Stimulus (N = ", n_distinct(saccades.acq.len.quad$subject), ")", sep=""), x = "Conditions", y = "Length [degree visual angle]") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_length_quad.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_length_quad.png"), width=1800, height=2400, units="px")
 
 # ### FIXATIONS
 # fixations.acq.valid <- fixations.acq.valid %>% 
@@ -1053,13 +1051,13 @@ ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = conditi
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=fixations.test.dwell, aes(y = dwell.time.prop), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Proportional Dwell Time On the Stimulus", x = "Conditions", y = "Proportional Dwell Time") +
+  labs(title = paste("Proportional Dwell Time On the Stimulus (N = ", n_distinct(fixations.test.dwell$subject), ")", sep=""), x = "Conditions", y = "Proportional Dwell Time") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "fixations_dwell_time_on_test.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "test", "fixations_dwell_time_on_test.png"), width=1800, height=2400, units="px")
 
 # Proportional Dwell Time Off The Stimulus
 fixations.test.dwell <- fixations.test.valid %>% 
@@ -1080,13 +1078,13 @@ ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = conditi
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=fixations.test.dwell, aes(y = dwell.time.prop), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Proportional Dwell Time Off the Stimulus", x = "Conditions", y = "Proportional Dwell Time") +
+  labs(title = paste("Proportional Dwell Time Off the Stimulus (N = ", n_distinct(fixations.test.dwell$subject), ")", sep=""), x = "Conditions", y = "Proportional Dwell Time") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "fixations_dwell_time_off_test.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "test", "fixations_dwell_time_off_test.png"), width=1800, height=2400, units="px")
 
 # Percentage of fixation going towards the stimuli
 fixations.test.prop <- fixations.test.valid %>% 
@@ -1103,13 +1101,13 @@ ggplot(fixations.test.roi.summary, aes(x = condition, y = Mean, fill = condition
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=fixations.test.prop, aes(y = relative_frequency_ROI), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Proportion of Fixations on the Stimulus", x = "Conditions", y = "Proportion") +
+  labs(title = paste("Proportion of Fixations on the Stimulus (N = ", n_distinct(fixations.test.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "fixations_proportion_on_test.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "test", "fixations_proportion_on_test.png"), width=1800, height=2400, units="px")
 
 
 ### SACCADES
@@ -1160,13 +1158,13 @@ ggplot(saccades.test.lat.roi.summary, aes(x = condition, y = Mean, fill = condit
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=saccades.test.lat.roi, aes(y = latency), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = "Latency to First Saccade Away from the Stimulus", x = "Conditions", y = "Latency [ms]") +
+  labs(title = paste("Latency to First Saccade Away from the Stimulus (N = ", n_distinct(saccades.test.lat.roi$subject), ")", sep=""), x = "Conditions", y = "Latency [ms]") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "saccades_latency_off_test.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "test", "saccades_latency_off_test.png"), width=1800, height=2400, units="px")
 
 
 ###############################################################################
@@ -1195,12 +1193,12 @@ for (p in c("Baseline", "Acquisition", "Test")) {
       width = 0.25) +
     geom_line(data=ratings.phase, aes(y = rating, group = subject), alpha=0.2) +
     geom_point(data=ratings.phase, aes(y = rating), size = 2, shape = 21, color = "black", alpha=0.5) + #, position=position_jitter(width=0.05)) +
-    labs(title = paste("Rating in ", p, "Phase", sep=" "), x = "Conditions", y = "Rating") +
+    labs(title = paste("Rating in ", p, " Phase (N = ", n_distinct(ratings.phase$subject), ")", sep=""), x = "Conditions", y = "Rating") +
     theme_minimal() +
     theme(legend.position = "none") +
     scale_fill_viridis_d() + 
     scale_color_viridis_d()
   
-  ggsave(file.path(path, "plots", paste("ratings_", tolower(p), ".png")), width=1800, height=2400, units="px")
+  ggsave(file.path(path, "plots", "avoidance-task", paste("ratings_", tolower(p), ".png")), width=1800, height=2400, units="px")
 }
 
