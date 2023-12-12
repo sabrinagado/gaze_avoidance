@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on Dezember 12, 2023, at 16:04
+    on Dezember 12, 2023, at 17:03
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -141,24 +141,12 @@ else:
 ioConfig = {}
 
 # Setup eyetracking
-ioConfig['eyetracker.hw.sr_research.eyelink.EyeTracker'] = {
+ioConfig['eyetracker.hw.mouse.EyeTracker'] = {
     'name': 'tracker',
-    'model_name': 'EYELINK 1000 TOWER',
-    'simulation_mode': False,
-    'network_settings': '100.1.1.1',
-    'default_native_data_file_name': 'EXPFILE',
-    'runtime_settings': {
-        'sampling_rate': 1000.0,
-        'track_eyes': 'RIGHT_EYE',
-        'sample_filtering': {
-            'sample_filtering': 'FILTER_LEVEL_2',
-            'elLiveFiltering': 'FILTER_LEVEL_OFF',
-        },
-        'vog_settings': {
-            'pupil_measure_types': 'PUPIL_AREA',
-            'tracking_mode': 'PUPIL_CR_TRACKING',
-            'pupil_center_algorithm': 'CENTROID_FIT',
-        }
+    'controls': {
+        'move': [],
+        'blink':('MIDDLE_BUTTON',),
+        'saccade_threshold': 0.5,
     }
 }
 
@@ -195,6 +183,7 @@ textPainThreshold = visual.TextStim(win=win, name='textPainThreshold',
 spacePainThreshold = keyboard.Keyboard()
 
 # --- Initialize components for Routine "painThreshold" ---
+keys_PainT = keyboard.Keyboard()
 # Run 'Begin Experiment' code from codePainRatingT
 skipShock = False
 sliderPainT = visual.Slider(win=win, name='sliderPainT',
@@ -203,36 +192,35 @@ sliderPainT = visual.Slider(win=win, name='sliderPainT',
     style='rating', styleTweaks=('labels45',), opacity=None,
     labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
     font='Open Sans', labelHeight=0.03,
-    flip=False, ori=0.0, depth=-1, readOnly=False)
+    flip=False, ori=0.0, depth=-2, readOnly=False)
 textRateT = visual.TextStim(win=win, name='textRateT',
     text='Wie schmerzhaft fanden Sie den elektrischen Reiz?',
     font='Open Sans',
     pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-2.0);
+    depth=-3.0);
 text_noPainT = visual.TextStim(win=win, name='text_noPainT',
     text='nichts\ngespürt',
     font='Open Sans',
     pos=(-0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-3.0);
+    depth=-4.0);
 text_slightPainT = visual.TextStim(win=win, name='text_slightPainT',
     text='eben \nwahrnehmbarer\nSchmerz',
     font='Open Sans',
     pos=(-0.1, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-4.0);
+    depth=-5.0);
 text_highPainT = visual.TextStim(win=win, name='text_highPainT',
     text='unerträglicher\nSchmerz',
     font='Open Sans',
     pos=(0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-5.0);
-keys_PainT = keyboard.Keyboard()
+    depth=-6.0);
 
 # --- Initialize components for Routine "shock" ---
 portShock1T = parallel.ParallelPort(address='0x0378')
@@ -947,6 +935,9 @@ for thisTrials_threshold in trials_threshold:
     continueRoutine = True
     routineForceEnded = False
     # update component parameters for each repeat
+    keys_PainT.keys = []
+    keys_PainT.rt = []
+    _keys_PainT_allKeys = []
     # Run 'Begin Routine' code from codePainRatingT
     if trials_threshold.thisN == 0:
         print("Press 's' to administer shock.")
@@ -955,11 +946,8 @@ for thisTrials_threshold in trials_threshold:
     logging.log(level=logging.INFO, msg=f'PainThreshold')
     last_rating = None
     sliderPainT.reset()
-    keys_PainT.keys = []
-    keys_PainT.rt = []
-    _keys_PainT_allKeys = []
     # keep track of which components have finished
-    painThresholdComponents = [sliderPainT, textRateT, text_noPainT, text_slightPainT, text_highPainT, keys_PainT]
+    painThresholdComponents = [keys_PainT, sliderPainT, textRateT, text_noPainT, text_slightPainT, text_highPainT]
     for thisComponent in painThresholdComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -980,6 +968,28 @@ for thisTrials_threshold in trials_threshold:
         tThisFlipGlobal = win.getFutureFlipTime(clock=None)
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
+        
+        # *keys_PainT* updates
+        waitOnFlip = False
+        if keys_PainT.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
+            # keep track of start time/frame for later
+            keys_PainT.frameNStart = frameN  # exact frame index
+            keys_PainT.tStart = t  # local t and not account for scr refresh
+            keys_PainT.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(keys_PainT, 'tStartRefresh')  # time at next scr refresh
+            keys_PainT.status = STARTED
+            # keyboard checking is just starting
+            waitOnFlip = True
+            win.callOnFlip(keys_PainT.clock.reset)  # t=0 on next screen flip
+            win.callOnFlip(keys_PainT.clearEvents, eventType='keyboard')  # clear events on next screen flip
+        if keys_PainT.status == STARTED and not waitOnFlip:
+            theseKeys = keys_PainT.getKeys(keyList=['s', 'g'], waitRelease=False)
+            _keys_PainT_allKeys.extend(theseKeys)
+            if len(_keys_PainT_allKeys):
+                keys_PainT.keys = _keys_PainT_allKeys[-1].name  # just the last key pressed
+                keys_PainT.rt = _keys_PainT_allKeys[-1].rt
+                # a response ends the routine
+                continueRoutine = False
         # Run 'Each Frame' code from codePainRatingT
         rating = sliderPainT.getRating()
         if rating != last_rating:
@@ -1035,28 +1045,6 @@ for thisTrials_threshold in trials_threshold:
             text_highPainT.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(text_highPainT, 'tStartRefresh')  # time at next scr refresh
             text_highPainT.setAutoDraw(True)
-        
-        # *keys_PainT* updates
-        waitOnFlip = False
-        if keys_PainT.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
-            # keep track of start time/frame for later
-            keys_PainT.frameNStart = frameN  # exact frame index
-            keys_PainT.tStart = t  # local t and not account for scr refresh
-            keys_PainT.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(keys_PainT, 'tStartRefresh')  # time at next scr refresh
-            keys_PainT.status = STARTED
-            # keyboard checking is just starting
-            waitOnFlip = True
-            win.callOnFlip(keys_PainT.clock.reset)  # t=0 on next screen flip
-            win.callOnFlip(keys_PainT.clearEvents, eventType='keyboard')  # clear events on next screen flip
-        if keys_PainT.status == STARTED and not waitOnFlip:
-            theseKeys = keys_PainT.getKeys(keyList=['s', 'g'], waitRelease=False)
-            _keys_PainT_allKeys.extend(theseKeys)
-            if len(_keys_PainT_allKeys):
-                keys_PainT.keys = _keys_PainT_allKeys[-1].name  # just the last key pressed
-                keys_PainT.rt = _keys_PainT_allKeys[-1].rt
-                # a response ends the routine
-                continueRoutine = False
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -2071,7 +2059,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(0.0, log=False)
+                gazeCursor.setOpacity(1.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             # *portImage* updates
             if portImage.status == NOT_STARTED and t >= 0.0-frameTolerance:
@@ -2965,7 +2953,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(0.0, log=False)
+                gazeCursor.setOpacity(1.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             # *portImage* updates
             if portImage.status == NOT_STARTED and t >= 0.0-frameTolerance:
