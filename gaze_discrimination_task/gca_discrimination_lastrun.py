@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 30, 2023, at 09:03
+    on Dezember 12, 2023, at 16:13
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -143,7 +143,6 @@ spaceStart = keyboard.Keyboard()
 # --- Initialize components for Routine "startExp" ---
 # Run 'Begin Experiment' code from codeStartExp
 instruction_start = f"Bitte geben Sie an, ob die beiden Bilder, die Sie sehen gleich oder unterschiedlich sind.\nDrücken Sie die '{same.upper()}'-Taste, wenn die beiden Bilder gleich sind und die '{different.upper()}'-Taste, wenn die beiden Bilder unterschiedlich sind."
-
 textStartExp = visual.TextStim(win=win, name='textStartExp',
     text=instruction_start,
     font='Open Sans',
@@ -152,7 +151,7 @@ textStartExp = visual.TextStim(win=win, name='textStartExp',
     languageStyle='LTR',
     depth=-1.0);
 textExpImages = visual.TextStim(win=win, name='textExpImages',
-    text='Mögliche Bilder sind folgende:',
+    text='Diese Bilder werden präsentiert:',
     font='Open Sans',
     pos=(0, 0.2), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -276,7 +275,7 @@ textStartTask = visual.TextStim(win=win, name='textStartTask',
     languageStyle='LTR',
     depth=-1.0);
 textTaskImages = visual.TextStim(win=win, name='textTaskImages',
-    text='Mögliche Bilder sind folgende:',
+    text='Diese Bilder werden präsentiert:',
     font='Open Sans',
     pos=(0, 0.2), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -460,8 +459,6 @@ while continueRoutine:
         spaceStart.tStart = t  # local t and not account for scr refresh
         spaceStart.tStartRefresh = tThisFlipGlobal  # on global time
         win.timeOnFlip(spaceStart, 'tStartRefresh')  # time at next scr refresh
-        # add timestamp to datafile
-        thisExp.timestampOnFlip(win, 'spaceStart.started')
         spaceStart.status = STARTED
         # keyboard checking is just starting
         waitOnFlip = True
@@ -498,13 +495,6 @@ while continueRoutine:
 for thisComponent in welcomeComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
-# check responses
-if spaceStart.keys in ['', [], None]:  # No response was made
-    spaceStart.keys = None
-thisExp.addData('spaceStart.keys',spaceStart.keys)
-if spaceStart.keys != None:  # we had a response
-    thisExp.addData('spaceStart.rt', spaceStart.rt)
-thisExp.nextEntry()
 # the Routine "welcome" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 
@@ -567,8 +557,6 @@ for thisBlock in blocks:
             textStartExp.tStart = t  # local t and not account for scr refresh
             textStartExp.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textStartExp, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textStartExp.started')
             textStartExp.setAutoDraw(True)
         
         # *textExpImages* updates
@@ -578,8 +566,6 @@ for thisBlock in blocks:
             textExpImages.tStart = t  # local t and not account for scr refresh
             textExpImages.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textExpImages, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textExpImages.started')
             textExpImages.setAutoDraw(True)
         
         # *ImageLearning1* updates
@@ -589,8 +575,6 @@ for thisBlock in blocks:
             ImageLearning1.tStart = t  # local t and not account for scr refresh
             ImageLearning1.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(ImageLearning1, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'ImageLearning1.started')
             ImageLearning1.setAutoDraw(True)
         
         # *ImageLearning2* updates
@@ -600,8 +584,6 @@ for thisBlock in blocks:
             ImageLearning2.tStart = t  # local t and not account for scr refresh
             ImageLearning2.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(ImageLearning2, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'ImageLearning2.started')
             ImageLearning2.setAutoDraw(True)
         
         # *textSpace* updates
@@ -611,8 +593,6 @@ for thisBlock in blocks:
             textSpace.tStart = t  # local t and not account for scr refresh
             textSpace.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textSpace, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textSpace.started')
             textSpace.setAutoDraw(True)
         
         # *spaceStartExp* updates
@@ -623,8 +603,6 @@ for thisBlock in blocks:
             spaceStartExp.tStart = t  # local t and not account for scr refresh
             spaceStartExp.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(spaceStartExp, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'spaceStartExp.started')
             spaceStartExp.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
@@ -661,12 +639,6 @@ for thisBlock in blocks:
     for thisComponent in startExpComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    # check responses
-    if spaceStartExp.keys in ['', [], None]:  # No response was made
-        spaceStartExp.keys = None
-    blocks.addData('spaceStartExp.keys',spaceStartExp.keys)
-    if spaceStartExp.keys != None:  # we had a response
-        blocks.addData('spaceStartExp.rt', spaceStartExp.rt)
     # the Routine "startExp" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -707,8 +679,6 @@ for thisBlock in blocks:
             blankScreen.tStart = t  # local t and not account for scr refresh
             blankScreen.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(blankScreen, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'blankScreen.started')
             blankScreen.setAutoDraw(True)
         if blankScreen.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
@@ -716,8 +686,6 @@ for thisBlock in blocks:
                 # keep track of stop time/frame for later
                 blankScreen.tStop = t  # not accounting for scr refresh
                 blankScreen.frameNStop = frameN  # exact frame index
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'blankScreen.stopped')
                 blankScreen.setAutoDraw(False)
         
         # check for quit (typically the Esc key)
@@ -772,6 +740,12 @@ for thisBlock in blocks:
         # update component parameters for each repeat
         # Run 'Begin Routine' code from codeFixate
         logging.log(level=logging.INFO, msg=f'FixationCross')
+        
+        if currentLoop.name == "learning_trials":
+            print("VP %s TEST-TRIALID %d"%(expInfo['participant'], learning_trials.thisN+1))
+        
+        if currentLoop.name == "trials":
+            print("VP %s TRIALID %d"%(expInfo['participant'], trials.thisN+1))
         # keep track of which components have finished
         crossComponents = [fixcross]
         for thisComponent in crossComponents:
@@ -802,8 +776,6 @@ for thisBlock in blocks:
                 fixcross.tStart = t  # local t and not account for scr refresh
                 fixcross.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcross, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcross.started')
                 fixcross.setAutoDraw(True)
             if fixcross.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -811,8 +783,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcross.tStop = t  # not accounting for scr refresh
                     fixcross.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcross.stopped')
                     fixcross.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -879,8 +849,6 @@ for thisBlock in blocks:
                 firstImage.tStart = t  # local t and not account for scr refresh
                 firstImage.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(firstImage, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'firstImage.started')
                 firstImage.setAutoDraw(True)
             if firstImage.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -888,8 +856,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     firstImage.tStop = t  # not accounting for scr refresh
                     firstImage.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'firstImage.stopped')
                     firstImage.setAutoDraw(False)
             
             # *fixcrossImage1* updates
@@ -899,8 +865,6 @@ for thisBlock in blocks:
                 fixcrossImage1.tStart = t  # local t and not account for scr refresh
                 fixcrossImage1.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossImage1, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossImage1.started')
                 fixcrossImage1.setAutoDraw(True)
             if fixcrossImage1.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -908,8 +872,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossImage1.tStop = t  # not accounting for scr refresh
                     fixcrossImage1.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossImage1.stopped')
                     fixcrossImage1.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -974,8 +936,6 @@ for thisBlock in blocks:
                 fixcrossITI.tStart = t  # local t and not account for scr refresh
                 fixcrossITI.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossITI, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossITI.started')
                 fixcrossITI.setAutoDraw(True)
             if fixcrossITI.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -983,8 +943,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossITI.tStop = t  # not accounting for scr refresh
                     fixcrossITI.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossITI.stopped')
                     fixcrossITI.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -1051,8 +1009,6 @@ for thisBlock in blocks:
                 secondImage.tStart = t  # local t and not account for scr refresh
                 secondImage.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(secondImage, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'secondImage.started')
                 secondImage.setAutoDraw(True)
             if secondImage.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1060,8 +1016,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     secondImage.tStop = t  # not accounting for scr refresh
                     secondImage.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'secondImage.stopped')
                     secondImage.setAutoDraw(False)
             
             # *fixcrossImage2* updates
@@ -1071,8 +1025,6 @@ for thisBlock in blocks:
                 fixcrossImage2.tStart = t  # local t and not account for scr refresh
                 fixcrossImage2.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossImage2, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossImage2.started')
                 fixcrossImage2.setAutoDraw(True)
             if fixcrossImage2.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1080,8 +1032,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossImage2.tStop = t  # not accounting for scr refresh
                     fixcrossImage2.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossImage2.stopped')
                     fixcrossImage2.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -1273,8 +1223,6 @@ for thisBlock in blocks:
                 feedbackText.tStart = t  # local t and not account for scr refresh
                 feedbackText.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(feedbackText, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'feedbackText.started')
                 feedbackText.setAutoDraw(True)
             if feedbackText.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1282,8 +1230,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     feedbackText.tStop = t  # not accounting for scr refresh
                     feedbackText.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'feedbackText.stopped')
                     feedbackText.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -1350,8 +1296,6 @@ for thisBlock in blocks:
                 fixcrossEnd.tStart = t  # local t and not account for scr refresh
                 fixcrossEnd.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossEnd, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossEnd.started')
                 fixcrossEnd.setAutoDraw(True)
             if fixcrossEnd.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1359,8 +1303,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossEnd.tStop = t  # not accounting for scr refresh
                     fixcrossEnd.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossEnd.stopped')
                     fixcrossEnd.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -1397,7 +1339,7 @@ for thisBlock in blocks:
     routineForceEnded = False
     # update component parameters for each repeat
     # Run 'Begin Routine' code from codeStartTask
-    print("Start Experiment Screen. Press Space to continue.")
+    print("Start Task Screen. Press Space to continue.")
     
     
     spaceStartTask.keys = []
@@ -1444,8 +1386,6 @@ for thisBlock in blocks:
             textTaskImages.tStart = t  # local t and not account for scr refresh
             textTaskImages.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textTaskImages, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textTaskImages.started')
             textTaskImages.setAutoDraw(True)
         
         # *ImageTask1* updates
@@ -1455,8 +1395,6 @@ for thisBlock in blocks:
             ImageTask1.tStart = t  # local t and not account for scr refresh
             ImageTask1.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(ImageTask1, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'ImageTask1.started')
             ImageTask1.setAutoDraw(True)
         
         # *ImageTask2* updates
@@ -1466,8 +1404,6 @@ for thisBlock in blocks:
             ImageTask2.tStart = t  # local t and not account for scr refresh
             ImageTask2.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(ImageTask2, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'ImageTask2.started')
             ImageTask2.setAutoDraw(True)
         
         # *ImageTask3* updates
@@ -1477,8 +1413,6 @@ for thisBlock in blocks:
             ImageTask3.tStart = t  # local t and not account for scr refresh
             ImageTask3.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(ImageTask3, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'ImageTask3.started')
             ImageTask3.setAutoDraw(True)
         
         # *ImageTask4* updates
@@ -1488,8 +1422,6 @@ for thisBlock in blocks:
             ImageTask4.tStart = t  # local t and not account for scr refresh
             ImageTask4.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(ImageTask4, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'ImageTask4.started')
             ImageTask4.setAutoDraw(True)
         
         # *textTaskSpace* updates
@@ -1499,8 +1431,6 @@ for thisBlock in blocks:
             textTaskSpace.tStart = t  # local t and not account for scr refresh
             textTaskSpace.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textTaskSpace, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textTaskSpace.started')
             textTaskSpace.setAutoDraw(True)
         
         # *spaceStartTask* updates
@@ -1511,8 +1441,6 @@ for thisBlock in blocks:
             spaceStartTask.tStart = t  # local t and not account for scr refresh
             spaceStartTask.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(spaceStartTask, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'spaceStartTask.started')
             spaceStartTask.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
@@ -1549,12 +1477,6 @@ for thisBlock in blocks:
     for thisComponent in startTaskComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    # check responses
-    if spaceStartTask.keys in ['', [], None]:  # No response was made
-        spaceStartTask.keys = None
-    blocks.addData('spaceStartTask.keys',spaceStartTask.keys)
-    if spaceStartTask.keys != None:  # we had a response
-        blocks.addData('spaceStartTask.rt', spaceStartTask.rt)
     # the Routine "startTask" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -1595,8 +1517,6 @@ for thisBlock in blocks:
             blankScreen.tStart = t  # local t and not account for scr refresh
             blankScreen.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(blankScreen, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'blankScreen.started')
             blankScreen.setAutoDraw(True)
         if blankScreen.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
@@ -1604,8 +1524,6 @@ for thisBlock in blocks:
                 # keep track of stop time/frame for later
                 blankScreen.tStop = t  # not accounting for scr refresh
                 blankScreen.frameNStop = frameN  # exact frame index
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'blankScreen.stopped')
                 blankScreen.setAutoDraw(False)
         
         # check for quit (typically the Esc key)
@@ -1660,6 +1578,12 @@ for thisBlock in blocks:
         # update component parameters for each repeat
         # Run 'Begin Routine' code from codeFixate
         logging.log(level=logging.INFO, msg=f'FixationCross')
+        
+        if currentLoop.name == "learning_trials":
+            print("VP %s TEST-TRIALID %d"%(expInfo['participant'], learning_trials.thisN+1))
+        
+        if currentLoop.name == "trials":
+            print("VP %s TRIALID %d"%(expInfo['participant'], trials.thisN+1))
         # keep track of which components have finished
         crossComponents = [fixcross]
         for thisComponent in crossComponents:
@@ -1690,8 +1614,6 @@ for thisBlock in blocks:
                 fixcross.tStart = t  # local t and not account for scr refresh
                 fixcross.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcross, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcross.started')
                 fixcross.setAutoDraw(True)
             if fixcross.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1699,8 +1621,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcross.tStop = t  # not accounting for scr refresh
                     fixcross.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcross.stopped')
                     fixcross.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -1767,8 +1687,6 @@ for thisBlock in blocks:
                 firstImage.tStart = t  # local t and not account for scr refresh
                 firstImage.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(firstImage, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'firstImage.started')
                 firstImage.setAutoDraw(True)
             if firstImage.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1776,8 +1694,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     firstImage.tStop = t  # not accounting for scr refresh
                     firstImage.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'firstImage.stopped')
                     firstImage.setAutoDraw(False)
             
             # *fixcrossImage1* updates
@@ -1787,8 +1703,6 @@ for thisBlock in blocks:
                 fixcrossImage1.tStart = t  # local t and not account for scr refresh
                 fixcrossImage1.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossImage1, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossImage1.started')
                 fixcrossImage1.setAutoDraw(True)
             if fixcrossImage1.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1796,8 +1710,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossImage1.tStop = t  # not accounting for scr refresh
                     fixcrossImage1.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossImage1.stopped')
                     fixcrossImage1.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -1862,8 +1774,6 @@ for thisBlock in blocks:
                 fixcrossITI.tStart = t  # local t and not account for scr refresh
                 fixcrossITI.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossITI, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossITI.started')
                 fixcrossITI.setAutoDraw(True)
             if fixcrossITI.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1871,8 +1781,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossITI.tStop = t  # not accounting for scr refresh
                     fixcrossITI.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossITI.stopped')
                     fixcrossITI.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -1939,8 +1847,6 @@ for thisBlock in blocks:
                 secondImage.tStart = t  # local t and not account for scr refresh
                 secondImage.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(secondImage, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'secondImage.started')
                 secondImage.setAutoDraw(True)
             if secondImage.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1948,8 +1854,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     secondImage.tStop = t  # not accounting for scr refresh
                     secondImage.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'secondImage.stopped')
                     secondImage.setAutoDraw(False)
             
             # *fixcrossImage2* updates
@@ -1959,8 +1863,6 @@ for thisBlock in blocks:
                 fixcrossImage2.tStart = t  # local t and not account for scr refresh
                 fixcrossImage2.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossImage2, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossImage2.started')
                 fixcrossImage2.setAutoDraw(True)
             if fixcrossImage2.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1968,8 +1870,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossImage2.tStop = t  # not accounting for scr refresh
                     fixcrossImage2.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossImage2.stopped')
                     fixcrossImage2.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -2162,8 +2062,6 @@ for thisBlock in blocks:
                 fixcrossEnd.tStart = t  # local t and not account for scr refresh
                 fixcrossEnd.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossEnd, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossEnd.started')
                 fixcrossEnd.setAutoDraw(True)
             if fixcrossEnd.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -2171,8 +2069,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossEnd.tStop = t  # not accounting for scr refresh
                     fixcrossEnd.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossEnd.stopped')
                     fixcrossEnd.setAutoDraw(False)
             
             # check for quit (typically the Esc key)

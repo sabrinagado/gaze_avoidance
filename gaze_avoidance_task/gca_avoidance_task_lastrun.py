@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on November 30, 2023, at 08:55
+    on Dezember 12, 2023, at 16:04
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -195,44 +195,44 @@ textPainThreshold = visual.TextStim(win=win, name='textPainThreshold',
 spacePainThreshold = keyboard.Keyboard()
 
 # --- Initialize components for Routine "painThreshold" ---
-textRateT = visual.TextStim(win=win, name='textRateT',
-    text='Wie schmerzhaft fanden Sie den elektrischen Reiz?',
-    font='Open Sans',
-    pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
-    color='white', colorSpace='rgb', opacity=None, 
-    languageStyle='LTR',
-    depth=0.0);
-text_noPainT = visual.TextStim(win=win, name='text_noPainT',
-    text='nichts\ngespürt',
-    font='Open Sans',
-    pos=(-0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
-    color='white', colorSpace='rgb', opacity=None, 
-    languageStyle='LTR',
-    depth=-1.0);
-text_slightPainT = visual.TextStim(win=win, name='text_slightPainT',
-    text='eben \nwahrnehmbarer\nSchmerz',
-    font='Open Sans',
-    pos=(-0.1, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
-    color='white', colorSpace='rgb', opacity=None, 
-    languageStyle='LTR',
-    depth=-2.0);
-text_highPainT = visual.TextStim(win=win, name='text_highPainT',
-    text='unerträglicher\nSchmerz',
-    font='Open Sans',
-    pos=(0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
-    color='white', colorSpace='rgb', opacity=None, 
-    languageStyle='LTR',
-    depth=-3.0);
+# Run 'Begin Experiment' code from codePainRatingT
+skipShock = False
 sliderPainT = visual.Slider(win=win, name='sliderPainT',
     startValue=None, size=(1.0, 0.1), pos=(0, 0), units=None,
     labels=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), ticks=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), granularity=1.0,
     style='rating', styleTweaks=('labels45',), opacity=None,
     labelColor='White', markerColor='Red', lineColor='White', colorSpace='rgb',
     font='Open Sans', labelHeight=0.03,
-    flip=False, ori=0.0, depth=-4, readOnly=False)
+    flip=False, ori=0.0, depth=-1, readOnly=False)
+textRateT = visual.TextStim(win=win, name='textRateT',
+    text='Wie schmerzhaft fanden Sie den elektrischen Reiz?',
+    font='Open Sans',
+    pos=(0, 0.6), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-2.0);
+text_noPainT = visual.TextStim(win=win, name='text_noPainT',
+    text='nichts\ngespürt',
+    font='Open Sans',
+    pos=(-0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-3.0);
+text_slightPainT = visual.TextStim(win=win, name='text_slightPainT',
+    text='eben \nwahrnehmbarer\nSchmerz',
+    font='Open Sans',
+    pos=(-0.1, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-4.0);
+text_highPainT = visual.TextStim(win=win, name='text_highPainT',
+    text='unerträglicher\nSchmerz',
+    font='Open Sans',
+    pos=(0.5, 0.15), height=0.05, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-5.0);
 keys_PainT = keyboard.Keyboard()
-# Run 'Begin Experiment' code from codePainRatingT
-skipShock = False
 
 # --- Initialize components for Routine "shock" ---
 portShock1T = parallel.ParallelPort(address='0x0378')
@@ -423,7 +423,7 @@ fixcrossE = visual.TextStim(win=win, name='fixcrossE',
 
 # --- Initialize components for Routine "repeatTask" ---
 textRepeatTask = visual.TextStim(win=win, name='textRepeatTask',
-    text='Kurze Pause\n\nIm nächsten Block ist Ihre Aufgabe weiterhin Ihren Belohnungsscore zu maximieren und die elektrischen Reize zu vermeiden. ',
+    text='--- Kurze Pause ---\n\nIm nächsten Block ist Ihre Aufgabe weiterhin Ihren Belohnungsscore zu maximieren und die elektrischen Reize zu vermeiden. ',
     font='Open Sans',
     pos=(0, 0.3), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -797,8 +797,6 @@ while continueRoutine:
         spaceStart.tStart = t  # local t and not account for scr refresh
         spaceStart.tStartRefresh = tThisFlipGlobal  # on global time
         win.timeOnFlip(spaceStart, 'tStartRefresh')  # time at next scr refresh
-        # add timestamp to datafile
-        thisExp.timestampOnFlip(win, 'spaceStart.started')
         spaceStart.status = STARTED
         # keyboard checking is just starting
         waitOnFlip = True
@@ -835,13 +833,6 @@ while continueRoutine:
 for thisComponent in welcomeComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
-# check responses
-if spaceStart.keys in ['', [], None]:  # No response was made
-    spaceStart.keys = None
-thisExp.addData('spaceStart.keys',spaceStart.keys)
-if spaceStart.keys != None:  # we had a response
-    thisExp.addData('spaceStart.rt', spaceStart.rt)
-thisExp.nextEntry()
 # the Routine "welcome" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 
@@ -884,8 +875,6 @@ while continueRoutine:
         textPainThreshold.tStart = t  # local t and not account for scr refresh
         textPainThreshold.tStartRefresh = tThisFlipGlobal  # on global time
         win.timeOnFlip(textPainThreshold, 'tStartRefresh')  # time at next scr refresh
-        # add timestamp to datafile
-        thisExp.timestampOnFlip(win, 'textPainThreshold.started')
         textPainThreshold.setAutoDraw(True)
     
     # *spacePainThreshold* updates
@@ -896,8 +885,6 @@ while continueRoutine:
         spacePainThreshold.tStart = t  # local t and not account for scr refresh
         spacePainThreshold.tStartRefresh = tThisFlipGlobal  # on global time
         win.timeOnFlip(spacePainThreshold, 'tStartRefresh')  # time at next scr refresh
-        # add timestamp to datafile
-        thisExp.timestampOnFlip(win, 'spacePainThreshold.started')
         spacePainThreshold.status = STARTED
         # keyboard checking is just starting
         waitOnFlip = True
@@ -934,13 +921,6 @@ while continueRoutine:
 for thisComponent in startPainThresholdComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
-# check responses
-if spacePainThreshold.keys in ['', [], None]:  # No response was made
-    spacePainThreshold.keys = None
-thisExp.addData('spacePainThreshold.keys',spacePainThreshold.keys)
-if spacePainThreshold.keys != None:  # we had a response
-    thisExp.addData('spacePainThreshold.rt', spacePainThreshold.rt)
-thisExp.nextEntry()
 # the Routine "startPainThreshold" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 
@@ -967,21 +947,19 @@ for thisTrials_threshold in trials_threshold:
     continueRoutine = True
     routineForceEnded = False
     # update component parameters for each repeat
-    sliderPainT.reset()
-    keys_PainT.keys = []
-    keys_PainT.rt = []
-    _keys_PainT_allKeys = []
     # Run 'Begin Routine' code from codePainRatingT
-    logging.log(level=logging.INFO, msg=f'PainThreshold')
-    
     if trials_threshold.thisN == 0:
         print("Press 's' to administer shock.")
     else:
         print(f"Press 's' to administer shock. Press 'g' to continue when pain threshold was found.")
-    
-    values = [None]
+    logging.log(level=logging.INFO, msg=f'PainThreshold')
+    last_rating = None
+    sliderPainT.reset()
+    keys_PainT.keys = []
+    keys_PainT.rt = []
+    _keys_PainT_allKeys = []
     # keep track of which components have finished
-    painThresholdComponents = [textRateT, text_noPainT, text_slightPainT, text_highPainT, sliderPainT, keys_PainT]
+    painThresholdComponents = [sliderPainT, textRateT, text_noPainT, text_slightPainT, text_highPainT, keys_PainT]
     for thisComponent in painThresholdComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -1002,61 +980,61 @@ for thisTrials_threshold in trials_threshold:
         tThisFlipGlobal = win.getFutureFlipTime(clock=None)
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
-        
-        # *textRateT* updates
-        if textRateT.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            textRateT.frameNStart = frameN  # exact frame index
-            textRateT.tStart = t  # local t and not account for scr refresh
-            textRateT.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(textRateT, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textRateT.started')
-            textRateT.setAutoDraw(True)
-        
-        # *text_noPainT* updates
-        if text_noPainT.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            text_noPainT.frameNStart = frameN  # exact frame index
-            text_noPainT.tStart = t  # local t and not account for scr refresh
-            text_noPainT.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(text_noPainT, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'text_noPainT.started')
-            text_noPainT.setAutoDraw(True)
-        
-        # *text_slightPainT* updates
-        if text_slightPainT.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            text_slightPainT.frameNStart = frameN  # exact frame index
-            text_slightPainT.tStart = t  # local t and not account for scr refresh
-            text_slightPainT.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(text_slightPainT, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'text_slightPainT.started')
-            text_slightPainT.setAutoDraw(True)
-        
-        # *text_highPainT* updates
-        if text_highPainT.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            text_highPainT.frameNStart = frameN  # exact frame index
-            text_highPainT.tStart = t  # local t and not account for scr refresh
-            text_highPainT.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(text_highPainT, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'text_highPainT.started')
-            text_highPainT.setAutoDraw(True)
+        # Run 'Each Frame' code from codePainRatingT
+        rating = sliderPainT.getRating()
+        if rating != last_rating:
+            print(f"Value: {rating}")
+            last_rating = rating
+            
+        if 'g' in keys_PainT.keys:
+            continueRoutine = False
+            trials_threshold.finished = True
+            skipShock = True
         
         # *sliderPainT* updates
-        if sliderPainT.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        if sliderPainT.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
             # keep track of start time/frame for later
             sliderPainT.frameNStart = frameN  # exact frame index
             sliderPainT.tStart = t  # local t and not account for scr refresh
             sliderPainT.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(sliderPainT, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'sliderPainT.started')
             sliderPainT.setAutoDraw(True)
+        
+        # *textRateT* updates
+        if textRateT.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
+            # keep track of start time/frame for later
+            textRateT.frameNStart = frameN  # exact frame index
+            textRateT.tStart = t  # local t and not account for scr refresh
+            textRateT.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textRateT, 'tStartRefresh')  # time at next scr refresh
+            textRateT.setAutoDraw(True)
+        
+        # *text_noPainT* updates
+        if text_noPainT.status == NOT_STARTED and tThisFlip >= 0.-frameTolerance:
+            # keep track of start time/frame for later
+            text_noPainT.frameNStart = frameN  # exact frame index
+            text_noPainT.tStart = t  # local t and not account for scr refresh
+            text_noPainT.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(text_noPainT, 'tStartRefresh')  # time at next scr refresh
+            text_noPainT.setAutoDraw(True)
+        
+        # *text_slightPainT* updates
+        if text_slightPainT.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
+            # keep track of start time/frame for later
+            text_slightPainT.frameNStart = frameN  # exact frame index
+            text_slightPainT.tStart = t  # local t and not account for scr refresh
+            text_slightPainT.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(text_slightPainT, 'tStartRefresh')  # time at next scr refresh
+            text_slightPainT.setAutoDraw(True)
+        
+        # *text_highPainT* updates
+        if text_highPainT.status == NOT_STARTED and tThisFlip >= 0.-frameTolerance:
+            # keep track of start time/frame for later
+            text_highPainT.frameNStart = frameN  # exact frame index
+            text_highPainT.tStart = t  # local t and not account for scr refresh
+            text_highPainT.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(text_highPainT, 'tStartRefresh')  # time at next scr refresh
+            text_highPainT.setAutoDraw(True)
         
         # *keys_PainT* updates
         waitOnFlip = False
@@ -1066,8 +1044,6 @@ for thisTrials_threshold in trials_threshold:
             keys_PainT.tStart = t  # local t and not account for scr refresh
             keys_PainT.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(keys_PainT, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'keys_PainT.started')
             keys_PainT.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
@@ -1081,15 +1057,6 @@ for thisTrials_threshold in trials_threshold:
                 keys_PainT.rt = _keys_PainT_allKeys[-1].rt
                 # a response ends the routine
                 continueRoutine = False
-        # Run 'Each Frame' code from codePainRatingT
-        if 'g' in keys_PainT.keys:
-            continueRoutine = False
-            trials_threshold.finished = True
-            skipShock = True
-            
-        if sliderPainT.getRating() != values[-1]:
-            values.append(sliderPainT.getRating())
-            print(f"Value: {values[-1]}")
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -1115,12 +1082,6 @@ for thisTrials_threshold in trials_threshold:
             thisComponent.setAutoDraw(False)
     trials_threshold.addData('sliderPainT.response', sliderPainT.getRating())
     trials_threshold.addData('sliderPainT.rt', sliderPainT.getRT())
-    # check responses
-    if keys_PainT.keys in ['', [], None]:  # No response was made
-        keys_PainT.keys = None
-    trials_threshold.addData('keys_PainT.keys',keys_PainT.keys)
-    if keys_PainT.keys != None:  # we had a response
-        trials_threshold.addData('keys_PainT.rt', keys_PainT.rt)
     # the Routine "painThreshold" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -1162,8 +1123,6 @@ for thisTrials_threshold in trials_threshold:
             portShock1T.tStart = t  # local t and not account for scr refresh
             portShock1T.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(portShock1T, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.addData('portShock1T.started', t)
             portShock1T.status = STARTED
             win.callOnFlip(portShock1T.setData, int(132))
         if portShock1T.status == STARTED:
@@ -1172,8 +1131,6 @@ for thisTrials_threshold in trials_threshold:
                 # keep track of stop time/frame for later
                 portShock1T.tStop = t  # not accounting for scr refresh
                 portShock1T.frameNStop = frameN  # exact frame index
-                # add timestamp to datafile
-                thisExp.addData('portShock1T.stopped', t)
                 portShock1T.status = FINISHED
                 win.callOnFlip(portShock1T.setData, int(0))
         # *portShock2T* updates
@@ -1183,8 +1140,6 @@ for thisTrials_threshold in trials_threshold:
             portShock2T.tStart = t  # local t and not account for scr refresh
             portShock2T.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(portShock2T, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.addData('portShock2T.started', t)
             portShock2T.status = STARTED
             win.callOnFlip(portShock2T.setData, int(132))
         if portShock2T.status == STARTED:
@@ -1193,8 +1148,6 @@ for thisTrials_threshold in trials_threshold:
                 # keep track of stop time/frame for later
                 portShock2T.tStop = t  # not accounting for scr refresh
                 portShock2T.frameNStop = frameN  # exact frame index
-                # add timestamp to datafile
-                thisExp.addData('portShock2T.stopped', t)
                 portShock2T.status = FINISHED
                 win.callOnFlip(portShock2T.setData, int(0))
         # *portShock3T* updates
@@ -1204,8 +1157,6 @@ for thisTrials_threshold in trials_threshold:
             portShock3T.tStart = t  # local t and not account for scr refresh
             portShock3T.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(portShock3T, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.addData('portShock3T.started', t)
             portShock3T.status = STARTED
             win.callOnFlip(portShock3T.setData, int(132))
         if portShock3T.status == STARTED:
@@ -1214,8 +1165,6 @@ for thisTrials_threshold in trials_threshold:
                 # keep track of stop time/frame for later
                 portShock3T.tStop = t  # not accounting for scr refresh
                 portShock3T.frameNStop = frameN  # exact frame index
-                # add timestamp to datafile
-                thisExp.addData('portShock3T.stopped', t)
                 portShock3T.status = FINISHED
                 win.callOnFlip(portShock3T.setData, int(0))
         
@@ -1226,8 +1175,6 @@ for thisTrials_threshold in trials_threshold:
             fixcrossT.tStart = t  # local t and not account for scr refresh
             fixcrossT.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(fixcrossT, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'fixcrossT.started')
             fixcrossT.setAutoDraw(True)
         if fixcrossT.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
@@ -1235,8 +1182,6 @@ for thisTrials_threshold in trials_threshold:
                 # keep track of stop time/frame for later
                 fixcrossT.tStop = t  # not accounting for scr refresh
                 fixcrossT.frameNStop = frameN  # exact frame index
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossT.stopped')
                 fixcrossT.setAutoDraw(False)
         
         # check for quit (typically the Esc key)
@@ -1316,8 +1261,6 @@ while continueRoutine:
         text_ETCalibration.tStart = t  # local t and not account for scr refresh
         text_ETCalibration.tStartRefresh = tThisFlipGlobal  # on global time
         win.timeOnFlip(text_ETCalibration, 'tStartRefresh')  # time at next scr refresh
-        # add timestamp to datafile
-        thisExp.timestampOnFlip(win, 'text_ETCalibration.started')
         text_ETCalibration.setAutoDraw(True)
     
     # *spaceETCalibration* updates
@@ -1328,8 +1271,6 @@ while continueRoutine:
         spaceETCalibration.tStart = t  # local t and not account for scr refresh
         spaceETCalibration.tStartRefresh = tThisFlipGlobal  # on global time
         win.timeOnFlip(spaceETCalibration, 'tStartRefresh')  # time at next scr refresh
-        # add timestamp to datafile
-        thisExp.timestampOnFlip(win, 'spaceETCalibration.started')
         spaceETCalibration.status = STARTED
         # keyboard checking is just starting
         waitOnFlip = True
@@ -1366,13 +1307,6 @@ while continueRoutine:
 for thisComponent in startETCalibrationComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
-# check responses
-if spaceETCalibration.keys in ['', [], None]:  # No response was made
-    spaceETCalibration.keys = None
-thisExp.addData('spaceETCalibration.keys',spaceETCalibration.keys)
-if spaceETCalibration.keys != None:  # we had a response
-    thisExp.addData('spaceETCalibration.rt', spaceETCalibration.rt)
-thisExp.nextEntry()
 # the Routine "startETCalibration" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 # define target for ETCalibration
@@ -1467,8 +1401,6 @@ for thisBlock in blocks:
             spaceStartExp.tStart = t  # local t and not account for scr refresh
             spaceStartExp.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(spaceStartExp, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'spaceStartExp.started')
             spaceStartExp.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
@@ -1505,12 +1437,6 @@ for thisBlock in blocks:
     for thisComponent in startExpComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    # check responses
-    if spaceStartExp.keys in ['', [], None]:  # No response was made
-        spaceStartExp.keys = None
-    blocks.addData('spaceStartExp.keys',spaceStartExp.keys)
-    if spaceStartExp.keys != None:  # we had a response
-        blocks.addData('spaceStartExp.rt', spaceStartExp.rt)
     # the Routine "startExp" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -1615,8 +1541,6 @@ for thisBlock in blocks:
                 sliderStim.tStart = t  # local t and not account for scr refresh
                 sliderStim.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(sliderStim, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'sliderStim.started')
                 sliderStim.setAutoDraw(True)
             
             # *textSpaceStim* updates
@@ -1636,8 +1560,6 @@ for thisBlock in blocks:
                 spaceStim.tStart = t  # local t and not account for scr refresh
                 spaceStim.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(spaceStim, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'spaceStim.started')
                 spaceStim.status = STARTED
                 # keyboard checking is just starting
                 waitOnFlip = True
@@ -1676,12 +1598,6 @@ for thisBlock in blocks:
                 thisComponent.setAutoDraw(False)
         ratingtrials1.addData('sliderStim.response', sliderStim.getRating())
         ratingtrials1.addData('sliderStim.rt', sliderStim.getRT())
-        # check responses
-        if spaceStim.keys in ['', [], None]:  # No response was made
-            spaceStim.keys = None
-        ratingtrials1.addData('spaceStim.keys',spaceStim.keys)
-        if spaceStim.keys != None:  # we had a response
-            ratingtrials1.addData('spaceStim.rt', spaceStim.rt)
         # the Routine "stimRating" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         thisExp.nextEntry()
@@ -1741,8 +1657,6 @@ for thisBlock in blocks:
             spaceStartTask.tStart = t  # local t and not account for scr refresh
             spaceStartTask.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(spaceStartTask, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'spaceStartTask.started')
             spaceStartTask.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
@@ -1779,12 +1693,6 @@ for thisBlock in blocks:
     for thisComponent in startTaskComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    # check responses
-    if spaceStartTask.keys in ['', [], None]:  # No response was made
-        spaceStartTask.keys = None
-    blocks.addData('spaceStartTask.keys',spaceStartTask.keys)
-    if spaceStartTask.keys != None:  # we had a response
-        blocks.addData('spaceStartTask.rt', spaceStartTask.rt)
     # the Routine "startTask" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -1825,8 +1733,6 @@ for thisBlock in blocks:
             blankScreen.tStart = t  # local t and not account for scr refresh
             blankScreen.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(blankScreen, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'blankScreen.started')
             blankScreen.setAutoDraw(True)
         if blankScreen.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
@@ -1834,8 +1740,6 @@ for thisBlock in blocks:
                 # keep track of stop time/frame for later
                 blankScreen.tStop = t  # not accounting for scr refresh
                 blankScreen.frameNStop = frameN  # exact frame index
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'blankScreen.stopped')
                 blankScreen.setAutoDraw(False)
         
         # check for quit (typically the Esc key)
@@ -1866,9 +1770,9 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    learning_trials = data.TrialHandler(nReps=1.0, method='random', 
+    learning_trials = data.TrialHandler(nReps=2.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(posFile, selection='0'),
+        trialList=data.importConditions(posFile),
         seed=None, name='learning_trials')
     thisExp.addLoop(learning_trials)  # add the loop to the experiment
     thisLearning_trial = learning_trials.trialList[0]  # so we can initialise stimuli with some values
@@ -1933,8 +1837,6 @@ for thisBlock in blocks:
                 fixcross.tStart = t  # local t and not account for scr refresh
                 fixcross.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcross, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcross.started')
                 fixcross.setAutoDraw(True)
             if fixcross.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -1942,8 +1844,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcross.tStop = t  # not accounting for scr refresh
                     fixcross.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcross.stopped')
                     fixcross.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -2011,8 +1911,6 @@ for thisBlock in blocks:
                 blankScreen.tStart = t  # local t and not account for scr refresh
                 blankScreen.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(blankScreen, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'blankScreen.started')
                 blankScreen.setAutoDraw(True)
             if blankScreen.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -2020,8 +1918,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     blankScreen.tStop = t  # not accounting for scr refresh
                     blankScreen.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'blankScreen.stopped')
                     blankScreen.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -2133,8 +2029,6 @@ for thisBlock in blocks:
                 roi.tStart = t  # local t and not account for scr refresh
                 roi.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(roi, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'roi.started')
                 roi.status = STARTED
             if roi.status == STARTED:
                 # check whether roi has been looked in
@@ -2158,8 +2052,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     roi.tStop = t  # not accounting for scr refresh
                     roi.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'roi.stopped')
                     roi.status = FINISHED
             
             # *gazeCursor* updates
@@ -2169,8 +2061,6 @@ for thisBlock in blocks:
                 gazeCursor.tStart = t  # local t and not account for scr refresh
                 gazeCursor.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(gazeCursor, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'gazeCursor.started')
                 gazeCursor.setAutoDraw(True)
             if gazeCursor.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -2178,8 +2068,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     gazeCursor.tStop = t  # not accounting for scr refresh
                     gazeCursor.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'gazeCursor.stopped')
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
@@ -2192,8 +2080,6 @@ for thisBlock in blocks:
                 portImage.tStart = t  # local t and not account for scr refresh
                 portImage.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(portImage, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.addData('portImage.started', t)
                 portImage.status = STARTED
                 win.callOnFlip(portImage.setData, int(1))
             if portImage.status == STARTED:
@@ -2202,8 +2088,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     portImage.tStop = t  # not accounting for scr refresh
                     portImage.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('portImage.stopped', t)
                     portImage.status = FINISHED
                     win.callOnFlip(portImage.setData, int(0))
             
@@ -2276,8 +2160,8 @@ for thisBlock in blocks:
         
         learning_trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
-           learning_trials.addData('roi.timesOn', roi.timesOn)
-           learning_trials.addData('roi.timesOff', roi.timesOff)
+           learning_trials.addData('roi.timesOn', roi.timesOn[0])
+           learning_trials.addData('roi.timesOff', roi.timesOff[0])
         else:
            learning_trials.addData('roi.timesOn', "")
            learning_trials.addData('roi.timesOff', "")
@@ -2410,8 +2294,6 @@ for thisBlock in blocks:
                 gazeCursor_Feedback.tStart = t  # local t and not account for scr refresh
                 gazeCursor_Feedback.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(gazeCursor_Feedback, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'gazeCursor_Feedback.started')
                 gazeCursor_Feedback.setAutoDraw(True)
             if gazeCursor_Feedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -2419,8 +2301,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     gazeCursor_Feedback.tStop = t  # not accounting for scr refresh
                     gazeCursor_Feedback.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'gazeCursor_Feedback.stopped')
                     gazeCursor_Feedback.setAutoDraw(False)
             if gazeCursor_Feedback.status == STARTED:  # only update if drawing
                 gazeCursor_Feedback.setFillColor(cursorcolor, log=False)
@@ -2432,8 +2312,6 @@ for thisBlock in blocks:
                 soundFeedback.frameNStart = frameN  # exact frame index
                 soundFeedback.tStart = t  # local t and not account for scr refresh
                 soundFeedback.tStartRefresh = tThisFlipGlobal  # on global time
-                # add timestamp to datafile
-                thisExp.addData('soundFeedback.started', t)
                 soundFeedback.play()  # start the sound (it finishes automatically)
             if soundFeedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -2441,8 +2319,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     soundFeedback.tStop = t  # not accounting for scr refresh
                     soundFeedback.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('soundFeedback.stopped', t)
                     soundFeedback.stop()
             # *portShock1* updates
             if portShock1.status == NOT_STARTED and t >= 0.0-frameTolerance:
@@ -2451,8 +2327,6 @@ for thisBlock in blocks:
                 portShock1.tStart = t  # local t and not account for scr refresh
                 portShock1.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(portShock1, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.addData('portShock1.started', t)
                 portShock1.status = STARTED
                 win.callOnFlip(portShock1.setData, int(port_msg))
             if portShock1.status == STARTED:
@@ -2461,8 +2335,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     portShock1.tStop = t  # not accounting for scr refresh
                     portShock1.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('portShock1.stopped', t)
                     portShock1.status = FINISHED
                     win.callOnFlip(portShock1.setData, int(0))
             # *portShock2* updates
@@ -2472,8 +2344,6 @@ for thisBlock in blocks:
                 portShock2.tStart = t  # local t and not account for scr refresh
                 portShock2.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(portShock2, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.addData('portShock2.started', t)
                 portShock2.status = STARTED
                 win.callOnFlip(portShock2.setData, int(128 if port_msg == 132 else 0))
             if portShock2.status == STARTED:
@@ -2482,8 +2352,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     portShock2.tStop = t  # not accounting for scr refresh
                     portShock2.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('portShock2.stopped', t)
                     portShock2.status = FINISHED
                     win.callOnFlip(portShock2.setData, int(0))
             # *portShock3* updates
@@ -2493,8 +2361,6 @@ for thisBlock in blocks:
                 portShock3.tStart = t  # local t and not account for scr refresh
                 portShock3.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(portShock3, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.addData('portShock3.started', t)
                 portShock3.status = STARTED
                 win.callOnFlip(portShock3.setData, int(128 if port_msg == 132 else 0))
             if portShock3.status == STARTED:
@@ -2503,8 +2369,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     portShock3.tStop = t  # not accounting for scr refresh
                     portShock3.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('portShock3.stopped', t)
                     portShock3.status = FINISHED
                     win.callOnFlip(portShock3.setData, int(0))
             
@@ -2580,8 +2444,6 @@ for thisBlock in blocks:
                 fixcrossE.tStart = t  # local t and not account for scr refresh
                 fixcrossE.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossE, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossE.started')
                 fixcrossE.setAutoDraw(True)
             if fixcrossE.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -2589,8 +2451,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossE.tStop = t  # not accounting for scr refresh
                     fixcrossE.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossE.stopped')
                     fixcrossE.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -2619,7 +2479,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 1.0 repeats of 'learning_trials'
+    # completed 2.0 repeats of 'learning_trials'
     
     
     # --- Prepare to start Routine "repeatTask" ---
@@ -2663,8 +2523,6 @@ for thisBlock in blocks:
             textRepeatTask.tStart = t  # local t and not account for scr refresh
             textRepeatTask.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textRepeatTask, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textRepeatTask.started')
             textRepeatTask.setAutoDraw(True)
         
         # *textboxRepeatInstruction* updates
@@ -2674,8 +2532,6 @@ for thisBlock in blocks:
             textboxRepeatInstruction.tStart = t  # local t and not account for scr refresh
             textboxRepeatInstruction.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textboxRepeatInstruction, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textboxRepeatInstruction.started')
             textboxRepeatInstruction.setAutoDraw(True)
         
         # *textRepeatSpace* updates
@@ -2685,8 +2541,6 @@ for thisBlock in blocks:
             textRepeatSpace.tStart = t  # local t and not account for scr refresh
             textRepeatSpace.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textRepeatSpace, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textRepeatSpace.started')
             textRepeatSpace.setAutoDraw(True)
         
         # *spaceRepeatTask* updates
@@ -2697,8 +2551,6 @@ for thisBlock in blocks:
             spaceRepeatTask.tStart = t  # local t and not account for scr refresh
             spaceRepeatTask.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(spaceRepeatTask, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'spaceRepeatTask.started')
             spaceRepeatTask.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
@@ -2735,12 +2587,6 @@ for thisBlock in blocks:
     for thisComponent in repeatTaskComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    # check responses
-    if spaceRepeatTask.keys in ['', [], None]:  # No response was made
-        spaceRepeatTask.keys = None
-    blocks.addData('spaceRepeatTask.keys',spaceRepeatTask.keys)
-    if spaceRepeatTask.keys != None:  # we had a response
-        blocks.addData('spaceRepeatTask.rt', spaceRepeatTask.rt)
     # the Routine "repeatTask" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -2781,8 +2627,6 @@ for thisBlock in blocks:
             blankScreen.tStart = t  # local t and not account for scr refresh
             blankScreen.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(blankScreen, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'blankScreen.started')
             blankScreen.setAutoDraw(True)
         if blankScreen.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
@@ -2790,8 +2634,6 @@ for thisBlock in blocks:
                 # keep track of stop time/frame for later
                 blankScreen.tStop = t  # not accounting for scr refresh
                 blankScreen.frameNStop = frameN  # exact frame index
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'blankScreen.stopped')
                 blankScreen.setAutoDraw(False)
         
         # check for quit (typically the Esc key)
@@ -2889,8 +2731,6 @@ for thisBlock in blocks:
                 fixcross.tStart = t  # local t and not account for scr refresh
                 fixcross.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcross, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcross.started')
                 fixcross.setAutoDraw(True)
             if fixcross.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -2898,8 +2738,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcross.tStop = t  # not accounting for scr refresh
                     fixcross.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcross.stopped')
                     fixcross.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -2967,8 +2805,6 @@ for thisBlock in blocks:
                 blankScreen.tStart = t  # local t and not account for scr refresh
                 blankScreen.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(blankScreen, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'blankScreen.started')
                 blankScreen.setAutoDraw(True)
             if blankScreen.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -2976,8 +2812,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     blankScreen.tStop = t  # not accounting for scr refresh
                     blankScreen.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'blankScreen.stopped')
                     blankScreen.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -3089,8 +2923,6 @@ for thisBlock in blocks:
                 roi.tStart = t  # local t and not account for scr refresh
                 roi.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(roi, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'roi.started')
                 roi.status = STARTED
             if roi.status == STARTED:
                 # check whether roi has been looked in
@@ -3114,8 +2946,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     roi.tStop = t  # not accounting for scr refresh
                     roi.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'roi.stopped')
                     roi.status = FINISHED
             
             # *gazeCursor* updates
@@ -3125,8 +2955,6 @@ for thisBlock in blocks:
                 gazeCursor.tStart = t  # local t and not account for scr refresh
                 gazeCursor.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(gazeCursor, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'gazeCursor.started')
                 gazeCursor.setAutoDraw(True)
             if gazeCursor.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -3134,8 +2962,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     gazeCursor.tStop = t  # not accounting for scr refresh
                     gazeCursor.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'gazeCursor.stopped')
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
@@ -3148,8 +2974,6 @@ for thisBlock in blocks:
                 portImage.tStart = t  # local t and not account for scr refresh
                 portImage.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(portImage, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.addData('portImage.started', t)
                 portImage.status = STARTED
                 win.callOnFlip(portImage.setData, int(1))
             if portImage.status == STARTED:
@@ -3158,8 +2982,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     portImage.tStop = t  # not accounting for scr refresh
                     portImage.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('portImage.stopped', t)
                     portImage.status = FINISHED
                     win.callOnFlip(portImage.setData, int(0))
             
@@ -3232,8 +3054,8 @@ for thisBlock in blocks:
         
         trials.addData('roi.numLooks', roi.numLooks)
         if roi.numLooks:
-           trials.addData('roi.timesOn', roi.timesOn)
-           trials.addData('roi.timesOff', roi.timesOff)
+           trials.addData('roi.timesOn', roi.timesOn[0])
+           trials.addData('roi.timesOff', roi.timesOff[0])
         else:
            trials.addData('roi.timesOn', "")
            trials.addData('roi.timesOff', "")
@@ -3366,8 +3188,6 @@ for thisBlock in blocks:
                 gazeCursor_Feedback.tStart = t  # local t and not account for scr refresh
                 gazeCursor_Feedback.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(gazeCursor_Feedback, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'gazeCursor_Feedback.started')
                 gazeCursor_Feedback.setAutoDraw(True)
             if gazeCursor_Feedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -3375,8 +3195,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     gazeCursor_Feedback.tStop = t  # not accounting for scr refresh
                     gazeCursor_Feedback.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'gazeCursor_Feedback.stopped')
                     gazeCursor_Feedback.setAutoDraw(False)
             if gazeCursor_Feedback.status == STARTED:  # only update if drawing
                 gazeCursor_Feedback.setFillColor(cursorcolor, log=False)
@@ -3388,8 +3206,6 @@ for thisBlock in blocks:
                 soundFeedback.frameNStart = frameN  # exact frame index
                 soundFeedback.tStart = t  # local t and not account for scr refresh
                 soundFeedback.tStartRefresh = tThisFlipGlobal  # on global time
-                # add timestamp to datafile
-                thisExp.addData('soundFeedback.started', t)
                 soundFeedback.play()  # start the sound (it finishes automatically)
             if soundFeedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -3397,8 +3213,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     soundFeedback.tStop = t  # not accounting for scr refresh
                     soundFeedback.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('soundFeedback.stopped', t)
                     soundFeedback.stop()
             # *portShock1* updates
             if portShock1.status == NOT_STARTED and t >= 0.0-frameTolerance:
@@ -3407,8 +3221,6 @@ for thisBlock in blocks:
                 portShock1.tStart = t  # local t and not account for scr refresh
                 portShock1.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(portShock1, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.addData('portShock1.started', t)
                 portShock1.status = STARTED
                 win.callOnFlip(portShock1.setData, int(port_msg))
             if portShock1.status == STARTED:
@@ -3417,8 +3229,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     portShock1.tStop = t  # not accounting for scr refresh
                     portShock1.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('portShock1.stopped', t)
                     portShock1.status = FINISHED
                     win.callOnFlip(portShock1.setData, int(0))
             # *portShock2* updates
@@ -3428,8 +3238,6 @@ for thisBlock in blocks:
                 portShock2.tStart = t  # local t and not account for scr refresh
                 portShock2.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(portShock2, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.addData('portShock2.started', t)
                 portShock2.status = STARTED
                 win.callOnFlip(portShock2.setData, int(128 if port_msg == 132 else 0))
             if portShock2.status == STARTED:
@@ -3438,8 +3246,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     portShock2.tStop = t  # not accounting for scr refresh
                     portShock2.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('portShock2.stopped', t)
                     portShock2.status = FINISHED
                     win.callOnFlip(portShock2.setData, int(0))
             # *portShock3* updates
@@ -3449,8 +3255,6 @@ for thisBlock in blocks:
                 portShock3.tStart = t  # local t and not account for scr refresh
                 portShock3.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(portShock3, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.addData('portShock3.started', t)
                 portShock3.status = STARTED
                 win.callOnFlip(portShock3.setData, int(128 if port_msg == 132 else 0))
             if portShock3.status == STARTED:
@@ -3459,8 +3263,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     portShock3.tStop = t  # not accounting for scr refresh
                     portShock3.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('portShock3.stopped', t)
                     portShock3.status = FINISHED
                     win.callOnFlip(portShock3.setData, int(0))
             
@@ -3536,8 +3338,6 @@ for thisBlock in blocks:
                 fixcrossE.tStart = t  # local t and not account for scr refresh
                 fixcrossE.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossE, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossE.started')
                 fixcrossE.setAutoDraw(True)
             if fixcrossE.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -3545,8 +3345,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossE.tStop = t  # not accounting for scr refresh
                     fixcrossE.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossE.stopped')
                     fixcrossE.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -3623,8 +3421,6 @@ for thisBlock in blocks:
             textRate.tStart = t  # local t and not account for scr refresh
             textRate.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textRate, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textRate.started')
             textRate.setAutoDraw(True)
         
         # *text_noPain* updates
@@ -3634,8 +3430,6 @@ for thisBlock in blocks:
             text_noPain.tStart = t  # local t and not account for scr refresh
             text_noPain.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(text_noPain, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'text_noPain.started')
             text_noPain.setAutoDraw(True)
         
         # *text_slightPain* updates
@@ -3645,8 +3439,6 @@ for thisBlock in blocks:
             text_slightPain.tStart = t  # local t and not account for scr refresh
             text_slightPain.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(text_slightPain, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'text_slightPain.started')
             text_slightPain.setAutoDraw(True)
         
         # *text_highPain* updates
@@ -3656,8 +3448,6 @@ for thisBlock in blocks:
             text_highPain.tStart = t  # local t and not account for scr refresh
             text_highPain.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(text_highPain, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'text_highPain.started')
             text_highPain.setAutoDraw(True)
         
         # *sliderPain* updates
@@ -3667,8 +3457,6 @@ for thisBlock in blocks:
             sliderPain.tStart = t  # local t and not account for scr refresh
             sliderPain.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(sliderPain, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'sliderPain.started')
             sliderPain.setAutoDraw(True)
         
         # *textSpacePain* updates
@@ -3678,8 +3466,6 @@ for thisBlock in blocks:
             textSpacePain.tStart = t  # local t and not account for scr refresh
             textSpacePain.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(textSpacePain, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'textSpacePain.started')
             textSpacePain.setAutoDraw(True)
         
         # *spacePain* updates
@@ -3690,8 +3476,6 @@ for thisBlock in blocks:
             spacePain.tStart = t  # local t and not account for scr refresh
             spacePain.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(spacePain, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'spacePain.started')
             spacePain.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
@@ -3734,12 +3518,6 @@ for thisBlock in blocks:
             thisComponent.setAutoDraw(False)
     blocks.addData('sliderPain.response', sliderPain.getRating())
     blocks.addData('sliderPain.rt', sliderPain.getRT())
-    # check responses
-    if spacePain.keys in ['', [], None]:  # No response was made
-        spacePain.keys = None
-    blocks.addData('spacePain.keys',spacePain.keys)
-    if spacePain.keys != None:  # we had a response
-        blocks.addData('spacePain.rt', spacePain.rt)
     # the Routine "painRating" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -3844,8 +3622,6 @@ for thisBlock in blocks:
                 sliderStim.tStart = t  # local t and not account for scr refresh
                 sliderStim.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(sliderStim, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'sliderStim.started')
                 sliderStim.setAutoDraw(True)
             
             # *textSpaceStim* updates
@@ -3865,8 +3641,6 @@ for thisBlock in blocks:
                 spaceStim.tStart = t  # local t and not account for scr refresh
                 spaceStim.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(spaceStim, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'spaceStim.started')
                 spaceStim.status = STARTED
                 # keyboard checking is just starting
                 waitOnFlip = True
@@ -3905,12 +3679,6 @@ for thisBlock in blocks:
                 thisComponent.setAutoDraw(False)
         ratingtrials2.addData('sliderStim.response', sliderStim.getRating())
         ratingtrials2.addData('sliderStim.rt', sliderStim.getRT())
-        # check responses
-        if spaceStim.keys in ['', [], None]:  # No response was made
-            spaceStim.keys = None
-        ratingtrials2.addData('spaceStim.keys',spaceStim.keys)
-        if spaceStim.keys != None:  # we had a response
-            ratingtrials2.addData('spaceStim.rt', spaceStim.rt)
         # the Routine "stimRating" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         thisExp.nextEntry()
@@ -3970,8 +3738,6 @@ for thisBlock in blocks:
             spaceTestInstr.tStart = t  # local t and not account for scr refresh
             spaceTestInstr.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(spaceTestInstr, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'spaceTestInstr.started')
             spaceTestInstr.status = STARTED
             # keyboard checking is just starting
             waitOnFlip = True
@@ -4008,12 +3774,6 @@ for thisBlock in blocks:
     for thisComponent in testInstrComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    # check responses
-    if spaceTestInstr.keys in ['', [], None]:  # No response was made
-        spaceTestInstr.keys = None
-    blocks.addData('spaceTestInstr.keys',spaceTestInstr.keys)
-    if spaceTestInstr.keys != None:  # we had a response
-        blocks.addData('spaceTestInstr.rt', spaceTestInstr.rt)
     # the Routine "testInstr" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -4085,8 +3845,6 @@ for thisBlock in blocks:
                 fixcross.tStart = t  # local t and not account for scr refresh
                 fixcross.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcross, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcross.started')
                 fixcross.setAutoDraw(True)
             if fixcross.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -4094,8 +3852,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcross.tStop = t  # not accounting for scr refresh
                     fixcross.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcross.stopped')
                     fixcross.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -4201,8 +3957,6 @@ for thisBlock in blocks:
                 roiTest.tStart = t  # local t and not account for scr refresh
                 roiTest.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(roiTest, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'roiTest.started')
                 roiTest.status = STARTED
             if roiTest.status == STARTED:
                 # check whether roiTest has been looked in
@@ -4226,8 +3980,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     roiTest.tStop = t  # not accounting for scr refresh
                     roiTest.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'roiTest.stopped')
                     roiTest.status = FINISHED
             # *portTestImage* updates
             if portTestImage.status == NOT_STARTED and t >= 0.0-frameTolerance:
@@ -4236,8 +3988,6 @@ for thisBlock in blocks:
                 portTestImage.tStart = t  # local t and not account for scr refresh
                 portTestImage.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(portTestImage, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.addData('portTestImage.started', t)
                 portTestImage.status = STARTED
                 win.callOnFlip(portTestImage.setData, int(2))
             if portTestImage.status == STARTED:
@@ -4246,8 +3996,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     portTestImage.tStop = t  # not accounting for scr refresh
                     portTestImage.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.addData('portTestImage.stopped', t)
                     portTestImage.status = FINISHED
                     win.callOnFlip(portTestImage.setData, int(0))
             
@@ -4275,8 +4023,8 @@ for thisBlock in blocks:
                 thisComponent.setAutoDraw(False)
         testtrials.addData('roiTest.numLooks', roiTest.numLooks)
         if roiTest.numLooks:
-           testtrials.addData('roiTest.timesOn', roiTest.timesOn)
-           testtrials.addData('roiTest.timesOff', roiTest.timesOff)
+           testtrials.addData('roiTest.timesOn', roiTest.timesOn[0])
+           testtrials.addData('roiTest.timesOff', roiTest.timesOff[0])
         else:
            testtrials.addData('roiTest.timesOn', "")
            testtrials.addData('roiTest.timesOff', "")
@@ -4325,8 +4073,6 @@ for thisBlock in blocks:
                 fixcrossE.tStart = t  # local t and not account for scr refresh
                 fixcrossE.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(fixcrossE, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'fixcrossE.started')
                 fixcrossE.setAutoDraw(True)
             if fixcrossE.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
@@ -4334,8 +4080,6 @@ for thisBlock in blocks:
                     # keep track of stop time/frame for later
                     fixcrossE.tStop = t  # not accounting for scr refresh
                     fixcrossE.frameNStop = frameN  # exact frame index
-                    # add timestamp to datafile
-                    thisExp.timestampOnFlip(win, 'fixcrossE.stopped')
                     fixcrossE.setAutoDraw(False)
             
             # check for quit (typically the Esc key)
@@ -4468,8 +4212,6 @@ for thisBlock in blocks:
                 sliderStim.tStart = t  # local t and not account for scr refresh
                 sliderStim.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(sliderStim, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'sliderStim.started')
                 sliderStim.setAutoDraw(True)
             
             # *textSpaceStim* updates
@@ -4489,8 +4231,6 @@ for thisBlock in blocks:
                 spaceStim.tStart = t  # local t and not account for scr refresh
                 spaceStim.tStartRefresh = tThisFlipGlobal  # on global time
                 win.timeOnFlip(spaceStim, 'tStartRefresh')  # time at next scr refresh
-                # add timestamp to datafile
-                thisExp.timestampOnFlip(win, 'spaceStim.started')
                 spaceStim.status = STARTED
                 # keyboard checking is just starting
                 waitOnFlip = True
@@ -4529,12 +4269,6 @@ for thisBlock in blocks:
                 thisComponent.setAutoDraw(False)
         ratingtrials3.addData('sliderStim.response', sliderStim.getRating())
         ratingtrials3.addData('sliderStim.rt', sliderStim.getRT())
-        # check responses
-        if spaceStim.keys in ['', [], None]:  # No response was made
-            spaceStim.keys = None
-        ratingtrials3.addData('spaceStim.keys',spaceStim.keys)
-        if spaceStim.keys != None:  # we had a response
-            ratingtrials3.addData('spaceStim.rt', spaceStim.rt)
         # the Routine "stimRating" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         thisExp.nextEntry()
