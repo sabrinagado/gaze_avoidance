@@ -24,7 +24,7 @@ filemat = list.files(path.behavior, pattern = "*.csv") # read all files from dat
 #cycle through all subject csv files
 
 for (subject in filemat){
-  #subject <- filemat[7]  #use  file for practice and coding changes
+  #subject <- filemat[2]  #use  file for practice and coding changes
    
   start.time <- Sys.time()    
   
@@ -75,7 +75,7 @@ for (subject in filemat){
                  match(subject,filemat), " of ", length(filemat), " files processed! ..... ", 
                  round((mean_code_time*length(filemat)-mean_code_time * match(subject,filemat))/60,1), " min remaining"))
   }
-}#end-loop
+} #end-loop
 
 
 vps_summary_long <- vps_summary

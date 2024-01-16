@@ -332,7 +332,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
       log <- log %>% 
         mutate(look = if_else(str_detect(outcome, "lookedat"), 1, if_else(str_detect(outcome, "no_look"), 0, NA)))
       log <- log %>% 
-        mutate(subject = file.log.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
+        mutate(subject = file.log.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
       log <- log %>%
         select(subject, trial, phase, condition, look)
       log <- log %>% 
@@ -355,7 +355,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
       # file.rating.path = files.rating[1]
       rating = read_csv(file.rating.path)
       rating <- rating %>%
-        select(stimtype, sliderStim.started, sliderStim.response)
+        select(stimtype, sliderStim.response)
       rating <- na.omit(rating)
       rating <- rating %>%
         group_by(stimtype) %>%
@@ -367,7 +367,7 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
         mutate(phase = ifelse(timepoint==3, "test", phase))
       
       rating <- rating %>% 
-        mutate(subject = file.rating.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
+        mutate(subject = file.rating.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
       rating <- rating %>%
         select(subject, phase, stimtype, sliderStim.response)
       names(rating) = c("subject","phase","condition", "rating")
@@ -617,14 +617,14 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
                quadrant.ytop = ifelse(y_position_norm < 0, 0, screen.height / 2),
                quadrant.ybottom = ifelse(y_position_norm < 0, screen.height / 2, screen.height))
       roi_acq <- roi_acq %>% 
-        mutate(subject = file.roi.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer())
+        mutate(subject = file.roi.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
       roi_acq <- roi_acq %>%
         select(subject, trial, roi.xleft, roi.xright, roi.ybottom, roi.ytop, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop)
       
       roi <- rbind(roi, roi_acq)
       
       roi_test <- data.frame(
-        subject = rep(file.roi.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(), 40),
+        subject = rep(file.roi.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(), 40),
         trial = seq(113, 152),
         roi.xleft = rep(screen.width / 2 - image.test.width / 2, 40),
         roi.xright = rep(screen.width / 2 + image.test.width / 2, 40),
