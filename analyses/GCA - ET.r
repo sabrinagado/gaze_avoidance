@@ -380,30 +380,30 @@ files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", fi
   
   loadFixations = function(filePath, screen.height) {
     fixations = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
-    names(fixations) = c("subject","trial","start","end","x","y", "eye")
+    names(fixations) = c("subject","trial","trial_label","start","end","x","y", "eye")
     fixations = fixations %>%
-      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
-             trial = trial %>% sub("Trial: ","", .) %>% as.numeric(),
+      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(),
              y = screen.height - y)
+    fixations = fixations[c("subject","trial","start","end","x","y", "eye")]
     return(fixations)
   }
   
   loadSaccades = function(filePath, screen.height) {
     saccades = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
-    names(saccades) = c("subject","trial","contains_blink", "start_time", "end_time", "start_x", "start_y","end_x","end_y")
+    names(saccades) = c("subject","trial","trial_label", "contains_blink", "start_time", "end_time", "start_x", "start_y","end_x","end_y")
     saccades = saccades %>%
-      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
-             trial = trial %>% sub("Trial: ","", .) %>% as.numeric(),
+      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(),
              start_y = screen.height - start_y, end_y = screen.height - end_y)
+    saccades = saccades[c("subject","trial","contains_blink", "start_time", "end_time", "start_x", "start_y","end_x","end_y")]
     return(saccades)
   }
   
   loadMessages = function(filePath) {
     messages = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
-    names(messages) = c("subject", "trial","time","event")
+    names(messages) = c("subject", "trial", "trial_label", "time","event")
     messages = messages %>%
-      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_2023.*", "", .) %>% as.integer(),
-             trial = trial %>% sub("Trial: ","", .) %>% as.numeric())
+      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
+    messages = messages[c("subject", "trial", "time","event")]
     return(messages)
   }
   
