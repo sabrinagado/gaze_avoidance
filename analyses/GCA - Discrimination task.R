@@ -33,7 +33,7 @@ for (subject in filemat){
   vp_data <- read.csv(file.path(path.behavior, subject)) %>% #read data from files per subject
     filter(str_detect(trialtype,"cs_")) %>% 
     mutate(condition = ifelse(trialtype == comptype, "same", "different"),
-           social = ifelse(trialtype %in% c("cs_plus_s","cs_minus_s"), "social","nonsocial")) %>%
+           social = ifelse(trialtype %in% c("cs_plus_s","cs_minus_s"), "social","non-social")) %>%
     select(participant, condition, social, correctness, key.rt) %>%
     group_by(participant,social,condition) %>%
     summarise(correct_sum = sum(correctness == "correct"),
@@ -91,21 +91,21 @@ vps_summary_long %>%
   scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1)) +
   scale_x_discrete("Category", labels = c("non-social","social")) +
   scale_fill_viridis_d("Condition",end = 0.25,begin = 0.25, guide = "none" ) + 
-  theme_classic()
-ggsave(file.path(path, "plots", "discrimination-task", "ga_correct.png"))
+  theme_minimal() + 
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d()
+ggsave(file.path(path, "plots", "avoidance-task", "ga_correct.png"), width=1500, height=2000, units="px")
 
 
-# vps_summary_long %>% 
-#   group_by(participant,social) %>%
-#   summarise(correct_mean = mean(correct_mean, na.rm = T)) %>% 
-#   ggplot(aes(x = social, y = correct_mean, fill = social)) + facet_wrap(~participant) + 
-#   geom_hline(yintercept = 0.5, linetype = 2, color = "red") + 
-#   geom_bar(stat = "identity", position = position_dodge(), color= "black" ) +
-#   scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1)) +
-#   scale_x_discrete("Category", labels = c("non-social","social")) +
-#   scale_fill_viridis_d("Condition",end = 0.25,begin = 0.25, guide = "none" ) + 
-#   theme_classic()
-# ggsave(file.path(path, "plots", "discrimination-task", "ga_correct_ind.png"))
+vps_summary_long %>%
+  group_by(participant, social, condition) %>% 
+  mutate(participant = as.factor(participant), social = as.factor(social), condition = as.factor(condition)) %>%
+  ez::ezANOVA(dv=.(correct_mean),
+              wid=.(participant), 
+              within=.(social, condition), 
+              # between=.(SPAI),
+              detailed=T, type=3) %>% 
+  apa::anova_apa()
 
 
 # Response Times
@@ -124,29 +124,18 @@ vps_summary_long %>%
   theme_classic()
 ggsave(file.path(path, "plots", "discrimination-task", "ga_rt.png"))
 
-
-# vps_summary_long %>% 
-#   group_by(participant,social) %>%
-#   summarise(rt_mean = mean(rt_mean, na.rm = T)) %>% 
-#   ggplot(aes(x = social, y = rt_mean, fill = social)) + facet_wrap(~participant) + 
-#   geom_hline(yintercept = 0.5, linetype = 2, color = "red") + 
-#   geom_bar(stat = "identity", position = position_dodge(), color= "black" ) +
-#   scale_y_continuous("RT [s]", expand = c(0,0), limits = c(0,1)) +
-#   scale_x_discrete("Category", labels = c("non-social","social")) +
-#   scale_fill_viridis_d("Condition",end = 0.25,begin = 0.25, guide = "none" ) + 
-#   theme_classic()
-# ggsave(file.path(path, "plots", "discrimination-task", "ga_rt_ind.png"))
+vps_summary_long %>%
+  ez::ezANOVA(dv=.(rt_mean),
+              wid=.(participant), 
+              within=.(social, condition), 
+              # between=.(SPAI),
+              detailed=T, type=3) %>% 
+  apa::anova_apa() %>% 
+  ungroup()
 
 
-# vps_summary_long %>% 
-#   group_by(participant,social) %>%
-#   summarise(rt_mean = mean(rt_mean, na.rm = T)) %>% 
-#   ggplot(aes(x = social, y = rt_mean, fill = social)) + facet_wrap(~participant) + 
-#   geom_hline(yintercept = 0.5, linetype = 2, color = "red") + 
-#   geom_violin(color= "black" ) +
-#   scale_y_continuous("RT [s]", expand = c(0,0), limits = c(0,1)) +
-#   scale_x_discrete("Category", labels = c("non-social","social")) +
-#   scale_fill_viridis_d("Condition",end = 0.25,begin = 0.25, guide = "none" ) + 
-#   theme_classic()
-# ggsave(file.path(path, "plots", "discrimination-task", "ga_rt_ind.png"))
+vps.discrimination.score <- vps_summary_long %>%
+  summarise(discrimination = mean(correct_mean))
 
+names(vps.discrimination.score[1]) <- "subject"
+write.csv2(vps.discrimination.score, file.path(path, "discrimination.csv"), row.names=FALSE, quote=FALSE)
