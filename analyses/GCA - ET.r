@@ -784,6 +784,10 @@ saccades.acq.analysis <- saccades.acq.analysis %>%
   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
 
+saccades.acq.analysis <- saccades.acq.analysis %>% 
+  mutate(correct_reaction = ifelse(str_detect(condition_threat, "neg") & str_detect(outcome_corr, "none"), TRUE, ifelse(str_detect(condition_threat, "pos") & str_detect(outcome_corr, "reward"), TRUE, FALSE)))
+
+
 # Add scores and write saccades to CSV
 saccades.acq.analysis <- saccades.acq.analysis %>% 
   left_join(scores, by="subject")
@@ -826,11 +830,6 @@ avoidance.acq.prop %>%
               detailed=T, type=3) %>% 
   apa::anova_apa()
 
-avoidance.acq.prop <- avoidance.acq.prop %>% 
-  left_join(discrimination, by=c("subject", "condition_social"))
-
-cor(avoidance.acq.prop$relative_frequency_av, avoidance.acq.prop$discrimination)
-
 # Line Plot
 avoidance.acq.prop <- saccades.acq.analysis %>%
   filter(blok) %>% 
@@ -856,6 +855,17 @@ ggplot(avoidance.acq.prop.summary, aes(x = block, y = Mean, group = condition, c
 
 ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "avoidance_proportion_roi_block.png"), width=2800, height=2000, units="px")
 
+
+# Correlation Correct Avoidance and Discrimination
+avoidance_corr.acq.prop <- saccades.acq.analysis %>%
+  filter(blok) %>% 
+  filter(outcomeok) %>%
+  summarise(absolute_frequency_corr = sum(correct_reaction), relative_frequency_av = mean(correct_reaction), .by=c(subject, condition_social)) 
+
+avoidance_corr.acq.prop <- avoidance_corr.acq.prop %>% 
+  left_join(discrimination, by=c("subject", "condition_social"))
+
+cor.test(avoidance_corr.acq.prop$absolute_frequency_corr, avoidance_corr.acq.prop$discrimination)
 
 # Percentage of saccades going towards the stimuli
 saccades.acq.prop <- saccades.acq.analysis %>% 
