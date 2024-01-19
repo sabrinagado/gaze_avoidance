@@ -1,3 +1,8 @@
+###############################################################################
+# Gaze Contingent Avoidance Project
+# Sabrina Gado & Yannik Stegmann
+# Code adapted from Mario Reutter and Matthias Gamer
+
 # EDA Analyse
 
 #packages 
@@ -9,23 +14,6 @@ library(ggbeeswarm)
 library(afex)
 options(dplyr.summarise.inform = FALSE)
 
-
-partial_eta_squared_ci <- function(x)
-{
-  # Calculate upper and lower limit of Lambda for 90%-CI
-  limits <- MBESS::conf.limits.ncf(x$F, .95, x$DFn, x$DFd)
-  
-  # Convert Lambda to partial eta-squared
-  ci <- c(limits$Lower.Limit, limits$Upper.Limit) /
-    (c(limits$Lower.Limit, limits$Upper.Limit) + x$DFn + x$DFd + 1)
-  
-  # Replace NA with zero (`conf.limits.ncf` returns NA instead of 0)
-  ci[is.na(ci)] <- 0
-  
-  ci <- sprintf("%.2f", round(ci, 2))
-  
-  paste0("[", ci[1], "; ", ci[2], "]")
-}
 
 #global parameters, options and plots
 
@@ -128,6 +116,23 @@ eirMinWindow = c(-.5,3) #minimun interval window for baseline correction
     
     return(result)
   }
+  
+  partial_eta_squared_ci <- function(x)
+  {
+    # Calculate upper and lower limit of Lambda for 90%-CI
+    limits <- MBESS::conf.limits.ncf(x$F, .95, x$DFn, x$DFd)
+    
+    # Convert Lambda to partial eta-squared
+    ci <- c(limits$Lower.Limit, limits$Upper.Limit) /
+      (c(limits$Lower.Limit, limits$Upper.Limit) + x$DFn + x$DFd + 1)
+    
+    # Replace NA with zero (`conf.limits.ncf` returns NA instead of 0)
+    ci[is.na(ci)] <- 0
+    
+    ci <- sprintf("%.2f", round(ci, 2))
+    
+    paste0("[", ci[1], "; ", ci[2], "]")
+  }
 }
 
 
@@ -150,27 +155,27 @@ eda_cr = tibble(subject = filemat %>% sub("\\..*","", .), cr = 0, valid = 0, lat
   select(ID,cr,valid,lat,rise)
 
 
-trigger_mat <- read.csv("../Physio/Trigger/conditions.csv") %>%
+trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
   mutate(subject = sprintf("gca_%02d", subject),
-         trigger = ifelse(phase == "acquisition" & condition == "cs_plus_s",1,
-                          ifelse(phase == "acquisition" & condition == "cs_minus_s",2,
-                                 ifelse(phase == "acquisition" & condition == "cs_plus_ns",3,
-                                        ifelse(phase == "acquisition" & condition == "cs_minus_ns",4,
-                                               ifelse(phase == "test" & condition == "cs_plus_s",5,
-                                                      ifelse(phase == "test" & condition == "cs_minus_s",6,
-                                                             ifelse(phase == "test" & condition == "cs_plus_ns",7,
-                                                                    ifelse(phase == "test" & condition == "cs_minus_ns",8,0)))))))))
+         trigger = ifelse(phase == "acquisition" & condition == "CSneg, social",1,
+                          ifelse(phase == "acquisition" & condition == "CSpos, social",2,
+                                 ifelse(phase == "acquisition" & condition == "CSneg, non-social",3,
+                                        ifelse(phase == "acquisition" & condition == "CSpos, non-social",4,
+                                               ifelse(phase == "test" & condition == "CSneg, social",5,
+                                                      ifelse(phase == "test" & condition == "CSpos, social",6,
+                                                             ifelse(phase == "test" & condition == "CSneg, non-social",7,
+                                                                    ifelse(phase == "test" & condition == "CSpos, non-social",8,0)))))))))
   
 
-for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
+for (subject_inmat in filemat[1:2]){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
   
-  #subject_inmat = filemat[[1]]
+  # subject_inmat = filemat[[22]]
   
   eda <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
     rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
     mutate(sample = 1:n())
   
-  firstCue <- eda %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
+  firstcue <- eda %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
   
   eda <- eda %>% filter(sample >= firstcue - 2000 & sample < max(eda$sample)-1000) %>%
     mutate(ImgAcq = ifelse(ImgAcq == 5,1,0),
@@ -181,17 +186,12 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
            trigger = ImgAcq + ImgTest + Shock + Reward + NoFeedback,
            sample = 1:n(),
            time = sample /1000) %>% 
-    select(sample,time, EDA, ECG, trigger) 
-  
+    select(sample,time, EDA, ECG, trigger)
     
   filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")# %>% str_remove(.,pattern="SiCP_")
   
- # 
-  
   #sum(eda$trigger == 2);sum(eda$trigger == 3);sum(eda$trigger == 4);sum(eda$trigger == 5);sum(eda$trigger == 6);sum(eda$trigger == 7);
   #sum(eda$trigger == 8);sum(eda$trigger == 9);sum(eda$trigger == 10);sum(eda$trigger == 11);sum(eda$trigger == 12); #count triggers and check
-  
-
   
   print("Data reading complete!")
   
@@ -220,14 +220,35 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
     
     eda = eda_downsampled; rm(eda_downsampled)
     print("Downsampling complete!")
-    
-  }  
+  }
   
+  if (sum(eda$trigger == 1) != 152) { warning(paste0("Warning: Too few/many Acq triggers"))}
   
-if (sum(eda$trigger == 1) != 152) { warning(paste0("Warning: Too few/many Acq triggers"))}
+  # Adapt conditions file to availlable trigger
+  trigger_diff <- eda %>% filter(trigger == 1) %>% 
+    mutate(sdiff = lead(time, 1) - time)
+  
+  trigger_diff <- trigger_diff %>% 
+    mutate(use.trial = TRUE) %>% 
+    mutate(rownum = row_number()) %>% 
+    bind_rows(., filter(., (sdiff > 16 ) & (sdiff < 22)) %>% 
+                mutate(use.trial = FALSE, rownum = rownum+.5)) %>% 
+    arrange(rownum) %>%
+    mutate(trial = row_number())
+  
+  filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")
+  trigger_mat_subj <- trigger_mat %>% filter(subject == filename)
+  
+  trigger_mat_subj <- trigger_mat_subj %>% 
+    left_join(trigger_diff %>% select(trial, use.trial), by=c("trial"))
+  
+  trigger_mat_subj <- trigger_mat_subj %>% 
+    filter(use.trial)
+  
   
   # Include trigger information
-  eda$trigger[eda$trigger == 1] <-  trigger_mat %>% filter(subject == filename) %>% .$trigger
+  eda$trigger[eda$trigger == 1] <-  trigger_mat_subj %>% .$trigger
+  print(paste0(filename, ': ', sum((eda$trigger > 0) & (eda$trigger < 9)), ' trials'))
 
 
   #smoothing / filtering
@@ -253,8 +274,7 @@ if (sum(eda$trigger == 1) != 152) { warning(paste0("Warning: Too few/many Acq tr
   }  
   
   
-  eda = eda %>% mutate(us = case_when(trigger %in% shock_triggers ~ T,
-                                      TRUE ~ F))
+  eda = eda %>% mutate(us = case_when(trigger %in% shock_triggers ~ T, TRUE ~ F))
   eda_vp = eda %>% filter(trigger != 0) %>% select(-EDA) %>% #One trial per row per VP
     mutate(trial = 1:n(), condition = trigger,
            us = us, us_prior = c(FALSE, lag(us)[-1]),
@@ -391,7 +411,7 @@ if (sum(eda$trigger == 1) != 152) { warning(paste0("Warning: Too few/many Acq tr
           geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1)+
           ggtitle(filename) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
       #print()
-      ggsave(paste0("../Plots/EDA/UCS/", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
+      ggsave(paste0("../plots/EDA/UCS/", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
     
     
     
@@ -691,7 +711,7 @@ if (sum(eda$trigger == 1) != 152) { warning(paste0("Warning: Too few/many Acq tr
           geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1)+ 
           ggtitle(filename) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
       #print()
-      ggsave(paste0("../Plots/EDA/CS/", filename, ".png"), plot=., 
+      ggsave(paste0("../plots/EDA/CS/", filename, ".png"), plot=., 
              device="png", width=1920/150, height=1080/150, dpi=300)
     
     print("CR plotting complete!")
@@ -703,7 +723,9 @@ if (sum(eda$trigger == 1) != 152) { warning(paste0("Warning: Too few/many Acq tr
   
   print(paste0("CRs: ", filename, " of ", length(filemat), " files processed!"))
   
-}#end inmat for loop 
+} #end inmat for loop
+
+
 
 for (t in 1:nrow(eda_unified)) {
   eda_unified$EDA[[t]] = eda_unified$EDA[[t]] %>% 
@@ -714,30 +736,31 @@ rm(eda, eda_vp)
 
 # Read or Save ga_unified and pupil_df for further processing
 
-# saveRDS(eda_unified,"EDA_unified.RData")
-# saveRDS(eda_df,"EDA_df.RData")
+saveRDS(eda_unified,"EDA_unified.RData")
+saveRDS(eda_df,"EDA_df.RData")
+#eda_unified <- readRDS("EDA_unified.RData")
+#eda_df <- readRDS("EDA_df.Rdata")
 
- #eda_unified <- readRDS("EDA_unified.RData")
- #eda_df <- readRDS("EDA_df.Rdata")
 
- responder <- eda_df %>%
-   mutate(scl_bl = abs(SCL-Baseline)) %>%
-   group_by(ID) %>%
-   summarise(scl_avg = mean(scl_bl)) %>% 
-   filter(scl_avg >= .02) %>% .$ID
- 
- non_responder <- eda_df %>%
-   mutate(scl_bl = abs(SCL-Baseline)) %>%
-   group_by(ID) %>%
-   summarise(scl_avg = mean(scl_bl)) %>% 
-   filter(scl_avg < .02) %>% .$ID
+
+responder <- eda_df %>%
+ mutate(scl_bl = abs(SCL-Baseline)) %>%
+ group_by(ID) %>%
+ summarise(scl_avg = mean(scl_bl)) %>% 
+ filter(scl_avg >= .02) %>% .$ID
+
+non_responder <- eda_df %>%
+ mutate(scl_bl = abs(SCL-Baseline)) %>%
+ group_by(ID) %>%
+ summarise(scl_avg = mean(scl_bl)) %>% 
+ filter(scl_avg < .02) %>% .$ID
  
 
 eda_unified$EDA %>%   
   bind_rows() %>%
   mutate(condition = as.factor(condition),time=round(time),1) %>% 
   #filter(condition %in% c(5,6,7,8)) %>% 
-  filter(condition %in% c(1,2,3)) %>% 
+  filter(condition %in% c(1,2,3,4)) %>% 
   group_by(time,condition) %>% 
   summarise(EDA = mean(EDA)) %>%
   ggplot(., aes(x=time, y=EDA, color=condition, group=condition)) +
@@ -745,7 +768,7 @@ eda_unified$EDA %>%
   geom_vline(xintercept=0, color="blue",linetype="dashed") + #zero 
   geom_smooth(se = F) + 
   #scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
-  scale_x_continuous(limits = c(0,10)) +
+  scale_x_continuous(limits = c(-1,10)) +
   theme_bw() 
 ggsave(paste0("E:/Experimente/Experiment - TFO/Plots/EDA/CS_raw/CS.png"), 
        device="png", width=1920/300, height=1080/200, dpi=300)
@@ -753,10 +776,10 @@ ggsave(paste0("E:/Experimente/Experiment - TFO/Plots/EDA/CS_raw/CS.png"),
 
 eda_unified$EDA %>% bind_rows() %>%
   mutate(condition = as.factor(condition),time=round(time),1) %>% 
-  filter(ID %in% responder) %>%
+  #filter(ID %in% responder) %>%
   #filter(condition %in% c(5,6,7,8)) %>% 
   #filter(trial_condition >= 41 & trial_condition <= 60) %>% 
-  filter(condition %in% c(1,2,3)) %>% 
+  filter(condition %in% c(1,2,3,4)) %>% 
   group_by(time,condition) %>% 
   summarise(EDA = mean(EDA_bl)) %>%
   ggplot(., aes(x=time, y=EDA, color=condition, group=condition)) +
@@ -764,15 +787,40 @@ eda_unified$EDA %>% bind_rows() %>%
   #geom_vline(xintercept=0, color="blue",linetype="dashed") + #zero 
   geom_path() + 
   scale_x_continuous("Time [s]",limits = c(0,10)) +
-  scale_y_continuous("EDA", limits=c(-0.25, 0)) + 
-  scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
+ #scale_y_continuous("EDA", limits=c(-0.25, 0)) + 
+ # scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
+  theme_classic() +
+  theme(legend.position=c(0.15,0.78),
+        legend.title = element_blank(),
+        #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
+  )
+
+ggsave(paste0("../plots/EDA/CS_baseline/Acquisition.png"), 
+       device="png", width=1920/400, height=1080/300, dpi=300)
+
+
+eda_unified$EDA %>% bind_rows() %>%
+  mutate(condition = as.factor(condition),time=round(time),1) %>% 
+  #filter(ID %in% responder) %>%
+  #filter(condition %in% c(5,6,7,8)) %>% 
+  #filter(trial_condition >= 41 & trial_condition <= 60) %>% 
+  filter(condition %in% c(5,6,7,8)) %>% 
+  group_by(time,condition) %>% 
+  summarise(EDA = mean(EDA_bl)) %>%
+  ggplot(., aes(x=time, y=EDA, color=condition, group=condition)) +
+  #geom_vline(xintercept=c(0.8,6), color="blue",linetype="dashed") + #borders of min/max scoring
+  #geom_vline(xintercept=0, color="blue",linetype="dashed") + #zero 
+  geom_path() + 
+  scale_x_continuous("Time [s]",limits = c(0,10)) +
+  #scale_y_continuous("EDA", limits=c(-0.25, 0)) + 
+  # scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
   theme_classic() +
   theme(legend.position=c(0.15,0.18),
         legend.title = element_blank(),
         #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
   )
 
-ggsave(paste0("E:/Experimente/Experiment - TFO/Plots/EDA/CS_baseline/CS.png"), 
+ggsave(paste0("../plots/EDA/CS_baseline/Test.png"), 
        device="png", width=1920/400, height=1080/300, dpi=300)
 
 
@@ -806,6 +854,7 @@ eda_df_long <- eda_df %>%  #filter(!(ID %in% c("tfo07"))) %>%
 
 eda_df_long %>% 
   #filter(timebin >= 3 & timebin <= 10) %>% #filter(valid == T) %>%
+  filter(condition %in% c(5,6,7,8)) %>% 
   group_by(ID,condition) %>%  summarise(scl = mean(scl)) %>%
   mutate(ID = as.factor(ID), condition = as.factor(condition)) %>% 
   ez::ezANOVA(dv=.(scl), wid=.(ID), 

@@ -1,5 +1,7 @@
-##################################################################
-# Project: SFB-TRR 58, C10, Experiment 3
+###############################################################################
+# Gaze Contingent Avoidance Project
+# Sabrina Gado & Yannik Stegmann
+# Code adapted from Mario Reutter and Matthias Gamer
 #
 # Tested with RStudio 2022.07.1 Build 554 running R 4.2.1
 #
@@ -93,184 +95,201 @@ limitrange = FALSE
 plimit = 0.003
 
 
-# Functions ---------------------------------------------------------------
-findpeaks = function (series, amplitude, dcrit=20) {
-  above = which(series > amplitude)
-  if (sum(diff(above) > 1) > 0) {
-    ast = c(1,(2:length(above))[diff(above)>1])
-    if (length(ast)==1) {
-      aen = length(above)		
-    } else {
-      aen = c(ast[2:length(ast)]-1,length(above))		
-    }
-    
-    result = numeric()
-    for (i in seq(ast)) {
-      result = c(result,above[ast[i]:aen[i]][series[above[ast[i]:aen[i]]]==max(series[above[ast[i]:aen[i]]])][1])
-    }
-    
-    # Remove duplicates
-    if (length(result)>1) {
-      fresult = c(result[1],result[2:length(result)][diff(result)>dcrit])
-    }
-  } else {
-    fresult = numeric()
+{ # Functions ---------------------------------------------------------------
+  sample.down = function(signal, conversionRate) {
+    suppressWarnings(matrix(signal, ncol=conversionRate, byrow=T)) %>% apply(1, mean) %>% 
+      head(-1) #discard last sample because it gets distorted by zero padding
   }
   
-  fresult
-}
-
-# Test if x/y fall into a rectangle
-inrect = function(x, y, bx1, by1, bx2, by2) {
-  x.low = min(c(bx1, bx2))
-  x.high = max(c(bx1, bx2))
-  y.low = min(c(by1, by2))
-  y.high = max(c(by1, by2))
+  closestRepresentative = function(x, values, returnIndices=F) {
+    indices = x %>% sapply(function(x, data) which.min(abs(data-x)), data=values)
+    if (returnIndices) return(indices)
+    return(values[indices])
+  }
   
-  return((x > x.low) & (x < x.high) & (y > y.low) & (y < y.high))
-}
-
-manualcheck = function(t_trial, ecg_trial, rpeak_trial) {
-  ready = FALSE # only true if trial was checked completely
-  while (!ready) {
-    # Check manually (delete systolic peaks within a selected time range)
-    ok = FALSE
-    while (!ok) {	
-      # Plot raw data
-      plot(t_trial,ecg_trial,type="l",xlab="time (s)",ylab="ECG")
-      box(col="red",lwd=2)
-      abline(v=rpeak_trial,col="red")
-      if (showMarkers) abline(v=markerwind, col="purple")
-      title("Manual editing")
-      
-      # Plot Heart Rate
-      if (length(rpeak_trial)>0) {
-        hr = 60/diff(rpeak_trial)
-        problem = ifelse((min(hr)<minhr) | (max(hr)>maxhr),1,0)
-        plot(t_trial,ecg_trial,type="n",xlab="time (s)",ylab="HR (bpm)", ylim=range(hr))
-        lines(rpeak_trial[2:length(rpeak_trial)],hr,col=c("black","red")[problem+1],lwd=2)
+  findpeaks = function (series, amplitude, dcrit=20) {
+    above = which(series > amplitude)
+    if (sum(diff(above) > 1) > 0) {
+      ast = c(1,(2:length(above))[diff(above)>1])
+      if (length(ast)==1) {
+        aen = length(above)		
       } else {
-        plot(t_trial,ecg_trial,type="n",xlab="time (s)",ylab="HR (bpm)",ylim=c(-10,10))
+        aen = c(ast[2:length(ast)]-1,length(above))		
       }
       
-      location = locator(n=2)
-      
-      if (is.null(location) | (length(location$x)==1)) {
-        ok = TRUE
-      } else {
-        # critsys = t_trial[(t_trial>(min(location$x))) & (t_trial<(max(location$x)))]
-        # rpeak_trial = rpeak_trial[!(rpeak_trial %in% critsys)]
-        rpeak_trial = rpeak_trial[!(rpeak_trial>min(location$x) & rpeak_trial<max(location$x))]
+      result = numeric()
+      for (i in seq(ast)) {
+        result = c(result,above[ast[i]:aen[i]][series[above[ast[i]:aen[i]]]==max(series[above[ast[i]:aen[i]]])][1])
       }
+      
+      # Remove duplicates
+      if (length(result)>1) {
+        fresult = c(result[1],result[2:length(result)][diff(result)>dcrit])
+      }
+    } else {
+      fresult = numeric()
     }
     
-    # Check manually (mark r-peaks)
-    ok = FALSE
-    while (!ok) {	
-      # Plot ECG
-      plot(t_trial,ecg_trial,type="l",xlab="time (s)",ylab="ECG")
-      box(col="green",lwd=2)
-      abline(v=rpeak_trial,col="red")
-      if (showMarkers) abline(v=markerwind, col="purple")
-      title("Manual editing")
-      
-      # Plot Heart Rate
-      if (length(rpeak_trial)>0) {
-        hr = 60/diff(rpeak_trial)
-        problem = ifelse((min(hr)<minhr) | (max(hr)>maxhr),1,0)
-        plot(t_trial,ecg_trial,type="n",xlab="time (s)",ylab="HR (bpm)", ylim=range(hr))
-        lines(rpeak_trial[2:length(rpeak_trial)],hr,col=c("black","red")[problem+1],lwd=2)
-      } else {
-        plot(t_trial,ecg_trial,type="n",xlab="time (s)",ylab="HR (bpm)",ylim=c(-10,10))
-      }
-      
-      # Button
-      rect(min(t_trial)-2, min(hr), min(t_trial), max(hr), border=NA, col="lightblue")
-      text(min(t_trial)-1, (max(hr)-min(hr))/2+min(hr), "Delete", adj=c(0.5,0.5), srt=90)
-      box(lwd=2)    
-      
-      location = locator(n=1)
-      if (is.null(location)) {
-        ok = TRUE
-        ready = TRUE
-      } else {
-        if (inrect(location$x, location$y, min(t_trial)-2, min(hr), min(t_trial), max(hr))) {
+    fresult
+  }
+  
+  # Test if x/y fall into a rectangle
+  inrect = function(x, y, bx1, by1, bx2, by2) {
+    x.low = min(c(bx1, bx2))
+    x.high = max(c(bx1, bx2))
+    y.low = min(c(by1, by2))
+    y.high = max(c(by1, by2))
+    
+    return((x > x.low) & (x < x.high) & (y > y.low) & (y < y.high))
+  }
+  
+  manualcheck = function(t_trial, ecg_trial, rpeak_trial) {
+    ready = FALSE # only true if trial was checked completely
+    while (!ready) {
+      # Check manually (delete systolic peaks within a selected time range)
+      ok = FALSE
+      while (!ok) {	
+        # Plot raw data
+        plot(t_trial,ecg_trial,type="l",xlab="time (s)",ylab="ECG")
+        box(col="red",lwd=2)
+        abline(v=rpeak_trial,col="red")
+        if (showMarkers) abline(v=markerwind, col="purple")
+        title("Manual editing")
+        
+        # Plot Heart Rate
+        if (length(rpeak_trial)>0) {
+          hr = 60/diff(rpeak_trial)
+          problem = ifelse((min(hr)<minhr) | (max(hr)>maxhr),1,0)
+          plot(t_trial,ecg_trial,type="n",xlab="time (s)",ylab="HR (bpm)", ylim=range(hr))
+          lines(rpeak_trial[2:length(rpeak_trial)],hr,col=c("black","red")[problem+1],lwd=2)
+        } else {
+          plot(t_trial,ecg_trial,type="n",xlab="time (s)",ylab="HR (bpm)",ylim=c(-10,10))
+        }
+        
+        location = locator(n=2)
+        
+        if (is.null(location) | (length(location$x)==1)) {
           ok = TRUE
         } else {
-          #critsys = (1:length(t_trial))[(t_trial>(location$x-0.15)) & (t_trial<(location$x+0.15))]
-          critsys = (1:length(t_trial))[(t_trial>(location$x-0.02)) & (t_trial<(location$x+0.02))] #use which-function instead?
-          rpeak_trial = c(rpeak_trial,t_trial[critsys[ecg_trial[critsys]==max(ecg_trial[critsys])][1]])
-          rpeak_trial = sort(rpeak_trial)
-          # Delete duplicates
-          difs = diff(rpeak_trial)
-          rpeak_trial = rpeak_trial[c(TRUE,difs!=0)]
+          # critsys = t_trial[(t_trial>(min(location$x))) & (t_trial<(max(location$x)))]
+          # rpeak_trial = rpeak_trial[!(rpeak_trial %in% critsys)]
+          rpeak_trial = rpeak_trial[!(rpeak_trial>min(location$x) & rpeak_trial<max(location$x))]
+        }
+      }
+      
+      # Check manually (mark r-peaks)
+      ok = FALSE
+      while (!ok) {	
+        # Plot ECG
+        plot(t_trial,ecg_trial,type="l",xlab="time (s)",ylab="ECG")
+        box(col="green",lwd=2)
+        abline(v=rpeak_trial,col="red")
+        if (showMarkers) abline(v=markerwind, col="purple")
+        title("Manual editing")
+        
+        # Plot Heart Rate
+        if (length(rpeak_trial)>0) {
+          hr = 60/diff(rpeak_trial)
+          problem = ifelse((min(hr)<minhr) | (max(hr)>maxhr),1,0)
+          plot(t_trial,ecg_trial,type="n",xlab="time (s)",ylab="HR (bpm)", ylim=range(hr))
+          lines(rpeak_trial[2:length(rpeak_trial)],hr,col=c("black","red")[problem+1],lwd=2)
+        } else {
+          plot(t_trial,ecg_trial,type="n",xlab="time (s)",ylab="HR (bpm)",ylim=c(-10,10))
+        }
+        
+        # Button
+        rect(min(t_trial)-2, min(hr), min(t_trial), max(hr), border=NA, col="lightblue")
+        text(min(t_trial)-1, (max(hr)-min(hr))/2+min(hr), "Delete", adj=c(0.5,0.5), srt=90)
+        box(lwd=2)    
+        
+        location = locator(n=1)
+        if (is.null(location)) {
+          ok = TRUE
+          ready = TRUE
+        } else {
+          if (inrect(location$x, location$y, min(t_trial)-2, min(hr), min(t_trial), max(hr))) {
+            ok = TRUE
+          } else {
+            #critsys = (1:length(t_trial))[(t_trial>(location$x-0.15)) & (t_trial<(location$x+0.15))]
+            critsys = (1:length(t_trial))[(t_trial>(location$x-0.02)) & (t_trial<(location$x+0.02))] #use which-function instead?
+            rpeak_trial = c(rpeak_trial,t_trial[critsys[ecg_trial[critsys]==max(ecg_trial[critsys])][1]])
+            rpeak_trial = sort(rpeak_trial)
+            # Delete duplicates
+            difs = diff(rpeak_trial)
+            rpeak_trial = rpeak_trial[c(TRUE,difs!=0)]
+          }
         }
       }
     }
+    
+    return(rpeak_trial)
   }
   
-  return(rpeak_trial)
-}
-
-pathToCode = function(path, path.sep="/", file.ext="\\.") {
-  first = path %>% gregexpr(path.sep, .) %>% lapply(max) %>% unlist() %>% {. + 1}
-  last = path %>% gregexpr(file.ext, .) %>% lapply(max) %>% unlist() %>% {. - 1}
-  return(path %>% substring(first, last))
-}
-
-promptIndex = function(codes) {
-  index = NA
-  while(is.na(index) || index < 1) {
-    cat("\n "); cat(paste0(seq(codes), ": ", codes, "\n"))
-    prompt = readline("Proceed with subject number: ")
-    index = tryCatch({as.integer(prompt)}, error=NA) %>% suppressWarnings()
+  pathToCode = function(path, path.sep="/", file.ext="\\.") {
+    first = path %>% gregexpr(path.sep, .) %>% lapply(max) %>% unlist() %>% {. + 1}
+    last = path %>% gregexpr(file.ext, .) %>% lapply(max) %>% unlist() %>% {. - 1}
+    return(path %>% substring(first, last))
   }
   
-  return(index)
-}
+  promptIndex = function(codes) {
+    index = NA
+    while(is.na(index) || index < 1) {
+      cat("\n "); cat(paste0(seq(codes), ": ", codes, "\n"))
+      prompt = readline("Proceed with subject number: ")
+      index = tryCatch({as.integer(prompt)}, error=NA) %>% suppressWarnings()
+    }
+    
+    return(index)
+  }
+  
+  implausibility = function(hrtrial, minimum=minhr, maximum=maxhr) {
+    #sum(hrtrial < minimum | hrtrial > maximum) #sum is too unspecific
+    
+    tooLow = hrtrial[hrtrial < minimum]
+    tooLow = sum(minimum - tooLow)
+    
+    tooHigh = hrtrial[hrtrial > maximum]
+    tooHigh = sum(tooHigh - maximum)
+    
+    return(tooLow + tooHigh)
+  }
 
-implausibility = function(hrtrial, minimum=minhr, maximum=maxhr) {
-  #sum(hrtrial < minimum | hrtrial > maximum) #sum is too unspecific
-  
-  tooLow = hrtrial[hrtrial < minimum]
-  tooLow = sum(minimum - tooLow)
-  
-  tooHigh = hrtrial[hrtrial > maximum]
-  tooHigh = sum(tooHigh - maximum)
-  
-  return(tooLow + tooHigh)
 }
-
 
 print("Downsampling and extracting HR ...")
 
 filemat = list.files("../Physio/Raw/", pattern="*.txt") # Das sollte der Ordner sein, in dem deine ganzen Files liegen. Pro VP ein File.
 
-trigger_mat <- read.csv("../Physio/Trigger/conditions.csv") %>%
+trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
   mutate(subject = sprintf("gca_%02d", subject),
-         trigger = ifelse(phase == "acquisition" & condition == "cs_plus_s",1,
-                          ifelse(phase == "acquisition" & condition == "cs_minus_s",2,
-                                 ifelse(phase == "acquisition" & condition == "cs_plus_ns",3,
-                                        ifelse(phase == "acquisition" & condition == "cs_minus_ns",4,
-                                               ifelse(phase == "test" & condition == "cs_plus_s",5,
-                                                      ifelse(phase == "test" & condition == "cs_minus_s",6,
-                                                             ifelse(phase == "test" & condition == "cs_plus_ns",7,
-                                                                    ifelse(phase == "test" & condition == "cs_minus_ns",8,0)))))))))
+         trigger = ifelse(phase == "acquisition" & condition == "CSneg, social",1,
+                          ifelse(phase == "acquisition" & condition == "CSpos, social",2,
+                                 ifelse(phase == "acquisition" & condition == "CSneg, non-social",3,
+                                        ifelse(phase == "acquisition" & condition == "CSpos, non-social",4,
+                                               ifelse(phase == "test" & condition == "CSneg, social",5,
+                                                      ifelse(phase == "test" & condition == "CSpos, social",6,
+                                                             ifelse(phase == "test" & condition == "CSneg, non-social",7,
+                                                                    ifelse(phase == "test" & condition == "CSpos, non-social",8,0)))))))))
 
 
 
 for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
   
-  #subject_inmat = filemat[[1]]
+  # subject_inmat = filemat[[22]]
 
   
   physio <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
     rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
     mutate(sample = 1:n())
   
-  firstCue <- physio %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
   
-  physio <- physio %>% filter(sample >= firstcue - 2000 & sample < max(physio$sample)-1000) %>%
+  firstcue <- physio %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
+  lastcue <- physio %>% filter(ImgTest == 5) %>% tail(1) %>% .$sample
+  recordend <- physio$sample %>% tail(1)
+  ((lastcue - firstcue)/1000)/60
+  ((recordend - lastcue)/1000)/60
+  
+  physio <- physio %>% filter(sample >= firstcue - 2000 & sample < lastcue + 12000) %>%
     mutate(ImgAcq = ifelse(ImgAcq == 5,1,0),
            ImgTest = ifelse(ImgTest == 5,1,0),
            Shock = ifelse(Shock == 5,9,0),
@@ -279,45 +298,66 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
            trigger = ImgAcq + ImgTest + Shock + Reward + NoFeedback,
            sample = 1:n(),
            time = sample /1000) %>% 
-    select(time, ECG, trigger) 
+    select(time, sample, ECG, trigger, ImgAcq, ImgTest, Shock, Reward, NoFeedback) %>%
+    mutate(trigger = ifelse(trigger == lag(trigger), 0, trigger)) %>%
+    fill(trigger,.direction = "up") %>%
+    fill(trigger,.direction = "down")
+  
+  trigger_diff <- physio %>% filter(trigger == 1) %>% 
+    mutate(sdiff = lead(time, 1) - time)
+  
+  trigger_diff <- trigger_diff %>% 
+    mutate(use.trial = TRUE) %>% 
+    mutate(rownum = row_number()) %>% 
+    bind_rows(., filter(., (sdiff > 16 ) & (sdiff < 22)) %>% 
+                mutate(use.trial = FALSE, rownum = rownum+.5)) %>% 
+    arrange(rownum) %>%
+    mutate(trial = row_number())
+  
+  filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")
+  trigger_mat_subj <- trigger_mat %>% filter(subject == filename)
+  
+  trigger_mat_subj <- trigger_mat_subj %>% 
+    left_join(trigger_diff %>% select(trial, use.trial), by=c("trial"))
+  
+  trigger_mat_subj <- trigger_mat_subj %>% 
+    filter(use.trial)
   
   
-    #downsample (all columns)
-    triggers_time = physio$time[physio$trigger != 0] #eda$time[eda$Trigger %>% is.na() == FALSE]
-    conversion = round(sample_rate / sample_rate_new)
-    physio_downsampled = data.frame(time=sample.down(physio$time,conversion),
-                                 ECG=sample.down(physio$ECG,conversion),
-                                 trigger=0) %>% 
-      mutate(sample=1:n()) %>% select(sample, everything())
-    
-    #calculate closest position for trigger onsets in downsampled time
-    triggers_time_old = physio$time[physio$trigger != 0]
-    triggers_indices_new = triggers_time_old %>% closestRepresentative(physio_downsampled$time, returnIndices = T) #for each old trigger time, find index of closest existing downsampled time
-    physio_downsampled$trigger[triggers_indices_new] = physio$trigger[physio$trigger != 0] #inject conditions as triggers of onsets
-    
-    for (row in 1:(nrow(physio_downsampled)-1)){ if (physio_downsampled$trigger[row] == physio_downsampled$trigger[row+1]) {physio_downsampled$trigger[row+1]=0}} #remove extra shock-markers
-    
-    
-    physio = physio_downsampled %>% select(-sample); rm(physio_downsampled) 
-    
-    filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")
-    physio$trigger[physio$trigger == 1] <-  trigger_mat %>% filter(subject == filename) %>% .$trigger
-    
-    
-    
-write.table(physio,paste0(path.phys,subject_inmat),row.names = F, col.names=F)
+  #downsample (all columns)
+  triggers_time = physio$time[physio$trigger != 0] #eda$time[eda$Trigger %>% is.na() == FALSE]
+  conversion = round(sample_rate / sample_rate_new)
+  physio_downsampled = data.frame(time=sample.down(physio$time,conversion),
+                                  ECG=sample.down(physio$ECG,conversion),
+                                  trigger=0) %>% 
+    mutate(sample=1:n()) %>% select(sample, everything())
+  
+  #calculate closest position for trigger onsets in downsampled time
+  triggers_time_old = physio$time[physio$trigger != 0]
+  triggers_indices_new = triggers_time_old %>% closestRepresentative(physio_downsampled$time, returnIndices = T) #for each old trigger time, find index of closest existing downsampled time
+  physio_downsampled$trigger[triggers_indices_new] = physio$trigger[physio$trigger != 0] #inject conditions as triggers of onsets
+  
+  for (row in 1:(nrow(physio_downsampled)-1)){ if (physio_downsampled$trigger[row] == physio_downsampled$trigger[row+1]) {physio_downsampled$trigger[row+1]=0}} #remove extra shock-markers
+  
+  
+  physio = physio_downsampled %>% select(-sample); rm(physio_downsampled)
+  
+  physio$trigger[physio$trigger == 1] <- trigger_mat_subj %>% .$trigger
+      
+  write.table(physio,paste0(path.phys,subject_inmat), row.names = F, col.names=F)
+  
+  print(paste0(filename, ': ', sum((physio$trigger > 0) & (physio$trigger < 9)), ' trials'))
 
 }; print("Downsampling complete!"); 
 
 
 
+# MAIN --------------------------------------------------------------------
 
 subjects.ecg = list.files(path.phys, pattern=ifelse(unzipFiles, ".zip", ".txt"), full.names=TRUE)
 codes.ecg = pathToCode(subjects.ecg)
 
 
-
-# MAIN --------------------------------------------------------------------
 index = 0
 while(T) {
   prompt = readline(paste0("Proceed with subject number: ", index+1, "? (Type \"n\" to select subject from list) "))
@@ -747,3 +787,18 @@ ranges %>% colnames() %>% .[ranges %>% which.max() %>% {. / 2} %>% ceiling()] %>
 
 #find minimum in percental heart range change for last subject
 #time.min = allrpeak[which.min(allHrMod)]; {time.min > analysis.sequence} %>% which() %>% tail(1) %>% paste0("Segment ", ., " (of ", length(analysis.sequence), ")")
+
+
+
+#check 
+filemat = list.files("../Physio/HR/", pattern="*.txt") # Das sollte der Ordner sein, in dem deine ganzen Files liegen. Pro VP ein File.
+
+for (subject_inmat in filemat){
+  #subject_inmat = filemat[[1]]
+ 
+  print(subject_inmat)
+  read.table(paste0("../Physio/HR/",subject_inmat),sep=" ") %>% 
+    group_by(V3) %>%
+    summarise(count = n()) %>% print()
+    
+}

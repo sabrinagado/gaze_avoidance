@@ -671,6 +671,9 @@ conditions <- conditions %>%
   mutate(across('condition', str_replace_all, rep_str))
 write.csv2(conditions, file.path(path, "Physio", "Trigger", "conditions.csv"), row.names=FALSE, quote=FALSE)
 
+# conditions <- conditions %>% 
+#   summarise(n_trials = n_distinct(trial), .by=c(subject))
+
 ratings = loadRatings(files.rating, files.log) # ratings
 ratings <- ratings %>% 
   mutate(across('condition', str_replace_all, rep_str))
@@ -1199,7 +1202,7 @@ fixations.test.dwell %>%
 saccades.test.valid <- saccades %>% 
   left_join(baseline.test.trials %>% mutate(trial = trial + 112) %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial")) %>% 
   filter(trial > 112)
-
+l
 saccades.test.valid = saccades.test.valid %>%
   mutate(end.testtrial = end.testtrial - picOnset, # realign such that 0 = picture onset
          start_time = start_time - picOnset, end_time = end_time - picOnset, # realign such that 0 = picture onset

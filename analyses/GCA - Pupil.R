@@ -1,0 +1,604 @@
+# EDA Analyse
+
+#packages 
+library(signal)
+library(zoo)
+library(tidyverse)
+library(stringr)
+library(afex)
+
+options(dplyr.summarise.inform = FALSE)
+
+# movemean kann man rausnehmen, genauso wie z standardisierung.
+# anschließend ergebnisse vergleichen - matthais hat auch eine 1s baseline
+
+
+# options & plots
+cr_plots = T
+
+
+sample_rate = 100  #samplerate after export
+trial_length = 12  #length of trial in s
+
+downsampling = F
+sample_rate_new = 10 #for downsampling
+check_ds_plots = F
+
+standardizing = F
+
+lowpass = T
+lowPassFreq = 2 #low pass filter (Hz) entweder keinen oder 2Hz wie bei Matthias
+highpass = F
+highPassFreq = 0.01 #high pass filter (Hz)
+check_smoothed_plots = F #not yet coded
+
+responseWindow = c(2.5,3.5)
+baselineWindow = c(0.5,1)
+
+
+{ # Functions ---------------------------------------------------------------
+  sample.down = function(signal, conversionRate) {
+    suppressWarnings(matrix(signal, ncol=conversionRate, byrow=T)) %>% apply(1, mean) %>% 
+      head(-1) #discard last sample because it gets distorted by zero padding
+  }
+  
+  closestRepresentative = function(x, values, returnIndices=F) {
+    indices = x %>% sapply(function(x, data) which.min(abs(data-x)), data=values)
+    if (returnIndices) return(indices)
+    return(values[indices])
+  }
+}
+
+
+data = read.csv2("../Physio/pupil.txt", sep ="\t") %>% select(-TRIAL_LABEL) %>%
+  mutate(diameter = ifelse(RIGHT_PUPIL_SIZE_BIN == ".", as.numeric(LEFT_PUPIL_SIZE_BIN), as.numeric(RIGHT_PUPIL_SIZE_BIN))) %>% 
+  select(-LEFT_PUPIL_SIZE_BIN, -RIGHT_PUPIL_SIZE_BIN, -BIN_START_TIME, -BIN_END_TIME) 
+
+codes <- unique(data$RECORDING_SESSION_LABEL)
+
+trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
+  mutate(subject = sprintf("gca_%02d", subject),
+         ID = as.numeric(substr(subject,5,6)),
+         trigger = ifelse(phase == "acquisition" & condition == "cs_plus_s",1,
+                          ifelse(phase == "acquisition" & condition == "cs_minus_s",2,
+                                 ifelse(phase == "acquisition" & condition == "cs_plus_ns",3,
+                                        ifelse(phase == "acquisition" & condition == "cs_minus_ns",4,
+                                               ifelse(phase == "test" & condition == "cs_plus_s",5,
+                                                      ifelse(phase == "test" & condition == "cs_minus_s",6,
+                                                             ifelse(phase == "test" & condition == "cs_plus_ns",7,
+                                                                    ifelse(phase == "test" & condition == "cs_minus_ns",8,0)))))))))
+
+
+
+pupils_list = list()
+pupils_df_list = list()
+pupil_df = tibble()
+ga_unified = tibble()
+code_times = c()
+
+
+for (subject_inmat in codes){ 
+  
+  #subject_inmat = codes[[22]]
+  start.time <- Sys.time()  
+  
+  pupil = data %>% filter(RECORDING_SESSION_LABEL == subject_inmat) %>%
+    rename(ID = RECORDING_SESSION_LABEL, trial = TRIAL_INDEX, bin_index = BIN_INDEX) %>%
+    mutate(ID = ifelse(is.na(as.numeric(substr(ID,20,21))),as.numeric(substr(ID,20,20)),as.numeric(substr(ID,20,21))),
+           sample = 1:n()) %>%
+    mutate(time = sample*0.01) 
+  
+  
+  conditions = trigger_mat %>% filter(ID == unique(pupil$ID)) %>%
+    select(ID, trial, condition, trigger)
+  
+  pupil <- left_join(pupil,conditions, by=c("ID","trial")) %>%
+    rowwise() %>%
+    mutate(trigger = ifelse(bin_index == 0, trigger,0))
+  
+  filename = unique(pupil$ID)
+  
+  print("data reading successful!")
+  
+  # interpolation of missing values  
+  
+  pupil = pupil %>% rowwise() %>% mutate(interpolated = ifelse(is.na(diameter),T,F)) %>% ungroup() #create coloum for interpolated values
+  pupil$diameter[[1]] = pupil$diameter[[min(which(!is.na(pupil$diameter)))]] # remove leading NA
+  pupil$diameter[[length(pupil$diameter)]] = pupil$diameter[[max(which(!is.na(pupil$diameter)))]] # remove trailing NA
+  pupil$diameter = na.approx(pupil$diameter) #interpolate NA
+  
+  print("interpolating missing values done!")
+  
+  
+  # artefact correction
+  
+  if (downsampling) {
+    
+    #downsample (all columns)
+    triggers_time = pupil$time[pupil$trigger != 0] #eda$time[eda$Trigger %>% is.na() == FALSE]
+    conversion = round(sample_rate / sample_rate_new)
+    pupil_downsampled = data.frame(time=sample.down(pupil$time,conversion),
+                                   diameter=sample.down(pupil$diameter,conversion),
+                                   interpolated = sample.down(pupil$interpolated,conversion),
+                                   trigger=0) %>% 
+      mutate(sample=1:n()) %>% select(sample, everything()) %>%
+      mutate(interpolated = ifelse(interpolated < 0.5,F,T))
+    
+    #calculate closest position for trigger onsets in downsampled time
+    triggers_time_old = pupil$time[pupil$trigger != 0]
+    triggers_indices_new = triggers_time_old %>% closestRepresentative(pupil_downsampled$time, returnIndices = T) #for each old trigger time, find index of closest existing downsampled time
+    pupil_downsampled$trigger[triggers_indices_new] = pupil$trigger[pupil$trigger != 0] #inject conditions as triggers of onsets
+    
+    # eda_downsampled %>% ggplot(aes(x=time, y=eda)) + geom_line() + geom_vline(xintercept = eda$time[eda$trigger!=0])
+    if(check_ds_plots){
+      pupil %>% ggplot(aes(x=time, y=diameter)) + geom_line() + geom_line(data=pupil_downsampled, color="red",linetype=4) + 
+        geom_vline(xintercept = pupil$time[pupil$trigger!=0],alpha=0.1) 
+    }  
+    pupil = pupil_downsampled; rm(pupil_downsampled)
+    print("downsampling done!")
+    
+  }  
+  
+  #smoothing / filtering
+  if (lowpass) {
+    reps = 100 #filters can produce artifacts on the edges => fill edges with first and last values
+    diameter_filtered = c(rep(first(pupil$diameter), reps), pupil$diameter, rep(last(pupil$diameter), reps)) %>% 
+      signal::filtfilt(signal::butter(2, lowPassFreq/(ifelse(downsampling, sample_rate_new, sample_rate)/2)), .) #low-pass filter
+    
+    if(highpass){
+      diameter_filtered = diameter_filtered %>%  # high-pass filter
+        signal::filtfilt(signal::butter(8, type="high", highPassFreq/(ifelse(downsampling, sample_rate_new, sample_rate)/2)), .)  
+    }
+    
+    pupil_filt = pupil
+    pupil_filt$diameter = diameter_filtered[(reps+1):(length(diameter_filtered)-reps)]; rm(diameter_filtered)
+    
+    
+    if (check_smoothed_plots) {
+      pupil  %>% ggplot(aes(x=time, y=diameter)) + geom_line() + geom_line(data=pupil_filt, color="red",linetype=4) + 
+        geom_vline(xintercept = pupil$time[pupil$trigger!=0],alpha=0.1) 
+    }
+    
+    pupil = pupil_filt
+    print("low pass filtering done!")
+  }  
+  
+  pupil_vp = pupil %>%  select(-diameter) %>%  filter(trigger != 0) %>% ungroup() %>% #One trial per row per VP
+    mutate(trial = 1:n(), condition = trigger,
+           time_start = time, time_end = time + trial_length,
+           sample_start = sample, 
+           sample_end =  {sample+(trial_length*ifelse(downsampling,sample_rate_new,sample_rate))} %>% round()) %>% 
+    select(-trigger, -time, -sample, -interpolated) %>% select(trial, condition, everything())
+  
+  for (row in nrow(pupil_vp)){ #count interpolated samples per trial
+    pupil_vp$interpolated = pupil_vp$time_start %>% lapply(function(start)
+      pupil %>% filter(time >= start-abs(min(baselineWindow)), time < start + trial_length) %>% .$interpolated %>% mean(.) %>% round(.,3))
+    
+    exclude = rep(TRUE,ifelse(downsampling, sample_rate_new/2, sample_rate/2)) #exclude if more than 30 interpolated samplepoints (0.5s) in a row
+    
+    pupil_vp$valid = pupil_vp$time_start %>% lapply(function(start)
+      pupil %>% filter(time >= start-abs(min(baselineWindow)), time < start + trial_length) %>% {!grepl(paste(exclude,collapse=""),paste(.$interpolated,collapse=""))})
+  }
+  
+  
+  pupils_df_list[[filename]] = pupil_vp
+  pupils_list[[filename]] = pupil
+  
+  
+  unified = pupil_vp %>% mutate(diameter = time_start %>% lapply(function(start) 
+    pupil %>% filter(time >= start - abs(min(baselineWindow)),
+                     time <= start + trial_length) %>% select(-trigger)))
+  
+  
+  for (t in 1:nrow(unified)) {
+    unified$diameter[[t]] = unified$diameter[[t]] %>% 
+      mutate(trial = t, 
+             #time = time - (min(time)+abs(min(baselineWindow))), 
+             #samplepoint = sample-min(sample),
+             condition = unified$condition[[t]], 
+             #diameter = diameter - unified$baseline[[t]] #unify starting time to allow overlap
+      )}
+  
+  if (standardizing) {  
+    unified$diameter <- unified$diameter %>% bind_rows() %>% 
+      mutate(diameter = (diameter - mean(diameter))/sd(diameter)) %>%
+      #z-stand %>%
+      split(.$trial)
+    
+    print("z-standardizing done!")
+    
+  }
+  
+  
+  # baseline and level scoring  
+  
+  test.time <- Sys.time()  
+  pupil_diameter_binded <- unified$diameter %>% bind_rows()
+  
+  for (t in 1:nrow(pupil_vp)) {
+    start = pupil_vp$time_start[t]
+    
+    baseline_trial = pupil_diameter_binded %>% filter(time <= start + max(baselineWindow),
+                                                      time >= start + min(baselineWindow)) %>% 
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial = pupil_diameter_binded %>% filter(time <= start + max(responseWindow),
+                                                            time >= start + min(responseWindow)) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    
+    diameter_level_trial_1 = pupil_diameter_binded %>% filter(time >= start + 1, time <= start + 1.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_2 = pupil_diameter_binded %>% filter(time >= start + 1.5,time <= start + 2) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_3 = pupil_diameter_binded %>% filter(time >= start + 2, time <= start + 2.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_4 = pupil_diameter_binded %>% filter(time >= start + 2.5,time <= start + 3) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_5 = pupil_diameter_binded %>% filter(time >= start + 3, time <= start + 3.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_6 = pupil_diameter_binded %>% filter(time >= start + 3.5,time <= start + 4) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_7 = pupil_diameter_binded %>% filter(time >= start + 4, time <= start + 4.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_8 = pupil_diameter_binded %>% filter(time >= start + 4.5, time <= start + 5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_9 = pupil_diameter_binded %>% filter(time >= start + 5,time <= start + 5.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_10 = pupil_diameter_binded %>% filter(time >= start + 5.5, time <= start + 6) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_11 = pupil_diameter_binded %>% filter(time >= start + 6,time <= start + 6.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_12 = pupil_diameter_binded %>% filter(time >= start + 6.5, time <= start + 7) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_13 = pupil_diameter_binded %>% filter(time >= start + 7,time <= start + 7.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_14 = pupil_diameter_binded %>% filter(time >= start + 7.5, time <= start + 8) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_15 = pupil_diameter_binded %>% filter(time >= start + 8, time <= start + 8.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_16 = pupil_diameter_binded %>% filter(time >= start + 8.5, time <= start + 9) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_17 = pupil_diameter_binded %>% filter(time >= start + 9, time <= start + 9.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_18 = pupil_diameter_binded %>% filter(time >= start + 9.5, time <= start + 10) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_19 = pupil_diameter_binded %>% filter(time >= start + 10, time <= start + 10.5) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    diameter_level_trial_20 = pupil_diameter_binded %>% filter(time >= start + 10.5, time <= start + 11) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
+    
+    dilations = tibble(dilation = diameter_level_trial - baseline_trial,
+                       dilation_1 = diameter_level_trial_1 - baseline_trial,
+                       dilation_2 = diameter_level_trial_2 - baseline_trial,
+                       dilation_3 = diameter_level_trial_3 - baseline_trial,
+                       dilation_4 = diameter_level_trial_4 - baseline_trial,
+                       dilation_5 = diameter_level_trial_5 - baseline_trial,
+                       dilation_6 = diameter_level_trial_6 - baseline_trial,
+                       dilation_7 = diameter_level_trial_7 - baseline_trial,
+                       dilation_8 = diameter_level_trial_8 - baseline_trial,
+                       dilation_9 = diameter_level_trial_9 - baseline_trial,
+                       dilation_10 = diameter_level_trial_10 - baseline_trial,
+                       dilation_11 = diameter_level_trial_11 - baseline_trial,
+                       dilation_12 = diameter_level_trial_12 - baseline_trial,
+                       dilation_13 = diameter_level_trial_13 - baseline_trial,
+                       dilation_14 = diameter_level_trial_14 - baseline_trial,
+                       dilation_15 = diameter_level_trial_15 - baseline_trial,
+                       dilation_16 = diameter_level_trial_16 - baseline_trial,
+                       dilation_17 = diameter_level_trial_17 - baseline_trial,
+                       dilation_18 = diameter_level_trial_18 - baseline_trial,
+                       dilation_19 = diameter_level_trial_19 - baseline_trial,
+                       dilation_20 = diameter_level_trial_20 - baseline_trial,
+                       baseline = baseline_trial,
+                       mean_diameter = diameter_level_trial) %>% select(dilation:dilation_20, baseline, mean_diameter, everything()) 
+    
+    
+    pupil_vp[t, names(dilations)] = dilations
+  } 
+  end.time <- Sys.time() - test.time
+  
+  print("0.5s bin averaging done!")
+  print(end.time)
+  
+  pupil_vp = pupil_vp %>% group_by(condition) %>% mutate(trial_condition = row_number()) %>% ungroup()
+  pupils_df_list[[filename]] = pupil_vp
+  
+  
+  
+  for (t in 1:nrow(unified)) {
+    unified$diameter[[t]] = unified$diameter[[t]] %>% 
+      mutate(time = time - (min(time)+abs(min(baselineWindow))), 
+             samplepoint = sample-min(sample),
+             diameter = diameter - pupil_vp$baseline[[t]] #unify starting time to allow overlap
+      )}
+  
+  if (cr_plots) {
+    
+    
+    unified$diameter %>% bind_rows() %>% 
+      mutate(trial = as.factor(trial)) %>% 
+      {ggplot(., aes(x=time-1, y=diameter, color=trial)) + facet_wrap(vars(condition)) +
+          geom_vline(xintercept=2, color="blue",linetype="dashed") + #borders of min/max scoring
+          geom_vline(xintercept=0, color="black",linetype="solid") + #zero 
+          geom_path() + scale_color_viridis_d() +
+          ggtitle(filename) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
+      #print()
+      ggsave(paste0("../plots/Pupil/subject_level/", filename, ".png"), plot=., 
+             device="png", width=1920/150, height=1080/150, dpi=300)
+    
+    
+    
+    unified$diameter %>% bind_rows() %>% 
+      mutate(condition = as.factor(condition)) %>% 
+      group_by(condition,samplepoint) %>% 
+      summarise(diameter = mean(diameter), time = mean(time)) %>%
+      {ggplot(., aes(x=time-1, y=diameter, color=condition, group=condition,linetype=condition)) +
+          geom_vline(xintercept=2, color="blue",linetype="dashed") + #borders of min/max scoring
+          geom_vline(xintercept=0, color="black",linetype="solid") + #zero 
+          geom_path() + scale_color_viridis_d() +
+          ggtitle(filename) + theme_bw() + theme(plot.title = element_text(hjust = 0.5))} %>% 
+      #print()
+      ggsave(paste0("../plots/Pupil/subject_level/", filename, "_average.png"), plot=., 
+             device="png", width=1920/150, height=1080/150, dpi=300)
+    
+    print("Cr plotting successful!")
+    
+  }
+  
+  unified = unified %>% mutate(ID = filename)
+  ga_unified = rbind(ga_unified,unified)
+  pupil_df  = rbind(pupil_df,pupil_vp %>% mutate(ID=filename))
+  
+  
+  # stuff for calculating computing duration
+  
+  end.time <- Sys.time()  
+  time.taken <- end.time - start.time
+  code_times = c(code_times,round(as.numeric(time.taken),1))
+  mean_code_time = mean(code_times)
+  
+  
+  #if(match(subject_inmat,codes) == 1){
+  #  print(paste0(round(match(subject_inmat,codes)/length(codes)*100,1), "% ..... ",
+  #               match(subject_inmat,codes), " of ", length(codes), " files processed!"))}
+  #else{
+  #  print(paste0(round(match(subject_inmat,codes)/length(codes)*100,1), "% ..... ",
+  #               match(subject_inmat,codes), " of ", length(codes), " files processed! ..... ", 
+  #               round((mean_code_time*length(codes)-mean_code_time * match(subject_inmat,codes))/60,1), 
+  #               " min remaining"))
+  #}
+  
+} # end inmat for loop
+
+# Read or Save ga_unified and pupil_df for further processing
+
+# saveRDS(ga_unified,"ET_ga_unified.RData")
+# saveRDS(pupil_df,"ET_pupil_df.RData")
+
+# ga_unified <- readRDS("ET_ga_unified.RData")
+# pupil_df <- readRDS("ET_pupil_df.Rdata")
+
+# Signal quality check
+
+mean(as.numeric(pupil_df$interpolated)) #30.4% interpolated sample points
+sum(pupil_df$valid == T) #6291 valid trials
+sum(pupil_df$valid == F) #2709 invalid trials
+sum(pupil_df$valid == T) / (sum(pupil_df$valid == T) + sum(pupil_df$valid == F) ) #70% valid trials
+
+pupil_df %>% group_by(condition) %>%
+  summarise(valid_sp = mean(as.numeric(interpolated)), 
+            valid_trials = sum(valid == T))  # no condition differences!
+
+responder <- pupil_df %>% filter(condition %in% c(1,2,3)) %>% group_by(ID) %>% 
+  summarise(dilators = mean(as.numeric(interpolated))) %>% filter(dilators < 0.5) %>% .$ID
+
+non_responder <- pupil_df %>% filter(condition %in% c(1,2,3)) %>% group_by(ID) %>% 
+  summarise(dilators = mean(as.numeric(interpolated))) %>% filter(dilators >= 0.5) %>% .$ID
+
+
+# Plot Unified Data
+
+ga_unified %>% filter(valid == TRUE) %>%
+  #filter(ID %in% responder) %>%
+  .$diameter %>% bind_rows() %>%
+  mutate(condition = as.factor(condition)) %>% 
+  # filter(trial < 60) %>%
+  filter(condition %in% c(1,2,3,4)) %>% 
+  group_by(condition,samplepoint) %>% 
+  summarise(diameter = mean(diameter), time = mean(time)) %>%
+  {ggplot(., aes(x=time-1, y=diameter, color=condition, group=condition)) +
+      #geom_vline(xintercept=c(responseWindow), color="blue",linetype="dashed") + #borders of min/max scoring
+      #geom_vline(xintercept=0, color="black",linetype="solid") + #zero 
+      #geom_vline(xintercept=2, color="lightblue",linetype="dashed") + #US time
+      #geom_vline(xintercept=10, color="lightblue",linetype="dashed") + #US time
+      geom_path() + 
+      scale_x_continuous("Time [s]",limits=c(-0.5, 2)) +
+      #scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
+      scale_y_continuous("Pupil Diameter") +
+      theme_classic() +
+      theme(legend.position=c(0.15,0.88),
+            legend.title = element_blank(),
+            #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
+      ) }
+ggsave("../plots/Pupil/cs_acq.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
+
+
+
+ga_unified %>% filter(valid == TRUE) %>%
+  #filter(ID %in% responder) %>%
+  .$diameter %>% bind_rows() %>%
+  mutate(condition = as.factor(condition)) %>% 
+  # filter(trial < 60) %>%
+  filter(condition %in% c(5,6,7,8)) %>% 
+  group_by(condition,samplepoint) %>% 
+  summarise(diameter = mean(diameter), time = mean(time)) %>%
+  {ggplot(., aes(x=time-1, y=diameter, color=condition, group=condition)) +
+      #geom_vline(xintercept=c(responseWindow), color="blue",linetype="dashed") + #borders of min/max scoring
+      #geom_vline(xintercept=0, color="black",linetype="solid") + #zero 
+      #geom_vline(xintercept=2, color="lightblue",linetype="dashed") + #US time
+      #geom_vline(xintercept=10, color="lightblue",linetype="dashed") + #US time
+      geom_path() + 
+      scale_x_continuous("Time [s]",limits=c(-0.5, 11)) +
+      #scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
+      scale_y_continuous("Pupil Diameter") +
+      theme_classic() +
+      theme(legend.position=c(0.15,0.88),
+            legend.title = element_blank(),
+            #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
+      ) }
+ggsave("../plots/Pupil/cs_test.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
+
+
+
+#Intereference statistics
+
+pupil_df %>%  
+  #filter(ID %in% responder) %>%
+  pivot_longer(dilation_1:dilation_20, names_to = "timebin", values_to ="diameter") %>%
+  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
+  filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
+  filter(condition %in% c(5,6,7,8)) %>%
+  group_by(ID,condition) %>%  summarise(diameter = mean(diameter)) %>%
+  mutate(ID = as.factor(ID), condition = as.factor(condition)) %>% 
+  ez::ezANOVA(dv=.(diameter), wid=.(ID), 
+              within=.(condition), 
+              #between=.(pairs),
+              detailed=T, type=2) %>% apa::anova_apa()
+
+
+
+
+
+pupil_df %>%  
+  #filter(ID %in% responder) %>%
+  pivot_longer(dilation_1:dilation_20, names_to = "timebin", values_to ="diameter") %>%
+  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
+  group_by(timebin,condition) %>%  summarise(diameter = mean(diameter)) %>%
+  mutate(condition = as.factor(condition)) %>% 
+  ggplot(., aes(x=timebin, y=diameter, color=condition, group=condition)) +
+  #geom_vline(xintercept=c(responseWindow), color="blue",linetype="dashed") + #borders of min/max scoring
+  geom_vline(xintercept=0, color="black",linetype="solid") + #zero 
+  geom_vline(xintercept=4, color="lightblue",linetype="dashed") + #US time
+  geom_vline(xintercept=20, color="lightblue",linetype="dashed") + #US time
+  geom_point() +
+  geom_path() + 
+  scale_color_viridis_d(begin=0.25,end =0.75, labels = c("Threat", "Flight", "Safety")) +
+  #scale_y_continuous("pupil diameter") +
+  theme_bw() 
+ggsave("../Plots/Pupille/cs_acq.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
+
+
+pupil_df_long <- pupil_df %>%  
+  #filter(ID %in% responder) %>%
+  pivot_longer(dilation_1:dilation_20, names_to = "timebin", values_to ="diameter") %>%
+  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
+  group_by(ID,condition,timebin) %>%  summarise(diameter = mean(diameter,na.rm = T)) %>%
+  group_by(ID) %>% mutate(diameter = scale(diameter))
+
+
+anova <- pupil_df_long %>% 
+  #filter(ID %in% responder) %>%
+  #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
+  mutate(ID = as.factor(ID), timebin = as.factor(timebin),
+         condition = recode(factor(condition),"1" = "Threat","2" = "Flight", "3" = "Safety")) %>% 
+  ez::ezANOVA(dv=.(diameter), wid=.(ID), 
+              within=.(condition, timebin), 
+              #between=.(pairs),
+              detailed=T, type=2)
+
+
+anova %>% anova_apa()
+anova$ANOVA[2,] %>% partial_eta_squared_ci()
+anova$ANOVA[3,] %>% partial_eta_squared_ci()
+anova$ANOVA[4,] %>% partial_eta_squared_ci()
+
+
+
+
+
+
+pupil_df_long %>% 
+  filter(ID %in% responder) %>%
+  #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
+  group_by(ID,condition,timebin) %>%  summarise(diameter = mean(diameter)) %>%
+  mutate(ID = as.factor(ID), condition = recode(factor(condition),"1" = "Threat","2" = "Flight", "3" = "Safety")) %>% 
+  aov_ez(dv="diameter", id="ID", . ,within = c("condition","timebin")) %>% 
+  emmeans::emmeans(~ condition|timebin) %>%
+  pairs() %>% summary(adjust = "none")
+
+
+
+# Get distributions for important time points
+
+pupil_df_long %>% 
+  filter(ID %in% responder) %>%
+  #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
+  filter(timebin == 4) %>% 
+  mutate(condition = as.factor(condition)) %>%
+  group_by(ID,condition) %>%  summarise(diameter = mean(diameter)) %>%
+  ggplot(., aes(x=condition, y=diameter, color=condition)) +
+  #geom_vline(xintercept=c(responseWindow), color="blue",linetype="dashed") + #borders of min/max scoring
+  geom_boxplot(outlier.alpha = 0) +
+  geom_jitter() +
+  geom_violin(color = "black", fill = "transparent")+
+  scale_color_manual(values=c("red","orange","darkgreen"),  guide = "none") +
+  scale_x_discrete("1500 - 2000 ms", labels = c("Threat", "Flight", "Safety")) +
+  scale_y_continuous("Pupil diameter change") +
+  theme_bw() 
+ggsave("../Plots/Pupille/cs_dist1.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
+
+pupil_df_long %>% 
+  filter(ID %in% responder) %>%
+  #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
+  filter(timebin == 20) %>% 
+  mutate(condition = as.factor(condition)) %>%
+  group_by(ID,condition) %>%  summarise(diameter = mean(diameter)) %>%
+  ggplot(., aes(x=condition, y=diameter, color=condition)) +
+  #geom_vline(xintercept=c(responseWindow), color="blue",linetype="dashed") + #borders of min/max scoring
+  geom_boxplot(outlier.alpha = 0) +
+  geom_jitter() +
+  geom_violin(color = "black", fill = "transparent")+
+  scale_color_manual(values=c("red","orange","darkgreen"),  guide = "none") +
+  scale_x_discrete("9500 - 10000 ms", labels = c("Threat", "Flight", "Safety")) +
+  scale_y_continuous("Pupil diameter change") +
+  theme_bw() 
+ggsave("../Plots/Pupille/cs_dist2.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
+
+# Out
+
+
+pupil_wide_out <- pupil_df_long %>% 
+  #filter(ID %in% responder) %>%
+  select(ID, condition, timebin, diameter) %>%
+  group_by(ID,condition,timebin) %>%  summarise(diameter = mean(diameter, na.rm = T), .groups = "drop") %>% 
+  mutate(condition = factor(condition, levels=c(1,2,3),labels =c("threat","flight","safety")),
+         condition_names = paste0(condition,"_",timebin)) %>% select(-condition, -timebin) %>%
+  pivot_wider(., names_from = condition_names, values_from = diameter)
+
+write.csv2(pupil_wide_out,"Pupillen_Daten.csv",row.names=F)
+
+
+#Out for Korrels
+
+pupil.data.wue <- pupil_df %>% select(ID,trial,dilation_1:dilation_20)
+

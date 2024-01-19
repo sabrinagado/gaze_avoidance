@@ -89,18 +89,21 @@ df_vas <- df_scores %>%
   )
 
 # Debriefing / Control Questions
+rep_str = c('-'='',
+            '\r\n'=',',
+            'ü' = 'ue',
+            'ä' = 'ae',
+            'ö' = 'oe',
+            'ß' = 'ss')
 df_debriefing <- df_scores %>%
   select(purpose, variables) %>%
-  mutate(
-    purpose = gsub("-", "", purpose),
-    purpose = gsub("\n", ", ", purpose),
-    variables = gsub("-", "", variables),
-    variables = gsub("\n", ", ", variables)
-  )
+  mutate(across('purpose', str_replace_all, rep_str)) %>% 
+  mutate(across('variables', str_replace_all, rep_str))
 
 # Labbook
 df_labbook <- df_scores %>%
-  select(labbook, digitimer, temperature, humidity)
+  select(labbook, digitimer, temperature, humidity) %>% 
+  mutate(across('labbook', str_replace_all, rep_str))
 
 # Demographic Information
 df_scores$VP <- as.integer(df_scores$ID)
@@ -113,4 +116,5 @@ print(paste("Age = ", round(mean(df_summary$age), 1), ", SD = ", round(sd(df_sum
 prop.table(table(df_summary$gender)) * 100
 
 # Write summary to CSV
-write.csv2(df_summary, file.path(path, "scores_summary.csv"), row.names=FALSE, quote=FALSE)
+write.csv2(df_summary, file.path(path, "scores_summary.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
+
