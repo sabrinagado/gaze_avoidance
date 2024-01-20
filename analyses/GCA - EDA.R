@@ -33,8 +33,8 @@ check_minmax_plots = F
 saveSclPlotsToFile = T
 
 
-shock_triggers = c(9,10,11) #Vector with the names of the US triggers
-condition_triggers = c(1,2,3,4,5,6,7,8)
+shock_triggers = c(10,11,12) #Vector with the names of the US triggers
+condition_triggers = c(2,3,4,5,6,7,8,9)
 
 sample_rate = 1000  #samplerate after export
 trial_length = 12  #length of trial in s
@@ -157,32 +157,36 @@ eda_cr = tibble(subject = filemat %>% sub("\\..*","", .), cr = 0, valid = 0, lat
 
 trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
   mutate(subject = sprintf("gca_%02d", subject),
-         trigger = ifelse(phase == "acquisition" & condition == "CSneg, social",1,
-                          ifelse(phase == "acquisition" & condition == "CSpos, social",2,
-                                 ifelse(phase == "acquisition" & condition == "CSneg, non-social",3,
-                                        ifelse(phase == "acquisition" & condition == "CSpos, non-social",4,
-                                               ifelse(phase == "test" & condition == "CSneg, social",5,
-                                                      ifelse(phase == "test" & condition == "CSpos, social",6,
-                                                             ifelse(phase == "test" & condition == "CSneg, non-social",7,
-                                                                    ifelse(phase == "test" & condition == "CSpos, non-social",8,0)))))))))
+         trigger = ifelse(phase == "acquisition" & condition == "CSneg, social",2,
+                          ifelse(phase == "acquisition" & condition == "CSpos, social",3,
+                                 ifelse(phase == "acquisition" & condition == "CSneg, non-social",4,
+                                        ifelse(phase == "acquisition" & condition == "CSpos, non-social",5,
+                                               ifelse(phase == "test" & condition == "CSneg, social",6,
+                                                      ifelse(phase == "test" & condition == "CSpos, social",7,
+                                                             ifelse(phase == "test" & condition == "CSneg, non-social",8,
+                                                                    ifelse(phase == "test" & condition == "CSpos, non-social",9,0)))))))))
   
 
-for (subject_inmat in filemat[1:2]){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
+for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
   
-  # subject_inmat = filemat[[22]]
+  # subject_inmat = filemat[[3]]
   
   eda <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
     rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
     mutate(sample = 1:n())
   
   firstcue <- eda %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
+  lastcue <- eda %>% filter(ImgTest == 5) %>% tail(1) %>% .$sample
+  recordend <- eda$sample %>% tail(1)
+  ((lastcue - firstcue)/1000)/60
+  ((recordend - lastcue)/1000)/60
   
-  eda <- eda %>% filter(sample >= firstcue - 2000 & sample < max(eda$sample)-1000) %>%
+  eda <- eda %>% filter(sample >= firstcue - 2000 & sample < lastcue + 1000) %>%
     mutate(ImgAcq = ifelse(ImgAcq == 5,1,0),
            ImgTest = ifelse(ImgTest == 5,1,0),
-           Shock = ifelse(Shock == 5,9,0),
-           Reward = ifelse(Reward == 5,10,0),
-           NoFeedback = ifelse(NoFeedback == 5,11,0),
+           Shock = ifelse(Shock == 5,10,0),
+           Reward = ifelse(Reward == 5,11,0),
+           NoFeedback = ifelse(NoFeedback == 5,12,0),
            trigger = ImgAcq + ImgTest + Shock + Reward + NoFeedback,
            sample = 1:n(),
            time = sample /1000) %>% 
@@ -222,16 +226,17 @@ for (subject_inmat in filemat[1:2]){ #Jetzt rechnet er den Spaß für jedes File
     print("Downsampling complete!")
   }
   
-  if (sum(eda$trigger == 1) != 152) { warning(paste0("Warning: Too few/many Acq triggers"))}
   
   # Adapt conditions file to availlable trigger
   trigger_diff <- eda %>% filter(trigger == 1) %>% 
     mutate(sdiff = lead(time, 1) - time)
   
+  second_highest = sort(trigger_diff$sdiff,partial=length(trigger_diff$sdiff)-2)[(length(trigger_diff$sdiff))-2]
+  
   trigger_diff <- trigger_diff %>% 
     mutate(use.trial = TRUE) %>% 
     mutate(rownum = row_number()) %>% 
-    bind_rows(., filter(., (sdiff > 16 ) & (sdiff < 22)) %>% 
+    bind_rows(., filter(., (sdiff > 16 ) & (sdiff < second_highest)) %>% 
                 mutate(use.trial = FALSE, rownum = rownum+.5)) %>% 
     arrange(rownum) %>%
     mutate(trial = row_number())
@@ -240,16 +245,24 @@ for (subject_inmat in filemat[1:2]){ #Jetzt rechnet er den Spaß für jedes File
   trigger_mat_subj <- trigger_mat %>% filter(subject == filename)
   
   trigger_mat_subj <- trigger_mat_subj %>% 
-    left_join(trigger_diff %>% select(trial, use.trial), by=c("trial"))
+    left_join(trigger_diff %>% select(trial, use.trial), by=c("trial")) %>% 
+    mutate(use.trial = if_else((filename == "gca_14") & (trial > 112), FALSE, use.trial)) # exclude test trials in VP 14 because one is missing, but we do not know which on
   
   trigger_mat_subj <- trigger_mat_subj %>% 
     filter(use.trial)
   
   
   # Include trigger information
-  eda$trigger[eda$trigger == 1] <-  trigger_mat_subj %>% .$trigger
-  print(paste0(filename, ': ', sum((eda$trigger > 0) & (eda$trigger < 9)), ' trials'))
-
+  if ((nrow(trigger_diff) == 152) |  (filename == "gca_14")) {
+    eda$trigger[eda$trigger == 1] <-  trigger_mat_subj %>% .$trigger
+  } else {
+    print(paste0(filename, ': ', sum((eda$trigger > 1) & (eda$trigger < 10)), ' trials'))
+    next
+  }
+  
+  print(paste0(filename, ': ', sum((eda$trigger > 1) & (eda$trigger < 10)), ' trials'))
+  if (sum((eda$trigger > 1) & (eda$trigger < 10)) != 152) { warning(paste0("Warning: Too few/many Acq triggers"))}
+  
 
   #smoothing / filtering
   if (lowpass) {
@@ -384,18 +397,14 @@ for (subject_inmat in filemat[1:2]){ #Jetzt rechnet er den Spaß für jedes File
   
   
   if (ucr_plots) {
-    
     unified = eda_vp_ucr %>% mutate(EDA = time_start %>% lapply(function(start) 
       eda %>% filter(time >= start,
-                     time <= start + 8) %>% select(-trigger))
-    )
+                     time <= start + 8) %>% select(-trigger)))
     
     for (t in 1:nrow(unified)) {
       unified$EDA[[t]] = unified$EDA[[t]] %>% 
         mutate(trial = t, sample = sample - min(sample) + 1, time = time - min(time)) #unify starting time to allow overlap
-      
-      
-    }
+      }
     
     minmax_unified = unified %>% select(trial,EDA.min,time.min,EDA.max,time.max,time_start) %>% 
       mutate(time.min = time.min - time_start,time.max = time.max - time_start,trial = as.factor(1:n())) %>% 
@@ -412,9 +421,6 @@ for (subject_inmat in filemat[1:2]){ #Jetzt rechnet er den Spaß für jedes File
           ggtitle(filename) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
       #print()
       ggsave(paste0("../plots/EDA/UCS/", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
-    
-    
-    
   }
   
   print(paste0("UCRs: ", filename, " of ", length(filemat), " files processed!"))
@@ -694,7 +700,7 @@ for (subject_inmat in filemat[1:2]){ #Jetzt rechnet er den Spaß für jedes File
       unified$EDA[[t]] = unified$EDA[[t]] %>% 
         mutate(trial = t, time = time - min(time), condition = unified$condition[[t]],
                trial_condition = unified$trial_condition[[t]]) #unify starting time to allow overlap
-    }
+      }
     
     
     minmax_unified = unified %>% select(trial,condition,EDA.min,time.min,EDA.max,time.max,time_start) %>% 
@@ -738,6 +744,7 @@ rm(eda, eda_vp)
 
 saveRDS(eda_unified,"EDA_unified.RData")
 saveRDS(eda_df,"EDA_df.RData")
+
 #eda_unified <- readRDS("EDA_unified.RData")
 #eda_df <- readRDS("EDA_df.Rdata")
 
