@@ -253,7 +253,7 @@ plimit = 0.003
     
     return(tooLow + tooHigh)
   }
-
+  
 }
 
 filemat = list.files("../Physio/Raw/", pattern="*.txt") # Das sollte der Ordner sein, in dem deine ganzen Files liegen. Pro VP ein File.
@@ -271,511 +271,510 @@ trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
 
 
 
-# { # Downsampling} and HR Extraction
-#   print("Downsampling and extracting HR ...")
-# 
-#   for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
-# 
-#     # subject_inmat = filemat[[1]]
-# 
-# 
-#     physio <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
-#       rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
-#       mutate(sample = 1:n())
-# 
-# 
-#     firstcue <- physio %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
-#     lastcue <- physio %>% filter(ImgTest == 5) %>% tail(1) %>% .$sample
-#     recordend <- physio$sample %>% tail(1)
-#     ((lastcue - firstcue)/1000)/60
-#     ((recordend - lastcue)/1000)/60
-# 
-#     physio <- physio %>% filter(sample >= firstcue - 10000 & sample < lastcue + 11000) %>%
-#       mutate(ImgAcq = ifelse(ImgAcq == 5,1,0),
-#              ImgTest = ifelse(ImgTest == 5,1,0),
-#              Shock = ifelse(Shock == 5,10,0),
-#              Reward = ifelse(Reward == 5,11,0),
-#              NoFeedback = ifelse(NoFeedback == 5,12,0),
-#              trigger = ImgAcq + ImgTest + Shock + Reward + NoFeedback,
-#              sample = 1:n(),
-#              time = sample /1000) %>%
-#       select(time, sample, ECG, trigger, ImgAcq, ImgTest, Shock, Reward, NoFeedback) %>%
-#       mutate(trigger = ifelse(trigger == lag(trigger), 0, trigger)) %>%
-#       fill(trigger,.direction = "up") %>%
-#       fill(trigger,.direction = "down")
-# 
-#     # Calculate time difference of triggers because of missing triggers in GCA study --> this way we can adapt the condition labels
-#     trigger_diff <- physio %>% filter(trigger == 1) %>%
-#       mutate(sdiff = lead(time, 1) - time)
-# 
-#     second_highest = sort(trigger_diff$sdiff,partial=length(trigger_diff$sdiff)-2)[(length(trigger_diff$sdiff))-2]
-# 
-#     trigger_diff <- trigger_diff %>%
-#       mutate(use.trial = TRUE) %>%
-#       mutate(rownum = row_number()) %>%
-#       bind_rows(., filter(., (sdiff > 16 ) & (sdiff < second_highest)) %>%
-#                   mutate(use.trial = FALSE, rownum = rownum+.5)) %>%
-#       arrange(rownum) %>%
-#       mutate(trial = row_number())
-# 
-#     filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")
-#     trigger_mat_subj <- trigger_mat %>% filter(subject == filename)
-# 
-#     trigger_mat_subj <- trigger_mat_subj %>%
-#       left_join(trigger_diff %>% select(trial, use.trial), by=c("trial")) %>%
-#       mutate(trigger = if_else((filename == "gca_14") & (trial > 112), 0, trigger)) # exclude test trials in VP 14 because one is missing, but we do not know which one
-# 
-#     trigger_mat_subj <- trigger_mat_subj %>%
-#       filter(use.trial)
-# 
-#     #downsample (all columns)
-#     triggers_time = physio$time[physio$trigger != 0] #eda$time[eda$Trigger %>% is.na() == FALSE]
-#     conversion = round(sample_rate / sample_rate_new)
-#     physio_downsampled = data.frame(time=sample.down(physio$time,conversion),
-#                                     ECG=sample.down(physio$ECG,conversion),
-#                                     trigger=0) %>%
-#       mutate(sample=1:n()) %>% select(sample, everything())
-# 
-#     #calculate closest position for trigger onsets in downsampled time
-#     triggers_time_old = physio$time[physio$trigger != 0]
-#     triggers_indices_new = triggers_time_old %>% closestRepresentative(physio_downsampled$time, returnIndices = T) #for each old trigger time, find index of closest existing downsampled time
-#     physio_downsampled$trigger[triggers_indices_new] = physio$trigger[physio$trigger != 0] #inject conditions as triggers of onsets
-# 
-#     for (row in 1:(nrow(physio_downsampled)-1)){ if (physio_downsampled$trigger[row] == physio_downsampled$trigger[row+1]) {physio_downsampled$trigger[row+1]=0}} #remove extra shock-markers
-# 
-# 
-#     physio = physio_downsampled %>% select(-sample); rm(physio_downsampled)
-# 
-#     # if also the corrected triggers are not correct, then drop this subject
-#     if ((nrow(trigger_diff) == 152) |  (filename == "gca_14")) {
-#       physio$trigger[physio$trigger == 1] <- trigger_mat_subj %>% .$trigger
-#       write.table(physio,paste0(path.phys,subject_inmat), row.names = F, col.names=F)
-#     }
-# 
-#     print(paste0(filename, ': ', sum((physio$trigger > 1) & (physio$trigger < 10)), ' trials'))
-# 
-#   }; print("Downsampling complete!");
-# }
+{ # Downsampling and HR Extraction --------------------------------
+  #   print("Downsampling and extracting HR ...")
+  # 
+  #   for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
+  # 
+  #     # subject_inmat = filemat[[1]]
+  # 
+  # 
+  #     physio <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
+  #       rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
+  #       mutate(sample = 1:n())
+  # 
+  # 
+  #     firstcue <- physio %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
+  #     lastcue <- physio %>% filter(ImgTest == 5) %>% tail(1) %>% .$sample
+  #     recordend <- physio$sample %>% tail(1)
+  #     ((lastcue - firstcue)/1000)/60
+  #     ((recordend - lastcue)/1000)/60
+  # 
+  #     physio <- physio %>% filter(sample >= firstcue - 10000 & sample < lastcue + 11000) %>%
+  #       mutate(ImgAcq = ifelse(ImgAcq == 5,1,0),
+  #              ImgTest = ifelse(ImgTest == 5,1,0),
+  #              Shock = ifelse(Shock == 5,10,0),
+  #              Reward = ifelse(Reward == 5,11,0),
+  #              NoFeedback = ifelse(NoFeedback == 5,12,0),
+  #              trigger = ImgAcq + ImgTest + Shock + Reward + NoFeedback,
+  #              sample = 1:n(),
+  #              time = sample /1000) %>%
+  #       select(time, sample, ECG, trigger, ImgAcq, ImgTest, Shock, Reward, NoFeedback) %>%
+  #       mutate(trigger = ifelse(trigger == lag(trigger), 0, trigger)) %>%
+  #       fill(trigger,.direction = "up") %>%
+  #       fill(trigger,.direction = "down")
+  # 
+  #     # Calculate time difference of triggers because of missing triggers in GCA study --> this way we can adapt the condition labels
+  #     trigger_diff <- physio %>% filter(trigger == 1) %>%
+  #       mutate(sdiff = lead(time, 1) - time)
+  # 
+  #     second_highest = sort(trigger_diff$sdiff,partial=length(trigger_diff$sdiff)-2)[(length(trigger_diff$sdiff))-2]
+  # 
+  #     trigger_diff <- trigger_diff %>%
+  #       mutate(use.trial = TRUE) %>%
+  #       mutate(rownum = row_number()) %>%
+  #       bind_rows(., filter(., (sdiff > 16 ) & (sdiff < second_highest)) %>%
+  #                   mutate(use.trial = FALSE, rownum = rownum+.5)) %>%
+  #       arrange(rownum) %>%
+  #       mutate(trial = row_number())
+  # 
+  #     filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")
+  #     trigger_mat_subj <- trigger_mat %>% filter(subject == filename)
+  # 
+  #     trigger_mat_subj <- trigger_mat_subj %>%
+  #       left_join(trigger_diff %>% select(trial, use.trial), by=c("trial")) %>%
+  #       mutate(trigger = if_else((filename == "gca_14") & (trial > 112), 0, trigger)) # exclude test trials in VP 14 because one is missing, but we do not know which one
+  # 
+  #     trigger_mat_subj <- trigger_mat_subj %>%
+  #       filter(use.trial)
+  # 
+  #     #downsample (all columns)
+  #     triggers_time = physio$time[physio$trigger != 0] #eda$time[eda$Trigger %>% is.na() == FALSE]
+  #     conversion = round(sample_rate / sample_rate_new)
+  #     physio_downsampled = data.frame(time=sample.down(physio$time,conversion),
+  #                                     ECG=sample.down(physio$ECG,conversion),
+  #                                     trigger=0) %>%
+  #       mutate(sample=1:n()) %>% select(sample, everything())
+  # 
+  #     #calculate closest position for trigger onsets in downsampled time
+  #     triggers_time_old = physio$time[physio$trigger != 0]
+  #     triggers_indices_new = triggers_time_old %>% closestRepresentative(physio_downsampled$time, returnIndices = T) #for each old trigger time, find index of closest existing downsampled time
+  #     physio_downsampled$trigger[triggers_indices_new] = physio$trigger[physio$trigger != 0] #inject conditions as triggers of onsets
+  # 
+  #     for (row in 1:(nrow(physio_downsampled)-1)){ if (physio_downsampled$trigger[row] == physio_downsampled$trigger[row+1]) {physio_downsampled$trigger[row+1]=0}} #remove extra shock-markers
+  # 
+  # 
+  #     physio = physio_downsampled %>% select(-sample); rm(physio_downsampled)
+  # 
+  #     # if also the corrected triggers are not correct, then drop this subject
+  #     if ((nrow(trigger_diff) == 152) |  (filename == "gca_14")) {
+  #       physio$trigger[physio$trigger == 1] <- trigger_mat_subj %>% .$trigger
+  #       write.table(physio,paste0(path.phys,subject_inmat), row.names = F, col.names=F)
+  #     }
+  # 
+  #     print(paste0(filename, ': ', sum((physio$trigger > 1) & (physio$trigger < 10)), ' trials'))
+  # 
+  #   }; print("Downsampling complete!");
+  }
 
 
-{ # R Peak Detection and Correction ---------------------------------------------------------
-  subjects.ecg = list.files(path.phys, pattern=ifelse(unzipFiles, ".zip", ".txt"), full.names=TRUE)
-  codes.ecg = pathToCode(subjects.ecg)
+# R Peak Detection and Correction ---------------------------------------------------------
+subjects.ecg = list.files(path.phys, pattern=ifelse(unzipFiles, ".zip", ".txt"), full.names=TRUE)
+codes.ecg = pathToCode(subjects.ecg)
+
+index = 0
+while(T) {
+  prompt = readline(paste0("Proceed with subject number: ", index+1, "? (Type \"n\" to select subject from list) "))
+  index = ifelse(prompt %>% substring(1, 1) == "n", promptIndex(codes.ecg), index+1)
+  if (index > length(codes.ecg)) {
+    print("Reached end of subject list. Exiting script.")
+    break
+  }
   
-  index = 0
-  while(T) {
-    prompt = readline(paste0("Proceed with subject number: ", index+1, "? (Type \"n\" to select subject from list) "))
-    index = ifelse(prompt %>% substring(1, 1) == "n", promptIndex(codes.ecg), index+1)
-    if (index > length(codes.ecg)) {
-      print("Reached end of subject list. Exiting script.")
-      break
-    }
+  #for (index in seq(subjects.ecg)) {
+  subject = subjects.ecg[index]
+  code = codes.ecg[index]
   
-    #for (index in seq(subjects.ecg)) {
-    subject = subjects.ecg[index]
-    code = codes.ecg[index]
-    
-    code %>% paste0("Subject: ", .) %>% print()
-    print("Loading data...")
-    
-    #external window (needed for script!)
-    x11()
-    par(mar=c(2,4,1,1))
-    layout(matrix(c(1,2),nrow=2), heights=c(2,1))
-    mainWindow = dev.cur()
-    
-    if (exists("r.threshold")) rm("r.threshold") #clear subject threshold
-    
-    # Load & Prepare Data -----------------------------------------------------
-    # Relevante Variablen:
-    # - ecg
-    # - timeline
-    # - marker (markertime)
-    if (unzipFiles) code %>% paste0(".zip") %>% unzip(exdir=path.phys)
-    #data = read.phys(subject)
-    data = read.table(subject ,col.names=c("timeline", "ECG", "Trigger")) 
-    if (unzipFiles) subject %>% file.remove()
-    
-    ecg = data$ECG
-    ecg[is.na(ecg)] = 0  # Remove NA
-    timeline = data$timeline     # in Sekunden
-    data = data %>% mutate(Trigger = ifelse(Trigger <= 8, Trigger, 0))
-    
-    mst = data$Trigger %>% diff() %>% {. > 0} %>% which() %>% {. + 1}
-    if (length(mst)==0) mst = c(1, nrow(data)) #if no triggers present, score all data
-    if (exclusions.phys.trials[[code]] %>% is.null() == F) {
-      print(paste0("Manually excluding trials: ", paste0(exclusions.phys.trials[[code]], collapse = ", ")))
-      mst = mst[-exclusions.phys.trials[[code]]]
-    }
-    mst = mst %>% tail(trials.n)
-    marker = timeline[mst]
-    
-    # Restrict range to majority of data
-    if (limitrange) {
-      ecg[ecg < quantile(ecg,plimit)] = quantile(ecg, plimit)
-      ecg[ecg > quantile(ecg,1-plimit)] = quantile(ecg, 1-plimit)
-    }
-    
-    data$ECG = signal::filtfilt(ecg.filter, ecg) #filtering
-    rm(ecg)
-    
-    
-    # R Scoring -------------------------------------------------------------
-    
-    # Restrict scoring range
-    scorest = {head(marker, 1) + min(analysis.range)} %>% c(0) %>% max()
-    scoreen = {tail(marker, 1) + max(analysis.range)} %>% c(tail(timeline, 1)) %>% min()
-    analysis.sequence = seq(scorest, scoreen, segment.length)
-    
-    if (scorest == 0) warning(paste0(code, ": Too little time at the START of subject."))
-    if (scoreen == tail(timeline, 1)) warning(paste0(code, ": Too little time at the END of subject."))
-    
-    # Determine peak detection threshold and find rpeaks adaptively for successive time windows
-    print(paste0("Analyzing data: (", round(scorest/60, 2), " - ", round(scoreen/60, 2), " min)"))
-    
-    allrpeak.list = list() #very important if there is an old list (previous subject) that is longer than the current analysis segment length
-    if (code %>% paste0(path.rpeaks, ., path.rpeaks.postfix) %>% file.exists()) { #r peaks exist. Load them from file.
-      print("R peaks file detected.")
-      allrpeak = read.csv2(code %>% paste0(path.rpeaks, ., path.rpeaks.postfix))[, 1]
-      allrpeak.list = list()
-      for (i in seq(analysis.sequence)) {
-        st = analysis.sequence[i]
-        en = {st + segment.length} %>% c(max(timeline)) %>% min()
-        allrpeak.list[[toString(i)]] = allrpeak[allrpeak >= st & allrpeak < en]
-      }
-    } else if (exists("allrpeak")) rm(allrpeak)
-    
-    manualok = FALSE
-    reassign = F
-    
-    i = 1
-    finishFlag = F
-    while (i <= length(analysis.sequence) && !finishFlag) {
-      windowtxt = paste0(i, " of ", length(analysis.sequence))
-      if (exists("r.threshold_new")) rm("r.threshold_new")
-      
+  code %>% paste0("Subject: ", .) %>% print()
+  print("Loading data...")
+  
+  #external window (needed for script!)
+  x11()
+  par(mar=c(2,4,1,1))
+  layout(matrix(c(1,2),nrow=2), heights=c(2,1))
+  mainWindow = dev.cur()
+  
+  if (exists("r.threshold")) rm("r.threshold") #clear subject threshold
+  
+  # Load & Prepare Data -----------------------------------------------------
+  # Relevante Variablen:
+  # - ecg
+  # - timeline
+  # - marker (markertime)
+  if (unzipFiles) code %>% paste0(".zip") %>% unzip(exdir=path.phys)
+  #data = read.phys(subject)
+  data = read.table(subject ,col.names=c("timeline", "ECG", "Trigger")) 
+  if (unzipFiles) subject %>% file.remove()
+  
+  ecg = data$ECG
+  ecg[is.na(ecg)] = 0  # Remove NA
+  timeline = data$timeline     # in Sekunden
+  data = data %>% mutate(Trigger = ifelse(Trigger <= 8, Trigger, 0))
+  
+  mst = data$Trigger %>% diff() %>% {. > 0} %>% which() %>% {. + 1}
+  if (length(mst)==0) mst = c(1, nrow(data)) #if no triggers present, score all data
+  if (exclusions.phys.trials[[code]] %>% is.null() == F) {
+    print(paste0("Manually excluding trials: ", paste0(exclusions.phys.trials[[code]], collapse = ", ")))
+    mst = mst[-exclusions.phys.trials[[code]]]
+  }
+  mst = mst %>% tail(trials.n)
+  marker = timeline[mst]
+  
+  # Restrict range to majority of data
+  if (limitrange) {
+    ecg[ecg < quantile(ecg,plimit)] = quantile(ecg, plimit)
+    ecg[ecg > quantile(ecg,1-plimit)] = quantile(ecg, 1-plimit)
+  }
+  
+  data$ECG = signal::filtfilt(ecg.filter, ecg) #filtering
+  rm(ecg)
+  
+  
+  # R Scoring -------------------------------------------------------------
+  
+  # Restrict scoring range
+  scorest = {head(marker, 1) + min(analysis.range)} %>% c(0) %>% max()
+  scoreen = {tail(marker, 1) + max(analysis.range)} %>% c(tail(timeline, 1)) %>% min()
+  analysis.sequence = seq(scorest, scoreen, segment.length)
+  
+  if (scorest == 0) warning(paste0(code, ": Too little time at the START of subject."))
+  if (scoreen == tail(timeline, 1)) warning(paste0(code, ": Too little time at the END of subject."))
+  
+  # Determine peak detection threshold and find rpeaks adaptively for successive time windows
+  print(paste0("Analyzing data: (", round(scorest/60, 2), " - ", round(scoreen/60, 2), " min)"))
+  
+  allrpeak.list = list() #very important if there is an old list (previous subject) that is longer than the current analysis segment length
+  if (code %>% paste0(path.rpeaks, ., path.rpeaks.postfix) %>% file.exists()) { #r peaks exist. Load them from file.
+    print("R peaks file detected.")
+    allrpeak = read.csv2(code %>% paste0(path.rpeaks, ., path.rpeaks.postfix))[, 1]
+    allrpeak.list = list()
+    for (i in seq(analysis.sequence)) {
       st = analysis.sequence[i]
       en = {st + segment.length} %>% c(max(timeline)) %>% min()
+      allrpeak.list[[toString(i)]] = allrpeak[allrpeak >= st & allrpeak < en]
+    }
+  } else if (exists("allrpeak")) rm(allrpeak)
+  
+  manualok = FALSE
+  reassign = F
+  
+  i = 1
+  finishFlag = F
+  while (i <= length(analysis.sequence) && !finishFlag) {
+    windowtxt = paste0(i, " of ", length(analysis.sequence))
+    if (exists("r.threshold_new")) rm("r.threshold_new")
+    
+    st = analysis.sequence[i]
+    en = {st + segment.length} %>% c(max(timeline)) %>% min()
+    
+    timewind = timeline[timeline>=st & timeline<en]
+    ecgwind  = data$ECG[timeline>=st & timeline<en]
+    markerwind = marker  [marker>=st &   marker<en]
+    
+    #allrpeak.list needs to be filled a priori since finish command can be prompted, i.e. not all segments are visited and previous file would be shrunken down to visited segments
+    # if (exists("allrpeak")) {
+    #   rpeak.temp = allrpeak[allrpeak[, 1] >= st & allrpeak[, 1] < en, 1] #take rpeaks of current segment from allrpeak
+    #   if (length(rpeak.temp) > 0) allrpeak.list[[toString(i)]] = rpeak.temp
+    # }
+    
+    if (allrpeak.list[[toString(i)]] %>% is.null() %>% !. && !reassign) { #this can also be reached from a "back" prompt even though allrpeak does not exist
+      rpeak = allrpeak.list[[toString(i)]]
+      hrtrial = 60/diff(rpeak)
+      # print("rpeaks read 1")
+    } else { #no r peaks in this segment, detect them
       
-      timewind = timeline[timeline>=st & timeline<en]
-      ecgwind  = data$ECG[timeline>=st & timeline<en]
-      markerwind = marker  [marker>=st &   marker<en]
-      
-      #allrpeak.list needs to be filled a priori since finish command can be prompted, i.e. not all segments are visited and previous file would be shrunken down to visited segments
-      # if (exists("allrpeak")) {
-      #   rpeak.temp = allrpeak[allrpeak[, 1] >= st & allrpeak[, 1] < en, 1] #take rpeaks of current segment from allrpeak
-      #   if (length(rpeak.temp) > 0) allrpeak.list[[toString(i)]] = rpeak.temp
-      # }
-      
-      if (allrpeak.list[[toString(i)]] %>% is.null() %>% !. && !reassign) { #this can also be reached from a "back" prompt even though allrpeak does not exist
-        rpeak = allrpeak.list[[toString(i)]]
-        hrtrial = 60/diff(rpeak)
-        # print("rpeaks read 1")
-      } else { #no r peaks in this segment, detect them
-        
-        #does threshold exist? if not, create one
-        if (!exists("r.threshold")) {
-          r.threshold.initial = 1
-          while (r.threshold.initial==1 || min(hrtrial) < minhr) { # Successively lower threshold until minimum plausible heart rate is found ##TODO: this could go in a separate function with while loop below
-            r.threshold.old = as.numeric(quantile(ecgwind, r.threshold.initial)) #determine threshold as upper percentil of time series
-            
-            r.threshold.initial = r.threshold.initial - 0.01
-            r.threshold = as.numeric(quantile(ecgwind, r.threshold.initial)) #determine threshold as upper percentil of time series
-            
-            rpeak = timewind[findpeaks(ecgwind, r.threshold)]
-            # print("rpeaks created 1")
-            hrtrial = 60/diff(rpeak)
-            
-            
-            rpeak.old = timewind[findpeaks(ecgwind, r.threshold.old)]
-            hrtrial.old = 60/diff(rpeak.old)
-            
-            #compare number of implausible values
-            if(length(rpeak.old) > 1 && implausibility(hrtrial) > implausibility(hrtrial.old)) {
-              r.threshold.initial = r.threshold.initial + 0.01
-              r.threshold = r.threshold.old #keep old threshold (fewer mistakes)
-              break
-            }
-          }      
-        }
-        
-        #apply threshold
-        rpeak = timewind[findpeaks(ecgwind, r.threshold)]
-        # print("rpeaks created 2")
-        hrtrial = 60/diff(rpeak)
-        
-        #check for plausibility
-        if (min(hrtrial) < minhr || max(hrtrial) > maxhr) { #note: if the while loop would start here, you might get stuck in endless loop (e.g. 99% threshold < minHR but 98% threshold > maxHR)
-          if (max(hrtrial) > maxhr) r.threshold.initial = 1 #reset threshold to 1 if maxhr is exceeded
+      #does threshold exist? if not, create one
+      if (!exists("r.threshold")) {
+        r.threshold.initial = 1
+        while (r.threshold.initial==1 || min(hrtrial) < minhr) { # Successively lower threshold until minimum plausible heart rate is found ##TODO: this could go in a separate function with while loop below
+          r.threshold.old = as.numeric(quantile(ecgwind, r.threshold.initial)) #determine threshold as upper percentil of time series
           
-          while (r.threshold.initial==1 || min(hrtrial) < minhr) { # Successively lower threshold until minimum plausible heart rate is found ##TODO: this could go in a separate function with while loop above
-            r.threshold.old = as.numeric(quantile(ecgwind, r.threshold.initial)) #determine threshold as upper percentil of time series
-            
-            r.threshold.initial = r.threshold.initial - 0.01
-            r.threshold = as.numeric(quantile(ecgwind, r.threshold.initial)) #determine threshold as upper percentil of time series
-            
-            rpeak = timewind[findpeaks(ecgwind, r.threshold)]
-            # print("rpeaks created 3")
-            hrtrial = 60/diff(rpeak)
-            
-            rpeak.old = timewind[findpeaks(ecgwind, r.threshold.old)]
-            hrtrial.old = 60/diff(rpeak.old)
-            
-            #compare number of implausible values
-            if(length(rpeak.old) > 1 && implausibility(hrtrial) > implausibility(hrtrial.old)) {
-              r.threshold.initial = r.threshold.initial + 0.01
-              r.threshold = r.threshold.old #keep old threshold (fewer mistakes)
-              rpeak = rpeak.old
-              hrtrial = hrtrial.old
-              break
-            }
-          }      
-        }
+          r.threshold.initial = r.threshold.initial - 0.01
+          r.threshold = as.numeric(quantile(ecgwind, r.threshold.initial)) #determine threshold as upper percentil of time series
+          
+          rpeak = timewind[findpeaks(ecgwind, r.threshold)]
+          # print("rpeaks created 1")
+          hrtrial = 60/diff(rpeak)
+          
+          
+          rpeak.old = timewind[findpeaks(ecgwind, r.threshold.old)]
+          hrtrial.old = 60/diff(rpeak.old)
+          
+          #compare number of implausible values
+          if(length(rpeak.old) > 1 && implausibility(hrtrial) > implausibility(hrtrial.old)) {
+            r.threshold.initial = r.threshold.initial + 0.01
+            r.threshold = r.threshold.old #keep old threshold (fewer mistakes)
+            break
+          }
+        }      
       }
       
-      problem = 1 #just to implement do-while loop
-      showThis = showAll
-      while (showThis || problem) {
-        # if (allrpeak.list[[toString(i)]] %>% is.null() %>% !. && !reassign) rpeak = allrpeak.list[[toString(i)]]
-        # else  rpeak = timewind[findpeaks(ecgwind, r.threshold)]
-        # hrtrial = 60/diff(rpeak)
-        
-        problem = 0
-        if (length(hrtrial)==0 || 
-            min(hrtrial) < minhr || max(hrtrial) > maxhr || 
-            min(tail(hrtrial / lag(hrtrial), -1)) < minHrChange) {
-          problem = 1
-        }
-        
-        if (showThis || problem) {   # Plot trial and ask for different threshold
-          # Plot raw data
-          plot(timewind, ecgwind, type="l", xlab="time (s)", ylab="ECG")
-          if (problem) box(col="orange",lwd=2)
-          if (exists("r.threshold")) abline(h=r.threshold, col="blue")
-          abline(v=rpeak, col="red")
-          if (showMarkers) abline(v=markerwind, col="purple")
-          currentTitle = paste0("Subject: ", code, " / Window: ", windowtxt, " (", st," - ", en, " sec)")
-          title(currentTitle)
-          # Plot heart rate
-          bpmRange = range(hrtrial)
-          if (Inf %in% bpmRange || -Inf %in% bpmRange) { #special case: no rpeak detected by threshold
-            plot(timewind, ecgwind, type="n", xlab="time (s)", ylab="HR (bpm)", ylim=c(-1, 1))
-            abline(h=0, col="red", lwd=2)
-          } else {
-            plot(timewind, ecgwind, type="n", xlab="time (s)", ylab="HR (bpm)", ylim=bpmRange)
-            lines(rpeak[2:length(rpeak)], hrtrial, col=c("black","red")[problem+1], lwd=2)
-            abline(h=c(minhr, maxhr), lty=2)
-          }
-          
-          reassign = F #needs to be here since it is used to determine if old rpeaks shall be loaded or peak detection with new threshold
-          
-          promptText = "New threshold"
-          if (exists("r.threshold")) promptText = paste0(promptText, " (", round(r.threshold, 2), ")")
-          promptText = paste0(promptText, ": ")
-          r.threshold_new = readline(promptText)
-          invalid = T
-          while (invalid) {
-            #if (r.threshold_new=="") {
-            if (substring(r.threshold_new, 1, 1)=="m") {   # Manual editing
-              rpeak = manualcheck(timewind, ecgwind, rpeak)
-              allrpeak.list[[toString(i)]] = rpeak
-              hrtrial = 60/diff(rpeak)
-              title(currentTitle)
-              invalid = F
-              showThis = T
-              # print("rpeaks manual")
-              #} else if (substring(r.threshold_new, 1, 1)=="o") {
-            } else if (substring(r.threshold_new, 1, 1)=="i") {
-              hrMod = tail(hrtrial / lag(hrtrial), -1)
-              hrModProblems = which(hrMod < minHrChange) + 1 #rpeaks AFTER these indices are missing
-              #hrModProblems = which(hrMod < minHrChange & lead(hrMod) > 1/minHrChange)  + 1 #rpeaks AFTER these indices are missing
-              print(paste0("Found ", length(hrModProblems), " problems in heart rate modulation:"))
-              
-              for (p in hrModProblems) {
-                if (p-1 <= 0 || p+1 > length(hrtrial)) 
-                  print(paste0("Cannot interpolate on the border of a segment. Change segment length via \"l\" to proceed."))
-                else { #interpolation algorithm
-                  neighbors.rpeak = rpeak[p+c(0, 1)] #adjacent valid heart beats
-                  neighbors.hr = hrtrial[p+c(-1, 1)] #adjacent valid heart rates not affected by missing beat
-                  missing = min(neighbors.rpeak) + abs(diff(neighbors.rpeak)) * last(neighbors.hr)/sum(neighbors.hr)
-                  
-                  rpeak = rpeak %>% c(missing)
-                }
-              } 
-              rpeak = rpeak %>% sort()
-              hrtrial = 60/diff(rpeak)
-              allrpeak.list[[toString(i)]] = rpeak
-              #invalid = F; showThis = F; i = i - 1 #workaround to reload
-              invalid = F
-              showThis = T
-            } else if (r.threshold_new=="") {
-              manualok = TRUE
-              problem = 0   # Manual acceptance
-              invalid = F
-              showThis = F
-              allrpeak.list[[toString(i)]] = rpeak
-            } else if (substring(r.threshold_new, 1, 1)=="b") {
-              problem = 0
-              invalid = F
-              showThis = F
-              allrpeak.list[[toString(i)]] = rpeak
-            } else if (substring(r.threshold_new, 1, 1)=="s") {
-              name = paste0(path.screenshots, code, " ", i, " @", segment.length, ".png")
-              print(paste("Saving Screenshot to:", name))
-              dev.copy(png, file=name, width=1920, height=1080); dev.off(); dev.set(mainWindow)
-            } else if (substring(r.threshold_new, 1, 1)=="f") {
-              problem = 0
-              invalid = F
-              showThis = F
-              finishFlag = T
-              allrpeak.list[[toString(i)]] = rpeak
-            } else if (substring(r.threshold_new, 1, 1)=="t") {
-              showMarkers = !showMarkers
-              print(paste0("showing markers: ", showMarkers))
-              invalid = F
-              showThis = T
-            } else if (substring(r.threshold_new, 1, 1)=="-") {
-              data$ECG = -data$ECG
-              ecgwind = -ecgwind
-              if (exists("r.threshold")) rm("r.threshold")
-              invalid = F
-              showThis = T
-            } else if (substring(r.threshold_new, 1, 1)=="j") {
-              jumpTo = readline("Jump to segment: ") %>% as.integer()
-              while (jumpTo %>% is.na()) {
-                print(paste0("Error. Cannot read new segment: ", jumpTo))
-                jumpTo = readline("Jump to segment: ") %>% as.integer()
-              }
-              
-              problem = 0
-              invalid = F
-              showThis = F
-            } else if (substring(r.threshold_new, 1, 1)=="l") {
-              input = readline("Change segment length (seconds): ")
-              while (input %>% as.integer() %>% is.na()) {
-                print(paste0("Error. Cannot read new segment length: ", jumpTo))
-                input = readline("Change segment length (seconds): ")
-              }
-              
-              segment.length = input %>% as.integer()
-              allrpeak.list[[toString(i)]] = rpeak
-              
-              analysis.sequence = seq(scorest, scoreen, segment.length)
-              i = which(analysis.sequence <= st) %>% last()
-              
-              allrpeak = allrpeak.list %>% unlist() %>% unname() %>% unique() %>% sort()
-              allrpeak.list = list()
-              for (ii in seq(analysis.sequence)) {
-                st.ii = analysis.sequence[ii]
-                en.ii = {st.ii + segment.length} %>% c(max(timeline)) %>% min()
-                allrpeak.list[[toString(ii)]] = allrpeak[allrpeak >= st.ii & allrpeak < en.ii]
-              }
-              rpeak = allrpeak.list[[toString(i)]]
-              hrtrial = 60/diff(rpeak)
-              
-              st = analysis.sequence[i]
-              en = {st + segment.length} %>% c(max(timeline)) %>% min()
-              timewind = timeline[timeline>=st & timeline<en]
-              ecgwind  = data$ECG[timeline>=st & timeline<en]
-              
-              problem = 0
-              invalid = F
-              showThis = T
-              #showThis = F; i = i - 1 #workaround to reload
-            } else { #no keyword, so new threshold provided as numeric
-              r.threshold_new = tryCatch(as.numeric(r.threshold_new), error=NA)
-              invalid = is.na(r.threshold_new)
-              reassign = !invalid
-            }
-            
-            if (invalid) {
-              if (r.threshold_new %in% commandList == F)
-                print(paste0("Error. Cannot read new threshold: ", r.threshold_new))
-              
-              r.threshold_new = readline(paste0("New threshold (", 
-                                                ifelse(exists("r.threshold"), round(r.threshold, 2), ""), 
-                                                "): "))
-            } else if (reassign) {
-              r.threshold = as.numeric(r.threshold_new)
-              rpeak = timewind[findpeaks(ecgwind, r.threshold)]
-              # print("rpeaks created 4")
-              hrtrial = 60/diff(rpeak)
-              allrpeak.list[[toString(i)]] = rpeak
-            }
-          }
-        }
-        #allrpeak.list[[toString(i)]] = rpeak
-      }
+      #apply threshold
+      rpeak = timewind[findpeaks(ecgwind, r.threshold)]
+      # print("rpeaks created 2")
+      hrtrial = 60/diff(rpeak)
       
-      #allrpeak.list[[toString(i)]] = rpeak
-      if (exists("r.threshold_new")==F || substring(r.threshold_new, 1, 1) != "j") jumpTo = i + 1 #jumpTo has to exist even if not evaluated :/
-      i = case_when(
-        showAll && substring(r.threshold_new, 1, 1) == "b" ~ {i - 1} %>% c(1) %>% max(),
-        showAll && substring(r.threshold_new, 1, 1) == "j" ~ jumpTo %>% c(1) %>% max(),
-        TRUE ~ i + 1)
-      if (showAll==F) cat(".")
-    } 
-    
-    cat("\n")
-    
-    allrpeak = allrpeak.list %>% unlist() %>% unname() %>% unique() %>% sort()
-    # allrpeak = numeric()
-    # for (i in seq(allrpeak.list)) allrpeak = c(allrpeak, allrpeak.list[[toString(i)]])
-    
-    # Delete duplicates
-    keep = c(TRUE, diff(allrpeak) > 60/maxhr/2)
-    if (sum(!keep)>0) print(paste0(sum(!keep), " duplicate(s) found and bigger voltage kept (heartrate > ", 2 * maxhr, ")"))
-    doubleR = which(!keep)
-    keepLater = data$ECG[which(timeline %in% allrpeak[doubleR])] > data$ECG[which(timeline %in% allrpeak[doubleR - 1])]
-    keep[doubleR] = keepLater; keep[doubleR-1] = !keepLater
-    
-    allrpeak = allrpeak[keep]
-    
-    # Interpolate extrasystoles
-    allHr = 60/diff(allrpeak)
-    allHrMod = tail(allHr / lag(allHr), -1)
-    
-    hrModProblems = which(allHrMod < minHrChange & lead(allHrMod) > 1/minHrChange) + 1 #rpeaks AFTER these indices are missing
-    interpolate = T
-    while (length(hrModProblems) > 0 && interpolate) {
-      print(paste0("Found ", length(hrModProblems), " problems in heart rate modulation:"))
-      allrpeak[hrModProblems] %>% sapply(function(x) return({x > analysis.sequence} %>% which() %>% tail(1))) %>% 
-        paste0("Segment ", ., " (of ", length(analysis.sequence), ")")
-      
-      interpol = readline("Shall problems be solved by interpolation? (\"y\" to interpolate) ")
-      if (substring(interpol, 1, 1)!="y") {
-        interpolate = F
-        } else {
-        for (i in hrModProblems) {
-          #allHr[i] #this value is too low because beat is missing between
-          #allrpeak[i+0:1]
+      #check for plausibility
+      if (min(hrtrial) < minhr || max(hrtrial) > maxhr) { #note: if the while loop would start here, you might get stuck in endless loop (e.g. 99% threshold < minHR but 98% threshold > maxHR)
+        if (max(hrtrial) > maxhr) r.threshold.initial = 1 #reset threshold to 1 if maxhr is exceeded
+        
+        while (r.threshold.initial==1 || min(hrtrial) < minhr) { # Successively lower threshold until minimum plausible heart rate is found ##TODO: this could go in a separate function with while loop above
+          r.threshold.old = as.numeric(quantile(ecgwind, r.threshold.initial)) #determine threshold as upper percentil of time series
           
-          #missing = mean(allrpeak[i+0:1]) #interpolate by mean time (i.e., allHr = constant; hrMod == 1)
+          r.threshold.initial = r.threshold.initial - 0.01
+          r.threshold = as.numeric(quantile(ecgwind, r.threshold.initial)) #determine threshold as upper percentil of time series
           
-          #interpolate by mean heart rate
-          missingHr = mean(allHr[i+c(-1, 1)])
-          missing = allrpeak[i] + 60/missingHr
+          rpeak = timewind[findpeaks(ecgwind, r.threshold)]
+          # print("rpeaks created 3")
+          hrtrial = 60/diff(rpeak)
           
-          #weighted average according to bpm #doesn't work well
-          # weights = {allHr[i-1] / (allHr[i+c(-1, 1)] %>% sum())} %>% c(., {1 - .})
-          # #sum(weights) #must be 1
-          # missing = weighted.mean(allrpeak[i+0:1], weights)
+          rpeak.old = timewind[findpeaks(ecgwind, r.threshold.old)]
+          hrtrial.old = 60/diff(rpeak.old)
           
-          allrpeak = allrpeak %>% c(missing)
-        } 
-        allrpeak = allrpeak %>% sort()
-        allHr = 60/diff(allrpeak)
-        allHrMod = tail(allHr / lag(allHr), -1)
-        hrModProblems = which(allHrMod < minHrChange & lead(allHrMod) > 1/minHrChange) + 1 #rpeaks AFTER these indices are missing
+          #compare number of implausible values
+          if(length(rpeak.old) > 1 && implausibility(hrtrial) > implausibility(hrtrial.old)) {
+            r.threshold.initial = r.threshold.initial + 0.01
+            r.threshold = r.threshold.old #keep old threshold (fewer mistakes)
+            rpeak = rpeak.old
+            hrtrial = hrtrial.old
+            break
+          }
+        }      
       }
     }
     
-    # Save positions of R-peaks
-    out = data.frame(rpeaks = allrpeak)
-    write.csv2(out, code %>% paste0(path.rpeaks, ., path.rpeaks.postfix), row.names=FALSE, quote=FALSE)
+    problem = 1 #just to implement do-while loop
+    showThis = showAll
+    while (showThis || problem) {
+      # if (allrpeak.list[[toString(i)]] %>% is.null() %>% !. && !reassign) rpeak = allrpeak.list[[toString(i)]]
+      # else  rpeak = timewind[findpeaks(ecgwind, r.threshold)]
+      # hrtrial = 60/diff(rpeak)
+      
+      problem = 0
+      if (length(hrtrial)==0 || 
+          min(hrtrial) < minhr || max(hrtrial) > maxhr || 
+          min(tail(hrtrial / lag(hrtrial), -1)) < minHrChange) {
+        problem = 1
+      }
+      
+      if (showThis || problem) {   # Plot trial and ask for different threshold
+        # Plot raw data
+        plot(timewind, ecgwind, type="l", xlab="time (s)", ylab="ECG")
+        if (problem) box(col="orange",lwd=2)
+        if (exists("r.threshold")) abline(h=r.threshold, col="blue")
+        abline(v=rpeak, col="red")
+        if (showMarkers) abline(v=markerwind, col="purple")
+        currentTitle = paste0("Subject: ", code, " / Window: ", windowtxt, " (", st," - ", en, " sec)")
+        title(currentTitle)
+        # Plot heart rate
+        bpmRange = range(hrtrial)
+        if (Inf %in% bpmRange || -Inf %in% bpmRange) { #special case: no rpeak detected by threshold
+          plot(timewind, ecgwind, type="n", xlab="time (s)", ylab="HR (bpm)", ylim=c(-1, 1))
+          abline(h=0, col="red", lwd=2)
+        } else {
+          plot(timewind, ecgwind, type="n", xlab="time (s)", ylab="HR (bpm)", ylim=bpmRange)
+          lines(rpeak[2:length(rpeak)], hrtrial, col=c("black","red")[problem+1], lwd=2)
+          abline(h=c(minhr, maxhr), lty=2)
+        }
+        
+        reassign = F #needs to be here since it is used to determine if old rpeaks shall be loaded or peak detection with new threshold
+        
+        promptText = "New threshold"
+        if (exists("r.threshold")) promptText = paste0(promptText, " (", round(r.threshold, 2), ")")
+        promptText = paste0(promptText, ": ")
+        r.threshold_new = readline(promptText)
+        invalid = T
+        while (invalid) {
+          #if (r.threshold_new=="") {
+          if (substring(r.threshold_new, 1, 1)=="m") {   # Manual editing
+            rpeak = manualcheck(timewind, ecgwind, rpeak)
+            allrpeak.list[[toString(i)]] = rpeak
+            hrtrial = 60/diff(rpeak)
+            title(currentTitle)
+            invalid = F
+            showThis = T
+            # print("rpeaks manual")
+            #} else if (substring(r.threshold_new, 1, 1)=="o") {
+          } else if (substring(r.threshold_new, 1, 1)=="i") {
+            hrMod = tail(hrtrial / lag(hrtrial), -1)
+            hrModProblems = which(hrMod < minHrChange) + 1 #rpeaks AFTER these indices are missing
+            #hrModProblems = which(hrMod < minHrChange & lead(hrMod) > 1/minHrChange)  + 1 #rpeaks AFTER these indices are missing
+            print(paste0("Found ", length(hrModProblems), " problems in heart rate modulation:"))
+            
+            for (p in hrModProblems) {
+              if (p-1 <= 0 || p+1 > length(hrtrial)) 
+                print(paste0("Cannot interpolate on the border of a segment. Change segment length via \"l\" to proceed."))
+              else { #interpolation algorithm
+                neighbors.rpeak = rpeak[p+c(0, 1)] #adjacent valid heart beats
+                neighbors.hr = hrtrial[p+c(-1, 1)] #adjacent valid heart rates not affected by missing beat
+                missing = min(neighbors.rpeak) + abs(diff(neighbors.rpeak)) * last(neighbors.hr)/sum(neighbors.hr)
+                
+                rpeak = rpeak %>% c(missing)
+              }
+            } 
+            rpeak = rpeak %>% sort()
+            hrtrial = 60/diff(rpeak)
+            allrpeak.list[[toString(i)]] = rpeak
+            #invalid = F; showThis = F; i = i - 1 #workaround to reload
+            invalid = F
+            showThis = T
+          } else if (r.threshold_new=="") {
+            manualok = TRUE
+            problem = 0   # Manual acceptance
+            invalid = F
+            showThis = F
+            allrpeak.list[[toString(i)]] = rpeak
+          } else if (substring(r.threshold_new, 1, 1)=="b") {
+            problem = 0
+            invalid = F
+            showThis = F
+            allrpeak.list[[toString(i)]] = rpeak
+          } else if (substring(r.threshold_new, 1, 1)=="s") {
+            name = paste0(path.screenshots, code, " ", i, " @", segment.length, ".png")
+            print(paste("Saving Screenshot to:", name))
+            dev.copy(png, file=name, width=1920, height=1080); dev.off(); dev.set(mainWindow)
+          } else if (substring(r.threshold_new, 1, 1)=="f") {
+            problem = 0
+            invalid = F
+            showThis = F
+            finishFlag = T
+            allrpeak.list[[toString(i)]] = rpeak
+          } else if (substring(r.threshold_new, 1, 1)=="t") {
+            showMarkers = !showMarkers
+            print(paste0("showing markers: ", showMarkers))
+            invalid = F
+            showThis = T
+          } else if (substring(r.threshold_new, 1, 1)=="-") {
+            data$ECG = -data$ECG
+            ecgwind = -ecgwind
+            if (exists("r.threshold")) rm("r.threshold")
+            invalid = F
+            showThis = T
+          } else if (substring(r.threshold_new, 1, 1)=="j") {
+            jumpTo = readline("Jump to segment: ") %>% as.integer()
+            while (jumpTo %>% is.na()) {
+              print(paste0("Error. Cannot read new segment: ", jumpTo))
+              jumpTo = readline("Jump to segment: ") %>% as.integer()
+            }
+            
+            problem = 0
+            invalid = F
+            showThis = F
+          } else if (substring(r.threshold_new, 1, 1)=="l") {
+            input = readline("Change segment length (seconds): ")
+            while (input %>% as.integer() %>% is.na()) {
+              print(paste0("Error. Cannot read new segment length: ", jumpTo))
+              input = readline("Change segment length (seconds): ")
+            }
+            
+            segment.length = input %>% as.integer()
+            allrpeak.list[[toString(i)]] = rpeak
+            
+            analysis.sequence = seq(scorest, scoreen, segment.length)
+            i = which(analysis.sequence <= st) %>% last()
+            
+            allrpeak = allrpeak.list %>% unlist() %>% unname() %>% unique() %>% sort()
+            allrpeak.list = list()
+            for (ii in seq(analysis.sequence)) {
+              st.ii = analysis.sequence[ii]
+              en.ii = {st.ii + segment.length} %>% c(max(timeline)) %>% min()
+              allrpeak.list[[toString(ii)]] = allrpeak[allrpeak >= st.ii & allrpeak < en.ii]
+            }
+            rpeak = allrpeak.list[[toString(i)]]
+            hrtrial = 60/diff(rpeak)
+            
+            st = analysis.sequence[i]
+            en = {st + segment.length} %>% c(max(timeline)) %>% min()
+            timewind = timeline[timeline>=st & timeline<en]
+            ecgwind  = data$ECG[timeline>=st & timeline<en]
+            
+            problem = 0
+            invalid = F
+            showThis = T
+            #showThis = F; i = i - 1 #workaround to reload
+          } else { #no keyword, so new threshold provided as numeric
+            r.threshold_new = tryCatch(as.numeric(r.threshold_new), error=NA)
+            invalid = is.na(r.threshold_new)
+            reassign = !invalid
+          }
+          
+          if (invalid) {
+            if (r.threshold_new %in% commandList == F)
+              print(paste0("Error. Cannot read new threshold: ", r.threshold_new))
+            
+            r.threshold_new = readline(paste0("New threshold (", 
+                                              ifelse(exists("r.threshold"), round(r.threshold, 2), ""), 
+                                              "): "))
+          } else if (reassign) {
+            r.threshold = as.numeric(r.threshold_new)
+            rpeak = timewind[findpeaks(ecgwind, r.threshold)]
+            # print("rpeaks created 4")
+            hrtrial = 60/diff(rpeak)
+            allrpeak.list[[toString(i)]] = rpeak
+          }
+        }
+      }
+      #allrpeak.list[[toString(i)]] = rpeak
+    }
     
-    dev.off()
+    #allrpeak.list[[toString(i)]] = rpeak
+    if (exists("r.threshold_new")==F || substring(r.threshold_new, 1, 1) != "j") jumpTo = i + 1 #jumpTo has to exist even if not evaluated :/
+    i = case_when(
+      showAll && substring(r.threshold_new, 1, 1) == "b" ~ {i - 1} %>% c(1) %>% max(),
+      showAll && substring(r.threshold_new, 1, 1) == "j" ~ jumpTo %>% c(1) %>% max(),
+      TRUE ~ i + 1)
+    if (showAll==F) cat(".")
+  } 
+  
+  cat("\n")
+  
+  allrpeak = allrpeak.list %>% unlist() %>% unname() %>% unique() %>% sort()
+  # allrpeak = numeric()
+  # for (i in seq(allrpeak.list)) allrpeak = c(allrpeak, allrpeak.list[[toString(i)]])
+  
+  # Delete duplicates
+  keep = c(TRUE, diff(allrpeak) > 60/maxhr/2)
+  if (sum(!keep)>0) print(paste0(sum(!keep), " duplicate(s) found and bigger voltage kept (heartrate > ", 2 * maxhr, ")"))
+  doubleR = which(!keep)
+  keepLater = data$ECG[which(timeline %in% allrpeak[doubleR])] > data$ECG[which(timeline %in% allrpeak[doubleR - 1])]
+  keep[doubleR] = keepLater; keep[doubleR-1] = !keepLater
+  
+  allrpeak = allrpeak[keep]
+  
+  # Interpolate extrasystoles
+  allHr = 60/diff(allrpeak)
+  allHrMod = tail(allHr / lag(allHr), -1)
+  
+  hrModProblems = which(allHrMod < minHrChange & lead(allHrMod) > 1/minHrChange) + 1 #rpeaks AFTER these indices are missing
+  interpolate = T
+  while (length(hrModProblems) > 0 && interpolate) {
+    print(paste0("Found ", length(hrModProblems), " problems in heart rate modulation:"))
+    allrpeak[hrModProblems] %>% sapply(function(x) return({x > analysis.sequence} %>% which() %>% tail(1))) %>% 
+      paste0("Segment ", ., " (of ", length(analysis.sequence), ")")
+    
+    interpol = readline("Shall problems be solved by interpolation? (\"y\" to interpolate) ")
+    if (substring(interpol, 1, 1)!="y") {
+      interpolate = F
+    } else {
+      for (i in hrModProblems) {
+        #allHr[i] #this value is too low because beat is missing between
+        #allrpeak[i+0:1]
+        
+        #missing = mean(allrpeak[i+0:1]) #interpolate by mean time (i.e., allHr = constant; hrMod == 1)
+        
+        #interpolate by mean heart rate
+        missingHr = mean(allHr[i+c(-1, 1)])
+        missing = allrpeak[i] + 60/missingHr
+        
+        #weighted average according to bpm #doesn't work well
+        # weights = {allHr[i-1] / (allHr[i+c(-1, 1)] %>% sum())} %>% c(., {1 - .})
+        # #sum(weights) #must be 1
+        # missing = weighted.mean(allrpeak[i+0:1], weights)
+        
+        allrpeak = allrpeak %>% c(missing)
+      } 
+      allrpeak = allrpeak %>% sort()
+      allHr = 60/diff(allrpeak)
+      allHrMod = tail(allHr / lag(allHr), -1)
+      hrModProblems = which(allHrMod < minHrChange & lead(allHrMod) > 1/minHrChange) + 1 #rpeaks AFTER these indices are missing
+    }
   }
+  
+  # Save positions of R-peaks
+  out = data.frame(rpeaks = allrpeak)
+  write.csv2(out, code %>% paste0(path.rpeaks, ., path.rpeaks.postfix), row.names=FALSE, quote=FALSE)
+  
+  dev.off()
 }
 
 
