@@ -227,7 +227,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
   }
   
   
-  # Adapt conditions file to availlable trigger
+  # Calculate time difference of triggers because of missing triggers in GCA study --> this way we can adapt the condition labels
   trigger_diff <- eda %>% filter(trigger == 1) %>% 
     mutate(sdiff = lead(time, 1) - time)
   
@@ -251,9 +251,9 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
   trigger_mat_subj <- trigger_mat_subj %>% 
     filter(use.trial)
   
-  
-  # Include trigger information
+  # if also the corrected triggers are not correct, then drop this subject
   if ((nrow(trigger_diff) == 152) |  (filename == "gca_14")) {
+    # Include trigger informationwar
     eda$trigger[eda$trigger == 1] <-  trigger_mat_subj %>% .$trigger
   } else {
     print(paste0(filename, ': ', sum((eda$trigger > 1) & (eda$trigger < 10)), ' trials'))
