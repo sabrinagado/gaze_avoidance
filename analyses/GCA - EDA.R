@@ -768,6 +768,10 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
 eda_unified <- readRDS("EDA_unified.RData")
 eda_df <- readRDS("EDA_df.Rdata")
 
+eda_unified = eda_unified %>% 
+  left_join(trigger_mat %>% mutate(ID = subject) %>% select(ID, trial, outcome), by=c("ID", "trial")) %>% 
+  mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
+
 
 responder <- eda_df %>%
  mutate(scl_bl = abs(SCL-Baseline)) %>%
@@ -783,8 +787,10 @@ non_responder <- eda_df %>%
 
 
 # Plot Unified Data
-eda_unified$EDA %>%   
-  bind_rows() %>%
+eda_unified %>%
+  # filter(outcome == "no outcome") %>%
+  #filter(ID %in% responder) %>%
+  .$EDA %>% bind_rows() %>%
   mutate(condition = as.factor(condition)) %>%
   filter(condition %in% c(2,3,4,5)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>% 
@@ -794,8 +800,8 @@ eda_unified$EDA %>%
       geom_vline(xintercept=0, color="black",linetype="solid") + #zero
       geom_line() +
       geom_ribbon(aes(ymin=EDA.mean-EDA.se, ymax=EDA.mean+EDA.se), color = NA, alpha=.2) +
-      scale_x_continuous("Time [s]",limits=c(-0.5, 10), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Skin Conductance") +
+      scale_x_continuous("Time [s]",limits=c(-0.5, 8), minor_breaks=c(0,1,2,3,4,5,6,7,8), breaks=c(0, 2, 4, 6, 8)) +
+      scale_y_continuous("Skin Conductance",limits=c(-0.5, 1.5)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
       theme_bw()
   }

@@ -207,6 +207,10 @@ heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")
   mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step + min(baselineWindow)} %>% as.factor(),
          condition = as.factor(condition))
 
+heart = heart %>% 
+  left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(subject = as.integer(substr(subject, 5, 6))), by=c("subject", "trial")) %>% 
+  mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
+
 heart.data <- heart.wide %>% mutate(ID = paste0("gca",str_pad(subject,2,pad="0"))) %>% select(ID, trial, hrbl:hr.20)
 
 #write_rds(heart, "Heart_df.rds")
@@ -229,6 +233,7 @@ heart.data <- heart.wide %>% mutate(ID = paste0("gca",str_pad(subject,2,pad="0")
 #plot hr change over trial time
 heart %>% 
   filter(condition %in% c(2,3,4,5)) %>%
+  # filter(outcome != "no outcome") %>%
   mutate(across('condition', str_replace_all, rep_str)) %>% 
   group_by(condition, time) %>% 
   summarise(HR.se = sd(HRchange, na.rm=T)/sqrt(n()), HR.mean = mean(HRchange, na.rm=T)) %>% 
@@ -237,15 +242,14 @@ heart %>%
       geom_vline(xintercept=0, color="black",linetype="solid") + #zero
       geom_line() +
       geom_ribbon(aes(ymin=HR.mean-HR.se, ymax=HR.mean+HR.se), color = NA, alpha=.2) +
-      scale_x_continuous("Time [s]",limits=c(-0.5, 10), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Heart Rate") +
+      scale_x_continuous("Time [s]",limits=c(-0.5, 8), minor_breaks=c(0,1,2,3,4,5,6,7,8), breaks=c(0, 2, 4, 6, 8)) +
+      scale_y_continuous("Heart Rate",limits=c(-3, 5.5)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
       theme_bw()
   }
 ggsave(paste0("../plots/HR/cs_acq.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 #Test phase
-
 heart %>% 
   filter(condition %in% c(6,7,8,9)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>%

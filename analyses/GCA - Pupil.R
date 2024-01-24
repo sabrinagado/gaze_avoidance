@@ -416,6 +416,11 @@ for (subject_inmat in codes){
 ga_unified <- readRDS("ET_ga_unified.RData")
 pupil_df <- readRDS("ET_pupil_df.Rdata")
 
+
+ga_unified = ga_unified %>% 
+  left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(ID = as.integer(substr(subject, 5, 6))), by=c("ID", "trial")) %>% 
+  mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
+
 # Signal quality check
 
 mean(as.numeric(pupil_df$interpolated)) #30.4% interpolated sample points
@@ -435,8 +440,8 @@ non_responder <- pupil_df %>% filter(condition %in% c(1,2,3)) %>% group_by(ID) %
 
 
 # Plot Unified Data
-
 ga_unified %>% filter(valid == TRUE) %>%
+  # filter(outcome == "no outcome") %>%
   #filter(ID %in% responder) %>%
   .$diameter %>% bind_rows() %>%
   mutate(condition = as.factor(condition)) %>%
@@ -448,8 +453,8 @@ ga_unified %>% filter(valid == TRUE) %>%
       geom_vline(xintercept=0, color="black",linetype="solid") + #zero
       geom_line() +
       geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se), color = NA, alpha=.2) +
-      scale_x_continuous("Time [s]",limits=c(-0.5, 10), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Pupil Diameter") +
+      scale_x_continuous("Time [s]",limits=c(-0.5, 8), minor_breaks=c(0,1,2,3,4,5,6,7,8), breaks=c(0, 2, 4, 6, 8)) +
+      scale_y_continuous("Pupil Diameter",limits=c(-80, 150)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
       theme_bw()
     }
