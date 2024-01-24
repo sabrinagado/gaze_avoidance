@@ -51,8 +51,8 @@ for (subject in filemat){
   
   ggplot(vp_data, aes(x = social, fill = condition, y = correct_mean)) +
     geom_hline(yintercept = 0.5, linetype = 2, color = "red") + 
-    geom_bar(stat = "identity", position = position_dodge(), color= "black") +
-    scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1)) +
+    geom_col(position = position_dodge()) +
+    scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1.05)) +
     scale_x_discrete("Category") +
     scale_fill_viridis_d("Condition",end = 0.75) + 
     theme_classic()
@@ -85,16 +85,19 @@ vps_summary_long %>%
   summarise(correct = mean(correct_mean, na.rm = T), se = sd(correct_mean)/sqrt(n())) %>% 
   ggplot(aes(x = social, y = correct, fill = social)) +
   geom_hline(yintercept = 0.5, linetype = 2, color = "red") + 
-  geom_bar(stat = "identity", position = position_dodge(), color= "black") +
+  geom_col(position = position_dodge()) +
   geom_errorbar(aes(ymax = correct + se, ymin = correct - se), width = 0.4) +
-  geom_point(data = vps_summary_long, aes(x = social, y = correct_mean), alpha = 0.5, shape = 21, position = position_jitter(0.2)) +
-  scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1)) +
+  geom_point(data = vps_summary_long, aes(x = social, y = correct_mean), size = 2, shape = 21, color = "black", alpha=0.3, position = position_jitter(width=0.2, height=0.005)) +
+  # geom_beeswarm(data = vps_summary_long, aes(x = social, y = correct_mean), alpha = 0.5, mapping = aes(x = social)) + 
+  labs(title = paste("Proportion of Trials with Correct Answer (N = ", n_distinct(vps_summary_long$participant), ")", sep=""), x = "Category", y = "% correct") +
+  # scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1.05)) +
   scale_x_discrete("Category", labels = c("non-social","social")) +
-  scale_fill_viridis_d("Condition",end = 0.25,begin = 0.25, guide = "none" ) + 
+  scale_fill_viridis_d("Condition", end = 0.25, begin = 0.25, guide = "none" ) + 
   theme_minimal() + 
   scale_fill_viridis_d() + 
-  scale_color_viridis_d()
-ggsave(file.path(path, "plots", "avoidance-task", "ga_correct.png"), width=1500, height=2000, units="px")
+  scale_color_viridis_d() +
+  theme(legend.position = "none")
+ggsave(file.path(path, "plots", "discrimination-task", "ga_correct.png"), width=1800, height=2000, units="px")
 
 
 vps_summary_long %>%
@@ -109,20 +112,25 @@ vps_summary_long %>%
 
 
 # Response Times
+vps_summary_long <- vps_summary_long %>% 
+  mutate(rt_mean = rt_mean * 1000)
 
 vps_summary_long %>% 
   group_by(social) %>%
   summarise(correct = mean(rt_mean, na.rm = T), se = sd(rt_mean)/sqrt(n())) %>% 
   ggplot(aes(x = social, y = correct, fill = social)) +
   geom_hline(yintercept = 0.5, linetype = 2, color = "red") + 
-  geom_bar(stat = "identity", position = position_dodge(), color= "black") +
+  geom_col(position = position_dodge()) +
   geom_errorbar(aes(ymax = correct + se, ymin = correct - se), width = 0.4) +
-  geom_point(data = vps_summary_long, aes(x = social, y = rt_mean), alpha = 0.5, shape = 21, position = position_jitter(0.2)) +
-  scale_y_continuous("RT [s]", expand = c(0,0), limits = c(0,1)) +
+  geom_point(data = vps_summary_long, aes(x = social, y = rt_mean), size = 2, shape = 21, color = "black", alpha=0.3, position = position_jitter(width=0.2, height=0.005)) +
+  labs(title = paste("Reaction Times (N = ", n_distinct(vps_summary_long$participant), ")", sep=""), x = "Category", y = "RT [ms]") +
   scale_x_discrete("Category", labels = c("non-social","social")) +
   scale_fill_viridis_d("Condition",end = 0.25,begin = 0.25, guide = "none" ) + 
-  theme_classic()
-ggsave(file.path(path, "plots", "discrimination-task", "ga_rt.png"))
+  theme_minimal() + 
+  scale_fill_viridis_d() + 
+  scale_color_viridis_d() +
+  theme(legend.position = "none")
+ggsave(file.path(path, "plots", "discrimination-task", "ga_rt.png"), width=1800, height=2000, units="px")
 
 vps_summary_long %>%
   ez::ezANOVA(dv=.(rt_mean),

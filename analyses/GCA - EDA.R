@@ -20,17 +20,17 @@ options(dplyr.summarise.inform = FALSE)
 ucr_plots = T
 cr_plots = T
 
-downsampling = T
+downsampling = F
 sample_rate_new = 20 #for downsampling
 check_ds_plots = F
 
-lowpass = F
-lowPassFreq = 10 #low pass filter (Hz)
+lowpass = T
+lowPassFreq = 2 #low pass filter (Hz)
 highpass = F
 highPassFreq = 0.01 #high pass filter (Hz)
 
 check_minmax_plots = F 
-saveSclPlotsToFile = T
+saveSclPlotsToFile = F
 
 
 shock_triggers = c(10,11,12) #Vector with the names of the US triggers
@@ -53,7 +53,7 @@ crRiseMax = 6 #latest Peak of CR in s (Bouton et al., 2012)
 
 scl_bins = T #calculate SCL in 1s bins after CS onset
 baselineWindow = c(-.5,0) #correct for Baseline in this time window
-sclWindow = c(0,10) #calculate SCL in this thime window
+sclWindow = c(0,10) #calculate SCL in this time window
 
 
 #First and second responses (FIR & SIR) analysis: 
@@ -165,6 +165,18 @@ trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
                                                       ifelse(phase == "test" & condition == "CSpos, social",7,
                                                              ifelse(phase == "test" & condition == "CSneg, non-social",8,
                                                                     ifelse(phase == "test" & condition == "CSpos, non-social",9,0)))))))))
+
+rep_str = c('10' = "Shock",
+            '11' = "Reward", 
+            '12' = "No Feedback",
+            '2' = 'CSneg, social, Acq',
+            '3' = 'CSpos, social, Acq',
+            '4' = 'CSneg, non-social, Acq',
+            '5' = 'CSpos, non-social, Acq',
+            '6' = 'CSneg, social, Test',
+            '7' = 'CSpos, social, Test',
+            '8' = 'CSneg, non-social, Test',
+            '9' = 'CSpos, non-social, Test')
   
 
 for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
@@ -178,10 +190,8 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
   firstcue <- eda %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
   lastcue <- eda %>% filter(ImgTest == 5) %>% tail(1) %>% .$sample
   recordend <- eda$sample %>% tail(1)
-  ((lastcue - firstcue)/1000)/60
-  ((recordend - lastcue)/1000)/60
   
-  eda <- eda %>% filter(sample >= firstcue - 2000 & sample < lastcue + 1000) %>%
+  eda <- eda %>% filter(sample >= firstcue - 2000 & sample < lastcue + 20000) %>%
     mutate(ImgAcq = ifelse(ImgAcq == 5,1,0),
            ImgTest = ifelse(ImgTest == 5,1,0),
            Shock = ifelse(Shock == 5,10,0),
@@ -190,7 +200,10 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
            trigger = ImgAcq + ImgTest + Shock + Reward + NoFeedback,
            sample = 1:n(),
            time = sample /1000) %>% 
-    select(sample,time, EDA, ECG, trigger)
+    select(sample,time, EDA, ECG, trigger) %>%
+    mutate(trigger = ifelse(trigger == lag(trigger), 0, trigger)) %>%
+    fill(trigger,.direction = "up") %>%
+    fill(trigger,.direction = "down")
     
   filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")# %>% str_remove(.,pattern="SiCP_")
   
@@ -202,7 +215,6 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
   
   if (downsampling) {
     #downsample (all columns)
-    triggers_time = eda$time[eda$trigger != 0] #eda$time[eda$Trigger %>% is.na() == FALSE]
     conversion = round(sample_rate / sample_rate_new)
     eda_downsampled = data.frame(time=sample.down(eda$time,conversion),
                                  EDA=sample.down(eda$EDA,conversion),
@@ -213,6 +225,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
     triggers_time_old = eda$time[eda$trigger != 0]
     triggers_indices_new = triggers_time_old %>% closestRepresentative(eda_downsampled$time, returnIndices = T) #for each old trigger time, find index of closest existing downsampled time
     eda_downsampled$trigger[triggers_indices_new] = eda$trigger[eda$trigger != 0] #inject conditions as triggers of onsets
+    
     
     for (row in 1:(nrow(eda_downsampled)-1)){ if (eda_downsampled$trigger[row] == eda_downsampled$trigger[row+1]) {eda_downsampled$trigger[row+1]=0}} #remove extra shock-markers
     
@@ -228,27 +241,31 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
   
   
   # Calculate time difference of triggers because of missing triggers in GCA study --> this way we can adapt the condition labels
-  trigger_diff <- eda %>% filter(trigger == 1) %>% 
-    mutate(sdiff = lead(time, 1) - time)
-  
-  second_highest = sort(trigger_diff$sdiff,partial=length(trigger_diff$sdiff)-2)[(length(trigger_diff$sdiff))-2]
-  
-  trigger_diff <- trigger_diff %>% 
-    mutate(use.trial = TRUE) %>% 
-    mutate(rownum = row_number()) %>% 
-    bind_rows(., filter(., (sdiff > 16 ) & (sdiff < second_highest)) %>% 
-                mutate(use.trial = FALSE, rownum = rownum+.5)) %>% 
-    arrange(rownum) %>%
+  trigger_diff <- eda %>% filter(trigger == 1) %>%
+    mutate(sdiff = lead(time, 1) - time) %>%
+    mutate(use.trial = TRUE) %>%
     mutate(trial = row_number())
+  
+  if (nrow(trigger_diff) != 152) {
+    
+    second_highest = sort(trigger_diff$sdiff,partial=length(trigger_diff$sdiff)-2)[(length(trigger_diff$sdiff))-2]
+    
+    trigger_diff <- trigger_diff %>%
+      mutate(rownum = row_number()) %>%
+      bind_rows(., filter(., (sdiff > 16 ) & (sdiff < second_highest)) %>%
+                  mutate(use.trial = FALSE, rownum = rownum+.5)) %>%
+      arrange(rownum) %>%
+      mutate(trial = row_number())
+  }
   
   filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")
   trigger_mat_subj <- trigger_mat %>% filter(subject == filename)
   
-  trigger_mat_subj <- trigger_mat_subj %>% 
-    left_join(trigger_diff %>% select(trial, use.trial), by=c("trial")) %>% 
-    mutate(use.trial = if_else((filename == "gca_14") & (trial > 112), FALSE, use.trial)) # exclude test trials in VP 14 because one is missing, but we do not know which on
+  trigger_mat_subj <- trigger_mat_subj %>%
+    left_join(trigger_diff %>% select(trial, use.trial), by=c("trial")) %>%
+    mutate(trigger = if_else((filename == "gca_14") & (trial > 112), 0, trigger)) # exclude test trials in VP 14 because one is missing, but we do not know which one
   
-  trigger_mat_subj <- trigger_mat_subj %>% 
+  trigger_mat_subj <- trigger_mat_subj %>%
     filter(use.trial)
   
   # if also the corrected triggers are not correct, then drop this subject
@@ -277,15 +294,10 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
     
     eda_filt = eda
     eda_filt$EDA = eda_filtered[(reps+1):(length(eda_filtered)-reps)]; rm(eda_filtered)
-    
-    if (check_smoothed_plots) {
-      eda %>% ggplot(aes(x=time, y=EDA)) + geom_line() + geom_line(data=eda_filt, color="red",linetype=4) + 
-        geom_vline(xintercept = eda$time[eda$trigger!=0],alpha=0.1)  %>% print()
-    }
+    eda = eda_filt
     print("lowpass filtering complete!")
     
-  }  
-  
+  }
   
   eda = eda %>% mutate(us = case_when(trigger %in% shock_triggers ~ T, TRUE ~ F))
   eda_vp = eda %>% filter(trigger != 0) %>% select(-EDA) %>% #One trial per row per VP
@@ -324,7 +336,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
       geom_point(data=eda_minima, color="blue") + 
       ggtitle(filename)
     if (check_minmax_plots) sclPlot %>% print()
-    if (saveSclPlotsToFile) sclPlot %>% ggsave(paste0("../Plots/EDA/", filename, ".png"), plot=., device="png", width=1920/50, height=1080/300, dpi=300)
+    if (saveSclPlotsToFile) sclPlot %>% ggsave(paste0("../plots/EDA/", filename, ".png"), plot=., device="png", width=1920/50, height=1080/300, dpi=300)
   }
   
   # UCR Scoring    
@@ -395,41 +407,42 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
               lat = mean(Lat, na.rm=T),
               rise = mean(Rise, na.rm=T))
   
+  unified = eda_vp_ucr %>% mutate(EDA = time_start %>% lapply(function(start) 
+    eda %>% filter(time >= start,
+                   time <= start + 8) %>% select(-trigger)))
+  
+  for (t in 1:nrow(unified)) {
+    unified$EDA[[t]] = unified$EDA[[t]] %>% 
+      mutate(trial = t,
+             sample = sample - min(sample) + 1,
+             time = time - min(time),
+             condition = unified$condition[[t]])
+  }
+  
+  minmax_unified = unified %>% select(trial,EDA.min,time.min,EDA.max,time.max,time_start) %>% 
+    mutate(time.min = time.min - time_start,time.max = time.max - time_start,trial = as.factor(1:n())) # %>% filter(time.max < 8)
   
   if (ucr_plots) {
-    unified = eda_vp_ucr %>% mutate(EDA = time_start %>% lapply(function(start) 
-      eda %>% filter(time >= start,
-                     time <= start + 8) %>% select(-trigger)))
-    
-    for (t in 1:nrow(unified)) {
-      unified$EDA[[t]] = unified$EDA[[t]] %>% 
-        mutate(trial = t, sample = sample - min(sample) + 1, time = time - min(time)) #unify starting time to allow overlap
-      }
-    
-    minmax_unified = unified %>% select(trial,EDA.min,time.min,EDA.max,time.max,time_start) %>% 
-      mutate(time.min = time.min - time_start,time.max = time.max - time_start,trial = as.factor(1:n())) %>% 
-      filter(time.max < 8)
-    
-    
     unified$EDA %>% bind_rows() %>% 
-      mutate(trial = as.factor(trial)) %>% 
-      {ggplot(., aes(x=time, y=EDA, color=trial,fill=trial)) + 
+      mutate(trial = as.factor(trial)) %>%
+      mutate(across('condition', str_replace_all, rep_str)) %>%
+      {ggplot(., aes(x=time, y=EDA, color=trial)) + facet_wrap(vars(condition)) +
+          geom_vline(xintercept=0, color="black",linetype="solid") + #zero 
           geom_vline(xintercept=ucrMinWindow, color="grey") + #borders of min/max scoring
           geom_path() + scale_color_viridis_d() + scale_fill_viridis_d() +
-          geom_point(data=minmax_unified,aes(x=time.min,y=EDA.min),shape=25,size=1)+
-          geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1)+
-          ggtitle(filename) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
-      #print()
+          # geom_point(data=minmax_unified,aes(x=time.min,y=EDA.min),shape=25,size=1) +
+          # geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1) +
+          ggtitle(as.integer(substr(filename, 5, 6))) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>%
       ggsave(paste0("../plots/EDA/UCS/", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
   }
   
-  print(paste0("UCRs: ", filename, " of ", length(filemat), " files processed!"))
+  print(paste0("UCRs: ", as.integer(substr(filename, 5, 6)), " of ", length(filemat), " files processed!"))
   
   eda_vp_cr = eda_vp %>% filter(condition %in% condition_triggers) #filter(us == F)
   
   for (t in 1:nrow(eda_vp_cr)) {
     
-    #t <- 2
+    #t = 1
     start = eda_vp_cr$time_start[t]
     
     baseline_trial = eda %>% filter(time <= start + max(baselineWindow),
@@ -664,8 +677,6 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
         )
     }
     
-    
-    
     if(fir_algorithm){
       scr_out = scr %>% select(1:5,8,9,12,13) %>%
         mutate(EDA.eir = eir_max$EDA,
@@ -689,65 +700,73 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
  
   print("trialwise parameterization complete!")
   
-  if (cr_plots) {
-    
-    unified = eda_vp_cr %>% mutate(EDA = time_start %>% lapply(function(start) 
-      eda %>% filter(time >= start,
+  unified = eda_vp_cr %>% 
+    mutate(EDA = time_start %>% lapply(function(start)
+      eda %>% filter(time >= start + min(baselineWindow),
                      time <= start + trial_length) %>% select(-trigger)))
-    
-    
-    for (t in 1:nrow(unified)) {
-      unified$EDA[[t]] = unified$EDA[[t]] %>% 
-        mutate(trial = t, time = time - min(time), condition = unified$condition[[t]],
-               trial_condition = unified$trial_condition[[t]]) #unify starting time to allow overlap
-      }
-    
-    
-    minmax_unified = unified %>% select(trial,condition,EDA.min,time.min,EDA.max,time.max,time_start) %>% 
-      mutate(time.min = time.min - time_start,time.max = time.max - time_start,trial = as.factor(1:n())) %>% 
-      filter(time.max < 6)
-    
-    
+  
+  
+  for (t in 1:nrow(unified)) {
+    # t = 1
+    unified$EDA[[t]] = unified$EDA[[t]] %>% 
+      mutate(trial = t,
+             sample = sample - unified$sample_start[[t]],
+             time = time - unified$time_start[[t]],
+             condition = unified$condition[[t]])
+    }
+  
+  minmax_unified = unified %>% select(trial,EDA.min,time.min,EDA.max,time.max,time_start, condition) %>% 
+    mutate(time.min = time.min - time_start,time.max = time.max - time_start,trial = as.factor(1:n())) %>% 
+    filter(time.max < 8) %>% 
+    mutate(across('condition', str_replace_all, rep_str))
+  
+  if (cr_plots) {
     unified$EDA %>% bind_rows() %>% 
+      mutate(across('condition', str_replace_all, rep_str)) %>%
       mutate(trial = as.factor(trial)) %>% 
-      {ggplot(., aes(x=time, y=EDA, color=trial,fill=trial)) + facet_wrap(vars(condition)) +
+      {ggplot(., aes(x=time, y=EDA, color=trial, fill=trial)) + facet_wrap(vars(condition)) +
           geom_vline(xintercept=c(ucrMinWindow,crRiseMax), color="blue",linetype="dashed") + #borders of min/max scoring
           geom_path() + scale_color_viridis_d() + scale_fill_viridis_d() +
-          geom_point(data=minmax_unified,aes(x=time.min,y=EDA.min),shape=25,size=1)+ 
-          geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1)+ 
-          ggtitle(filename) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
+          geom_point(data=minmax_unified,aes(x=time.min,y=EDA.min),shape=24,size=1)+
+          geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1)+
+          xlab("Time") + ylab("EDA") +
+          ggtitle(as.integer(substr(filename, 5, 6))) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
       #print()
-      ggsave(paste0("../plots/EDA/CS/", filename, ".png"), plot=., 
-             device="png", width=1920/150, height=1080/150, dpi=300)
+      ggsave(paste0("../plots/EDA/CS/", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
     
     print("CR plotting complete!")
+  }
+  
+  for (t in 1:nrow(unified)) {
+    # t = 1
+    unified$EDA[[t]] = unified$EDA[[t]] %>% 
+      mutate(EDA = EDA - unified$Baseline[[t]])
   }
   
   unified <- unified %>% mutate(ID = filename)
   eda_unified = rbind(eda_unified,unified)
   
   
-  print(paste0("CRs: ", filename, " of ", length(filemat), " files processed!"))
+  print(paste0("CRs: ", as.integer(substr(filename, 5, 6)), " of ", length(filemat), " files processed!"))
   
 } #end inmat for loop
 
 
 
-for (t in 1:nrow(eda_unified)) {
-  eda_unified$EDA[[t]] = eda_unified$EDA[[t]] %>% 
-    mutate(EDA_bl = EDA - eda_unified$Baseline[[t]], ID = eda_unified$ID[[t]]) #unify starting time to allow overlap
-}
-
-rm(eda, eda_vp)
+# for (t in 1:nrow(eda_unified)) {
+#   eda_unified$EDA[[t]] = eda_unified$EDA[[t]] %>% 
+#     mutate(EDA_bl = EDA - eda_unified$Baseline[[t]], ID = eda_unified$ID[[t]])
+# }
+# 
+# rm(eda, eda_vp)
 
 # Read or Save ga_unified and pupil_df for further processing
 
-saveRDS(eda_unified,"EDA_unified.RData")
-saveRDS(eda_df,"EDA_df.RData")
+# saveRDS(eda_unified,"EDA_unified.RData")
+# saveRDS(eda_df,"EDA_df.RData")
 
-#eda_unified <- readRDS("EDA_unified.RData")
-#eda_df <- readRDS("EDA_df.Rdata")
-
+eda_unified <- readRDS("EDA_unified.RData")
+eda_df <- readRDS("EDA_df.Rdata")
 
 
 responder <- eda_df %>%
@@ -761,208 +780,212 @@ non_responder <- eda_df %>%
  group_by(ID) %>%
  summarise(scl_avg = mean(scl_bl)) %>% 
  filter(scl_avg < .02) %>% .$ID
- 
 
+
+# Plot Unified Data
 eda_unified$EDA %>%   
   bind_rows() %>%
-  mutate(condition = as.factor(condition),time=round(time),1) %>% 
-  #filter(condition %in% c(5,6,7,8)) %>% 
-  filter(condition %in% c(1,2,3,4)) %>% 
-  group_by(time,condition) %>% 
-  summarise(EDA = mean(EDA)) %>%
-  ggplot(., aes(x=time, y=EDA, color=condition, group=condition)) +
-  #geom_vline(xintercept=c(0.8,6), color="blue",linetype="dashed") + #borders of min/max scoring
-  geom_vline(xintercept=0, color="blue",linetype="dashed") + #zero 
-  geom_smooth(se = F) + 
-  #scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
-  scale_x_continuous(limits = c(-1,10)) +
-  theme_bw() 
-ggsave(paste0("E:/Experimente/Experiment - TFO/Plots/EDA/CS_raw/CS.png"), 
-       device="png", width=1920/300, height=1080/200, dpi=300)
-
-
-eda_unified$EDA %>% bind_rows() %>%
-  mutate(condition = as.factor(condition),time=round(time),1) %>% 
-  #filter(ID %in% responder) %>%
-  #filter(condition %in% c(5,6,7,8)) %>% 
-  #filter(trial_condition >= 41 & trial_condition <= 60) %>% 
-  filter(condition %in% c(1,2,3,4)) %>% 
-  group_by(time,condition) %>% 
-  summarise(EDA = mean(EDA_bl)) %>%
-  ggplot(., aes(x=time, y=EDA, color=condition, group=condition)) +
-  #geom_vline(xintercept=c(0.8,6), color="blue",linetype="dashed") + #borders of min/max scoring
-  #geom_vline(xintercept=0, color="blue",linetype="dashed") + #zero 
-  geom_path() + 
-  scale_x_continuous("Time [s]",limits = c(0,10)) +
- #scale_y_continuous("EDA", limits=c(-0.25, 0)) + 
- # scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
-  theme_classic() +
-  theme(legend.position=c(0.15,0.78),
-        legend.title = element_blank(),
-        #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
-  )
-
-ggsave(paste0("../plots/EDA/CS_baseline/Acquisition.png"), 
-       device="png", width=1920/400, height=1080/300, dpi=300)
-
-
-eda_unified$EDA %>% bind_rows() %>%
-  mutate(condition = as.factor(condition),time=round(time),1) %>% 
-  #filter(ID %in% responder) %>%
-  #filter(condition %in% c(5,6,7,8)) %>% 
-  #filter(trial_condition >= 41 & trial_condition <= 60) %>% 
-  filter(condition %in% c(5,6,7,8)) %>% 
-  group_by(time,condition) %>% 
-  summarise(EDA = mean(EDA_bl)) %>%
-  ggplot(., aes(x=time, y=EDA, color=condition, group=condition)) +
-  #geom_vline(xintercept=c(0.8,6), color="blue",linetype="dashed") + #borders of min/max scoring
-  #geom_vline(xintercept=0, color="blue",linetype="dashed") + #zero 
-  geom_path() + 
-  scale_x_continuous("Time [s]",limits = c(0,10)) +
-  #scale_y_continuous("EDA", limits=c(-0.25, 0)) + 
-  # scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
-  theme_classic() +
-  theme(legend.position=c(0.15,0.18),
-        legend.title = element_blank(),
-        #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
-  )
-
-ggsave(paste0("../plots/EDA/CS_baseline/Test.png"), 
-       device="png", width=1920/400, height=1080/300, dpi=300)
-
-
-
-
-# per ID
-eda_unified$EDA %>% bind_rows() %>%
-  mutate(condition = as.factor(condition),time=round(time),1) %>% 
-  filter(condition %in% c(1,2,3)) %>% 
-  #filter(condition %in% c(1,2)) %>% 
-  group_by(time,condition,ID) %>% 
-  summarise(EDA = mean(EDA_bl)) %>%
-  ggplot(., aes(x=time, y=EDA, color=condition, group=condition)) +
-  facet_wrap(~ID)+
-  geom_vline(xintercept=c(0.8,6), color="blue",linetype="dashed") + #borders of min/max scoring
-  geom_vline(xintercept=0, color="black",linetype="solid") + #zero 
-  geom_path() + scale_color_viridis_d(begin=0.25,end =0.75) +
-  theme_classic()
-ggsave(paste0("E:/Experimente/Experiment - TFO/Plots/EDA/CS_per_Subject/TFO.png"), 
-       device="png", width=1920/150, height=1080/150, dpi=300)
-
-
-# Interference statistics
-
-eda_df_long <- eda_df %>%  #filter(!(ID %in% c("tfo07"))) %>% 
-  select(ID,scl_1:scl_10,condition,trial_condition) %>%
-  pivot_longer(scl_1:scl_10, names_to = "timebin", values_to ="scl") %>%
-  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin))  %>% 
-  #filter(trial_condition <= 20) %>%
-  select(-quark) 
-
-eda_df_long %>% 
-  #filter(timebin >= 3 & timebin <= 10) %>% #filter(valid == T) %>%
-  filter(condition %in% c(5,6,7,8)) %>% 
-  group_by(ID,condition) %>%  summarise(scl = mean(scl)) %>%
-  mutate(ID = as.factor(ID), condition = as.factor(condition)) %>% 
-  ez::ezANOVA(dv=.(scl), wid=.(ID), 
-              within=.(condition), 
-              #between=.(pairs),
-              detailed=T, type=2) %>% anova_apa()
-
-
-anova <- eda_df_long %>% 
-  #filter(timebin >= 3 & timebin <= 10) %>% #filter(valid == T) %>%
-  group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl)) %>%
-  mutate(ID = as.factor(ID), condition = as.factor(condition), timebin = as.factor(timebin)) %>% 
-  ez::ezANOVA(dv=.(scl), wid=.(ID), 
-              within=.(condition, timebin), 
-              #between=.(pairs),
-              detailed=T, type=2)
-
-
-anova %>% anova_apa()
-anova$ANOVA[2,] %>% partial_eta_squared_ci()
-anova$ANOVA[3,] %>% partial_eta_squared_ci()
-anova$ANOVA[4,] %>% partial_eta_squared_ci()
-
-
-eda_df_long %>% 
-  filter(ID %in% responder) %>%
- # filter(trial_condition >= 1 & trial_condition <= 5) %>% 
-  group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl)) %>%
-  mutate(ID = as.factor(ID), condition = recode(factor(condition),"1" = "Threat","2" = "Flight", "3" = "Safety")) %>% 
-  aov_ez(dv="scl", id="ID", . ,within = c("condition","timebin")) %>% 
-  emmeans::emmeans(~ condition|timebin) %>%
-  pairs() %>% summary(adjust = "FDR")
-
-
-
-
-# Get distributions for important time points
-
-eda_df_long %>% 
-  filter(ID %in% responder) %>%
-  #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
-  filter(timebin == 6) %>% 
   mutate(condition = as.factor(condition)) %>%
-  group_by(ID,condition) %>%  summarise(scl = mean(scl)) %>%
-  ggplot(., aes(x=condition, y=scl, color=condition)) +
-  geom_boxplot(outlier.alpha = 0) +
-  geom_jitter() +
-  geom_violin(color = "black", fill = "transparent")+
-  scale_color_manual(values=c("red","orange","darkgreen"),  guide = "none") +
-  scale_x_discrete("5000 - 6000 ms", labels = c("Threat", "Flight", "Safety")) +
-  scale_y_continuous("SCL change") +
-  theme_bw() 
-ggsave("../Plots/EDA/CS_baseline/cs_dist1.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
+  filter(condition %in% c(2,3,4,5)) %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>% 
+  group_by(condition, sample) %>% 
+  summarise(EDA.mean = mean(EDA), EDA.se = sd(EDA)/sqrt(length(EDA)), time = mean(time)) %>%
+  {ggplot(., aes(x=time, y=EDA.mean, color=condition, group=condition, fill=condition)) +
+      geom_vline(xintercept=0, color="black",linetype="solid") + #zero
+      geom_line() +
+      geom_ribbon(aes(ymin=EDA.mean-EDA.se, ymax=EDA.mean+EDA.se), color = NA, alpha=.2) +
+      scale_x_continuous("Time [s]",limits=c(-0.5, 10), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
+      scale_y_continuous("Skin Conductance") +
+      scale_color_viridis_d(aesthetics = c("colour", "fill")) +
+      theme_bw()
+  }
+ggsave("../plots/EDA/cs_acq.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
-eda_df_long %>% 
-  filter(ID %in% responder) %>%
-  #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
-  filter(timebin == 10) %>% 
+
+eda_unified$EDA %>%   
+  # filter(valid == TRUE) %>%
+  # filter(ID %in% responder) %>%
+  bind_rows() %>%
   mutate(condition = as.factor(condition)) %>%
-  group_by(ID,condition) %>%  summarise(scl = mean(scl)) %>%
-  ggplot(., aes(x=condition, y=scl, color=condition)) +
-  geom_boxplot(outlier.alpha = 0) +
-  geom_jitter() +
-  geom_violin(color = "black", fill = "transparent")+
-  scale_color_manual(values=c("red","orange","darkgreen"),  guide = "none") +
-  scale_x_discrete("9000 - 10000 ms", labels = c("Threat", "Flight", "Safety")) +
-  scale_y_continuous("SCL change") +
-  theme_bw() 
-ggsave("../Plots/EDA/CS_baseline/cs_dist2.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
+  filter(condition %in% c(6,7,8,9)) %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>% 
+  group_by(condition,sample) %>% 
+  summarise(EDA.mean = mean(EDA), EDA.se = sd(EDA)/sqrt(length(EDA)), time = mean(time)) %>%
+  {ggplot(., aes(x=time, y=EDA.mean, color=condition, group=condition, fill=condition)) +
+      geom_vline(xintercept=0, color="black",linetype="solid") + #zero
+      geom_line() +
+      geom_ribbon(aes(ymin=EDA.mean-EDA.se, ymax=EDA.mean+EDA.se), color = NA, alpha=.2) +
+      scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
+      scale_y_continuous("Skin Conductance") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
+      scale_color_viridis_d(aesthetics = c("colour", "fill")) +
+      theme_bw()
+  }
+ggsave("../plots/EDA/cs_test.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 
 
-eda_wide_out <- eda_df_long %>% select(ID, condition, timebin, scl, trial_condition) %>%
-  group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl), .groups = "drop") %>% 
-  mutate(condition = factor(condition, levels=c(1,2,3),labels =c("threat","flight","safety")),
-         condition_names = paste0(condition,"_",timebin)) %>% select(-condition, -timebin) %>%
-  pivot_wider(., names_from = condition_names, values_from = scl)
-
-write.csv2(eda_wide_out,"EDA_Daten.csv",row.names=F)
-
-
-scl.data <- eda_df %>% select(ID,trial,Baseline,scl_1:scl_10)
-
-
-
-
-eda_wide_out_1 <- eda_df_long %>% select(ID, condition, timebin, scl, trial_condition) %>%
-  filter(trial_condition < 31) %>%
-  group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl), .groups = "drop") %>% 
-  mutate(condition = factor(condition, levels=c(1,2,3),labels =c("threat","flight","safety")),
-         condition_names = paste0(condition,"_1st_",timebin)) %>% select(-condition, -timebin) %>%
-  pivot_wider(., names_from = condition_names, values_from = scl)
-
-write.csv2(eda_wide_out_1,"EDA_Daten_1st.csv",row.names=F)
-
-eda_wide_out_2 <- eda_df_long %>% select(ID, condition, timebin, scl, trial_condition) %>%
-  filter(trial_condition > 30) %>%
-  group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl), .groups = "drop") %>% 
-  mutate(condition = factor(condition, levels=c(1,2,3),labels =c("threat","flight","safety")),
-         condition_names = paste0(condition,"_2nd_",timebin)) %>% select(-condition, -timebin) %>%
-  pivot_wider(., names_from = condition_names, values_from = scl)
-
-write.csv2(eda_wide_out_2,"EDA_Daten_2st.csv",row.names=F)
+# eda_unified$EDA %>% bind_rows() %>%
+#   mutate(condition = as.factor(condition),time=round(time),1) %>% 
+#   #filter(ID %in% responder) %>%
+#   #filter(condition %in% c(5,6,7,8)) %>% 
+#   #filter(trial_condition >= 41 & trial_condition <= 60) %>% 
+#   filter(condition %in% c(1,2,3,4)) %>% 
+#   group_by(time,condition) %>% 
+#   summarise(EDA = mean(EDA_bl)) %>%
+#   ggplot(., aes(x=time, y=EDA, color=condition, group=condition)) +
+#   #geom_vline(xintercept=c(0.8,6), color="blue",linetype="dashed") + #borders of min/max scoring
+#   #geom_vline(xintercept=0, color="blue",linetype="dashed") + #zero 
+#   geom_path() + 
+#   scale_x_continuous("Time [s]",limits = c(0,10)) +
+#  #scale_y_continuous("EDA", limits=c(-0.25, 0)) + 
+#  # scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
+#   theme_classic() +
+#   theme(legend.position=c(0.15,0.78),
+#         legend.title = element_blank(),
+#         #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
+#   )
+# 
+# ggsave(paste0("../plots/EDA/CS_baseline/Acquisition.png"), 
+#        device="png", width=1920/400, height=1080/300, dpi=300)
+# 
+# 
+# eda_unified$EDA %>% bind_rows() %>%
+#   mutate(condition = as.factor(condition),time=round(time),1) %>% 
+#   #filter(ID %in% responder) %>%
+#   #filter(condition %in% c(5,6,7,8)) %>% 
+#   #filter(trial_condition >= 41 & trial_condition <= 60) %>% 
+#   filter(condition %in% c(5,6,7,8)) %>% 
+#   group_by(time,condition) %>% 
+#   summarise(EDA = mean(EDA_bl)) %>%
+#   ggplot(., aes(x=time, y=EDA, color=condition, group=condition)) +
+#   #geom_vline(xintercept=c(0.8,6), color="blue",linetype="dashed") + #borders of min/max scoring
+#   #geom_vline(xintercept=0, color="blue",linetype="dashed") + #zero 
+#   geom_path() + 
+#   scale_x_continuous("Time [s]",limits = c(0,10)) +
+#   #scale_y_continuous("EDA", limits=c(-0.25, 0)) + 
+#   # scale_color_manual(values=c("red","orange","darkgreen"), labels = c("Threat", "Flight", "Safety")) +
+#   theme_classic() +
+#   theme(legend.position=c(0.15,0.18),
+#         legend.title = element_blank(),
+#         #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
+#   )
+# ggsave("../plots/Pupil/cs_test.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+# 
+# 
+# # Interference statistics
+# 
+# eda_df_long <- eda_df %>%  #filter(!(ID %in% c("tfo07"))) %>% 
+#   select(ID,scl_1:scl_10,condition,trial_condition) %>%
+#   pivot_longer(scl_1:scl_10, names_to = "timebin", values_to ="scl") %>%
+#   separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin))  %>% 
+#   #filter(trial_condition <= 20) %>%
+#   select(-quark) 
+# 
+# eda_df_long %>% 
+#   #filter(timebin >= 3 & timebin <= 10) %>% #filter(valid == T) %>%
+#   filter(condition %in% c(5,6,7,8)) %>% 
+#   group_by(ID,condition) %>%  summarise(scl = mean(scl)) %>%
+#   mutate(ID = as.factor(ID), condition = as.factor(condition)) %>% 
+#   ez::ezANOVA(dv=.(scl), wid=.(ID), 
+#               within=.(condition), 
+#               #between=.(pairs),
+#               detailed=T, type=2) %>% anova_apa()
+# 
+# 
+# anova <- eda_df_long %>% 
+#   #filter(timebin >= 3 & timebin <= 10) %>% #filter(valid == T) %>%
+#   group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl)) %>%
+#   mutate(ID = as.factor(ID), condition = as.factor(condition), timebin = as.factor(timebin)) %>% 
+#   ez::ezANOVA(dv=.(scl), wid=.(ID), 
+#               within=.(condition, timebin), 
+#               #between=.(pairs),
+#               detailed=T, type=2)
+# 
+# 
+# anova %>% anova_apa()
+# anova$ANOVA[2,] %>% partial_eta_squared_ci()
+# anova$ANOVA[3,] %>% partial_eta_squared_ci()
+# anova$ANOVA[4,] %>% partial_eta_squared_ci()
+# 
+# 
+# eda_df_long %>% 
+#   filter(ID %in% responder) %>%
+#  # filter(trial_condition >= 1 & trial_condition <= 5) %>% 
+#   group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl)) %>%
+#   mutate(ID = as.factor(ID), condition = recode(factor(condition),"1" = "Threat","2" = "Flight", "3" = "Safety")) %>% 
+#   aov_ez(dv="scl", id="ID", . ,within = c("condition","timebin")) %>% 
+#   emmeans::emmeans(~ condition|timebin) %>%
+#   pairs() %>% summary(adjust = "FDR")
+# 
+# 
+# 
+# 
+# # Get distributions for important time points
+# 
+# eda_df_long %>% 
+#   filter(ID %in% responder) %>%
+#   #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
+#   filter(timebin == 6) %>% 
+#   mutate(condition = as.factor(condition)) %>%
+#   group_by(ID,condition) %>%  summarise(scl = mean(scl)) %>%
+#   ggplot(., aes(x=condition, y=scl, color=condition)) +
+#   geom_boxplot(outlier.alpha = 0) +
+#   geom_jitter() +
+#   geom_violin(color = "black", fill = "transparent")+
+#   scale_color_manual(values=c("red","orange","darkgreen"),  guide = "none") +
+#   scale_x_discrete("5000 - 6000 ms", labels = c("Threat", "Flight", "Safety")) +
+#   scale_y_continuous("SCL change") +
+#   theme_bw() 
+# ggsave("../Plots/EDA/CS_baseline/cs_dist1.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
+# 
+# eda_df_long %>% 
+#   filter(ID %in% responder) %>%
+#   #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
+#   filter(timebin == 10) %>% 
+#   mutate(condition = as.factor(condition)) %>%
+#   group_by(ID,condition) %>%  summarise(scl = mean(scl)) %>%
+#   ggplot(., aes(x=condition, y=scl, color=condition)) +
+#   geom_boxplot(outlier.alpha = 0) +
+#   geom_jitter() +
+#   geom_violin(color = "black", fill = "transparent")+
+#   scale_color_manual(values=c("red","orange","darkgreen"),  guide = "none") +
+#   scale_x_discrete("9000 - 10000 ms", labels = c("Threat", "Flight", "Safety")) +
+#   scale_y_continuous("SCL change") +
+#   theme_bw() 
+# ggsave("../Plots/EDA/CS_baseline/cs_dist2.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
+# 
+# 
+# 
+# 
+# eda_wide_out <- eda_df_long %>% select(ID, condition, timebin, scl, trial_condition) %>%
+#   group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl), .groups = "drop") %>% 
+#   mutate(condition = factor(condition, levels=c(1,2,3),labels =c("threat","flight","safety")),
+#          condition_names = paste0(condition,"_",timebin)) %>% select(-condition, -timebin) %>%
+#   pivot_wider(., names_from = condition_names, values_from = scl)
+# 
+# write.csv2(eda_wide_out,"EDA_Daten.csv",row.names=F)
+# 
+# 
+# scl.data <- eda_df %>% select(ID,trial,Baseline,scl_1:scl_10)
+# 
+# 
+# 
+# 
+# eda_wide_out_1 <- eda_df_long %>% select(ID, condition, timebin, scl, trial_condition) %>%
+#   filter(trial_condition < 31) %>%
+#   group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl), .groups = "drop") %>% 
+#   mutate(condition = factor(condition, levels=c(1,2,3),labels =c("threat","flight","safety")),
+#          condition_names = paste0(condition,"_1st_",timebin)) %>% select(-condition, -timebin) %>%
+#   pivot_wider(., names_from = condition_names, values_from = scl)
+# 
+# write.csv2(eda_wide_out_1,"EDA_Daten_1st.csv",row.names=F)
+# 
+# eda_wide_out_2 <- eda_df_long %>% select(ID, condition, timebin, scl, trial_condition) %>%
+#   filter(trial_condition > 30) %>%
+#   group_by(ID,condition,timebin) %>%  summarise(scl = mean(scl), .groups = "drop") %>% 
+#   mutate(condition = factor(condition, levels=c(1,2,3),labels =c("threat","flight","safety")),
+#          condition_names = paste0(condition,"_2nd_",timebin)) %>% select(-condition, -timebin) %>%
+#   pivot_wider(., names_from = condition_names, values_from = scl)
+# 
+# write.csv2(eda_wide_out_2,"EDA_Daten_2st.csv",row.names=F)
