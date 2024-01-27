@@ -10,6 +10,8 @@ library(zoo)
 library(tidyverse)
 library(stringr)
 library(afex)
+library(lme4)
+library(lmerTest)
 
 options(dplyr.summarise.inform = FALSE)
 
@@ -240,74 +242,75 @@ for (subject_inmat in codes){
     baseline_trial = pupil_diameter_binded %>% filter(time <= start_time + max(baselineWindow),
                                                       time >= start_time + min(baselineWindow)) %>% 
       summarize(mean = mean(diameter,na.rm=T))
+    
     baseline_trial_diameter = baseline_trial$mean
     
     diameter_level_trial = pupil_diameter_binded %>% filter(time >= start_time - 0.5 & trial == trial_idx) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    
-    diameter_level_trial_1 = pupil_diameter_binded %>% filter(time >= start + 1, time <= start + 1.5) %>%  
+    diameter_level_trial_0 = pupil_diameter_binded %>% filter(time >= start_time, time <= start_time + 0.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_2 = pupil_diameter_binded %>% filter(time >= start + 1.5,time <= start + 2) %>%  
+    diameter_level_trial_1 = pupil_diameter_binded %>% filter(time >= start_time + 0.5, time <= start_time + 1) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_3 = pupil_diameter_binded %>% filter(time >= start + 2, time <= start + 2.5) %>%  
+    diameter_level_trial_2 = pupil_diameter_binded %>% filter(time >= start_time + 1, time <= start_time + 1.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_4 = pupil_diameter_binded %>% filter(time >= start + 2.5,time <= start + 3) %>%  
+    diameter_level_trial_3 = pupil_diameter_binded %>% filter(time >= start_time + 1.5,time <= start_time + 2) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_5 = pupil_diameter_binded %>% filter(time >= start + 3, time <= start + 3.5) %>%  
+    diameter_level_trial_4 = pupil_diameter_binded %>% filter(time >= start_time + 2, time <= start_time + 2.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_6 = pupil_diameter_binded %>% filter(time >= start + 3.5,time <= start + 4) %>%  
+    diameter_level_trial_5 = pupil_diameter_binded %>% filter(time >= start_time + 2.5,time <= start_time + 3) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_7 = pupil_diameter_binded %>% filter(time >= start + 4, time <= start + 4.5) %>%  
+    diameter_level_trial_6 = pupil_diameter_binded %>% filter(time >= start_time + 3, time <= start_time + 3.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_8 = pupil_diameter_binded %>% filter(time >= start + 4.5, time <= start + 5) %>%  
+    diameter_level_trial_7 = pupil_diameter_binded %>% filter(time >= start_time + 3.5,time <= start_time + 4) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_9 = pupil_diameter_binded %>% filter(time >= start + 5,time <= start + 5.5) %>%  
+    diameter_level_trial_8 = pupil_diameter_binded %>% filter(time >= start_time + 4, time <= start_time + 4.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_10 = pupil_diameter_binded %>% filter(time >= start + 5.5, time <= start + 6) %>%  
+    diameter_level_trial_9 = pupil_diameter_binded %>% filter(time >= start_time + 4.5, time <= start_time + 5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_11 = pupil_diameter_binded %>% filter(time >= start + 6,time <= start + 6.5) %>%  
+    diameter_level_trial_10 = pupil_diameter_binded %>% filter(time >= start_time + 5,time <= start_time + 5.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_12 = pupil_diameter_binded %>% filter(time >= start + 6.5, time <= start + 7) %>%  
+    diameter_level_trial_11 = pupil_diameter_binded %>% filter(time >= start_time + 5.5, time <= start_time + 6) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_13 = pupil_diameter_binded %>% filter(time >= start + 7,time <= start + 7.5) %>%  
+    diameter_level_trial_12 = pupil_diameter_binded %>% filter(time >= start_time + 6,time <= start_time + 6.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_14 = pupil_diameter_binded %>% filter(time >= start + 7.5, time <= start + 8) %>%  
+    diameter_level_trial_13 = pupil_diameter_binded %>% filter(time >= start_time + 6.5, time <= start_time + 7) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_15 = pupil_diameter_binded %>% filter(time >= start + 8, time <= start + 8.5) %>%  
+    diameter_level_trial_14 = pupil_diameter_binded %>% filter(time >= start_time + 7,time <= start_time + 7.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_16 = pupil_diameter_binded %>% filter(time >= start + 8.5, time <= start + 9) %>%  
+    diameter_level_trial_15 = pupil_diameter_binded %>% filter(time >= start_time + 7.5, time <= start_time + 8) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_17 = pupil_diameter_binded %>% filter(time >= start + 9, time <= start + 9.5) %>%  
+    diameter_level_trial_16 = pupil_diameter_binded %>% filter(time >= start_time + 8,time <= start_time + 8.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_18 = pupil_diameter_binded %>% filter(time >= start + 9.5, time <= start + 10) %>%  
+    diameter_level_trial_17 = pupil_diameter_binded %>% filter(time >= start_time + 8.5, time <= start_time + 8) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_19 = pupil_diameter_binded %>% filter(time >= start + 10, time <= start + 10.5) %>%  
+    diameter_level_trial_18 = pupil_diameter_binded %>% filter(time >= start_time + 9,time <= start_time + 9.5) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
-    diameter_level_trial_20 = pupil_diameter_binded %>% filter(time >= start + 10.5, time <= start + 11) %>%  
+    diameter_level_trial_19 = pupil_diameter_binded %>% filter(time >= start_time + 9.5, time <= start_time + 10) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
     
     dilations = tibble(dilation = diameter_level_trial - baseline_trial,
+                       dilation_0 = diameter_level_trial_1 - baseline_trial,
                        dilation_1 = diameter_level_trial_1 - baseline_trial,
                        dilation_2 = diameter_level_trial_2 - baseline_trial,
                        dilation_3 = diameter_level_trial_3 - baseline_trial,
@@ -323,13 +326,12 @@ for (subject_inmat in codes){
                        dilation_13 = diameter_level_trial_13 - baseline_trial,
                        dilation_14 = diameter_level_trial_14 - baseline_trial,
                        dilation_15 = diameter_level_trial_15 - baseline_trial,
-                       dilation_16 = diameter_level_trial_16 - baseline_trial,
-                       dilation_17 = diameter_level_trial_17 - baseline_trial,
-                       dilation_18 = diameter_level_trial_18 - baseline_trial,
-                       dilation_19 = diameter_level_trial_19 - baseline_trial,
-                       dilation_20 = diameter_level_trial_20 - baseline_trial,
+                       dilation_16 = diameter_level_trial_12 - baseline_trial,
+                       dilation_17 = diameter_level_trial_13 - baseline_trial,
+                       dilation_18 = diameter_level_trial_14 - baseline_trial,
+                       dilation_19 = diameter_level_trial_15 - baseline_trial,
                        baseline = baseline_trial,
-                       mean_diameter = diameter_level_trial) %>% select(dilation:dilation_20, baseline, mean_diameter, everything()) 
+                       mean_diameter = diameter_level_trial) %>% select(dilation:dilation_19, baseline, mean_diameter, everything()) 
     
     
     pupil_vp[t, names(dilations)] = dilations
@@ -421,8 +423,11 @@ ga_unified = ga_unified %>%
   left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(ID = as.integer(substr(subject, 5, 6))), by=c("ID", "trial")) %>% 
   mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
 
-# Signal quality check
+pupil_df = pupil_df %>% 
+  left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(ID = as.integer(substr(subject, 5, 6))), by=c("ID", "trial")) %>% 
+  mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
 
+# Signal quality check
 mean(as.numeric(pupil_df$interpolated)) #30.4% interpolated sample points
 sum(pupil_df$valid == T) #6291 valid trials
 sum(pupil_df$valid == F) #2709 invalid trials
@@ -439,7 +444,58 @@ non_responder <- pupil_df %>% filter(condition %in% c(1,2,3)) %>% group_by(ID) %
   summarise(dilators = mean(as.numeric(interpolated))) %>% filter(dilators >= 0.5) %>% .$ID
 
 
+
 # Plot Unified Data
+# Acquisition
+# Long format for statistical testing
+pupil_df_long_acq <- pupil_df %>%
+  # filter(outcome == "no outcome") %>%
+  #filter(ID %in% responder) %>%
+  pivot_longer(dilation_0:dilation_15, names_to = "timebin", values_to ="diameter") %>%
+  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
+  # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
+  filter(condition %in% c(2,3,4,5)) %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>% 
+  select(ID, trial, condition, outcome, timebin, diameter) %>% 
+  mutate(diameter = as.numeric(diameter[,1])) %>% 
+  mutate(time = timebin * 0.5) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+
+main_effect_threat = list()
+main_effect_social = list()
+interaction_effect = list()
+alpha = .05 / length(unique(pupil_df_long_acq$time))
+for (timepoint in unique(pupil_df_long_acq$time)) {
+  # timepoint = 3
+  data = pupil_df_long_acq %>% 
+    filter(time == timepoint) %>% 
+    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+    group_by(ID, condition_social, condition_threat)
+  model = lmer(diameter ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
+  anova = anova(model, type=2)
+  
+  p_threat = anova["condition_threat", "Pr(>F)"]
+  p_social = anova["condition_social", "Pr(>F)"]
+  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
+  if (p_threat < alpha) {
+    main_effect_threat = c(main_effect_threat, timepoint)
+  }
+  if (p_social < alpha) {
+    main_effect_social = c(main_effect_social, timepoint)
+  }
+  if (p_interaction < alpha) {
+    interaction_effect = c(interaction_effect, timepoint)
+  }
+}
+main_effect_threat = as.numeric(main_effect_threat)
+main_effect_social = as.numeric(main_effect_social)
+interaction_effect = as.numeric(interaction_effect)
+
+main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
+main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
+interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
+
 ga_unified %>% filter(valid == TRUE) %>%
   # filter(outcome == "no outcome") %>%
   #filter(ID %in% responder) %>%
@@ -449,168 +505,94 @@ ga_unified %>% filter(valid == TRUE) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>% 
   group_by(condition,samplepoint) %>% 
   summarise(diameter.mean = mean(diameter), diameter.se = sd(diameter)/sqrt(length(diameter)), time = mean(time)) %>%
-  {ggplot(., aes(x=time, y=diameter.mean, color=condition, group=condition, fill=condition)) +
-      geom_vline(xintercept=0, color="black",linetype="solid") + #zero
-      geom_line() +
-      geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se), color = NA, alpha=.2) +
+  {ggplot(., aes(x=time, y=diameter.mean)) +
+      geom_vline(xintercept=0, colour="black",linetype="solid") + #zero
+      geom_line(aes(colour=condition)) +
+      geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se, colour=condition, fill=condition), color = NA, alpha=.2) +
+      geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-70, yend=-70, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-75, yend=-75, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+      geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-80, yend=-80, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
       scale_x_continuous("Time [s]",limits=c(-0.5, 8), minor_breaks=c(0,1,2,3,4,5,6,7,8), breaks=c(0, 2, 4, 6, 8)) +
       scale_y_continuous("Pupil Diameter",limits=c(-80, 150)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw()
-    }
+      theme_bw() + 
+      # labs(title = paste("Pupil (N = ", n_distinct(pupil_df_long_acq$ID), ")", sep="")) +
+      scale_size_manual("effects", values=rep(1,3), guide=guide_legend(override.aes = list(colour=c("#e874ff", "#ff8383", "#ffdd74")))) # 
+  }
 ggsave("../plots/Pupil/cs_acq.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
+# Test
+# Long format for statistical testing
+pupil_df_long_test <- pupil_df %>%
+  #filter(ID %in% responder) %>%
+  pivot_longer(dilation_0:dilation_19, names_to = "timebin", values_to ="diameter") %>%
+  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
+  # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
+  filter(condition %in% c(2,3,4,5)) %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>% 
+  select(ID, trial, condition, timebin, diameter) %>% 
+  mutate(diameter = as.numeric(diameter[,1])) %>% 
+  mutate(time = timebin * 0.5) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+
+main_effect_threat = list()
+main_effect_social = list()
+interaction_effect = list()
+alpha = .05 / length(unique(pupil_df_long_test$time))
+for (timepoint in unique(pupil_df_long_test$time)) {
+  # timepoint = 0
+  data = pupil_df_long_test %>% 
+    filter(time == timepoint) %>% 
+    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+    group_by(ID, condition_social, condition_threat)
+  
+  model = lmer(diameter ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
+  anova = anova(model, type=2)
+  
+  p_threat = anova["condition_threat", "Pr(>F)"]
+  p_social = anova["condition_social", "Pr(>F)"]
+  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
+  
+  if (p_threat < alpha) {
+    main_effect_threat = c(main_effect_threat, timepoint)
+  }
+  if (p_social < alpha) {
+    main_effect_social = c(main_effect_social, timepoint)
+  }
+  if (p_interaction < alpha) {
+    interaction_effect = c(interaction_effect, timepoint)
+  }
+}
+main_effect_threat = as.numeric(main_effect_threat)
+main_effect_social = as.numeric(main_effect_social)
+interaction_effect = as.numeric(interaction_effect)
+
+main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
+main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
+interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
 
 ga_unified %>% filter(valid == TRUE) %>%
   #filter(ID %in% responder) %>%
   .$diameter %>% bind_rows() %>%
   mutate(condition = as.factor(condition)) %>% 
   # filter(trial < 60) %>%
-  filter(condition %in% c(6,7,8, 9)) %>%
+  filter(condition %in% c(6,7,8,9)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>% 
   group_by(condition,samplepoint) %>% 
   summarise(diameter.mean = mean(diameter), diameter.se = sd(diameter)/sqrt(length(diameter)), time = mean(time)) %>%
-  {ggplot(., aes(x=time, y=diameter.mean, color=condition, group=condition, fill=condition)) +
-      geom_vline(xintercept=0, color="black",linetype="solid") + #zero
-      geom_line() +
-      geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se), color = NA, alpha=.2) +
+  {ggplot(., aes(x=time, y=diameter.mean)) +
+      geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
+      geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
+      geom_line(aes(colour=condition)) +
+      geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se, colour=condition, fill=condition), color = NA, alpha=.2) +
+      geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-90, yend=-90, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-93, yend=-93, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+      geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-96, yend=-96, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
       scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
       scale_y_continuous("Pupil Diameter", breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw()
+      theme_bw() +
+      scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#e874ff", "#ff8383", "#ffdd74"))))
   }
 ggsave("../plots/Pupil/cs_test.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
-
-
-
-# #Intereference statistics
-# 
-# pupil_df %>%  
-#   #filter(ID %in% responder) %>%
-#   pivot_longer(dilation_1:dilation_20, names_to = "timebin", values_to ="diameter") %>%
-#   separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
-#   filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
-#   filter(condition %in% c(5,6,7,8)) %>%
-#   group_by(ID,condition) %>%  summarise(diameter = mean(diameter)) %>%
-#   mutate(ID = as.factor(ID), condition = as.factor(condition)) %>% 
-#   ez::ezANOVA(dv=.(diameter), wid=.(ID), 
-#               within=.(condition), 
-#               #between=.(pairs),
-#               detailed=T, type=2) %>% apa::anova_apa()
-# 
-# 
-# 
-# 
-# 
-# pupil_df %>%  
-#   #filter(ID %in% responder) %>%
-#   pivot_longer(dilation_1:dilation_20, names_to = "timebin", values_to ="diameter") %>%
-#   separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
-#   group_by(timebin,condition) %>%  summarise(diameter = mean(diameter)) %>%
-#   mutate(condition = as.factor(condition)) %>% 
-#   ggplot(., aes(x=timebin, y=diameter, color=condition, group=condition)) +
-#   #geom_vline(xintercept=c(responseWindow), color="blue",linetype="dashed") + #borders of min/max scoring
-#   geom_vline(xintercept=0, color="black",linetype="solid") + #zero 
-#   geom_vline(xintercept=4, color="lightblue",linetype="dashed") + #US time
-#   geom_vline(xintercept=20, color="lightblue",linetype="dashed") + #US time
-#   geom_point() +
-#   geom_path() + 
-#   scale_color_viridis_d(begin=0.25,end =0.75, labels = c("Threat", "Flight", "Safety")) +
-#   #scale_y_continuous("pupil diameter") +
-#   theme_bw() 
-# ggsave("../Plots/Pupille/cs_acq.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
-# 
-# 
-# pupil_df_long <- pupil_df %>%  
-#   #filter(ID %in% responder) %>%
-#   pivot_longer(dilation_1:dilation_20, names_to = "timebin", values_to ="diameter") %>%
-#   separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
-#   group_by(ID,condition,timebin) %>%  summarise(diameter = mean(diameter,na.rm = T)) %>%
-#   group_by(ID) %>% mutate(diameter = scale(diameter))
-# 
-# 
-# anova <- pupil_df_long %>% 
-#   #filter(ID %in% responder) %>%
-#   #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
-#   mutate(ID = as.factor(ID), timebin = as.factor(timebin),
-#          condition = recode(factor(condition),"1" = "Threat","2" = "Flight", "3" = "Safety")) %>% 
-#   ez::ezANOVA(dv=.(diameter), wid=.(ID), 
-#               within=.(condition, timebin), 
-#               #between=.(pairs),
-#               detailed=T, type=2)
-# 
-# 
-# anova %>% anova_apa()
-# anova$ANOVA[2,] %>% partial_eta_squared_ci()
-# anova$ANOVA[3,] %>% partial_eta_squared_ci()
-# anova$ANOVA[4,] %>% partial_eta_squared_ci()
-# 
-# 
-# 
-# 
-# 
-# 
-# pupil_df_long %>% 
-#   filter(ID %in% responder) %>%
-#   #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
-#   group_by(ID,condition,timebin) %>%  summarise(diameter = mean(diameter)) %>%
-#   mutate(ID = as.factor(ID), condition = recode(factor(condition),"1" = "Threat","2" = "Flight", "3" = "Safety")) %>% 
-#   aov_ez(dv="diameter", id="ID", . ,within = c("condition","timebin")) %>% 
-#   emmeans::emmeans(~ condition|timebin) %>%
-#   pairs() %>% summary(adjust = "none")
-# 
-# 
-# 
-# # Get distributions for important time points
-# 
-# pupil_df_long %>% 
-#   filter(ID %in% responder) %>%
-#   #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
-#   filter(timebin == 4) %>% 
-#   mutate(condition = as.factor(condition)) %>%
-#   group_by(ID,condition) %>%  summarise(diameter = mean(diameter)) %>%
-#   ggplot(., aes(x=condition, y=diameter, color=condition)) +
-#   #geom_vline(xintercept=c(responseWindow), color="blue",linetype="dashed") + #borders of min/max scoring
-#   geom_boxplot(outlier.alpha = 0) +
-#   geom_jitter() +
-#   geom_violin(color = "black", fill = "transparent")+
-#   scale_color_manual(values=c("red","orange","darkgreen"),  guide = "none") +
-#   scale_x_discrete("1500 - 2000 ms", labels = c("Threat", "Flight", "Safety")) +
-#   scale_y_continuous("Pupil diameter change") +
-#   theme_bw() 
-# ggsave("../Plots/Pupille/cs_dist1.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
-# 
-# pupil_df_long %>% 
-#   filter(ID %in% responder) %>%
-#   #filter(trial_condition >= 1 & trial_condition <= 60) %>% 
-#   filter(timebin == 20) %>% 
-#   mutate(condition = as.factor(condition)) %>%
-#   group_by(ID,condition) %>%  summarise(diameter = mean(diameter)) %>%
-#   ggplot(., aes(x=condition, y=diameter, color=condition)) +
-#   #geom_vline(xintercept=c(responseWindow), color="blue",linetype="dashed") + #borders of min/max scoring
-#   geom_boxplot(outlier.alpha = 0) +
-#   geom_jitter() +
-#   geom_violin(color = "black", fill = "transparent")+
-#   scale_color_manual(values=c("red","orange","darkgreen"),  guide = "none") +
-#   scale_x_discrete("9500 - 10000 ms", labels = c("Threat", "Flight", "Safety")) +
-#   scale_y_continuous("Pupil diameter change") +
-#   theme_bw() 
-# ggsave("../Plots/Pupille/cs_dist2.png",type="cairo-png", width=1920/400, height=1080/300, dpi=300)
-# 
-# # Out
-# 
-# 
-# pupil_wide_out <- pupil_df_long %>% 
-#   #filter(ID %in% responder) %>%
-#   select(ID, condition, timebin, diameter) %>%
-#   group_by(ID,condition,timebin) %>%  summarise(diameter = mean(diameter, na.rm = T), .groups = "drop") %>% 
-#   mutate(condition = factor(condition, levels=c(1,2,3),labels =c("threat","flight","safety")),
-#          condition_names = paste0(condition,"_",timebin)) %>% select(-condition, -timebin) %>%
-#   pivot_wider(., names_from = condition_names, values_from = diameter)
-# 
-# write.csv2(pupil_wide_out,"Pupillen_Daten.csv",row.names=F)
-# 
-# 
-# #Out for Korrels
-# 
-# pupil.data.wue <- pupil_df %>% select(ID,trial,dilation_1:dilation_20)

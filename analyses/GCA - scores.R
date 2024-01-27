@@ -6,6 +6,7 @@
 library(readxl)
 library(dplyr)
 library(tidyr)
+library(tidyverse)
 
 # Set working directory
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -20,12 +21,14 @@ df_scores$gender <- recode(df_scores$gender, `1` = "male", `2` = "female", `3` =
 df_scores$handedness <- recode(df_scores$handedness, `1` = "right", `2` = "left")
 df_scores$smoking <- recode(df_scores$smoking, `1` = "smoker", `2` = "no smoker")
 
+
+# Calculate Questionnaire Scores
+# --> Recoding of reversed items has already been done in sosci
+
 # SPAI
 df_spai <- df_scores %>%
   select(contains('spai'))
-
-# Adapt scaling (from 1-7 to 0-6)
-df_spai <- df_spai - 1
+df_spai <- df_spai - 1 # Adapt scaling (from 1-7 to 0-6)
 
 # Calculate means of nested items
 columns_spai_multi <- names(df_spai)[grepl('_', names(df_spai))]
@@ -43,39 +46,33 @@ for (item in items) {
     mutate("{sprintf('spai%d', item)}" := rowMeans(df_spai_multi_subset, na.rm = TRUE))
 }
 
-# Calculate mean of scale
 df_spai <- df_spai %>%
-  mutate(SPAI = rowMeans(df_spai, na.rm = TRUE)) %>%
+  mutate(SPAI = rowMeans(df_spai, na.rm = TRUE)) %>% # Calculate mean of scale
   select(SPAI)
 
 # SIAS
 df_sias <- df_scores %>%
   select(contains('sias'))
 
-# Adapt scaling (from 1-5 to 0-4)
-df_sias <- df_sias - 1
-
-# Calculate sum of items
-df_sias <- df_sias %>%
-  mutate(SIAS = rowSums(.)) %>%
+df_sias <- df_sias - 1 # Adapt scaling (from 1-5 to 0-4)
+df_sias <- df_sias %>% 
+  mutate(SIAS = rowSums(.)) %>% # Calculate sum of items
   select(SIAS)
 
 # STAI-T
 df_stai <- df_scores %>%
   select(contains('stai'))
 
-# Calculate sum of respective items
 df_stai <- df_stai %>%
-  mutate(STAI_T = rowSums(.)) %>%
+  mutate(STAI_T = rowSums(.)) %>% 
   select(STAI_T)
 
 # Intolerance of Uncertainty
 df_ui <- df_scores %>%
   select(contains('ui'))
 
-# Calculate sum of respective items
 df_ui <- df_ui %>%
-  mutate(UI = rowSums(.)) %>%
+  mutate(UI = rowSums(.)) %>% # Calculate sum of items
   select(UI)
 
 # VAS: State Anxiety, Nervousness, Distress, Stress
@@ -91,6 +88,7 @@ df_vas <- df_scores %>%
 # Debriefing / Control Questions
 rep_str = c('-'='',
             '\r\n'=',',
+            ';'=',',
             'ü' = 'ue',
             'ä' = 'ae',
             'ö' = 'oe',
@@ -116,5 +114,9 @@ print(paste("Age = ", round(mean(df_summary$age), 1), ", SD = ", round(sd(df_sum
 prop.table(table(df_summary$gender)) * 100
 
 # Write summary to CSV
-write.csv2(df_summary, file.path(path, "scores_summary.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
+write.csv2(df_summary, file.path(path, "demo_scores.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
 
+# Write summary to CSV for jamovi
+df_summary <- df_summary %>% 
+  select(-c(purpose, variables, labbook))
+write.csv2(df_summary, file.path(path, "demo_scores_jamovi.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")

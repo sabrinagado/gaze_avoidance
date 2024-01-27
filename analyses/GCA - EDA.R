@@ -10,8 +10,9 @@ library(signal)
 library(tidyverse)
 library(stringr)
 library(apa)
-library(ggbeeswarm)
 library(afex)
+library(lme4)
+library(lmerTest)
 options(dplyr.summarise.inform = FALSE)
 
 
@@ -181,7 +182,7 @@ rep_str = c('10' = "Shock",
 
 for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
   
-  # subject_inmat = filemat[[3]]
+  # subject_inmat = filemat[[5]]
   
   eda <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
     rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
@@ -456,77 +457,96 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
  
     if(scl_bins){
       
-      scl_1 <- eda %>% filter(time >= start,
-                              time <= start+1) %>%
+      scl_0 <- eda %>% filter(time >= start, time <= start+0.5) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
-      scl_2 <- eda %>% filter(time >= start+1,
-                              time <= start+2) %>%
+      scl_1 <- eda %>% filter(time >= start+0.5, time <= start+1) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
-      scl_3 <- eda %>% filter(time >= start+2,
-                              time <= start+3) %>%
+      scl_2 <- eda %>% filter(time >= start+1, time <= start+1.5) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
-      scl_4 <- eda %>% filter(time >= start+3,
-                              time <= start+4) %>%
+      scl_3 <- eda %>% filter(time >= start+1.5, time <= start+2) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
-      scl_5 <- eda %>% filter(time >= start+4,
-                              time <= start+5) %>%
+      scl_4 <- eda %>% filter(time >= start+2, time <= start+2.5) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
-      scl_6 <- eda %>% filter(time >= start+5,
-                              time <= start+6) %>%
+      scl_5 <- eda %>% filter(time >= start+2.5, time <= start+3) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
-      scl_7 <- eda %>% filter(time >= start+6,
-                              time <= start+7) %>%
+      scl_6 <- eda %>% filter(time >= start+3, time <= start+3.5) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
-      scl_8 <- eda %>% filter(time >= start+7,
-                              time <= start+8) %>%
+      scl_7 <- eda %>% filter(time >= start+3.5, time <= start+4) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
-      scl_9 <- eda %>% filter(time >= start+8,
-                              time <= start+9) %>%
+      scl_8 <- eda %>% filter(time >= start+4, time <= start+4.5) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
-      scl_10 <- eda %>% filter(time >= start+9,
-                              time <= start+10) %>%
+      scl_9 <- eda %>% filter(time >= start+4.5, time <= start+5) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_10 <- eda %>% filter(time >= start+5, time <= start+5.5) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_11 <- eda %>% filter(time >= start+5.5, time <= start+6) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_12 <- eda %>% filter(time >= start+6, time <= start+6.5) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_13 <- eda %>% filter(time >= start+6.5, time <= start+7) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_14 <- eda %>% filter(time >= start+7, time <= start+7.5) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_15 <- eda %>% filter(time >= start+7.5, time <= start+8) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_16 <- eda %>% filter(time >= start+8, time <= start+8.5) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_17 <- eda %>% filter(time >= start+8.5, time <= start+9) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_18 <- eda %>% filter(time >= start+9, time <= start+9.5) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
+      scl_19 <- eda %>% filter(time >= start+9.5, time <= start+10) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
       }
      
     if(fir_algorithm){
-    
-    eir_max_searching = T
-    upperLimit <- start + max(eirWindow)
-    lowerLimit <- start + min(eirWindow)
-    
-    while (eir_max_searching){ 
+      eir_max_searching = T
+      upperLimit <- start + max(eirWindow)
+      lowerLimit <- start + min(eirWindow)
       
-      eir_max = eda %>% 
-        filter(time <= upperLimit &
-                 time >= lowerLimit) %>%
-        filter(EDA == max(EDA)) %>% head(1)
-      
-      
-      if(eir_max$time > lowerLimit & eir_max$time < upperLimit){
-        eir_max_searching <- F
-      }    
-      
-      if (isTRUE(all.equal(eir_max$time,upperLimit))){
-        upperLimit <- round(upperLimit - 1/sample_rate,2)
-      } else if(isTRUE(all.equal(eir_max$time,lowerLimit))){
-        lowerLimit <- round(lowerLimit + 1/sample_rate,2)
+      while (eir_max_searching){ 
+        
+        eir_max = eda %>% 
+          filter(time <= upperLimit &
+                   time >= lowerLimit) %>%
+          filter(EDA == max(EDA)) %>% head(1)
+        
+        
+        if(eir_max$time > lowerLimit & eir_max$time < upperLimit){
+          eir_max_searching <- F
+        }    
+        
+        if (isTRUE(all.equal(eir_max$time,upperLimit))){
+          upperLimit <- round(upperLimit - 1/sample_rate,2)
+        } else if(isTRUE(all.equal(eir_max$time,lowerLimit))){
+          lowerLimit <- round(lowerLimit + 1/sample_rate,2)
+        }
+        
+        if(upperLimit == lowerLimit){
+          eir_max$EDA <- NA
+          eir_max_searching <- F
+        }
       }
-      
-      if(upperLimit == lowerLimit){
-        eir_max$EDA <- NA
-        eir_max_searching <- F
-      }
-    }
     
     
     
@@ -664,6 +684,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
     if(scl_bins){
       scr_out <- scr_out %>%
         mutate(
+          scl_0 = scl_0 - Baseline,
           scl_1 = scl_1 - Baseline,
           scl_2 = scl_2 - Baseline,
           scl_3 = scl_3 - Baseline,
@@ -673,7 +694,16 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
           scl_7 = scl_7 - Baseline,
           scl_8 = scl_8 - Baseline,
           scl_9 = scl_9 - Baseline,
-          scl_10 = scl_10 - Baseline
+          scl_10 = scl_10 - Baseline,
+          scl_11 = scl_11 - Baseline,
+          scl_12 = scl_12 - Baseline,
+          scl_13 = scl_13 - Baseline,
+          scl_14 = scl_14 - Baseline,
+          scl_15 = scl_15 - Baseline,
+          scl_16 = scl_16 - Baseline,
+          scl_17 = scl_17 - Baseline,
+          scl_18 = scl_18 - Baseline,
+          scl_19 = scl_19 - Baseline,
         )
     }
     
@@ -760,15 +790,19 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
 # 
 # rm(eda, eda_vp)
 
-# Read or Save ga_unified and pupil_df for further processing
+# Read or Save eda_unified and eda_df for further processing
 
-# saveRDS(eda_unified,"EDA_unified.RData")
-# saveRDS(eda_df,"EDA_df.RData")
+saveRDS(eda_unified,"EDA_unified.RData")
+saveRDS(eda_df,"EDA_df.RData")
 
 eda_unified <- readRDS("EDA_unified.RData")
 eda_df <- readRDS("EDA_df.Rdata")
 
 eda_unified = eda_unified %>% 
+  left_join(trigger_mat %>% mutate(ID = subject) %>% select(ID, trial, outcome), by=c("ID", "trial")) %>% 
+  mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
+
+eda_df = eda_df %>% 
   left_join(trigger_mat %>% mutate(ID = subject) %>% select(ID, trial, outcome), by=c("ID", "trial")) %>% 
   mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
 
@@ -787,25 +821,154 @@ non_responder <- eda_df %>%
 
 
 # Plot Unified Data
-eda_unified %>%
-  # filter(outcome == "no outcome") %>%
+# Acquisition
+# Long format for statistical testing
+eda_df_long_acq <- eda_df %>%
+  filter(outcome != "no outcome") %>%
+  #filter(ID %in% responder) %>%
+  pivot_longer(scl_0:scl_15, names_to = "timebin", values_to ="EDA") %>%
+  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
+  # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
+  filter(condition %in% c(2,3,4,5)) %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>% 
+  select(ID, trial, condition, outcome, timebin, EDA) %>%
+  mutate(time = timebin * 0.5) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+
+main_effect_threat = list()
+main_effect_social = list()
+interaction_effect = list()
+alpha = .05 / length(unique(eda_df_long_acq$time))
+for (timepoint in unique(eda_df_long_acq$time)) {
+  # timepoint = 3
+  data = eda_df_long_acq %>% 
+    filter(time == timepoint) %>% 
+    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+    group_by(ID, condition_social, condition_threat)
+  model = lmer(EDA ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
+  anova = anova(model, type=2)
+  
+  p_threat = anova["condition_threat", "Pr(>F)"]
+  p_social = anova["condition_social", "Pr(>F)"]
+  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
+  if (p_threat < alpha) {
+    main_effect_threat = c(main_effect_threat, timepoint)
+  }
+  if (p_social < alpha) {
+    main_effect_social = c(main_effect_social, timepoint)
+  }
+  if (p_interaction < alpha) {
+    interaction_effect = c(interaction_effect, timepoint)
+  }
+}
+main_effect_threat = as.numeric(main_effect_threat)
+main_effect_social = as.numeric(main_effect_social)
+interaction_effect = as.numeric(interaction_effect)
+
+main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
+main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
+interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
+
+eda_unified %>% 
+  filter(outcome != "no outcome") %>%
   #filter(ID %in% responder) %>%
   .$EDA %>% bind_rows() %>%
   mutate(condition = as.factor(condition)) %>%
   filter(condition %in% c(2,3,4,5)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>% 
-  group_by(condition, sample) %>% 
+  group_by(condition,sample) %>% 
   summarise(EDA.mean = mean(EDA), EDA.se = sd(EDA)/sqrt(length(EDA)), time = mean(time)) %>%
-  {ggplot(., aes(x=time, y=EDA.mean, color=condition, group=condition, fill=condition)) +
-      geom_vline(xintercept=0, color="black",linetype="solid") + #zero
-      geom_line() +
-      geom_ribbon(aes(ymin=EDA.mean-EDA.se, ymax=EDA.mean+EDA.se), color = NA, alpha=.2) +
+  {ggplot(., aes(x=time, y=EDA.mean)) +
+      geom_vline(xintercept=0, colour="black",linetype="solid") + #zero
+      geom_line(aes(colour=condition)) +
+      geom_ribbon(aes(ymin=EDA.mean-EDA.se, ymax=EDA.mean+EDA.se, colour=condition, fill=condition), color = NA, alpha=.2) +
+      # geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-0.4, yend=-0.4, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-0.43, yend=-0.43, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+      # geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-0.46, yend=-0.46, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
       scale_x_continuous("Time [s]",limits=c(-0.5, 8), minor_breaks=c(0,1,2,3,4,5,6,7,8), breaks=c(0, 2, 4, 6, 8)) +
       scale_y_continuous("Skin Conductance",limits=c(-0.5, 1.5)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw()
+      theme_bw() +
+      scale_size_manual("effects", values=rep(1,3), guide=guide_legend(override.aes = list(colour=c("#ff8383")))) # , "#e874ff", "#ffdd74"
   }
-ggsave("../plots/EDA/cs_acq.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave("../plots/EDA/cs_acq_outcome.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+
+
+# Test
+# Long format for statistical testing
+eda_df_long_test <- eda_df %>%
+  #filter(ID %in% responder) %>%
+  pivot_longer(scl_0:scl_19, names_to = "timebin", values_to ="EDA") %>%
+  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
+  # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
+  filter(condition %in% c(6,7,8,9)) %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>% 
+  select(ID, trial, condition, timebin, EDA) %>%
+  mutate(time = timebin * 0.5) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+
+main_effect_threat = list()
+main_effect_social = list()
+interaction_effect = list()
+alpha = .05 / length(unique(eda_df_long_test$time))
+for (timepoint in unique(eda_df_long_test$time)) {
+  # timepoint = 0
+  data = eda_df_long_test %>% 
+    filter(time == timepoint) %>% 
+    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+    group_by(ID, condition_social, condition_threat)
+  
+  model = lmer(EDA ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
+  anova = anova(model, type=2)
+  
+  p_threat = anova["condition_threat", "Pr(>F)"]
+  p_social = anova["condition_social", "Pr(>F)"]
+  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
+  
+  if (p_threat < alpha) {
+    main_effect_threat = c(main_effect_threat, timepoint)
+  }
+  if (p_social < alpha) {
+    main_effect_social = c(main_effect_social, timepoint)
+  }
+  if (p_interaction < alpha) {
+    interaction_effect = c(interaction_effect, timepoint)
+  }
+}
+main_effect_threat = as.numeric(main_effect_threat)
+main_effect_social = as.numeric(main_effect_social)
+interaction_effect = as.numeric(interaction_effect)
+
+main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
+main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
+interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
+
+eda_unified %>%
+  #filter(ID %in% responder) %>%
+  .$EDA %>% bind_rows() %>%
+  mutate(condition = as.factor(condition)) %>% 
+  # filter(trial < 60) %>%
+  filter(condition %in% c(6,7,8,9)) %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>% 
+  group_by(condition,sample) %>% 
+  summarise(EDA.mean = mean(EDA), EDA.se = sd(EDA)/sqrt(length(EDA)), time = mean(time)) %>%
+  {ggplot(., aes(x=time, y=EDA.mean)) +
+      geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
+      geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
+      geom_line(aes(colour=condition)) +
+      geom_ribbon(aes(ymin=EDA.mean-EDA.se, ymax=EDA.mean+EDA.se, colour=condition, fill=condition), color = NA, alpha=.2) +
+      # geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-0.2, yend=-0.2, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+      # geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-0.23, yend=-0.23, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+      # geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-0.26, yend=-0.26, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
+      scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
+      scale_y_continuous("Skin Conductance") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
+      scale_color_viridis_d(aesthetics = c("colour", "fill")) +
+      theme_bw() # +
+      # scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#e874ff", "#ff8383", "#ffdd74"))))
+  }
+ggsave("../plots/EDA/cs_test.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 eda_unified$EDA %>%   
