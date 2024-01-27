@@ -22,7 +22,7 @@ baselineWindow = c(-.5, 0) #correct for Baseline in this time window
 step_plotting = 0.1
 scaling.window = c(seq(-.5, 12, by=step_plotting)) # Scoring bins in seconds (real time scaling; may be non-integer)
 bin_width = 0.5
-bin.window = c(seq(-.5, 12, by=bin_width)) # Scoring bins in seconds (real time scaling; may be non-integer)
+bin.window = c(seq(0, 10, by=bin_width)) # Scoring bins in seconds (real time scaling; may be non-integer)
 
 { # Functions ---------------------------------------------------------------
   scaleHR = function(hr_t, hr, st, en) {
@@ -96,13 +96,14 @@ rep_str = c('10' = "Shock",
 
 # Read & Score HR --------------------------------------------------------------------
 vpn.ecg.rpeaks = list.files("../Physio/Peak_Export/", pattern="*_rpeaks.csv", full.names=TRUE)
+vpn.ecg.hr = list.files("../Physio/HR/", pattern="*.txt", full.names=TRUE)
 
 #ratings.all = read_rds("ratings.rds" %>% paste0(path.rds, .))
 #rawfiles = vpn.ecg.rpeaks %>% gsub("rpeaks/", "", .) %>% gsub(path.rpeaks.postfix, "", .) %>% paste0(".txt")
 
 hr.list = list() #vector("list", length(vpn.ecg.rpeaks))
 
-for (vpi in seq(vpn.ecg.rpeaks)) {
+for (vpi in seq(vpn.ecg.hr)) {
   # vpi = 1
   
   vp = vpn.ecg.rpeaks[vpi]
@@ -227,8 +228,12 @@ for (vpi in seq(vpn.ecg.rpeaks)) {
 heart.wide = hr.list %>% bind_rows(.id="subject") %>% 
   mutate(subject = subject %>% gsub("\\D", "", .) %>% as.integer()) %>% tibble() %>% 
   # group_by(subject, condition) %>% mutate(trial_condition = 1:n()) %>% ungroup() %>% 
-  select(subject, trial, condition, everything())
+  select(subject, trial, condition, everything()) %>% 
+  left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(subject = as.integer(substr(subject, 5, 6))), by=c("subject", "trial")) %>% 
+  mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
 rm(hr.list); row.names(heart.wide) = NULL
+
+saveRDS(heart.wide,"HR.RData")
 
 heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")) %>% tibble() %>% 
   mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(baselineWindow)} %>% as.factor(),
@@ -239,26 +244,60 @@ heart = heart %>%
   left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(subject = as.integer(substr(subject, 5, 6))), by=c("subject", "trial")) %>% 
   mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
 
-heart.data <- heart.wide %>% mutate(ID = paste0("gca",str_pad(subject,2,pad="0"))) %>% select(ID, trial, hrbl:hr.20)
+# heart.data <- heart.wide %>% mutate(ID = paste0("gca",str_pad(subject,2,pad="0"))) %>% select(ID, trial, hrbl:hr.20)
 
-#write_rds(heart, "Heart_df.rds")
 
 # Plots -------------------------------------------------------------
-#heart = read_rds("heart_df.rds" )
+# heart.wide <- readRDS("HR.RData")
 
-#plot hr change over trial time
-# heart.ga.gen.timeOnly = heart %>% filter(phase == "Gen") %>% group_by(time) %>% 
-#   summarise(HRchange.se = se(HRchange, na.rm=T), HRchange = mean(HRchange, na.rm=T)) %>% 
-#   mutate(time = time %>% as.character() %>% as.numeric()) %>% 
-#   bind_rows(data.frame(time=0, HRchange=0, HRchange.se=0)) #add origin
-# print(heart.trialtimeOnly.plot <- heart.ga.gen.timeOnly %>% ggplot(aes(x=time, y=HRchange)) + 
-#         geom_hline(yintercept = 0, linetype="dashed") +
-#         geom_ribbon(aes(ymin=HRchange-HRchange.se*1.96, ymax=HRchange+HRchange.se*1.96), color=NA, alpha=.1) +
-#         #geom_errorbar(aes(ymin=HRchange-HRchange.se*1.96, ymax=HRchange+HRchange.se*1.96)) +
-#         geom_point(size=3) + geom_line() + 
-#         ylab("Heart Rate Change (bpm)") + xlab("Trial Time (sec)") + myGgTheme)
+# Acquisition
+# Long format for statistical testing
+hr_df_long_acq <- heart.wide %>%
+  # filter(outcome == "no outcome") %>%
+  #filter(ID %in% responder) %>%
+  pivot_longer(hr.bin.1:hr.bin.16, names_to = "timebin", values_to ="HR", names_prefix="hr.bin.") %>%
+  mutate(timebin = as.numeric(timebin)) %>%
+  filter(condition %in% c(2,3,4,5)) %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>%
+  mutate(ID = subject) %>% 
+  select(ID, trial, condition, outcome, timebin, HR) %>%
+  mutate(time = (timebin - 1) * 0.5) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
 
-#plot hr change over trial time
+main_effect_threat = list()
+main_effect_social = list()
+interaction_effect = list()
+alpha = .05 / length(unique(hr_df_long_acq$time))
+for (timepoint in unique(hr_df_long_acq$time)) {
+  # timepoint = 3
+  data = hr_df_long_acq %>% 
+    filter(time == timepoint) %>% 
+    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+    group_by(ID, condition_social, condition_threat)
+  model = lmer(HR ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
+  anova = anova(model, type=2)
+  
+  p_threat = anova["condition_threat", "Pr(>F)"]
+  p_social = anova["condition_social", "Pr(>F)"]
+  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
+  if (p_threat < alpha) {
+    main_effect_threat = c(main_effect_threat, timepoint)
+  }
+  if (p_social < alpha) {
+    main_effect_social = c(main_effect_social, timepoint)
+  }
+  if (p_interaction < alpha) {
+    interaction_effect = c(interaction_effect, timepoint)
+  }
+}
+main_effect_threat = as.numeric(main_effect_threat)
+main_effect_social = as.numeric(main_effect_social)
+interaction_effect = as.numeric(interaction_effect)
+
+main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
+main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
+interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
 heart %>% 
   filter(condition %in% c(2,3,4,5)) %>%
   # filter(outcome != "no outcome") %>%
@@ -266,293 +305,91 @@ heart %>%
   group_by(condition, time) %>% 
   summarise(HR.se = sd(HRchange, na.rm=T)/sqrt(n()), HR.mean = mean(HRchange, na.rm=T)) %>% 
   mutate(time = time %>% as.character() %>% as.numeric()) %>%
-  {ggplot(., aes(x=time, y=HR.mean, color=condition, group=condition, fill=condition)) +
-      geom_vline(xintercept=0, color="black",linetype="solid") + #zero
-      geom_line() +
-      geom_ribbon(aes(ymin=HR.mean-HR.se, ymax=HR.mean+HR.se), color = NA, alpha=.2) +
+  {ggplot(., aes(x=time, y=HR.mean)) +
+      geom_vline(xintercept=0, colour="black",linetype="solid") + #zero
+      geom_line(aes(colour=condition)) +
+      geom_ribbon(aes(ymin=HR.mean-HR.se, ymax=HR.mean+HR.se, colour=condition, fill=condition), color = NA, alpha=.2) +
+      # geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-2.7, yend=-2.7, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-3, yend=-3, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+      # geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-3.3, yend=-3.3, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
       scale_x_continuous("Time [s]",limits=c(-0.5, 8), minor_breaks=c(0,1,2,3,4,5,6,7,8), breaks=c(0, 2, 4, 6, 8)) +
       scale_y_continuous("Heart Rate",limits=c(-3, 5.5)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw()
+      theme_bw() +
+      scale_size_manual("effects", values=rep(1,3), guide=guide_legend(override.aes = list(colour=c("#ff8383")))) # "#e874ff", "#ff8383", "#ffdd74"
   }
 ggsave(paste0("../plots/HR/cs_acq.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
-#Test phase
+
+# Test
+# Long format for statistical testing
+hr_df_long_test <- heart.wide %>%
+  # filter(outcome == "no outcome") %>%
+  #filter(ID %in% responder) %>%
+  pivot_longer(hr.bin.1:hr.bin.19, names_to = "timebin", values_to ="HR", names_prefix="hr.bin.") %>%
+  mutate(timebin = as.numeric(timebin)) %>%
+  filter(condition %in% c(6,7,8,9)) %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>%
+  mutate(ID = subject) %>% 
+  select(ID, trial, condition, outcome, timebin, HR) %>%
+  mutate(time = (timebin - 1) * 0.5) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+
+main_effect_threat = list()
+main_effect_social = list()
+interaction_effect = list()
+alpha = .05 / length(unique(hr_df_long_test$time))
+for (timepoint in unique(hr_df_long_test$time)) {
+  # timepoint = 0
+  data = hr_df_long_test %>% 
+    filter(time == timepoint) %>% 
+    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+    group_by(ID, condition_social, condition_threat)
+  
+  model = lmer(HR ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
+  anova = anova(model, type=2)
+  
+  p_threat = anova["condition_threat", "Pr(>F)"]
+  p_social = anova["condition_social", "Pr(>F)"]
+  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
+  
+  if (p_threat < alpha) {
+    main_effect_threat = c(main_effect_threat, timepoint)
+  }
+  if (p_social < alpha) {
+    main_effect_social = c(main_effect_social, timepoint)
+  }
+  if (p_interaction < alpha) {
+    interaction_effect = c(interaction_effect, timepoint)
+  }
+}
+main_effect_threat = as.numeric(main_effect_threat)
+main_effect_social = as.numeric(main_effect_social)
+interaction_effect = as.numeric(interaction_effect)
+
+main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
+main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
+interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
+
 heart %>% 
   filter(condition %in% c(6,7,8,9)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>%
   group_by(condition, time) %>% 
   summarise(HR.se = sd(HRchange, na.rm=T)/sqrt(n()), HR.mean = mean(HRchange, na.rm=T)) %>% 
   mutate(time = time %>% as.character() %>% as.numeric()) %>% 
-  {ggplot(., aes(x=time, y=HR.mean, color=condition, group=condition, fill=condition)) +
-      geom_vline(xintercept=0, color="black",linetype="solid") + #zero
-      geom_line() +
-      geom_ribbon(aes(ymin=HR.mean-HR.se, ymax=HR.mean+HR.se), color = NA, alpha=.2) +
+  {ggplot(., aes(x=time, y=HR.mean)) +
+      geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
+      geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
+      geom_line(aes(colour=condition)) +
+      geom_ribbon(aes(ymin=HR.mean-HR.se, ymax=HR.mean+HR.se, colour=condition, fill=condition), color = NA, alpha=.2) +
+      geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-2.7, yend=-2.7, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-3, yend=-3, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+      geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-3.3, yend=-3.3, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
       scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
       scale_y_continuous("Heart Rate") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw()
+      theme_bw() +
+      scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#e874ff", "#ff8383", "#ffdd74"))))
   }
 ggsave(paste0("../Plots/HR/cs_test.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
-
-
-
-# heart %>% 
-#   filter(trial_condition <= 30) %>% 
-#   group_by(condition, time) %>% 
-#   summarise(HRchange.se = sd(HRchange, na.rm=T)/sqrt(n()), HRchange = mean(HRchange, na.rm=T)) %>% 
-#   mutate(time = time %>% as.character() %>% as.numeric()) %>% 
-#   bind_rows(data.frame(condition=unique(heart$condition), time=0, HRchange=0, HRchange.se=0)) %>% #add origin
-#   ggplot(aes(x=time-0.5,y=HRchange, fill = condition)) +
-#   #geom_rect(aes(xmin=4, xmax=6, ymin=-2, ymax=1), fill = "deepskyblue1", alpha=0.03) +
-#   geom_errorbar(aes(ymin=HRchange-HRchange.se,ymax=HRchange+HRchange.se), width=0.2)+
-#   geom_line()+
-#   geom_point(size=3, shape=21)+
-#   scale_fill_manual(values=c("red","orange","darkgreen")) +
-#   scale_x_continuous(name ="Time [s]", breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12)) + 
-#   scale_y_continuous(name="Heart rate change [bpm]", expand= c(0,0))+
-#   ggtitle("1st Half") +
-#   theme_classic() +
-#   theme(legend.position=c(0.1,0.18),
-#         legend.title = element_blank(),
-#         #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
-#   )
-# 
-# heart %>% 
-#   filter(trial_condition > 30) %>% 
-#   group_by(condition, time) %>% 
-#   summarise(HRchange.se = sd(HRchange, na.rm=T)/sqrt(n()), HRchange = mean(HRchange, na.rm=T)) %>% 
-#   mutate(time = time %>% as.character() %>% as.numeric()) %>% 
-#   bind_rows(data.frame(condition=unique(heart$condition), time=0, HRchange=0, HRchange.se=0)) %>% #add origin
-#   ggplot(aes(x=time-0.5,y=HRchange, fill = condition)) +
-#   #geom_rect(aes(xmin=4, xmax=6, ymin=-2, ymax=1), fill = "deepskyblue1", alpha=0.03) +
-#   geom_errorbar(aes(ymin=HRchange-HRchange.se,ymax=HRchange+HRchange.se), width=0.2)+
-#   geom_line()+
-#   geom_point(size=3, shape=21)+
-#   scale_fill_manual(values=c("red","orange","darkgreen")) +
-#   scale_x_continuous(name ="Time [s]", breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12)) + 
-#   scale_y_continuous(name="Heart rate change [bpm]", expand= c(0,0))+
-#   ggtitle("2nd Half") +
-#   theme_classic() +
-#   theme(legend.position=c(0.1,0.18),
-#         legend.title = element_blank(),
-#         #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
-#   )
-# 
-# 
-# # Interference statistics
-# 
-# anova <- heart %>%  
-#   filter(!(time %in% c(10.5,11,11.5,12,12.5,13,13.5,14,14.5,15))) %>%
-#   group_by(subject,time,condition) %>% 
-#   summarize(HRchange = mean(HRchange)) %>% ungroup() %>%
-#   mutate(subject = as.factor(subject), condition = as.factor(condition), time = as.factor(time)) %>%
-#   ez::ezANOVA(dv=.(HRchange), wid=.(subject), 
-#               within=.(condition, time), 
-#               #between=.(pairs),
-#               detailed=T, type=2)
-# 
-# 
-# anova %>% anova_apa()
-# anova$ANOVA[2,] %>% partial_eta_squared_ci()
-# anova$ANOVA[3,] %>% partial_eta_squared_ci()
-# anova$ANOVA[4,] %>% partial_eta_squared_ci()
-# 
-# 
-# heart %>%  
-#   filter(!(time %in% c(10.5,11,11.5,12,12.5,13,13.5,14,14.5,15))) %>%
-#   group_by(subject,time,condition) %>% 
-#   summarize(HRchange = mean(HRchange)) %>%
-#   mutate(subject = as.factor(subject), condition = as.factor(condition), time = as.factor(time)) %>%
-#   aov_ez(dv="HRchange", id="subject", . ,within = c("condition","time")) %>% 
-#   emmeans::emmeans(~ condition|time) %>%
-#   pairs() %>% summary(adjust = "FDR")
-# 
-# 
-# 
-# 
-# 
-# heart %>% 
-#   filter(!(time %in% c(11,11.5,12,12.5,13,13.5,14,14.5,15))) %>%
-#   group_by(condition, time) %>% 
-#   summarise(HRchange.se = sd(HRchange, na.rm=T)/sqrt(n()), HRchange = mean(HRchange, na.rm=T)) %>% 
-#   mutate(time = time %>% as.character() %>% as.numeric()) %>% 
-#   #bind_rows(data.frame(condition=unique(heart$condition), time=0, HRchange=0, HRchange.se=0)) %>% #add origin
-#   ggplot(aes(x=time-0.5,y=HRchange, group = condition, color = condition)) +
-#   #geom_rect(aes(xmin=4, xmax=6, ymin=-2, ymax=1), fill = "deepskyblue1", alpha=0.03) +
-#   #geom_errorbar(aes(ymin=HRchange-HRchange.se,ymax=HRchange+HRchange.se), width=0.2)+
-#   geom_path()+
-#   #geom_point(size=3, shape=21)+
-#   scale_color_manual(values=c("red","orange","darkgreen"), label = c("Threat","Flight","Safety")) +
-#   scale_x_continuous(name ="Time [s]", limits = c(0,10), breaks = c(0,1,2,3,4,5,6,7,8,9,10)) + 
-#   scale_y_continuous(name="Heart rate change [bpm]")+
-#   theme_classic() +
-#   theme(legend.position=c(0.15,0.18),
-#         legend.title = element_blank(),
-#         #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
-#   )
-# 
-# ggsave(paste0("../Plots/HR/acq_cs_hr_bl_lines.png"), type="cairo-png", width=1920/400, height=1080/300, dpi=300)
-# 
-# # with US 
-# heart %>% 
-#   #filter(!(time %in% c(11,11.5,12,12.5,13,13.5,14,14.5,15))) %>%
-#   group_by(condition, time) %>% 
-#   summarise(HRchange.se = sd(HRchange, na.rm=T)/sqrt(n()), HRchange = mean(HRchange, na.rm=T)) %>% 
-#   mutate(time = time %>% as.character() %>% as.numeric()) %>% 
-#   #bind_rows(data.frame(condition=unique(heart$condition), time=0, HRchange=0, HRchange.se=0)) %>% #add origin
-#   ggplot(aes(x=time-0.5,y=HRchange, group = condition, color = condition)) +
-#   #geom_rect(aes(xmin=4, xmax=6, ymin=-2, ymax=1), fill = "deepskyblue1", alpha=0.03) +
-#   geom_ribbon(aes(ymin=HRchange-HRchange.se,ymax=HRchange+HRchange.se, fill = condition), color = "transparent", alpha=0.2, show_guide = FALSE)+
-#   geom_path()+
-#   #geom_point(size=3, shape=21)+
-#   scale_color_manual(values=c("red","orange","darkgreen"), label = c("Threat","Flight","Safety")) +
-#   scale_fill_manual(values=c("red","orange","darkgreen"), label = c("Threat","Flight","Safety")) +
-#   scale_x_continuous(name ="Time [s]") + 
-#   scale_y_continuous(name="Heart rate change [bpm]")+
-#   theme_classic() +
-#   theme(legend.position=c(0.15,0.18),
-#         legend.title = element_blank(),
-#         #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
-#   )
-# 
-# ggsave(paste0("../Plots/HR/acq_cs_hr_bl_lines.png"), type="cairo-png", width=1920/400, height=1080/300, dpi=300)
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# hr_out <- heart %>% group_by(subject, condition, time) %>%
-#   summarise(hr = mean(HRchange)) %>%
-#   mutate(time = as.numeric(time),
-#          ID = paste0("tfo",str_pad(subject,2,pad="0")),
-#          condition = factor(condition, levels = c(1,2,3), labels = c("threat", "flight", "safety")),
-#          names = paste0(condition,"_",time)) %>% select(-subject) %>%
-#   pivot_wider(id_cols = ID, names_from = names, values_from = hr) 
-# hr_out <- hr_out[order(hr_out$ID),]
-# write.csv2(hr_out,"HR_Daten.csv", row.names = F)
-# 
-# 
-# 
-# heart_wue <- heart %>% group_by(subject, condition, time) %>%
-#   summarise(hr = mean(HRchange)) %>% ungroup() %>%
-#   mutate(bin = as.numeric(time),
-#          ID = subject,
-#          cue = factor(condition, levels = c(1,2,3), labels = c("threat", "flight", "safety"))) %>% 
-#   select(ID, cue, bin, hr, -subject) %>% mutate(site = "wuerzburg")
-# 
-# 
-# # Gainesville Data
-# 
-# library(R.matlab)
-# 
-# hr_gainesville <- readMat("../Florida Sample/HR/allsubjects.mat")
-# 
-# hr_gainesville1 <- data.frame(hr_gainesville[[1]]) %>% 
-#   mutate(code = c(1:49,51,52),
-#          cue = "threat") %>%
-#   pivot_longer(X1:X22, names_to = "bin", values_to = "hr") %>%
-#   mutate(bin = as.numeric(str_remove(bin,"X"))-1)
-# 
-# hr_gainesville2 <- data.frame(hr_gainesville[[2]]) %>% 
-#   mutate(code = c(1:49,51,52),
-#          cue = "flight") %>%
-#   pivot_longer(X1:X22, names_to = "bin", values_to = "hr") %>%
-#   mutate(bin = as.numeric(str_remove(bin,"X"))-1)
-# 
-# hr_gainesville3 <- data.frame(hr_gainesville[[3]]) %>% 
-#   mutate(code = c(1:49,51,52),
-#          cue = "safety") %>%
-#   pivot_longer(X1:X22, names_to = "bin", values_to = "hr") %>%
-#   mutate(bin = as.numeric(str_remove(bin,"X"))-1)
-# 
-# hr_ga <- rbind(hr_gainesville1,hr_gainesville2) %>% rbind(.,hr_gainesville3) %>%
-#   mutate(code = code+100) 
-# 
-# 
-# 
-# 
-# 
-# hr_ga %>% 
-#   mutate(cue = factor(cue, levels = c("threat","flight","safety"), labels = c("threat", "flight", "safety"))) %>%
-#   group_by(cue, bin) %>% 
-#   summarise(hr.se = sd(hr, na.rm=T)/sqrt(n()), hr = mean(hr, na.rm=T)) %>% 
-#   #bind_rows(data.frame(cue=unique(heart$cue), time=0, HRchange=0, HRchange.se=0)) %>% #add origin
-#   ggplot(aes(x=bin/2,y=hr, group = cue, color = cue)) +
-#   #geom_rect(aes(xmin=4, xmax=6, ymin=-2, ymax=1), fill = "deepskyblue1", alpha=0.03) +
-#   geom_ribbon(aes(ymin=hr-hr.se,ymax=hr+hr.se, fill = cue), color = "transparent", alpha=0.1, show_guide = FALSE)+
-#   geom_path()+
-#   #geom_point(size=3, shape=21)+
-#   scale_color_manual(values=c("red","orange","darkgreen"), label = c("Threat","Flight","Safety")) +
-#   scale_fill_manual(values=c("red","orange","darkgreen"), label = c("Threat","Flight","Safety")) +
-#   #scale_x_continuous(name ="Time [s]", breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)) + 
-#   scale_y_continuous(name="Heart rate change [bpm]")+
-#   theme_classic() +
-#   theme(legend.position=c(0.15,0.88),
-#         legend.title = element_blank(),
-#         #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
-#   )
-# 
-# 
-# anova <- hr_ga %>%  
-#   filter(!(bin %in% c(0, 21))) %>%
-#   filter((bin %in% c(15,16,17,18))) %>%
-#   group_by(code,bin,cue) %>% 
-#   summarize(hr = mean(hr)) %>% ungroup() %>%
-#   mutate(subject = as.factor(subject), cue = as.factor(cue), bin = as.factor(bin)) %>%
-#   ez::ezANOVA(dv=.(hr), wid=.(code), 
-#               within=.(cue, bin), 
-#               #between=.(pairs),
-#               detailed=T, type=2)
-# 
-# 
-# anova %>% anova_apa()
-# anova$ANOVA[2,] %>% partial_eta_squared_ci()
-# anova$ANOVA[3,] %>% partial_eta_squared_ci()
-# anova$ANOVA[4,] %>% partial_eta_squared_ci()
-# 
-# 
-# # All together
-# 
-# hr_all <- rbind(heart_wue, hr_ga %>% filter(time!=0) %>% mutate(site = "gainesville"))
-# 
-# 
-# 
-# hr_all %>% 
-#   filter(time < 21) %>% 
-#   group_by(cue, bin) %>% 
-#   summarise(hr.se = sd(hr, na.rm=T)/sqrt(n()), hr = mean(hr, na.rm=T)) %>% 
-#   #bind_rows(data.frame(condition=unique(heart$condition), time=0, HRchange=0, HRchange.se=0)) %>% #add origin
-#   ggplot(aes(x=bin/2,y=hr, group = cue, color = cue)) +
-#   #geom_rect(aes(xmin=4, xmax=6, ymin=-2, ymax=1), fill = "deepskyblue1", alpha=0.03) +
-#   geom_errorbar(aes(ymin=hr-hr.se,ymax=hr+hr.se), width=0.2)+
-#   geom_path()+
-#   #geom_point(size=3, shape=21)+
-#   scale_color_manual(values=c("darkred","orange","blue")) +
-#   #scale_x_continuous(name ="Time [s]", breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)) + 
-#   scale_y_continuous(name="Heart rate change [bpm]")+
-#   theme_classic() +
-#   theme(legend.position=c(0.15,0.18),
-#         legend.title = element_blank(),
-#         #panel.grid.major.y = element_line(size=0.5, color="#DDDDDD")
-#   )
-# 
-# 
-# anova <- hr_all %>%  
-#   filter(bin != 0) %>%
-#   filter(bin < 21) %>%
-#   group_by(ID,bin,cue) %>% 
-#   summarize(hr = mean(hr)) %>% ungroup() %>%
-#   mutate(ID = as.factor(ID), cue = as.factor(cue), bin = as.factor(bin)) %>%
-#   ez::ezANOVA(dv=.(hr), wid=.(ID), 
-#               within=.(cue, bin), 
-#               #between=.(pairs),
-#               detailed=T, type=2)
-# 
-# 
-# anova %>% anova_apa()
-# anova$ANOVA[2,] %>% partial_eta_squared_ci()
-# anova$ANOVA[3,] %>% partial_eta_squared_ci()
-# anova$ANOVA[4,] %>% partial_eta_squared_ci()

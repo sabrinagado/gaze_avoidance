@@ -410,11 +410,11 @@ for (subject_inmat in codes){
   
 } # end inmat for loop
 
-# Read or Save ga_unified and pupil_df for further processing
+saveRDS(ga_unified,"ET_pupil_ga_unified.RData")
+saveRDS(pupil_df,"ET_pupil_df.RData")
 
-# saveRDS(ga_unified,"ET_pupil_ga_unified.RData")
-# saveRDS(pupil_df,"ET_pupil_df.RData")
 
+# Plots ----------------------------------------
 ga_unified <- readRDS("ET_ga_unified.RData")
 pupil_df <- readRDS("ET_pupil_df.Rdata")
 
@@ -443,9 +443,6 @@ responder <- pupil_df %>% filter(condition %in% c(1,2,3)) %>% group_by(ID) %>%
 non_responder <- pupil_df %>% filter(condition %in% c(1,2,3)) %>% group_by(ID) %>% 
   summarise(dilators = mean(as.numeric(interpolated))) %>% filter(dilators >= 0.5) %>% .$ID
 
-
-
-# Plot Unified Data
 # Acquisition
 # Long format for statistical testing
 pupil_df_long_acq <- pupil_df %>%
@@ -528,7 +525,7 @@ pupil_df_long_test <- pupil_df %>%
   pivot_longer(dilation_0:dilation_19, names_to = "timebin", values_to ="diameter") %>%
   separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
   # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
-  filter(condition %in% c(2,3,4,5)) %>%
+  filter(condition %in% c(6,7,8,9)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>% 
   select(ID, trial, condition, timebin, diameter) %>% 
   mutate(diameter = as.numeric(diameter[,1])) %>% 
