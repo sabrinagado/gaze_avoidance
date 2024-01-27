@@ -231,7 +231,7 @@ heart.wide = hr.list %>% bind_rows(.id="subject") %>%
   select(subject, trial, condition, everything()) %>% 
   left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(subject = as.integer(substr(subject, 5, 6))), by=c("subject", "trial")) %>% 
   mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
-rm(hr.list); row.names(heart.wide) = NULL
+# rm(hr.list); row.names(heart.wide) = NULL
 
 saveRDS(heart.wide,"HR.RData")
 
@@ -239,10 +239,6 @@ heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")
   mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(baselineWindow)} %>% as.factor(),
          condition = as.factor(condition)) %>% 
   select(-contains("hr.bin."))
-
-heart = heart %>% 
-  left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(subject = as.integer(substr(subject, 5, 6))), by=c("subject", "trial")) %>% 
-  mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
 
 # heart.data <- heart.wide %>% mutate(ID = paste0("gca",str_pad(subject,2,pad="0"))) %>% select(ID, trial, hrbl:hr.20)
 
@@ -253,7 +249,7 @@ heart = heart %>%
 # Acquisition
 # Long format for statistical testing
 hr_df_long_acq <- heart.wide %>%
-  # filter(outcome == "no outcome") %>%
+  # filter(outcome != "no outcome") %>%
   #filter(ID %in% responder) %>%
   pivot_longer(hr.bin.1:hr.bin.16, names_to = "timebin", values_to ="HR", names_prefix="hr.bin.") %>%
   mutate(timebin = as.numeric(timebin)) %>%
@@ -298,6 +294,7 @@ interaction_effect = as.numeric(interaction_effect)
 main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
 main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
 interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
+
 heart %>% 
   filter(condition %in% c(2,3,4,5)) %>%
   # filter(outcome != "no outcome") %>%
@@ -309,9 +306,9 @@ heart %>%
       geom_vline(xintercept=0, colour="black",linetype="solid") + #zero
       geom_line(aes(colour=condition)) +
       geom_ribbon(aes(ymin=HR.mean-HR.se, ymax=HR.mean+HR.se, colour=condition, fill=condition), color = NA, alpha=.2) +
-      # geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-2.7, yend=-2.7, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
-      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-3, yend=-3, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
-      # geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-3.3, yend=-3.3, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
+      # geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-2.5, yend=-2.5, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-2.7, yend=-2.7, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+      # geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-2.9, yend=-2.9, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
       scale_x_continuous("Time [s]",limits=c(-0.5, 8), minor_breaks=c(0,1,2,3,4,5,6,7,8), breaks=c(0, 2, 4, 6, 8)) +
       scale_y_continuous("Heart Rate",limits=c(-3, 5.5)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +

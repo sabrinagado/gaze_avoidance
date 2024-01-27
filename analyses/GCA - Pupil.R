@@ -585,11 +585,11 @@ ga_unified %>% filter(valid == TRUE) %>%
       geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se, colour=condition, fill=condition), color = NA, alpha=.2) +
       geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-90, yend=-90, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
       geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-93, yend=-93, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
-      geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-96, yend=-96, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
+      # geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-96, yend=-96, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
       scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
       scale_y_continuous("Pupil Diameter", breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
       theme_bw() +
-      scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#e874ff", "#ff8383", "#ffdd74"))))
+      scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#e874ff", "#ff8383")))) # , "#ffdd74"
   }
 ggsave("../plots/Pupil/cs_test.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
