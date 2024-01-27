@@ -2,6 +2,7 @@ library(tidyverse)
 library(afex)
 library(apa)
 library(lme4)
+library(lmerTest)
 
 #source("0 General.R" %>% paste0("C:/Users/mar84qk/Dropbox/Arbeit/C10 - Gamer Fear/3 Diagnostic Generalization/3 Analysis/main Anx/", .))
 
@@ -16,9 +17,12 @@ sample.rate = 100
 minhr =  45 #minimum plausible heart rate
 maxhr = 120 #maximum plausible heart rate
 
+hr_bins = T #calculate HR in 1s bins after CS onset
 baselineWindow = c(-.5, 0) #correct for Baseline in this time window
-step = 0.1
-scaling.window = c(seq(-.5, 12, by=step)) # Scoring bins in seconds (real time scaling; may be non-integer)
+step_plotting = 0.1
+scaling.window = c(seq(-.5, 12, by=step_plotting)) # Scoring bins in seconds (real time scaling; may be non-integer)
+bin_width = 0.5
+bin.window = c(seq(-.5, 12, by=bin_width)) # Scoring bins in seconds (real time scaling; may be non-integer)
 
 { # Functions ---------------------------------------------------------------
   scaleHR = function(hr_t, hr, st, en) {
@@ -167,6 +171,25 @@ for (vpi in seq(vpn.ecg.rpeaks)) {
     allhr = rbind(allhr, hrtrial)
   }
   
+  # Bins
+  allhrbins = numeric()
+  for (trial in seq(marker)) {
+    # trial = 1
+    mtime = marker[trial]
+    hr_t = allrpeak - mtime #heart rate time (relative to marker)
+    
+    # Real time scaling
+    hrtrial = numeric()
+    for (j in seq(bin.window)[-1]) { #for all indices except for the first (due to j-1 indexing)
+      # j = seq(scaling.window)[-1][[1]]
+      current = ifelse(mtime + bin.window[j] < 0, NA, #skip marker time points that refer to negative times (i.e. out of data)
+                       scaleHR(hr_t, hr, bin.window[j-1], bin.window[j]))
+      hrtrial = c(hrtrial, current)
+    }
+    
+    allhrbins = rbind(allhrbins, hrtrial)
+  }
+  
   # Baseline Correction using first 0.5 seconds before trial
   allhrbl = numeric()
   for (trial in seq(marker)) {
@@ -186,11 +209,15 @@ for (vpi in seq(vpn.ecg.rpeaks)) {
     allhrbl = rbind(allhrbl, blhrtrial)
   }
   allhr = cbind(allhrbl, allhr)
- 
-  
   deltaval = allhr - matrix(allhr[, 1], nrow=nrow(allhr), ncol=ncol(allhr))
-  out = data.frame(trial = 1:trials.n, condition = conditions,
-                   hrbl = allhr[, 1], hr = deltaval[, 2:ncol(deltaval)])
+  deltavalbins = allhrbins - matrix(allhrbins[, 1], nrow=nrow(allhrbins), ncol=ncol(allhrbins))
+  
+  out = data.frame(trial = 1:trials.n, 
+                   condition = conditions,
+                   hrbl = allhr[, 1], 
+                   hr.bin = deltavalbins[, 2:ncol(deltavalbins)],
+                   hr = deltaval[, 2:ncol(deltaval)]
+                   )
   
   hr.list[[code]] = out
   #write.csv2(out, paste(savepath.ecg, code,"_task.csv",sep=""), row.names=FALSE, quote=FALSE)
@@ -204,8 +231,9 @@ heart.wide = hr.list %>% bind_rows(.id="subject") %>%
 rm(hr.list); row.names(heart.wide) = NULL
 
 heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")) %>% tibble() %>% 
-  mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step + min(baselineWindow)} %>% as.factor(),
-         condition = as.factor(condition))
+  mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(baselineWindow)} %>% as.factor(),
+         condition = as.factor(condition)) %>% 
+  select(-contains("hr.bin."))
 
 heart = heart %>% 
   left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(subject = as.integer(substr(subject, 5, 6))), by=c("subject", "trial")) %>% 
