@@ -1337,10 +1337,10 @@ fixations.test.valid <- fixations.test.valid %>%
 # Proportional Dwell Time On The Stimulus
 fixations.test.dwell <- fixations.test.valid %>%
   filter(blok) %>%
-  mutate(dwell.time.total = sum(dur), .by=c(subject, SPAI, condition)) %>% 
+  mutate(dwell.time.total = sum(dur), .by=c(subject, condition)) %>% 
   filter(ROI) %>%
   mutate(dwell.time.roi = sum(dur), .by=c(subject, condition)) %>% 
-  summarise(dwell.time.prop = mean(dwell.time.roi/dwell.time.total), .by=c(subject, SPAI, condition))
+  summarise(dwell.time.prop = mean(dwell.time.roi/dwell.time.total), .by=c(subject, condition))
 
 fixations.test.dwell.wide <- fixations.test.dwell %>% 
   pivot_wider(names_from = condition, values_from = dwell.time.prop)
@@ -1429,25 +1429,25 @@ saccades.test.analysis <- saccades.test.analysis %>%
   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
 
-# # Add scores and write saccades to CSV
-# saccades.test.analysis <- saccades.test.analysis %>% 
-#   left_join(scores, by="subject")
-# 
-# write.csv2(saccades.test.analysis, file.path(path, "Gaze", "saccades_test.csv"), row.names=FALSE, quote=FALSE)
-# 
-# # Percentage of saccades going away from the stimuli
-# saccades.test.prop <- saccades.test.analysis %>%
-#   filter(blok) %>%
-#   filter(!contains_blink) %>%
-#   summarise(relative_frequency_ROI = mean(!ROI), .by=c(subject, SPAI, condition)) 
-# 
-# saccades.test.prop.wide <- saccades.test.prop %>% 
-#   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
-# 
-# saccades.test.prop.wide <- saccades.test.prop.wide %>% 
-#   left_join(scores, by="subject")
-# 
-# write.csv2(saccades.test.prop.wide, file.path(path, "saccades_test_wide.csv"), row.names=FALSE, quote=FALSE)
+# Add scores and write saccades to CSV
+saccades.test.analysis <- saccades.test.analysis %>%
+  left_join(scores, by="subject")
+
+write.csv2(saccades.test.analysis, file.path(path, "Gaze", "saccades_test.csv"), row.names=FALSE, quote=FALSE)
+
+# Percentage of saccades going away from the stimuli
+saccades.test.prop <- saccades.test.analysis %>%
+  filter(blok) %>%
+  filter(!contains_blink) %>%
+  summarise(relative_frequency_ROI = mean(!ROI), .by=c(subject, condition))
+
+saccades.test.prop.wide <- saccades.test.prop %>%
+  pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
+
+saccades.test.prop.wide <- saccades.test.prop.wide %>%
+  left_join(scores, by="subject")
+
+write.csv2(saccades.test.prop.wide, file.path(path, "saccades_test_wide.csv"), row.names=FALSE, quote=FALSE)
 # 
 # 
 # saccades.test.prop <- saccades.test.analysis %>%

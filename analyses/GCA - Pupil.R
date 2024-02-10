@@ -125,7 +125,7 @@ for (subject_inmat in codes){
   
   filename = unique(pupil$ID)
   
-  print("data reading successful!")
+  print(paste0(vp, " data reading successful!"))
   
   # interpolation of missing values
   pupil = pupil %>% 
@@ -308,6 +308,9 @@ for (subject_inmat in codes){
     diameter_level_trial_19 = pupil_diameter_binded %>% filter(time >= start_time + 9.5, time <= start_time + 10) %>%  
       summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
     
+    diameter_level_trial_2_10 = pupil_diameter_binded %>% filter(time >= start_time + 2, time <= start_time + 10) %>%  
+      summarize(mean = mean(diameter,na.rm=T)) %>% unlist()
+    
     
     dilations = tibble(dilation = diameter_level_trial - baseline_trial,
                        dilation_0 = diameter_level_trial_1 - baseline_trial,
@@ -330,8 +333,9 @@ for (subject_inmat in codes){
                        dilation_17 = diameter_level_trial_13 - baseline_trial,
                        dilation_18 = diameter_level_trial_14 - baseline_trial,
                        dilation_19 = diameter_level_trial_15 - baseline_trial,
+                       dilation_2_10 = diameter_level_trial_2_10 - baseline_trial,
                        baseline = baseline_trial,
-                       mean_diameter = diameter_level_trial) %>% select(dilation:dilation_19, baseline, mean_diameter, everything()) 
+                       mean_diameter = diameter_level_trial) %>% select(dilation:dilation_19, baseline, mean_diameter, dilation_2_10, everything()) 
     
     
     pupil_vp[t, names(dilations)] = dilations
@@ -417,6 +421,26 @@ saveRDS(pupil_df,"ET_pupil_df.RData")
 # Plots ----------------------------------------
 ga_unified <- readRDS("ET_ga_unified.RData")
 pupil_df <- readRDS("ET_pupil_df.Rdata")
+
+# pupil.wide <- pupil_df %>%
+#   mutate(across('condition', str_replace_all, rep_str)) %>% 
+#   mutate(dilation_2_10 = as.numeric(dilation_2_10[,1])) %>% 
+#   mutate(subject=ID) %>%
+#   select(subject, condition, dilation_2_10) %>% 
+#   summarise(dilation_2_10 = mean(dilation_2_10), .by=c(subject, condition)) %>% 
+#   pivot_wider(names_from = condition, values_from = dilation_2_10) %>% 
+#   select(-contains("Acq")) %>% 
+#   arrange(subject)
+# 
+# scores = read_delim("../demo_scores.csv", delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
+# scores$subject <- scores$VP
+# scores <- scores %>%
+#   select(subject, gender, age, digitimer, temperature, humidity, SPAI, SIAS, STAI_T, UI, motivation, tiredness)
+# 
+# pupil.wide <- pupil.wide %>% 
+#   left_join(scores, by="subject")
+# 
+# write.csv2(pupil.wide, "pupil_wide.csv", row.names=FALSE, quote=FALSE)
 
 
 ga_unified = ga_unified %>% 

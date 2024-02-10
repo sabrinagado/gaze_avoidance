@@ -61,7 +61,7 @@ df_sias <- df_sias %>%
 
 # STAI-T
 df_stai <- df_scores %>%
-  select(contains('stai'))
+  select(contains(c('stai')))
 
 df_stai <- df_stai %>%
   mutate(STAI_T = rowSums(.)) %>% 

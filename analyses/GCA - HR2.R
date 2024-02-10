@@ -191,6 +191,20 @@ for (vpi in seq(vpn.ecg.hr)) {
     allhrbins = rbind(allhrbins, hrtrial)
   }
   
+  # BA
+  allhrba = numeric()
+  for (trial in seq(marker)) {
+    # trial = 1
+    mtime = marker[trial]
+    hr_t = allrpeak - mtime #heart rate time (relative to marker)
+    
+    # Real time scaling
+    current = ifelse(mtime + 10 < 0, NA, #skip marker time points that refer to negative times (i.e. out of data)
+                     scaleHR(hr_t, hr, 2, 10))
+    
+    allhrba = rbind(allhrba, current)
+  }
+  
   # Baseline Correction using first 0.5 seconds before trial
   allhrbl = numeric()
   for (trial in seq(marker)) {
@@ -209,14 +223,20 @@ for (vpi in seq(vpn.ecg.hr)) {
     
     allhrbl = rbind(allhrbl, blhrtrial)
   }
+  
+  # Add baseline column to dataframes
   allhr = cbind(allhrbl, allhr)
+  allhrbins = cbind(allhrbl, allhrbins, allhrba)
+  
+  
   deltaval = allhr - matrix(allhr[, 1], nrow=nrow(allhr), ncol=ncol(allhr))
   deltavalbins = allhrbins - matrix(allhrbins[, 1], nrow=nrow(allhrbins), ncol=ncol(allhrbins))
   
   out = data.frame(trial = 1:trials.n, 
                    condition = conditions,
                    hrbl = allhr[, 1], 
-                   hr.bin = deltavalbins[, 2:ncol(deltavalbins)],
+                   hr.bin = deltavalbins[, 2:(ncol(deltavalbins)-1)],
+                   hr.2_10 = deltavalbins[, (ncol(deltavalbins))],
                    hr = deltaval[, 2:ncol(deltaval)]
                    )
   
@@ -234,6 +254,24 @@ heart.wide = hr.list %>% bind_rows(.id="subject") %>%
 # rm(hr.list); row.names(heart.wide) = NULL
 
 saveRDS(heart.wide,"HR.RData")
+
+# hr.wide <- heart.wide %>%
+#   mutate(across('condition', str_replace_all, rep_str)) %>%
+#   select(subject, condition, hr.2_10) %>% 
+#   summarise(hr.2_10 = mean(hr.2_10), .by=c(subject, condition)) %>% 
+#   pivot_wider(names_from = condition, values_from = hr.2_10) %>% 
+#   select(-contains("Acq")) %>% 
+#   arrange(subject)
+# 
+# scores = read_delim("../demo_scores.csv", delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
+# scores$subject <- scores$VP
+# scores <- scores %>%
+#   select(subject, gender, age, digitimer, temperature, humidity, SPAI, SIAS, STAI_T, UI, motivation, tiredness)
+# 
+# hr.wide <- hr.wide %>% 
+#   left_join(scores, by="subject")
+# 
+# write.csv2(hr.wide, "hr_wide.csv", row.names=FALSE, quote=FALSE)
 
 heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")) %>% tibble() %>% 
   mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(baselineWindow)} %>% as.factor(),

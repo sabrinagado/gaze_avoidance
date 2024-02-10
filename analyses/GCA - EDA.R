@@ -52,7 +52,7 @@ crRiseMax = 6 #latest Peak of CR in s (Bouton et al., 2012)
 
 #SCL Analysis:
 
-scl_bins = T #calculate SCL in 1s bins after CS onset
+scl_bins = T #calculate SCL in bins after CS onset
 baselineWindow = c(-.5,0) #correct for Baseline in this time window
 sclWindow = c(0,10) #calculate SCL in this time window
 
@@ -211,7 +211,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
   #sum(eda$trigger == 2);sum(eda$trigger == 3);sum(eda$trigger == 4);sum(eda$trigger == 5);sum(eda$trigger == 6);sum(eda$trigger == 7);
   #sum(eda$trigger == 8);sum(eda$trigger == 9);sum(eda$trigger == 10);sum(eda$trigger == 11);sum(eda$trigger == 12); #count triggers and check
   
-  print("Data reading complete!")
+  print(paste0(filename, " data reading complete!"))
   
   
   if (downsampling) {
@@ -517,6 +517,9 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
       scl_19 <- eda %>% filter(time >= start+9.5, time <= start+10) %>%
         summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
       
+      scl_2_10 <- eda %>% filter(time >= start+2, time <= start+10) %>%
+        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+      
       }
      
     if(fir_algorithm){
@@ -704,6 +707,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
           scl_17 = scl_17 - Baseline,
           scl_18 = scl_18 - Baseline,
           scl_19 = scl_19 - Baseline,
+          scl_2_10 = scl_2_10 - Baseline,
         )
     }
     
@@ -797,6 +801,34 @@ saveRDS(eda_df,"EDA_df.RData")
 
 eda_unified <- readRDS("EDA_unified.RData")
 eda_df <- readRDS("EDA_df.Rdata")
+
+eda.wide <- eda_df %>%
+  mutate(across('condition', str_replace_all, rep_str)) %>%
+  mutate(subject=as.integer(substr(ID, 5, 6))) %>%
+  select(subject, condition, scl_2_10) %>%
+  summarise(scl_2_10 = mean(scl_2_10), .by=c(subject, condition)) %>%
+  pivot_wider(names_from = condition, values_from = scl_2_10) %>%
+  select(-contains("Acq")) %>%
+  arrange(subject)
+
+scores = read_delim("../demo_scores.csv", delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
+scores$subject <- scores$VP
+scores <- scores %>%
+  select(subject, gender, age, digitimer, temperature, humidity, SPAI, SIAS, STAI_T, UI, motivation, tiredness)
+
+eda.wide <- eda.wide %>%
+  left_join(scores, by="subject")
+
+write.csv2(eda.wide, "eda_wide.csv", row.names=FALSE, quote=FALSE)
+
+
+eda.wide <- eda_df %>%
+  pivot_wider(names_from = condition, values_from = scl_2_10)
+
+eda.wide <- eda.wide %>%
+  left_join(scores, by="subject")
+
+write.csv2(eda.wide, file.path(path, "eda_wide.csv"), row.names=FALSE, quote=FALSE)
 
 eda_unified = eda_unified %>% 
   left_join(trigger_mat %>% mutate(ID = subject) %>% select(ID, trial, outcome), by=c("ID", "trial")) %>% 
