@@ -1,8 +1,7 @@
 ###############################################################################
 # Gaze Contingent Avoidance Project
 # Sabrina Gado & Yannik Stegmann
-
-# Pupil Analyse
+###############################################################################
 
 #packages 
 library(signal)
@@ -352,7 +351,8 @@ for (subject_inmat in codes){
   
   for (t in 1:nrow(unified)) {
     unified$diameter[[t]] = unified$diameter[[t]] %>% 
-      mutate(time = time - (min(time)+abs(min(baselineWindow))), 
+      mutate(subject = vp,
+             time = time - (min(time)+abs(min(baselineWindow))), 
              samplepoint = sample-min(sample),
              diameter = diameter - pupil_vp$baseline[[t]] #unify starting time to allow overlap
       )}
@@ -417,203 +417,8 @@ for (subject_inmat in codes){
 saveRDS(ga_unified,"ET_pupil_ga_unified.RData")
 saveRDS(pupil_df,"ET_pupil_df.RData")
 
+pupil_df <- pupil_df %>% 
+  mutate(valid = as.logical(valid))
 
-# Plots ----------------------------------------
-ga_unified <- readRDS("ET_ga_unified.RData")
-pupil_df <- readRDS("ET_pupil_df.Rdata")
-
-# pupil.wide <- pupil_df %>%
-#   mutate(across('condition', str_replace_all, rep_str)) %>% 
-#   mutate(dilation_2_10 = as.numeric(dilation_2_10[,1])) %>% 
-#   mutate(subject=ID) %>%
-#   select(subject, condition, dilation_2_10) %>% 
-#   summarise(dilation_2_10 = mean(dilation_2_10), .by=c(subject, condition)) %>% 
-#   pivot_wider(names_from = condition, values_from = dilation_2_10) %>% 
-#   select(-contains("Acq")) %>% 
-#   arrange(subject)
-# 
-# scores = read_delim("../demo_scores.csv", delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
-# scores$subject <- scores$VP
-# scores <- scores %>%
-#   select(subject, gender, age, digitimer, temperature, humidity, SPAI, SIAS, STAI_T, UI, motivation, tiredness)
-# 
-# pupil.wide <- pupil.wide %>% 
-#   left_join(scores, by="subject")
-# 
-# write.csv2(pupil.wide, "pupil_wide.csv", row.names=FALSE, quote=FALSE)
-
-
-ga_unified = ga_unified %>% 
-  left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(ID = as.integer(substr(subject, 5, 6))), by=c("ID", "trial")) %>% 
-  mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
-
-pupil_df = pupil_df %>% 
-  left_join(trigger_mat %>% select(subject, trial, outcome) %>% mutate(ID = as.integer(substr(subject, 5, 6))), by=c("ID", "trial")) %>% 
-  mutate(outcome = ifelse(is.na(outcome), "no outcome", outcome))
-
-# Signal quality check
-mean(as.numeric(pupil_df$interpolated)) #30.4% interpolated sample points
-sum(pupil_df$valid == T) #6291 valid trials
-sum(pupil_df$valid == F) #2709 invalid trials
-sum(pupil_df$valid == T) / (sum(pupil_df$valid == T) + sum(pupil_df$valid == F) ) #70% valid trials
-
-pupil_df %>% group_by(condition) %>%
-  summarise(valid_sp = mean(as.numeric(interpolated)), 
-            valid_trials = sum(valid == T))  # no condition differences!
-
-responder <- pupil_df %>% filter(condition %in% c(1,2,3)) %>% group_by(ID) %>% 
-  summarise(dilators = mean(as.numeric(interpolated))) %>% filter(dilators < 0.5) %>% .$ID
-
-non_responder <- pupil_df %>% filter(condition %in% c(1,2,3)) %>% group_by(ID) %>% 
-  summarise(dilators = mean(as.numeric(interpolated))) %>% filter(dilators >= 0.5) %>% .$ID
-
-# Acquisition
-# Long format for statistical testing
-pupil_df_long_acq <- pupil_df %>%
-  # filter(outcome == "no outcome") %>%
-  #filter(ID %in% responder) %>%
-  pivot_longer(dilation_0:dilation_15, names_to = "timebin", values_to ="diameter") %>%
-  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
-  # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
-  filter(condition %in% c(2,3,4,5)) %>%
-  mutate(across('condition', str_replace_all, rep_str)) %>% 
-  select(ID, trial, condition, outcome, timebin, diameter) %>% 
-  mutate(diameter = as.numeric(diameter[,1])) %>% 
-  mutate(time = timebin * 0.5) %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
-
-main_effect_threat = list()
-main_effect_social = list()
-interaction_effect = list()
-alpha = .05 / length(unique(pupil_df_long_acq$time))
-for (timepoint in unique(pupil_df_long_acq$time)) {
-  # timepoint = 3
-  data = pupil_df_long_acq %>% 
-    filter(time == timepoint) %>% 
-    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-    group_by(ID, condition_social, condition_threat)
-  model = lmer(diameter ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
-  anova = anova(model, type=2)
-  
-  p_threat = anova["condition_threat", "Pr(>F)"]
-  p_social = anova["condition_social", "Pr(>F)"]
-  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
-  if (p_threat < alpha) {
-    main_effect_threat = c(main_effect_threat, timepoint)
-  }
-  if (p_social < alpha) {
-    main_effect_social = c(main_effect_social, timepoint)
-  }
-  if (p_interaction < alpha) {
-    interaction_effect = c(interaction_effect, timepoint)
-  }
-}
-main_effect_threat = as.numeric(main_effect_threat)
-main_effect_social = as.numeric(main_effect_social)
-interaction_effect = as.numeric(interaction_effect)
-
-main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
-main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
-interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
-
-ga_unified %>% filter(valid == TRUE) %>%
-  # filter(outcome == "no outcome") %>%
-  #filter(ID %in% responder) %>%
-  .$diameter %>% bind_rows() %>%
-  mutate(condition = as.factor(condition)) %>%
-  filter(condition %in% c(2,3,4,5)) %>%
-  mutate(across('condition', str_replace_all, rep_str)) %>% 
-  group_by(condition,samplepoint) %>% 
-  summarise(diameter.mean = mean(diameter), diameter.se = sd(diameter)/sqrt(length(diameter)), time = mean(time)) %>%
-  {ggplot(., aes(x=time, y=diameter.mean)) +
-      geom_vline(xintercept=0, colour="black",linetype="solid") + #zero
-      geom_line(aes(colour=condition)) +
-      geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se, colour=condition, fill=condition), color = NA, alpha=.2) +
-      geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-70, yend=-70, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
-      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-75, yend=-75, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
-      geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-80, yend=-80, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
-      scale_x_continuous("Time [s]",limits=c(-0.5, 8), minor_breaks=c(0,1,2,3,4,5,6,7,8), breaks=c(0, 2, 4, 6, 8)) +
-      scale_y_continuous("Pupil Diameter",limits=c(-80, 150)) +
-      scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw() + 
-      # labs(title = paste("Pupil (N = ", n_distinct(pupil_df_long_acq$ID), ")", sep="")) +
-      scale_size_manual("effects", values=rep(1,3), guide=guide_legend(override.aes = list(colour=c("#e874ff", "#ff8383", "#ffdd74")))) # 
-  }
-ggsave("../plots/Pupil/cs_acq.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
-
-# Test
-# Long format for statistical testing
-pupil_df_long_test <- pupil_df %>%
-  #filter(ID %in% responder) %>%
-  pivot_longer(dilation_0:dilation_19, names_to = "timebin", values_to ="diameter") %>%
-  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
-  # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
-  filter(condition %in% c(6,7,8,9)) %>%
-  mutate(across('condition', str_replace_all, rep_str)) %>% 
-  select(ID, trial, condition, timebin, diameter) %>% 
-  mutate(diameter = as.numeric(diameter[,1])) %>% 
-  mutate(time = timebin * 0.5) %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
-
-main_effect_threat = list()
-main_effect_social = list()
-interaction_effect = list()
-alpha = .05 / length(unique(pupil_df_long_test$time))
-for (timepoint in unique(pupil_df_long_test$time)) {
-  # timepoint = 0
-  data = pupil_df_long_test %>% 
-    filter(time == timepoint) %>% 
-    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-    group_by(ID, condition_social, condition_threat)
-  
-  model = lmer(diameter ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
-  anova = anova(model, type=2)
-  
-  p_threat = anova["condition_threat", "Pr(>F)"]
-  p_social = anova["condition_social", "Pr(>F)"]
-  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
-  
-  if (p_threat < alpha) {
-    main_effect_threat = c(main_effect_threat, timepoint)
-  }
-  if (p_social < alpha) {
-    main_effect_social = c(main_effect_social, timepoint)
-  }
-  if (p_interaction < alpha) {
-    interaction_effect = c(interaction_effect, timepoint)
-  }
-}
-main_effect_threat = as.numeric(main_effect_threat)
-main_effect_social = as.numeric(main_effect_social)
-interaction_effect = as.numeric(interaction_effect)
-
-main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
-main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
-interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
-
-ga_unified %>% filter(valid == TRUE) %>%
-  #filter(ID %in% responder) %>%
-  .$diameter %>% bind_rows() %>%
-  mutate(condition = as.factor(condition)) %>% 
-  # filter(trial < 60) %>%
-  filter(condition %in% c(6,7,8,9)) %>%
-  mutate(across('condition', str_replace_all, rep_str)) %>% 
-  group_by(condition,samplepoint) %>% 
-  summarise(diameter.mean = mean(diameter), diameter.se = sd(diameter)/sqrt(length(diameter)), time = mean(time)) %>%
-  {ggplot(., aes(x=time, y=diameter.mean)) +
-      geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
-      geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
-      geom_line(aes(colour=condition)) +
-      geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se, colour=condition, fill=condition), color = NA, alpha=.2) +
-      geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-90, yend=-90, size="Main Effect Social"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
-      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-93, yend=-93, size="Main Effect Threat"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
-      # geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-96, yend=-96, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
-      scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Pupil Diameter", breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
-      scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw() +
-      scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#e874ff", "#ff8383")))) # , "#ffdd74"
-  }
-ggsave("../plots/Pupil/cs_test.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+pupil_df_invalid <- pupil_df %>% filter(condition %in% c(6,7,8,9)) %>% summarise(invalid = mean(!valid), .by=c(ID)) %>% arrange(desc(invalid))
+pupil_df_invalid %>% summarise(mean_invalid = mean(invalid)*100, sd_invalid = sd(invalid)*100)
