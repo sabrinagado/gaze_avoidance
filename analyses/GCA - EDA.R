@@ -38,7 +38,7 @@ shock_triggers = c(10,11,12) #Vector with the names of the US triggers
 condition_triggers = c(2,3,4,5,6,7,8,9)
 
 sample_rate = 1000  #samplerate after export
-trial_length = 12  #length of trial in s
+trial_length = 10  #length of trial in s
 
 #Min-Max-SCR Analysis:
 
@@ -182,7 +182,7 @@ rep_str = c('10' = "Shock",
 
 for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
   
-  # subject_inmat = filemat[[5]]
+  # subject_inmat = filemat[[1]]
   
   eda <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
     rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
@@ -439,87 +439,56 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
   
   print(paste0("UCRs: ", as.integer(substr(filename, 5, 6)), " of ", length(filemat), " files processed!"))
   
+  eda_vp = eda %>% 
+    filter(trigger != 0) %>% 
+    select(-EDA) %>% #One trial per row per VP
+    mutate(timepoint = ifelse(trigger < 10, "start", "end")) %>% 
+    pivot_wider(names_from=timepoint, values_from=time) %>% 
+    mutate(end = lead(end)) %>%
+    filter(trigger < 10) %>% 
+    mutate(trial = 1:n(), 
+           condition = trigger,
+           us = us, us_prior = c(FALSE, lag(us)[-1]),
+           time_start = start, 
+           time_end = ifelse(is.na(end), time_start + trial_length, end),
+           sample_start = sample, 
+           sample_end =  {sample+(trial_length*ifelse(downsampling,sample_rate_new,sample_rate))} %>% round()) %>% 
+    select(-trigger, -start, -end, -sample) %>% select(trial, condition, everything())
+  
   eda_vp_cr = eda_vp %>% filter(condition %in% condition_triggers) #filter(us == F)
   
   for (t in 1:nrow(eda_vp_cr)) {
     
     #t = 1
     start = eda_vp_cr$time_start[t]
+    end = eda_vp_cr$time_end[t]
+    eda_trial <- eda %>% filter(time >= start + min(baselineWindow), time <= end)
     
-    baseline_trial = eda %>% filter(time <= start + max(baselineWindow),
-                                    time >= start + min(baselineWindow)) %>% 
-      summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+    baseline_trial = eda_trial %>% filter(time >= start + min(baselineWindow), time <= start + max(baselineWindow)) %>% pull(EDA) %>% mean(na.rm=T)
     
-    
-    scl_trial = eda %>% filter(time <= start + max(sclWindow),
-                               time >= start + min(sclWindow)) %>% 
-      summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
+    scl_trial = eda %>% filter(time >= start + min(sclWindow), time <= end) %>% pull(EDA) %>% mean(na.rm=T)
  
     if(scl_bins){
-      
-      scl_0 <- eda %>% filter(time >= start, time <= start+0.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_1 <- eda %>% filter(time >= start+0.5, time <= start+1) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_2 <- eda %>% filter(time >= start+1, time <= start+1.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_3 <- eda %>% filter(time >= start+1.5, time <= start+2) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_4 <- eda %>% filter(time >= start+2, time <= start+2.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_5 <- eda %>% filter(time >= start+2.5, time <= start+3) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_6 <- eda %>% filter(time >= start+3, time <= start+3.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_7 <- eda %>% filter(time >= start+3.5, time <= start+4) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_8 <- eda %>% filter(time >= start+4, time <= start+4.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_9 <- eda %>% filter(time >= start+4.5, time <= start+5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_10 <- eda %>% filter(time >= start+5, time <= start+5.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_11 <- eda %>% filter(time >= start+5.5, time <= start+6) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_12 <- eda %>% filter(time >= start+6, time <= start+6.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_13 <- eda %>% filter(time >= start+6.5, time <= start+7) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_14 <- eda %>% filter(time >= start+7, time <= start+7.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_15 <- eda %>% filter(time >= start+7.5, time <= start+8) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_16 <- eda %>% filter(time >= start+8, time <= start+8.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_17 <- eda %>% filter(time >= start+8.5, time <= start+9) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_18 <- eda %>% filter(time >= start+9, time <= start+9.5) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_19 <- eda %>% filter(time >= start+9.5, time <= start+10) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
-      scl_2_10 <- eda %>% filter(time >= start+2, time <= start+10) %>%
-        summarize(mean = mean(EDA,na.rm=T)) %>% unlist()
-      
+      scl_0 <- eda_trial %>% filter(time >= start, time <= start+0.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_1 <- eda_trial %>% filter(time >= start+0.5, time <= start+1) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_2 <- eda_trial %>% filter(time >= start+1, time <= start+1.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_3 <- eda_trial %>% filter(time >= start+1.5, time <= start+2) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_4 <- eda_trial %>% filter(time >= start+2, time <= start+2.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_5 <- eda_trial %>% filter(time >= start+2.5, time <= start+3) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_6 <- eda_trial %>% filter(time >= start+3, time <= start+3.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_7 <- eda_trial %>% filter(time >= start+3.5, time <= start+4) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_8 <- eda_trial %>% filter(time >= start+4, time <= start+4.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_9 <- eda_trial %>% filter(time >= start+4.5, time <= start+5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_10 <- eda_trial %>% filter(time >= start+5, time <= start+5.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_11 <- eda_trial %>% filter(time >= start+5.5, time <= start+6) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_12 <- eda_trial %>% filter(time >= start+6, time <= start+6.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_13 <- eda_trial %>% filter(time >= start+6.5, time <= start+7) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_14 <- eda_trial %>% filter(time >= start+7, time <= start+7.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_15 <- eda_trial %>% filter(time >= start+7.5, time <= start+8) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_16 <- eda_trial %>% filter(time >= start+8, time <= start+8.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_17 <- eda_trial %>% filter(time >= start+8.5, time <= start+9) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_18 <- eda_trial %>% filter(time >= start+9, time <= start+9.5) %>% pull(EDA) %>% mean(na.rm=T)
+      scl_19 <- eda_trial %>% filter(time >= start+9.5, time <= start+10) %>% pull(EDA) %>% mean(na.rm=T)
       }
      
     if(fir_algorithm){
@@ -529,7 +498,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
       
       while (eir_max_searching){ 
         
-        eir_max = eda %>% 
+        eir_max = eda_trial %>% 
           filter(time <= upperLimit &
                    time >= lowerLimit) %>%
           filter(EDA == max(EDA)) %>% head(1)
@@ -559,9 +528,8 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
     
     while (fir_max_searching){ 
       
-      fir_max = eda %>% 
-        filter(time <= upperLimit &
-                 time >= lowerLimit) %>%
+      fir_max = eda_trial %>% 
+        filter(time <= upperLimit & time >= lowerLimit) %>%
         filter(EDA == max(EDA)) %>% head(1)
       
       
@@ -588,7 +556,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
     
     while (sir_max_searching){ 
       
-      sir_max = eda %>% 
+      sir_max = eda_trial %>% 
         filter(time <= upperLimit &
                  time >= lowerLimit) %>%
         filter(EDA == max(EDA)) %>% head(1)
@@ -610,24 +578,22 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
       }
     }
     
-    eir_min = eda %>% 
+    eir_min = eda_trial %>% 
       filter(time <= start + max(eirMinWindow) &
                time >= start + min(eirMinWindow)) %>%
       filter(EDA == min(EDA)) %>% head(1)
     
     }
     
-    eda_minima_trial = eda_minima %>% filter(time >= start + min(crMinWindow),
-                                             time <= start + max(crMinWindow)) 
+    eda_minima_trial = eda_minima %>% filter(time >= start + min(crMinWindow), time <= min(start + max(crMinWindow), end)) 
     eda_maxima_trial = eda_maxima %>% filter(time > suppressWarnings(min(eda_minima_trial$time))) %>% 
       head(nrow(eda_minima_trial)) #same amount of maxima as minima
     
     if (nrow(eda_maxima_trial) < nrow(eda_minima_trial)) { #if recording ended before next max
       eda_maxima_trial = eda_maxima_trial %>% bind_rows(
-        eda %>% filter(time >= max(eda_minima_trial$time)) %>% filter(EDA==max(EDA)) %>% mutate(n = 0) %>% select(n, everything()) %>% select(-trigger)
+        eda_trial %>% filter(time >= max(eda_minima_trial$time)) %>% filter(EDA==max(EDA)) %>% mutate(n = 0) %>% select(n, everything()) %>% select(-trigger)
       )
     }
-    
     
     #if no minimum found within time range use deflection point as minimum
     if (nrow(eda_minima_trial)==0) { 
@@ -637,7 +603,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
         head(nrow(eda_minima_trial)) #same amount of maxima as minima
       if (nrow(eda_maxima_trial) < nrow(eda_minima_trial)) { #if recording ended before next max
         eda_maxima_trial = eda_maxima_trial %>% bind_rows(
-          eda %>% filter(time >= max(eda_minima_trial$time)) %>% filter(EDA==max(EDA)) %>% mutate(n = 0) %>% select(n, everything()) %>% select(-trigger)
+          eda_trial %>% filter(time >= max(eda_minima_trial$time)) %>% filter(EDA==max(EDA)) %>% mutate(n = 0) %>% select(n, everything()) %>% select(-trigger)
         )
       }
       
@@ -707,7 +673,6 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
           scl_17 = scl_17 - Baseline,
           scl_18 = scl_18 - Baseline,
           scl_19 = scl_19 - Baseline,
-          scl_2_10 = scl_2_10 - Baseline,
         )
     }
     
@@ -734,11 +699,23 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
  
   print("trialwise parameterization complete!")
   
-  unified = eda_vp_cr %>% 
-    mutate(EDA = time_start %>% lapply(function(start)
-      eda %>% filter(time >= start + min(baselineWindow),
-                     time <= start + trial_length) %>% select(-trigger)))
+  eda_vp_cr = eda_vp_cr %>% mutate(time_bl = time_start - 0.5)
+  eda = eda %>% 
+    left_join(eda_vp_cr %>% select(trial, time_bl, time_start, time_end), join_by(closest(time >= time_bl))) 
   
+  eda <- eda %>%
+    mutate(time = time - time_start, 
+           time_end = time_end - time_start,
+           time_bl = time_bl - time_start,
+           time_start = time_start - time_start) %>%
+    mutate(EDA = ifelse((time >= time_bl) & (time <= time_end), EDA, NA))
+  
+  eda <- eda %>% drop_na(EDA) %>% select(-c(time_bl, time_start, time_end))
+  
+  eda_vp_cr <- eda_vp_cr %>% mutate(trial_idx = trial)
+  
+  unified = eda_vp_cr %>% mutate(EDA = trial_idx %>% lapply(function(trial_idx) 
+    eda %>% filter(trial == trial_idx)))
   
   for (t in 1:nrow(unified)) {
     # t = 1
@@ -746,7 +723,6 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
       mutate(subject = as.integer(substr(filename, 5, 6)),
              trial = t,
              sample = sample - unified$sample_start[[t]],
-             time = time - unified$time_start[[t]],
              samplepoint = sample-min(sample),
              condition = unified$condition[[t]])
     }
@@ -761,10 +737,11 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
       mutate(across('condition', str_replace_all, rep_str)) %>%
       mutate(trial = as.factor(trial)) %>% 
       {ggplot(., aes(x=time, y=EDA, color=trial, fill=trial)) + facet_wrap(vars(condition)) +
+          geom_vline(xintercept=0, color="black",linetype="solid") + #zero 
           geom_vline(xintercept=c(ucrMinWindow,crRiseMax), color="blue",linetype="dashed") + #borders of min/max scoring
           geom_path() + scale_color_viridis_d() + scale_fill_viridis_d() +
-          geom_point(data=minmax_unified,aes(x=time.min,y=EDA.min),shape=24,size=1)+
-          geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1)+
+          # geom_point(data=minmax_unified,aes(x=time.min,y=EDA.min),shape=24,size=1)+
+          # geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1)+
           xlab("Time") + ylab("EDA") +
           ggtitle(as.integer(substr(filename, 5, 6))) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
       #print()
