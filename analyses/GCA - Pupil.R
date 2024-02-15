@@ -297,7 +297,7 @@ for (subject_inmat in codes){
     
     baseline_trial = pupil_diameter_binded_trial %>% filter(time >= min(baselineWindow), time <= 0) %>% pull(diameter) %>% mean(na.rm=T)
     
-    diameter_level_trial = pupil_diameter_binded_trial %>% filter(time >= 0) %>% pull(diameter) %>% mean(na.rm=T)
+    diameter_level_trial = pupil_diameter_binded_trial %>% filter(time >= 0, time <= 10) %>% pull(diameter) %>% mean(na.rm=T)
     
     diameter_level_trial_0 = pupil_diameter_binded_trial %>% filter(time >= 0, time <= 0.5) %>% pull(diameter) %>% mean(na.rm=T)
     diameter_level_trial_1 = pupil_diameter_binded_trial %>% filter(time >= 0.5, time <= 1) %>% pull(diameter) %>% mean(na.rm=T)
