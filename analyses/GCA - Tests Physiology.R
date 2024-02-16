@@ -475,12 +475,12 @@ eda_long <- eda_unified %>%
 # with parallelization:
 # Use parallelization to run the permutations. As this was written for Windows, the doSNOW backend is used in the current implementation.
 cl <- makeCluster(detectCores() - 1)
-clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova"))
+clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova", "perform_lmm"))
 registerDoSNOW(cl)
 
 eda_null_dist <- data.frame()
 
-tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex")) %dopar% {
+tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex", "lme4")) %dopar% {
   y <- pt_null_distribution(eda_long, dv = "EDA", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
                             time = "samplepoint", trial = "trial", id = "subject", nperm = as.integer(ceiling(iterations/length(cl))))
   return(y)
@@ -541,6 +541,8 @@ clusters_F_int <- clusters_F_int %>%
 
 save(clusters_F_main1, clusters_F_main2, clusters_F_int,
      file = "eda_cluster.RData")
+
+load("eda_cluster.RData")
 
 eda_unified %>%
   filter(ID %in% responder) %>%
@@ -759,12 +761,12 @@ heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")
 # with parallelization:
 # Use parallelization to run the permutations. As this was written for Windows, the doSNOW backend is used in the current implementation.
 cl <- makeCluster(detectCores() - 1)
-clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova"))
+clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova", "perform_lmm"))
 registerDoSNOW(cl)
 
 hr_null_dist <- data.frame()
 
-tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex")) %dopar% {
+tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex", "lme4")) %dopar% {
   y <- pt_null_distribution(hr_long, dv = "HR", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
                             time = "samplepoint", trial = "trial", id = "subject", nperm = as.integer(ceiling(iterations/length(cl))))
   return(y)
@@ -825,6 +827,8 @@ clusters_F_int <- clusters_F_int %>%
 
 save(clusters_F_main1, clusters_F_main2, clusters_F_int,
      file = "hr_cluster.RData")
+
+load("hr_cluster.RData")
 
 baselineWindow = c(-.5, 0)
 step_plotting = 0.1
