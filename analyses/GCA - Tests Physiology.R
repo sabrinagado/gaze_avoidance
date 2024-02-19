@@ -736,23 +736,25 @@ sample_rate = 10
 
 heart.wide <- readRDS("HR.RData")
 
+step_plotting = 0.1
+scaling.window = c(seq(-4, 12, by=step_plotting))
+baselineWindow = c(-.5, 0) #correct for Baseline in this time window
+
 # CLUSTER
 hr_long <- heart.wide %>%
-  pivot_longer(hr.1:hr.125, names_to = "samplepoint", values_to ="HR", names_prefix="hr.") %>%
+  pivot_longer(hr.1:hr.160, names_to = "samplepoint", values_to ="HR", names_prefix="hr.") %>%
   mutate(samplepoint = as.numeric(samplepoint)) %>%
   filter(condition %in% c(6,7,8,9)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>%
   # mutate(ID = subject) %>% 
   select(subject, trial, condition, outcome, samplepoint, HR) %>%
-  mutate(time = ((samplepoint - 1) * 0.1) - 0.5) %>% 
+  mutate(time = ((samplepoint - 1) * step_plotting) + min(scaling.window)) %>% 
   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
-
-step_plotting = 0.1
-baselineWindow = c(-.5, 0) #correct for Baseline in this time window
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  filter(time >= 0, time < 10)
 
 heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")) %>% tibble() %>% 
-  mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(baselineWindow)} %>% as.factor(),
+  mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(scaling.window)} %>% round(2) %>% as.factor(),
          condition = as.factor(condition)) %>% 
   select(-contains("hr.bin."))
 
@@ -830,13 +832,6 @@ save(clusters_F_main1, clusters_F_main2, clusters_F_int,
 
 load("hr_cluster.RData")
 
-baselineWindow = c(-.5, 0)
-step_plotting = 0.1
-heart = heart.wide %>% select(-c(hr.2_10)) %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")) %>% tibble() %>% 
-  mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(baselineWindow)} %>% as.factor(),
-         condition = as.factor(condition)) %>% 
-  select(-contains("hr.bin."))
-
 heart %>% 
   filter(condition %in% c(6,7,8,9)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>%
@@ -851,7 +846,7 @@ heart %>%
       # geom_segment(data = clusters_F_main2, aes(x=times_start, xend = times_end, y=-2.7, yend=-2.7, size="Main Effect Social"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
       # geom_segment(data = clusters_F_main1, aes(x=times_start, xend = times_end, y=-3, yend=-3, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
       # geom_segment(data = clusters_F_int, aes(x=times_start, xend = times_end, y=-3.3, yend=-3.3, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
-      scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
+      scale_x_continuous("Time [s]",limits=c(-4, 12), minor_breaks=c(-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10), breaks=c(-4,-2,0, 2, 4, 6, 8, 10)) +
       scale_y_continuous("Heart Rate") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
       theme_bw() +

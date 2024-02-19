@@ -20,7 +20,7 @@ maxhr = 120 #maximum plausible heart rate
 hr_bins = T #calculate HR in 1s bins after CS onset
 baselineWindow = c(-.5, 0) #correct for Baseline in this time window
 step_plotting = 0.1
-scaling.window = c(seq(-.5, 12, by=step_plotting)) # Scoring bins in seconds (real time scaling; may be non-integer)
+scaling.window = c(seq(-4, 12, by=step_plotting)) # Scoring bins in seconds (real time scaling; may be non-integer)
 bin_width = 0.5
 bin.window = c(seq(0, 10, by=bin_width)) # Scoring bins in seconds (real time scaling; may be non-integer)
 
@@ -191,20 +191,6 @@ for (vpi in seq(vpn.ecg.hr)) {
     allhrbins = rbind(allhrbins, hrtrial)
   }
   
-  # BA
-  allhrba = numeric()
-  for (trial in seq(marker)) {
-    # trial = 1
-    mtime = marker[trial]
-    hr_t = allrpeak - mtime #heart rate time (relative to marker)
-    
-    # Real time scaling
-    current = ifelse(mtime + 10 < 0, NA, #skip marker time points that refer to negative times (i.e. out of data)
-                     scaleHR(hr_t, hr, 2, 10))
-    
-    allhrba = rbind(allhrba, current)
-  }
-  
   # Baseline Correction using first 0.5 seconds before trial
   allhrbl = numeric()
   for (trial in seq(marker)) {
@@ -226,7 +212,7 @@ for (vpi in seq(vpn.ecg.hr)) {
   
   # Add baseline column to dataframes
   allhr = cbind(allhrbl, allhr)
-  allhrbins = cbind(allhrbl, allhrbins, allhrba)
+  allhrbins = cbind(allhrbl, allhrbins)
   
   
   deltaval = allhr - matrix(allhr[, 1], nrow=nrow(allhr), ncol=ncol(allhr))
@@ -235,8 +221,7 @@ for (vpi in seq(vpn.ecg.hr)) {
   out = data.frame(trial = 1:trials.n, 
                    condition = conditions,
                    hrbl = allhr[, 1], 
-                   hr.bin = deltavalbins[, 2:(ncol(deltavalbins)-1)],
-                   hr.2_10 = deltavalbins[, (ncol(deltavalbins))],
+                   hr.bin = deltavalbins[, 2:(ncol(deltavalbins))],
                    hr = deltaval[, 2:ncol(deltaval)]
                    )
   
