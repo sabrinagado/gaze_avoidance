@@ -271,92 +271,92 @@ trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
 
 
 
-# { # Downsampling and HR Extraction --------------------------------
-#     print("Downsampling and extracting HR ...")
-# 
-#     for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
-# 
-#       # subject_inmat = filemat[[44]]
-# 
-#       physio <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
-#         rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
-#         mutate(sample = 1:n())
-# 
-# 
-#       firstcue <- physio %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
-#       lastcue <- physio %>% filter(ImgTest == 5) %>% tail(1) %>% .$sample
-#       recordend <- physio$sample %>% tail(1)
-# 
-#       physio <- physio %>% filter(sample >= firstcue - 10000 & sample < lastcue + 20000) %>%
-#         mutate(ImgAcq = ifelse(ImgAcq == 5,1,0),
-#                ImgTest = ifelse(ImgTest == 5,1,0),
-#                Shock = ifelse(Shock == 5,10,0),
-#                Reward = ifelse(Reward == 5,11,0),
-#                NoFeedback = ifelse(NoFeedback == 5,12,0),
-#                trigger = ImgAcq + ImgTest + Shock + Reward + NoFeedback,
-#                sample = 1:n(),
-#                time = sample /1000) %>%
-#         select(time, sample, ECG, trigger, ImgAcq, ImgTest, Shock, Reward, NoFeedback) %>%
-#         mutate(trigger = ifelse(trigger == lag(trigger), 0, trigger)) %>%
-#         fill(trigger,.direction = "up") %>%
-#         fill(trigger,.direction = "down")
-# 
-#       # Calculate time difference of triggers because of missing triggers in GCA study --> this way we can adapt the condition labels
-#       trigger_diff <- physio %>% filter(trigger == 1) %>%
-#         mutate(sdiff = lead(time, 1) - time) %>%
-#         mutate(use.trial = TRUE) %>%
-#         mutate(trial = row_number())
-# 
-#       if (nrow(trigger_diff) != 152) {
-# 
-#         second_highest = sort(trigger_diff$sdiff,partial=length(trigger_diff$sdiff)-2)[(length(trigger_diff$sdiff))-2]
-# 
-#         trigger_diff <- trigger_diff %>%
-#           mutate(rownum = row_number()) %>%
-#           bind_rows(., filter(., (sdiff > 16 ) & (sdiff < second_highest)) %>%
-#                       mutate(use.trial = FALSE, rownum = rownum+.5)) %>%
-#           arrange(rownum) %>%
-#           mutate(trial = row_number())
-#       }
-# 
-#       filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")
-#       trigger_mat_subj <- trigger_mat %>% filter(subject == filename)
-# 
-#       trigger_mat_subj <- trigger_mat_subj %>%
-#         left_join(trigger_diff %>% select(trial, use.trial), by=c("trial")) %>%
-#         mutate(trigger = if_else((filename == "gca_14") & (trial > 112), 0, trigger)) # exclude test trials in VP 14 because one is missing, but we do not know which one
-# 
-#       trigger_mat_subj <- trigger_mat_subj %>%
-#         filter(use.trial)
-# 
-#       #downsample (all columns)
-#       triggers_time = physio$time[physio$trigger != 0] #eda$time[eda$Trigger %>% is.na() == FALSE]
-#       conversion = round(sample_rate / sample_rate_new)
-#       physio_downsampled = data.frame(time=sample.down(physio$time,conversion),
-#                                       ECG=sample.down(physio$ECG,conversion),
-#                                       trigger=0) %>%
-#         mutate(sample=1:n()) %>% select(sample, everything())
-# 
-#       #calculate closest position for trigger onsets in downsampled time
-#       triggers_time_old = physio$time[physio$trigger != 0]
-#       triggers_indices_new = triggers_time_old %>% closestRepresentative(physio_downsampled$time, returnIndices = T) #for each old trigger time, find index of closest existing downsampled time
-#       physio_downsampled$trigger[triggers_indices_new] = physio$trigger[physio$trigger != 0] #inject conditions as triggers of onsets
-# 
-#       for (row in 1:(nrow(physio_downsampled)-1)){ if (physio_downsampled$trigger[row] == physio_downsampled$trigger[row+1]) {physio_downsampled$trigger[row+1]=0}} #remove extra shock-markers
-# 
-# 
-#       physio = physio_downsampled %>% select(-sample); rm(physio_downsampled)
-# 
-#       # if also the corrected triggers are not correct, then drop this subject
-#       if ((nrow(trigger_diff) == 152) |  (filename == "gca_14")) {
-#         physio$trigger[physio$trigger == 1] <- trigger_mat_subj %>% .$trigger
-#         write.table(physio,paste0(path.phys,subject_inmat), row.names = F, col.names=F)
-#       }
-# 
-#       print(paste0(filename, ': ', sum((physio$trigger > 1) & (physio$trigger < 10)), ' trials'))
-# 
-#     }; print("Downsampling complete!");
-#   }
+{ # Downsampling and HR Extraction --------------------------------
+    print("Downsampling and extracting HR ...")
+
+    for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durch, wenn du einzelne Files berechnen willst, mach es nicht mit der for loop sondern kommentier die nächste zeile wieder ein
+
+      # subject_inmat = filemat[[22]]
+
+      physio <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
+        rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
+        mutate(sample = 1:n())
+
+
+      firstcue <- physio %>% filter(ImgAcq == 5) %>% head(1) %>% .$sample
+      lastcue <- physio %>% filter(ImgTest == 5) %>% tail(1) %>% .$sample
+      recordend <- physio$sample %>% tail(1)
+
+      physio <- physio %>% filter(sample >= firstcue - 10000 & sample < lastcue + 20000) %>%
+        mutate(ImgAcq = ifelse(ImgAcq == 5,1,0),
+               ImgTest = ifelse(ImgTest == 5,1,0),
+               Shock = ifelse(Shock == 5,10,0),
+               Reward = ifelse(Reward == 5,11,0),
+               NoFeedback = ifelse(NoFeedback == 5,12,0),
+               trigger = ImgAcq + ImgTest + Shock + Reward + NoFeedback,
+               sample = 1:n(),
+               time = sample /1000) %>%
+        select(time, sample, ECG, trigger, ImgAcq, ImgTest, Shock, Reward, NoFeedback) %>%
+        mutate(trigger = ifelse(trigger == lag(trigger), 0, trigger)) %>%
+        fill(trigger,.direction = "up") %>%
+        fill(trigger,.direction = "down")
+
+      # Calculate time difference of triggers because of missing triggers in GCA study --> this way we can adapt the condition labels
+      trigger_diff <- physio %>% filter(trigger == 1) %>%
+        mutate(sdiff = lead(time, 1) - time) %>%
+        mutate(use.trial = TRUE) %>%
+        mutate(trial = row_number())
+
+      if (nrow(trigger_diff) != 152) {
+
+        second_highest = sort(trigger_diff$sdiff,partial=length(trigger_diff$sdiff)-2)[(length(trigger_diff$sdiff))-2]
+
+        trigger_diff <- trigger_diff %>%
+          mutate(rownum = row_number()) %>%
+          bind_rows(., filter(., (sdiff > 16 ) & (sdiff < second_highest)) %>%
+                      mutate(use.trial = FALSE, rownum = rownum+.5)) %>%
+          arrange(rownum) %>%
+          mutate(trial = row_number())
+      }
+
+      filename =  filemat[filemat == subject_inmat] %>% str_remove(.,pattern=".txt")
+      trigger_mat_subj <- trigger_mat %>% filter(subject == filename)
+
+      trigger_mat_subj <- trigger_mat_subj %>%
+        left_join(trigger_diff %>% select(trial, use.trial), by=c("trial")) %>%
+        mutate(trigger = if_else((filename == "gca_14") & (trial > 112), 0, trigger)) # exclude test trials in VP 14 because one is missing, but we do not know which one
+
+      trigger_mat_subj <- trigger_mat_subj %>%
+        filter(use.trial)
+
+      #downsample (all columns)
+      triggers_time = physio$time[physio$trigger != 0]
+      conversion = round(sample_rate / sample_rate_new)
+      physio_downsampled = data.frame(time=sample.down(physio$time,conversion),
+                                      ECG=sample.down(physio$ECG,conversion),
+                                      trigger=0) %>%
+        mutate(sample=1:n()) %>% select(sample, everything())
+
+      #calculate closest position for trigger onsets in downsampled time
+      triggers_time_old = physio$time[physio$trigger != 0]
+      triggers_indices_new = triggers_time_old %>% closestRepresentative(physio_downsampled$time, returnIndices = T) #for each old trigger time, find index of closest existing downsampled time
+      physio_downsampled$trigger[triggers_indices_new] = physio$trigger[physio$trigger != 0] #inject conditions as triggers of onsets
+
+      for (row in 1:(nrow(physio_downsampled)-1)){ if (physio_downsampled$trigger[row] == physio_downsampled$trigger[row+1]) {physio_downsampled$trigger[row+1]=0}} #remove extra shock-markers
+
+
+      physio = physio_downsampled %>% select(-sample); rm(physio_downsampled)
+
+      # if also the corrected triggers are not correct, then drop this subject
+      if ((nrow(trigger_diff) == 152) |  (filename == "gca_14")) {
+        physio$trigger[physio$trigger == 1] <- trigger_mat_subj %>% .$trigger
+        write.table(physio,paste0(path.phys,subject_inmat), row.names = F, col.names=F)
+      }
+
+      print(paste0(filename, ': ', sum((physio$trigger > 1) & (physio$trigger < 10)), ' trials'))
+
+    }; print("Downsampling complete!");
+  }
 
 
 

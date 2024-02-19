@@ -104,7 +104,7 @@ vpn.ecg.hr = list.files("../Physio/HR/", pattern="*.txt", full.names=TRUE)
 hr.list = list() #vector("list", length(vpn.ecg.rpeaks))
 
 for (vpi in seq(vpn.ecg.hr)) {
-  # vpi = 1
+  # vpi = 22
   
   vp = vpn.ecg.rpeaks[vpi]
   #if (vp %>% pathToCode() %>% codeToNum() %in% exclusions.hr) next
@@ -129,12 +129,6 @@ for (vpi in seq(vpn.ecg.hr)) {
   # }
   triggers.n = sum(trigger!=0)
   trials.n = triggers.n
-  
-  # exclude first wrong triggers for VP6
-  # if(triggers.n > 180) {
-  #    trigger[head(which(trigger > 0),16)] <- 0
-  #    triggers.n = sum(trigger!=0)
-  #  }
   
   conditions = trigger[trigger!=0]
   
