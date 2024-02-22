@@ -35,6 +35,15 @@ standardizing = F
 lowpass = T
 lowPassFreq = 2 #low pass filter (Hz) entweder keinen oder 2Hz wie bei Matthias
 
+conversion <- T  # Convert to mm according to Hayes & Petrov (2016)
+# screen: 24" ASUS VG248QE
+screen.width <- 1920
+screen.height <- 1080
+screen.width.cm <- 53.136
+screen.height.cm <- 29.889
+pixsize_in_cm <- screen.width.cm / screen.width  # Pixel size in cm
+distance <- 500 # Distance Camera - Eye 500 mm (chin rest with remote tracking)
+
 baselineWindow = c(-0.5, 0)
 # responseWindow = c(0, 8)
 
@@ -214,6 +223,14 @@ for (subject_inmat in codes){
     
     pupil = pupil_filt
     print("low pass filtering done!")
+  }
+  
+  #conversion to mm based on Hayes & Petrov (2016)
+  if (conversion) {
+    pupil_conv = pupil
+    pupil_conv$diameter =  1.70*10^(-4)*distance*sqrt(pupil_conv$diameter)
+    
+    pupil = pupil_conv
   }
   
   pupil_vp = pupil %>%  select(-diameter) %>% 

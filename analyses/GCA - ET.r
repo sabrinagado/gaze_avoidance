@@ -79,7 +79,7 @@ requirePackage = function(name, load=T) {
   screen.width.cm <- 53.136
   screen.height.cm <- 29.889
   pixsize_in_cm <- screen.width.cm / screen.width  # Pixel size in cm
-  distance <- 560 # Distance Camera - Eye 560 mm (chin rest with remote tracking)
+  distance <- 500 # Distance Camera - Eye 500 mm (chin rest with remote tracking)
   
   # #statistical analysis
   # z.max = 2 #winsorize dependent variables to a z value of 2
@@ -790,6 +790,7 @@ baseline.acq.summary %>% group_by(subject) %>% summarise(invalid = mean(invalid)
 baseline.acq.summary %>% summarise(mean_bl = mean(invalid)*100, sd_bl = sd(invalid)*100)
 excluded_subjects = baseline.acq.summary %>% filter(included == FALSE)
 excluded_subjects = as.numeric(excluded_subjects$subject)
+print(paste0("Number of excluded subjects (Acquisition): ", length(excluded_subjects)))
 
 ### SACCADES
 saccades = loadSaccades(file.path(path.eye, "saccades.txt"), screen.height) %>% 
@@ -1002,7 +1003,6 @@ ggplot(saccades.acq.roi.summary, aes(x = condition, y = Mean, fill = condition))
 ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_proportion_roi.png"), width=1800, height=2000, units="px")
 
 saccades.acq.prop %>%
-  group_by(subject, condition_social, condition_threat) %>%
   mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
   ez::ezANOVA(dv=.(relative_frequency_ROI),
               wid=.(subject),
@@ -1090,24 +1090,24 @@ ggplot(saccades.acq.roi.summary, aes(x = block, y = Mean, group = condition, col
 ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_proportion_roi_block.png"), width=2800, height=2000, units="px")
 
 
-# Percentage of saccades going towards the quadrant
-saccades.acq.quad.summary <- saccades.acq.prop %>%
-  summarise(Mean = mean(relative_frequency_Quadrant), SD = sd(relative_frequency_Quadrant), .by=condition)
-
-ggplot(saccades.acq.quad.summary, aes(x = condition, y = Mean, fill = condition)) +
-  geom_col(position = "dodge", width = 0.7) +
-  geom_errorbar(
-    aes(ymin = Mean - SD, ymax = Mean + SD),
-    position = position_dodge(width = 0.7),
-    width = 0.25) +
-  geom_point(data=saccades.acq.prop, aes(y = relative_frequency_Quadrant), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = paste("Proportion of Trials with a Saccade to the Quadrant of the Stimulus (N = ", n_distinct(saccades.acq.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d()
-
-ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_proportion_quad.png"), width=1800, height=2400, units="px")
+# # Percentage of saccades going towards the quadrant
+# saccades.acq.quad.summary <- saccades.acq.prop %>%
+#   summarise(Mean = mean(relative_frequency_Quadrant), SD = sd(relative_frequency_Quadrant), .by=condition)
+# 
+# ggplot(saccades.acq.quad.summary, aes(x = condition, y = Mean, fill = condition)) +
+#   geom_col(position = "dodge", width = 0.7) +
+#   geom_errorbar(
+#     aes(ymin = Mean - SD, ymax = Mean + SD),
+#     position = position_dodge(width = 0.7),
+#     width = 0.25) +
+#   geom_point(data=saccades.acq.prop, aes(y = relative_frequency_Quadrant), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
+#   labs(title = paste("Proportion of Trials with a Saccade to the Quadrant of the Stimulus (N = ", n_distinct(saccades.acq.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
+#   theme_minimal() +
+#   theme(legend.position = "none") +
+#   scale_fill_viridis_d() +
+#   scale_color_viridis_d()
+# 
+# ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_proportion_quad.png"), width=1800, height=2400, units="px")
 
 # Latency to first saccade going towards the stimuli
 saccades.acq.lat.roi <- saccades.acq.analysis %>%
@@ -1117,7 +1117,7 @@ saccades.acq.lat.roi <- saccades.acq.analysis %>%
   filter(!contains_blink) %>%
   filter(angle >= 1) %>%
   filter(ROI & start_time < feedbackOnset) %>%
-  reframe(latency = start_time, .by=c(subject, SPAI, condition, condition_social, condition_threat))
+  reframe(latency = mean(start_time), .by=c(subject, SPAI, condition, condition_social, condition_threat))
 
 saccades.acq.lat.roi.filter <- saccades.acq.lat.roi%>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
@@ -1152,52 +1152,52 @@ saccades.acq.lat.roi %>%
               detailed=T, type=3) %>%
   apa::anova_apa()
 
-# Zoom in Interaction
-saccades.acq.lat.roi.summary <- saccades.acq.lat.roi.summary %>%
-  mutate(condition_threat = ifelse(condition_threat == "neg", "negative (Shock)", "positive (Reward)"))
+# # Zoom in Interaction
+# saccades.acq.lat.roi.summary <- saccades.acq.lat.roi.summary %>%
+#   mutate(condition_threat = ifelse(condition_threat == "neg", "negative (Shock)", "positive (Reward)"))
+# 
+# ggplot(saccades.acq.lat.roi.summary, aes(x = condition_threat, y = Mean, group = condition_social, color = condition_social)) +
+#   geom_point(position = position_dodge(width = 0.5), shape = "square", size = 5) +
+#   geom_errorbar(
+#     aes(ymin = Mean - SD, ymax = Mean + SD),
+#     position = position_dodge(width = 0.5),
+#     width = 0.25, linewidth = 1) +
+#   geom_line(position = position_dodge(width = 0.5), linewidth = 1) +
+#   labs(title = paste("Latency to First Saccade to the Stimulus (N = ", n_distinct(saccades.acq.lat.roi$subject), ")", sep=""), x = "Threat Condition", y = "Latency [ms]") +
+#   guides(color = guide_legend(title = "Social Conditions")) +
+#   theme_minimal() +
+#   scale_fill_viridis_d() +
+#   scale_color_viridis_d()
+# 
+# ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_latency_roi_interaction.png"), width=2000, height=2000, units="px")
 
-ggplot(saccades.acq.lat.roi.summary, aes(x = condition_threat, y = Mean, group = condition_social, color = condition_social)) +
-  geom_point(position = position_dodge(width = 0.5), shape = "square", size = 5) +
-  geom_errorbar(
-    aes(ymin = Mean - SD, ymax = Mean + SD),
-    position = position_dodge(width = 0.5),
-    width = 0.25, linewidth = 1) +
-  geom_line(position = position_dodge(width = 0.5), linewidth = 1) +
-  labs(title = paste("Latency to First Saccade to the Stimulus (N = ", n_distinct(saccades.acq.lat.roi$subject), ")", sep=""), x = "Threat Condition", y = "Latency [ms]") +
-  guides(color = guide_legend(title = "Social Conditions")) +
-  theme_minimal() +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_latency_roi_interaction.png"), width=2000, height=2000, units="px")
-
-
-# Latency to first saccade going towards the quadrant of stimuli
-saccades.acq.lat.quad <- saccades.acq.analysis %>%
-  filter (trial >= 32) %>%
-  filter(blok) %>%
-  filter(outcomeok) %>%
-  filter(!contains_blink) %>%
-  filter(ROI & start_time < feedbackOnset & angle >= 1) %>%
-  summarise(latency = start_time, .by=c(subject, condition))
-
-saccades.acq.lat.quad.summary <- saccades.acq.lat.quad %>%
-  summarise(Mean = mean(latency), SD = sd(latency), .by=condition)
-
-ggplot(saccades.acq.lat.quad.summary, aes(x = condition, y = Mean, fill = condition)) +
-  geom_col(position = "dodge", width = 0.7) +
-  geom_errorbar(
-    aes(ymin = Mean - SD, ymax = Mean + SD),
-    position = position_dodge(width = 0.7),
-    width = 0.25) +
-  geom_point(data=saccades.acq.lat.quad, aes(y = latency), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = paste("Latency to First Saccade to the Quadrant of the Stimulus (N = ", n_distinct(saccades.acq.lat.quad$subject), ")", sep=""), x = "Conditions", y = "Latency [ms]") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d()
-
-ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_latency_quad.png"), width=1800, height=2400, units="px")
+# # Latency to first saccade going towards the quadrant of stimuli
+# saccades.acq.lat.quad <- saccades.acq.analysis %>%
+#   filter (trial >= 32) %>%
+#   filter(blok) %>%
+#   filter(outcomeok) %>%
+#   filter(!contains_blink) %>%
+#   filter(ROI & start_time < feedbackOnset & angle >= 1) %>%
+#   summarise(latency = start_time, .by=c(subject, condition))
+# 
+# saccades.acq.lat.quad.summary <- saccades.acq.lat.quad %>%
+#   summarise(Mean = mean(latency), SD = sd(latency), .by=condition)
+# 
+# ggplot(saccades.acq.lat.quad.summary, aes(x = condition, y = Mean, fill = condition)) +
+#   geom_col(position = "dodge", width = 0.7) +
+#   geom_errorbar(
+#     aes(ymin = Mean - SD, ymax = Mean + SD),
+#     position = position_dodge(width = 0.7),
+#     width = 0.25) +
+#   geom_point(data=saccades.acq.lat.quad, aes(y = latency), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
+#   labs(title = paste("Latency to First Saccade to the Quadrant of the Stimulus (N = ", n_distinct(saccades.acq.lat.quad$subject), ")", sep=""), x = "Conditions", y = "Latency [ms]") +
+#   theme_minimal() +
+#   theme(legend.position = "none") +
+#   scale_fill_viridis_d() +
+#   scale_color_viridis_d()
+# 
+# ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_latency_quad.png"), width=1800, height=2400, units="px")
 
 # Length of saccade going towards the stimuli
 saccades.acq.len.roi <- saccades.acq.analysis %>%
@@ -1207,13 +1207,13 @@ saccades.acq.len.roi <- saccades.acq.analysis %>%
   filter(!contains_blink) %>%
   # filter(angle >= 1) %>%
   filter(ROI & start_time < feedbackOnset) %>%
-  summarise(length = angle, .by=c(subject, SPAI, condition, condition_social, condition_threat))
+  summarise(length = mean(angle), .by=c(subject, SPAI, condition, condition_social, condition_threat))
 
 saccades.acq.len.roi.filter <- saccades.acq.len.roi%>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
 
 saccades.acq.len.roi.summary <- saccades.acq.len.roi %>%
-  summarise(Mean = mean(length), SD = sd(length), .by=condition)
+  summarise(Mean = mean(length), SD = sd(length), .by=c(condition, condition_social, condition_threat))
 
 ggplot(saccades.acq.len.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
   geom_col(position = "dodge", width = 0.7) +
@@ -1243,32 +1243,52 @@ saccades.acq.len.roi %>%
               detailed=T, type=3) %>%
   apa::anova_apa()
 
-# Latency to first saccade going towards the quadrant of stimuli
-saccades.acq.len.quad <- saccades.acq.analysis %>%
-  filter (trial >= 32) %>%
-  filter(blok) %>%
-  filter(outcomeok) %>%
-  filter(!contains_blink) %>%
-  filter(ROI & start_time < feedbackOnset & angle >= 1) %>%
-  summarise(length = angle, .by=c(subject, condition))
+# Zoom in Interaction
+saccades.acq.len.roi.summary <- saccades.acq.len.roi.summary %>%
+  mutate(condition_threat = ifelse(condition_threat == "neg", "negative (Shock)", "positive (Reward)"))
 
-saccades.acq.len.quad.summary <- saccades.acq.len.quad %>%
-  summarise(Mean = mean(length), SD = sd(length), .by=condition)
-
-ggplot(saccades.acq.len.quad.summary, aes(x = condition, y = Mean, fill = condition)) +
-  geom_col(position = "dodge", width = 0.7) +
+ggplot(saccades.acq.len.roi.summary, aes(x = condition_threat, y = Mean, group = condition_social, color = condition_social)) +
+  geom_point(position = position_dodge(width = 0.5), shape = "square", size = 5) +
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
-    position = position_dodge(width = 0.7),
-    width = 0.25) +
-  geom_point(data=saccades.acq.len.quad, aes(y = length), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
-  labs(title = paste("Length of Saccade to the Quadrant of the Stimulus (N = ", n_distinct(saccades.acq.len.quad$subject), ")", sep=""), x = "Conditions", y = "Length [degree visual angle]") +
+    position = position_dodge(width = 0.5),
+    width = 0.25, linewidth = 1) +
+  geom_line(position = position_dodge(width = 0.5), linewidth = 1) +
+  labs(title = paste("Length of Saccade to the Stimulus (N = ", n_distinct(saccades.acq.len.roi$subject), ")", sep=""), x = "Threat Condition", y = "Latency [ms]") +
+  guides(color = guide_legend(title = "Social Conditions")) +
   theme_minimal() +
-  theme(legend.position = "none") +
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_length_quad.png"), width=1800, height=2400, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_length_roi_interaction.png"), width=2000, height=2000, units="px")
+
+
+# # Latency to first saccade going towards the quadrant of stimuli
+# saccades.acq.len.quad <- saccades.acq.analysis %>%
+#   filter (trial >= 32) %>%
+#   filter(blok) %>%
+#   filter(outcomeok) %>%
+#   filter(!contains_blink) %>%
+#   filter(ROI & start_time < feedbackOnset & angle >= 1) %>%
+#   summarise(length = angle, .by=c(subject, condition))
+# 
+# saccades.acq.len.quad.summary <- saccades.acq.len.quad %>%
+#   summarise(Mean = mean(length), SD = sd(length), .by=condition)
+# 
+# ggplot(saccades.acq.len.quad.summary, aes(x = condition, y = Mean, fill = condition)) +
+#   geom_col(position = "dodge", width = 0.7) +
+#   geom_errorbar(
+#     aes(ymin = Mean - SD, ymax = Mean + SD),
+#     position = position_dodge(width = 0.7),
+#     width = 0.25) +
+#   geom_point(data=saccades.acq.len.quad, aes(y = length), size = 2, shape = 21, color = "black", alpha=0.5, position=position_jitter(width=0.05)) +
+#   labs(title = paste("Length of Saccade to the Quadrant of the Stimulus (N = ", n_distinct(saccades.acq.len.quad$subject), ")", sep=""), x = "Conditions", y = "Length [degree visual angle]") +
+#   theme_minimal() +
+#   theme(legend.position = "none") +
+#   scale_fill_viridis_d() +
+#   scale_color_viridis_d()
+# 
+# ggsave(file.path(path, "plots", "avoidance-task", "acquisition", "saccades_length_quad.png"), width=1800, height=2400, units="px")
 
 
 ###############################################################################
@@ -1308,6 +1328,7 @@ baseline.test.summary %>% group_by(subject) %>% summarise(invalid = mean(invalid
 baseline.test.summary %>% summarise(mean_bl = mean(invalid)*100, sd_bl = sd(invalid)*100)
 excluded_subjects = baseline.test.summary %>% filter(included == FALSE)
 excluded_subjects = as.numeric(excluded_subjects$subject)
+print(paste0("Number of excluded subjects (Test): ", length(excluded_subjects)))
 
 # Baseline OK?
 fixations.test.valid <- fixations.test.valid %>% 
@@ -1467,7 +1488,7 @@ saccades.test.prop <- saccades.test.analysis %>%
 saccades.test.prop <- saccades.test.analysis %>%
   filter(blok) %>%
   filter(!contains_blink) %>%
-  summarise(absolute_frequency_ROI = sum(angle >= 1 & !ROI), relative_frequency_ROI = mean(angle >= 1 & !ROI), .by=c(trial, subject, SPAI, condition, condition_social, condition_threat))
+  summarise(absolute_frequency_ROI = sum(angle >= 1 & !ROI), relative_frequency_ROI = mean(angle >= 1 & !ROI), .by=c(subject, SPAI, condition, condition_social, condition_threat))
 
 saccades.test.roi.summary <- saccades.test.prop %>%
   summarise(Mean = mean(relative_frequency_ROI), SD = sd(relative_frequency_ROI), .by=condition)
@@ -1488,7 +1509,7 @@ ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "avoidance-task", "test", "saccades_proportion_roi_visualanglefilter.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "test", "saccades_proportion_roi.png"), width=1800, height=2000, units="px")
 
 
 saccades.test.prop %>%
@@ -1507,7 +1528,7 @@ saccades.test.prop %>%
 saccades.test.prop <- saccades.test.analysis %>%
   filter(blok) %>%
   filter(!contains_blink) %>%
-  summarise(absolute_frequency_ROI = sum(!ROI), relative_frequency_ROI = mean(!ROI), .by=c(trial, subject, SPAI, condition, condition_social, condition_threat))
+  summarise(absolute_frequency_ROI = sum(!ROI), relative_frequency_ROI = mean(!ROI), .by=c(subject, SPAI, condition, condition_social, condition_threat))
 
 saccades.test.roi.summary <- saccades.test.prop %>%
   summarise(Mean = mean(relative_frequency_ROI), SD = sd(relative_frequency_ROI), .by=condition)
@@ -1525,7 +1546,7 @@ ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "plots", "avoidance-task", "test", "saccades_proportion_roi_allsaccades.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "plots", "avoidance-task", "test", "microsaccades_proportion_roi_allsaccades.png"), width=1800, height=2000, units="px")
 
 saccades.test.prop %>%
   left_join(saccades.test.roi.filter, by=c("subject")) %>%
@@ -1545,7 +1566,7 @@ saccades.test.lat.roi <- saccades.test.analysis %>%
   filter(blok) %>%
   filter(!contains_blink) %>%
   filter(!ROI & angle >= 1) %>%
-  summarise(latency = start_time, .by=c(subject, SPAI, condition, condition_social, condition_threat))
+  summarise(latency = mean(start_time), .by=c(subject, SPAI, condition, condition_social, condition_threat))
 
 saccades.test.lat.roi.summary <- saccades.test.lat.roi %>%
   summarise(Mean = mean(latency), SD = sd(latency), .by=c(condition, condition_social, condition_threat))
