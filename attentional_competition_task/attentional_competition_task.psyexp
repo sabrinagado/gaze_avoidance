@@ -2,7 +2,7 @@
 <PsychoPy2experiment encoding="utf-8" version="2022.2.4">
   <Settings>
     <Param val="use prefs" valType="str" updates="None" name="Audio latency priority"/>
-    <Param val="ptb" valType="str" updates="None" name="Audio lib"/>
+    <Param val="pygame" valType="str" updates="None" name="Audio lib"/>
     <Param val="" valType="str" updates="None" name="Completed URL"/>
     <Param val="auto" valType="str" updates="None" name="Data file delimiter"/>
     <Param val="u'data/%s_%s_%s' % (expName, expInfo['participant'], expInfo['date'])" valType="code" updates="None" name="Data filename"/>
@@ -25,7 +25,7 @@
     <Param val="False" valType="bool" updates="None" name="Show mouse"/>
     <Param val="norm" valType="str" updates="None" name="Units"/>
     <Param val="2022.2.4" valType="str" updates="None" name="Use version"/>
-    <Param val="[2560, 1440]" valType="list" updates="None" name="Window size (pixels)"/>
+    <Param val="[1680, 1050]" valType="list" updates="None" name="Window size (pixels)"/>
     <Param val="avg" valType="str" updates="None" name="blendMode"/>
     <Param val="$[0,0,0]" valType="color" updates="None" name="color"/>
     <Param val="rgb" valType="str" updates="None" name="colorSpace"/>
@@ -103,7 +103,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="3" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -127,7 +127,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="3" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="routine" valType="str" updates="constant" name="timeRelativeTo"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -155,7 +155,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="3" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
@@ -198,7 +198,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="3" valType="code" updates="constant" name="stopVal"/>
+        <Param val="1" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="$feedback_points" valType="str" updates="set every frame" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -223,7 +223,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="3" valType="code" updates="constant" name="stopVal"/>
+        <Param val="1" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="$feedback_score" valType="str" updates="set every frame" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -251,7 +251,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="3" valType="code" updates="constant" name="stopVal"/>
+        <Param val="1" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
@@ -278,7 +278,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="3" valType="code" updates="constant" name="stopVal"/>
+        <Param val="1" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -305,7 +305,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="3" valType="code" updates="constant" name="stopVal"/>
+        <Param val="1" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
@@ -1050,7 +1050,7 @@
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
         <Param val="" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
-        <Param val="Wir starten nun mit dem Experiment.&amp;#10;&amp;#10;Sie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines elektrischen Reizes. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren und die elektrischen Reize zu vermeiden.&amp;#10;&amp;#10;Bitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.&amp;#10;&amp;#10;Drücken Sie die Leertaste, um zu starten.&amp;#10;" valType="str" updates="constant" name="text"/>
+        <Param val="Wir starten nun mit dem Experiment.&amp;#10;&amp;#10;Sie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines Verlustes von Punkten. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren.&amp;#10;&amp;#10;Bitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.&amp;#10;&amp;#10;Drücken Sie die Leertaste, um zu starten.&amp;#10;" valType="str" updates="constant" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
@@ -1174,7 +1174,7 @@
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
         <Param val="" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
-        <Param val="--- Kurze Pause ---&amp;#10;&amp;#10;Im nächsten Block ist Ihre Aufgabe weiterhin Ihren Belohnungsscore zu maximieren und die elektrischen Reize zu vermeiden. " valType="str" updates="constant" name="text"/>
+        <Param val="--- Kurze Pause ---&amp;#10;&amp;#10;Im nächsten Block ist Ihre Aufgabe weiterhin Ihren Belohnungsscore zu maximieren." valType="str" updates="constant" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
@@ -1212,7 +1212,7 @@
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
         <Param val="" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
-        <Param val="Den elektrischen Reiz können Sie vermeiden, in dem Sie das entsprechende Bild nicht anschauen." valType="str" updates="constant" name="text"/>
+        <Param val="Sie können den Verlust von Punkten vermeiden, in dem Sie das entsprechende Bild nicht anschauen." valType="str" updates="constant" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
       </TextboxComponent>
       <TextComponent name="textRepeatSpace">
@@ -1292,7 +1292,7 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
         <Param val="looked_at_roi1 = False&amp;#10;looked_at_roi2 = False&amp;#10;looked_at_roi3 = False&amp;#10;looked_at_roi4 = False&amp;#10;cursorcolor=&quot;white&quot;&amp;#10;&amp;#10;logging.log(level=logging.INFO, msg=f'ImageTestOnset')&amp;#10;ioServer.sendMessageEvent(text='ImageTestOnset')&amp;#10;eyetracker.sendMessage('ImageTestOnset')" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
-        <Param val="if loop_timer.getTime() &gt;= 5.0:&amp;#10;    continueRoutine = False&amp;#10;    currentLoop.finished = True&amp;#10;&amp;#10;test_roi1.size = test_image1.size&amp;#10;test_roi1.pos = position1&amp;#10;&amp;#10;if test_roi1.isLookedIn and not looked_at_roi1_trial:&amp;#10;    looked_at_roi1 = True&amp;#10;    looked_at_roi1_trial = True&amp;#10;    continueRoutine = False&amp;#10;&amp;#10;test_roi2.size = test_image2.size&amp;#10;test_roi2.pos = position2&amp;#10;&amp;#10;if test_roi2.isLookedIn and not looked_at_roi2_trial:&amp;#10;    looked_at_roi2 = True&amp;#10;    looked_at_roi2_trial = True&amp;#10;    continueRoutine = False&amp;#10;    &amp;#10;test_roi3.size = test_image3.size&amp;#10;test_roi3.pos = position3&amp;#10;&amp;#10;if test_roi3.isLookedIn and not looked_at_roi3_trial:&amp;#10;    looked_at_roi3 = True&amp;#10;    looked_at_roi3_trial = True&amp;#10;    continueRoutine = False&amp;#10;   &amp;#10;test_roi4.size = test_image4.size&amp;#10;test_roi4.pos = position4&amp;#10;&amp;#10;if test_roi4.isLookedIn and not looked_at_roi4_trial:&amp;#10;    looked_at_roi4 = True&amp;#10;    looked_at_roi4_trial = True&amp;#10;    continueRoutine = False&amp;#10;    &amp;#10;if event.getKeys(keyList=[&quot;p&quot;]) and not paused:&amp;#10;    print(&quot;Experiment Paused - Press 'p' to continue.&quot;)&amp;#10;    paused = True&amp;#10;    event.waitKeys(keyList=[&quot;p&quot;], clearEvents=True)&amp;#10;    &amp;#10;    print(&quot;Experiment Continued&quot;)&amp;#10;    paused = False&amp;#10;    event.clearEvents(eventType=&quot;keyboard&quot;)&amp;#10;    " valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="if loop_timer.getTime() &gt;= 2.0:&amp;#10;    continueRoutine = False&amp;#10;    currentLoop.finished = True&amp;#10;&amp;#10;test_roi1.size = test_image1.size&amp;#10;test_roi1.pos = position1&amp;#10;&amp;#10;if test_roi1.isLookedIn and not looked_at_roi1_trial:&amp;#10;    looked_at_roi1 = True&amp;#10;    looked_at_roi1_trial = True&amp;#10;    continueRoutine = False&amp;#10;&amp;#10;test_roi2.size = test_image2.size&amp;#10;test_roi2.pos = position2&amp;#10;&amp;#10;if test_roi2.isLookedIn and not looked_at_roi2_trial:&amp;#10;    looked_at_roi2 = True&amp;#10;    looked_at_roi2_trial = True&amp;#10;    continueRoutine = False&amp;#10;    &amp;#10;test_roi3.size = test_image3.size&amp;#10;test_roi3.pos = position3&amp;#10;&amp;#10;if test_roi3.isLookedIn and not looked_at_roi3_trial:&amp;#10;    looked_at_roi3 = True&amp;#10;    looked_at_roi3_trial = True&amp;#10;    continueRoutine = False&amp;#10;   &amp;#10;test_roi4.size = test_image4.size&amp;#10;test_roi4.pos = position4&amp;#10;&amp;#10;if test_roi4.isLookedIn and not looked_at_roi4_trial:&amp;#10;    looked_at_roi4 = True&amp;#10;    looked_at_roi4_trial = True&amp;#10;    continueRoutine = False&amp;#10;    &amp;#10;if event.getKeys(keyList=[&quot;p&quot;]) and not paused:&amp;#10;    print(&quot;Experiment Paused - Press 'p' to continue.&quot;)&amp;#10;    paused = True&amp;#10;    event.waitKeys(keyList=[&quot;p&quot;], clearEvents=True)&amp;#10;    &amp;#10;    print(&quot;Experiment Continued&quot;)&amp;#10;    paused = False&amp;#10;    event.clearEvents(eventType=&quot;keyboard&quot;)&amp;#10;    " valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
@@ -1323,7 +1323,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="2" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1347,7 +1347,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="2" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="routine" valType="str" updates="constant" name="timeRelativeTo"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1375,7 +1375,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="2" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1399,7 +1399,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="2" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="routine" valType="str" updates="constant" name="timeRelativeTo"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1427,7 +1427,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="2" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1451,7 +1451,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="2" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="routine" valType="str" updates="constant" name="timeRelativeTo"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1479,7 +1479,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="2" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1503,7 +1503,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="2" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="routine" valType="str" updates="constant" name="timeRelativeTo"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1531,7 +1531,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="5" valType="code" updates="constant" name="stopVal"/>
+        <Param val="2" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
@@ -1546,7 +1546,7 @@
         <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
         <Param val="logging.log(level=logging.INFO, msg=f'FeedbackTestOnset_{log_msg}')&amp;#10;ioServer.sendMessageEvent(text='FeedbackTestOnset')&amp;#10;eyetracker.sendMessage('FeedbackTestOnset')&amp;#10;eyetracker.sendMessage(outcome)&amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
         <Param val="Py" valType="str" updates="None" name="Code Type"/>
-        <Param val="if loop_timer.getTime() &gt;= 5.0:&amp;#10;    continueRoutine = False&amp;#10;    currentLoop.finished = True" valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="if loop_timer.getTime() &gt;= 2.0:&amp;#10;    continueRoutine = False&amp;#10;    currentLoop.finished = True" valType="extendedCode" updates="constant" name="Each Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
         <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
         <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
@@ -1559,14 +1559,14 @@
         <Param val="$feedback_color" valType="color" updates="set every repeat" name="color"/>
         <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
         <Param val="1" valType="num" updates="constant" name="contrast"/>
-        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="True" valType="bool" updates="None" name="disabled"/>
         <Param val="" valType="code" updates="None" name="durationEstim"/>
         <Param val="None" valType="str" updates="constant" name="flip"/>
         <Param val="Open Sans" valType="str" updates="constant" name="font"/>
         <Param val="LTR" valType="str" updates="None" name="languageStyle"/>
         <Param val="0.1" valType="num" updates="constant" name="letterHeight"/>
         <Param val="textPointsTest" valType="code" updates="None" name="name"/>
-        <Param val="" valType="num" updates="constant" name="opacity"/>
+        <Param val="0" valType="num" updates="constant" name="opacity"/>
         <Param val="0" valType="num" updates="constant" name="ori"/>
         <Param val="(0, 0.15)" valType="list" updates="constant" name="pos"/>
         <Param val="False" valType="bool" updates="None" name="saveStartStop"/>
@@ -1574,7 +1574,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="1" valType="code" updates="constant" name="stopVal"/>
+        <Param val="0.5" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="$feedback_points" valType="str" updates="set every frame" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1599,7 +1599,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="1" valType="code" updates="constant" name="stopVal"/>
+        <Param val="0.5" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="$feedback_score" valType="str" updates="set every frame" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1627,7 +1627,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="1" valType="code" updates="constant" name="stopVal"/>
+        <Param val="0.5" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
@@ -1654,7 +1654,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="1" valType="code" updates="constant" name="stopVal"/>
+        <Param val="0.5" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1681,7 +1681,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="1" valType="code" updates="constant" name="stopVal"/>
+        <Param val="0.5" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1708,7 +1708,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="1" valType="code" updates="constant" name="stopVal"/>
+        <Param val="0.5" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1735,7 +1735,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="1" valType="code" updates="constant" name="stopVal"/>
+        <Param val="0.5" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="128" valType="num" updates="constant" name="texture resolution"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
@@ -1762,7 +1762,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0.0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="1" valType="code" updates="constant" name="stopVal"/>
+        <Param val="0.5" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="list" updates="constant" name="vertices"/>
@@ -1778,7 +1778,7 @@
         <Param val="time (s)" valType="str" updates="None" name="startType"/>
         <Param val="0" valType="code" updates="None" name="startVal"/>
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
-        <Param val="1" valType="code" updates="constant" name="stopVal"/>
+        <Param val="0.5" valType="code" updates="constant" name="stopVal"/>
         <Param val="False" valType="bool" updates="constant" name="syncScreenRefresh"/>
         <Param val="1" valType="num" updates="constant" name="volume"/>
       </SoundComponent>
@@ -1860,7 +1860,7 @@
     <Routine name="startTask"/>
     <Routine name="blank"/>
     <LoopInitiator loopType="TrialHandler" name="learning_trials">
-      <Param name="Selected rows" updates="None" val="$randchoice(16, 4)" valType="str"/>
+      <Param name="Selected rows" updates="None" val="$randchoice(16, 2)" valType="str"/>
       <Param name="conditions" updates="None" val="None" valType="str"/>
       <Param name="conditionsFile" updates="None" val="$posFile" valType="file"/>
       <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
@@ -1879,7 +1879,7 @@
     <Routine name="repeatTask"/>
     <Routine name="blank"/>
     <LoopInitiator loopType="TrialHandler" name="trials">
-      <Param name="Selected rows" updates="None" val="$randchoice(16, 4)" valType="str"/>
+      <Param name="Selected rows" updates="None" val="$randchoice(16, 2)" valType="str"/>
       <Param name="conditions" updates="None" val="None" valType="str"/>
       <Param name="conditionsFile" updates="None" val="$posFile" valType="file"/>
       <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
