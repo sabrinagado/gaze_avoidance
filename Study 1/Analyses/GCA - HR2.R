@@ -70,7 +70,13 @@ bin.window = c(seq(0, 10, by=bin_width)) # Scoring bins in seconds (real time sc
   }
 }
 
-trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+setwd('..')
+path = getwd()
+
+path.physio = file.path(path, "Physio")
+
+trigger_mat <- read.csv2(file.path(path.physio, "Trigger", "conditions.csv")) %>%
   mutate(subject = sprintf("gca_%02d", subject),
          trigger = ifelse(phase == "acquisition" & condition == "CSneg, social",2,
                           ifelse(phase == "acquisition" & condition == "CSpos, social",3,
@@ -95,8 +101,8 @@ rep_str = c('10' = "Shock",
 
 
 # Read & Score HR --------------------------------------------------------------------
-vpn.ecg.rpeaks = list.files("../Physio/Peak_Export/", pattern="*_rpeaks.csv", full.names=TRUE)
-vpn.ecg.hr = list.files("../Physio/HR/", pattern="*.txt", full.names=TRUE)
+vpn.ecg.rpeaks = list.files(file.path(path.physio, "Peak_Export"), pattern="*_rpeaks.csv", full.names=TRUE)
+vpn.ecg.hr = list.files(file.path(path.physio, "HR"), pattern="*.txt", full.names=TRUE)
 
 #ratings.all = read_rds("ratings.rds" %>% paste0(path.rds, .))
 #rawfiles = vpn.ecg.rpeaks %>% gsub("rpeaks/", "", .) %>% gsub(path.rpeaks.postfix, "", .) %>% paste0(".txt")
@@ -118,7 +124,7 @@ for (vpi in seq(vpn.ecg.hr)) {
   hr = 60/diff(allrpeak) #convert to bpm
   
   #load triggers
-  trigger <-  read.table(paste0("../Physio/HR/",code,".txt")) %>% .$V3 #lade triggerspalte von HR file mit 0er und marker
+  trigger <-  read.table(file.path(path.physio, "HR", paste0(code,".txt"))) %>% .$V3 #lade triggerspalte von HR file mit 0er und marker
   trigger <- ifelse(trigger > max(markers), 0, trigger)
 
   # if (exclusions.phys.trials[[code]] %>% is.null() == F) { #exclude trials manually (cp. triggerCheck)

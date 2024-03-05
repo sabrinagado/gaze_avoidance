@@ -14,7 +14,7 @@ setwd('..')
 path = getwd()
 
 # Read data from Excel file
-df_scores <- read_excel(file.path(path, "questionnaires.xlsx"))
+df_scores <- read_excel(file.path(path, "Questionnaires", "questionnaires.xlsx"))
 
 # Recode variables from numeric to string
 df_scores$gender <- recode(df_scores$gender, `1` = "male", `2` = "female", `3` = "diverse")
@@ -115,9 +115,9 @@ print(paste("Age = ", round(mean(df_summary$age), 1), ", SD = ", round(sd(df_sum
 prop.table(table(df_summary$gender)) * 100
 
 # Write summary to CSV
-write.csv2(df_summary, file.path(path, "demo_scores.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
+write.csv2(df_summary, file.path(path, "Questionnaires", "demo_scores.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
 
-# Write summary to CSV for jamovi
-df_summary <- df_summary %>% 
-  select(-c(purpose, variables, labbook))
-write.csv2(df_summary, file.path(path, "demo_scores_jamovi.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
+# # Write summary to CSV for jamovi
+# df_summary <- df_summary %>% 
+#   select(-c(purpose, variables, labbook))
+# write.csv2(df_summary, file.path(path, "Questionnaires", "demo_scores_jamovi.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")

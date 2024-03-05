@@ -146,7 +146,13 @@ eda_inflection_list = list()
 eda_df = tibble()
 eda_unified = tibble()
 
-filemat = list.files("../Physio/Raw/", pattern="*.txt") # Das sollte der Ordner sein, in dem deine ganzen Files liegen. Pro VP ein File.
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+setwd('..')
+path = getwd()
+
+path.physio = file.path(path, "Physio")
+
+filemat = list.files(file.path(path.physio, "Raw"), pattern="*.txt") # Das sollte der Ordner sein, in dem deine ganzen Files liegen. Pro VP ein File.
 
 eda_ucr = tibble(subject = filemat %>% sub("\\..*","", .), ucr = 0, valid = 0, lat = 0, rise = 0) %>% 
   separate(subject,c("Exp","ID","tech","tech2"),sep="_",remove=T) %>%
@@ -156,7 +162,7 @@ eda_cr = tibble(subject = filemat %>% sub("\\..*","", .), cr = 0, valid = 0, lat
   select(ID,cr,valid,lat,rise)
 
 
-trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
+trigger_mat <- read.csv2(file.path(path.physio, "Trigger", "conditions.csv")) %>%
   mutate(subject = sprintf("gca_%02d", subject),
          trigger = ifelse(phase == "acquisition" & condition == "CSneg, social",2,
                           ifelse(phase == "acquisition" & condition == "CSpos, social",3,
@@ -184,7 +190,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
   
   # subject_inmat = filemat[[1]]
   
-  eda <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
+  eda <- read.csv(file.path(path.physio, "Raw", subject_inmat), sep="\t", header = F) %>% #read export
     rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
     mutate(sample = 1:n())
   
@@ -434,7 +440,8 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
           # geom_point(data=minmax_unified,aes(x=time.min,y=EDA.min),shape=25,size=1) +
           # geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1) +
           ggtitle(as.integer(substr(filename, 5, 6))) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>%
-      ggsave(paste0("../Plots/EDA/UCS/", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
+      ggsave(file.path(path, "Plots", "EDA", "UCS", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
+    
   }
   
   print(paste0("UCRs: ", as.integer(substr(filename, 5, 6)), " of ", length(filemat), " files processed!"))
@@ -745,7 +752,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
           xlab("Time") + ylab("EDA") +
           ggtitle(as.integer(substr(filename, 5, 6))) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
       #print()
-      ggsave(paste0("../Plots/EDA/CS/", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
+      ggsave(file.path(path, "Plots", "EDA", "CS", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
     
     print("CR plotting complete!")
   }

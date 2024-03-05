@@ -4,7 +4,7 @@
 ###############################################################################
 
 #packages 
-library(signal)
+#library(signal)
 library(zoo)
 library(tidyverse)
 library(stringr)
@@ -80,8 +80,13 @@ baselineWindow = c(-0.5, 0)
   }
 }
 
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+setwd('..')
+path = getwd()
 
-data = read.csv2("../Physio/pupil.txt", sep ="\t", dec = ",", na.strings=".")
+path.physio = file.path(path, "Physio")
+
+data = read.csv2(file.path(path.physio, "pupil.txt"), sep ="\t", dec = ",", na.strings=".")
 
 data <- data %>%
   mutate(diameter = ifelse(is.na(RIGHT_PUPIL_SIZE), LEFT_PUPIL_SIZE, RIGHT_PUPIL_SIZE)) %>% 
@@ -101,7 +106,7 @@ data <- data %>% select(-c(RIGHT_IN_SACCADE, LEFT_IN_SACCADE, RIGHT_IN_BLINK, LE
 
 codes <- unique(data$RECORDING_SESSION_LABEL)
 
-trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
+trigger_mat <- read.csv2(file.path(path.physio, "Trigger", "conditions.csv")) %>%
   mutate(subject = sprintf("gca_%02d", subject),
          ID = as.numeric(substr(subject,5,6)),
          trigger = ifelse(phase == "acquisition" & condition == "CSneg, social",2,
@@ -131,8 +136,9 @@ pupil_df = tibble()
 ga_unified = tibble()
 code_times = c()
 
-
-messages = read.csv2("../Gaze/messages.csv", sep =";") %>% 
+path.msg = file.path(path, "Gaze")
+messages = read.csv2(file.path(path.msg, "messages.csv"), sep =";")
+messages <- messages %>% 
   filter(grepl("Onset", event))
 
 

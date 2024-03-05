@@ -19,13 +19,13 @@ code_times = c()
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 setwd('..')
 path = getwd()
-path.behavior = file.path(path, "gaze_discrimination_task", "data")
+
+path.behavior = file.path(path, "Experiment", "gaze_discrimination_task", "data")
 
 filemat = list.files(path.behavior, pattern = "*.csv") # read all files from data-folder into a single list
 
 
 #cycle through all subject csv files
-
 for (subject in filemat){
   # subject <- filemat[2]  #use  file for practice and coding changes
    
@@ -55,7 +55,7 @@ for (subject in filemat){
     scale_x_discrete("Category") +
     scale_fill_viridis_d("Condition",end = 0.75) + 
     theme_classic()
-  ggsave(file.path(path, "Plots", "discrimination-task", "individuals", paste0(participant, ".png")))
+  ggsave(file.path(path, "Plots", "Discrimination", "individuals", paste0(participant, ".png")))
     
   
   # stuff for calculating computing duration
@@ -75,8 +75,11 @@ for (subject in filemat){
   }
 } #end-loop
 
+vps_summary <- vps_summary %>% 
+  ungroup
+
 # Accuracy
-vps_summary_grouped = vps_summary %>% 
+vps_summary_grouped = vps_summary %>%
   summarise(correct_mean = mean(correct_mean), rt_mean = mean(rt_mean) * 1000, .by=c(participant, social))
 
 vps_summary_grouped %>% 
@@ -96,7 +99,7 @@ vps_summary_grouped %>%
   scale_fill_viridis_d() + 
   scale_color_viridis_d() +
   theme(legend.position = "none")
-ggsave(file.path(path, "Plots", "discrimination-task", "ga_correct.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Discrimination", "ga_correct.png"), width=1800, height=2000, units="px")
 
 vps_summary %>%
   ez::ezANOVA(dv=.(correct_mean),
@@ -122,7 +125,7 @@ vps_summary_grouped %>%
   scale_fill_viridis_d() +
   scale_color_viridis_d() +
   theme(legend.position = "none")
-ggsave(file.path(path, "Plots", "discrimination-task", "ga_rt.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Discrimination", "ga_rt.png"), width=1800, height=2000, units="px")
 
 vps_summary %>%
   ez::ezANOVA(dv=.(rt_mean),
@@ -135,11 +138,6 @@ vps_summary %>%
 
 
 vps.discrimination.score <- vps_summary %>%
-  summarise(discrimination = mean(correct_mean))
-
-names(vps.discrimination.score[1]) <- "subject"
-write.csv2(vps.discrimination.score, file.path(path, "discrimination.csv"), row.names=FALSE, quote=FALSE)
-
-vps.discrimination.score.wide <- vps.discrimination.score %>% 
-  pivot_wider(names_from = social, values_from = discrimination)
-write.csv2(vps.discrimination.score.wide, file.path(path, "discrimination_wide.csv"), row.names=FALSE, quote=FALSE)
+  summarise(discrimination = mean(correct_mean), .by=c("participant", "social"))
+names(vps.discrimination.score) = c("subject","condition_social","discrimination")
+write.csv2(vps.discrimination.score, file.path(path, "Behavior", "discrimination.csv"), row.names=FALSE, quote=FALSE)

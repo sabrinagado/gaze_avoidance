@@ -93,19 +93,19 @@ requirePackage = function(name, load=T) {
   path = getwd()
   
   #load behavioral data (logs)
-  path.logs = file.path(path, "gaze_avoidance_task", "data")
+  path.logs = file.path(path, "Experiment", "gaze_avoidance_task", "data")
   files.log.prefix = "gca_avoidance_task_"
   files.log.extension = ".log"
   
   files.rating.prefix = "gca_avoidance_task_"
   files.rating.extension = ".csv"
   
-  path.eye = file.path(path, "gaze_avoidance_task", "data") #eye tracking data
-  path.pupil = file.path(path, "gaze_avoidance_task", "data") #pupil data
-  path.plots = file.path(path, "Plots")
+  path.eye = file.path(path, "Experiment", "gaze_avoidance_task", "data") #eye tracking data
+  path.pupil = file.path(path, "Experiment", "gaze_avoidance_task", "data") #pupil data
+  path.plots = file.path(path, "Plots", "Gaze")
   
   # Get Scores
-  path.scores = file.path(path, "demo_scores.csv")
+  path.scores = file.path(path, "Questionnaires", "demo_scores.csv")
   scores = read_delim(path.scores, delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
   scores$subject <- scores$VP
   scores <- scores %>%
@@ -663,9 +663,7 @@ requirePackage = function(name, load=T) {
   }
 }
 
-discrimination <- read.csv(file.path(path, "discrimination.csv"))
-discrimination = read_delim(file.path(path, "discrimination.csv"), delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
-names(discrimination) = c("subject","condition_social","discrimination")
+discrimination <- read.csv(file.path(path, "Behavior", "discrimination.csv"))
 
 rep_str = c('cs_minus_ns'='CSpos, non-social','cs_minus_s'='CSpos, social',
             'cs_plus_ns'='CSneg, non-social', 'cs_plus_s'='CSneg, social')
@@ -691,7 +689,7 @@ ratings <- ratings %>%
 ratings <- ratings %>%
   left_join(scores, by="subject")
 
-write.csv2(ratings, file.path(path, "ratings.csv"), row.names=FALSE, quote=FALSE)
+write.csv2(ratings, file.path(path, "Ratings", "ratings.csv"), row.names=FALSE, quote=FALSE)
 
 for (p in c("Baseline", "Acquisition", "Test")) {
   # p = "Baseline"
@@ -715,7 +713,7 @@ for (p in c("Baseline", "Acquisition", "Test")) {
     scale_fill_viridis_d() +
     scale_color_viridis_d()
 
-  ggsave(file.path(path, "Plots", "avoidance-task", paste("ratings_", tolower(p), ".png")), width=1500, height=2000, units="px")
+  ggsave(file.path(path, "Plots", "Ratings", paste0("ratings_", tolower(p), ".png")), width=1500, height=2000, units="px")
 
   print(p)
   ratings.phase %>%
@@ -740,7 +738,7 @@ write.csv2(conditions, file.path(path, "Physio", "Trigger", "conditions.csv"), r
 
 rois = loadRois(files.rating) # rois
 
-path.eye = file.path(path, "gaze_avoidance_task", "data") # eye tracking data
+path.eye = file.path(path, "Experiment", "gaze_avoidance_task", "data") # eye tracking data
 messages = loadMessages(file.path(path.eye, "messages.txt")) %>% # messages for timepoints
   mutate(across('event', str_replace_all, rep_str)) %>% 
   filter(time != 0)
@@ -884,13 +882,13 @@ avoidance.acq.prop <- saccades.acq.analysis %>%
   filter(outcomeok) %>%
   summarise(relative_frequency_av = mean(outcome_corr=="none"), .by=c(subject, condition))
 
-avoidance.acq.prop.wide <- avoidance.acq.prop %>%
-  pivot_wider(names_from = condition, values_from = relative_frequency_av)
-
-avoidance.acq.prop.wide <- avoidance.acq.prop.wide %>%
-  left_join(scores, by="subject")
-
-write.csv2(avoidance.acq.prop.wide, file.path(path, "avoidance_wide.csv"), row.names=FALSE, quote=FALSE)
+# avoidance.acq.prop.wide <- avoidance.acq.prop %>%
+#   pivot_wider(names_from = condition, values_from = relative_frequency_av)
+# 
+# avoidance.acq.prop.wide <- avoidance.acq.prop.wide %>%
+#   left_join(scores, by="subject")
+# 
+# write.csv2(avoidance.acq.prop.wide, file.path(path, "avoidance_wide.csv"), row.names=FALSE, quote=FALSE)
 
 # Bar Plot
 avoidance.acq.prop <- saccades.acq.analysis %>%
@@ -916,7 +914,7 @@ ggplot(avoidance.acq.prop.summary, aes(x = condition, y = Mean, fill = condition
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "avoidance_proportion_roi.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "avoidance_proportion_roi.png"), width=1800, height=2000, units="px")
 
 avoidance.acq.prop %>%
   group_by(subject, condition_social, condition_threat) %>%
@@ -950,7 +948,7 @@ ggplot(avoidance.acq.prop.summary, aes(x = block, y = Mean, group = condition, c
   scale_color_viridis_d() +
   scale_x_continuous(breaks=c(0,1,2), labels=c("Block 1\n1-32", "Block 2\n33-72", "Block 3\n73-112"))
 
-ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "avoidance_proportion_roi_block.png"), width=2800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "avoidance_proportion_roi_block.png"), width=2800, height=2000, units="px")
 
 
 # Correlation Correct Avoidance and Discrimination
@@ -973,7 +971,7 @@ ggplot(avoidance_corr.acq.prop, aes(x = discrimination, y = relative_frequency_c
   scale_fill_viridis_d() +
   scale_color_viridis_d() +
   theme(legend.position="top", legend.box = "horizontal")
-ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "corr_discrimination_avoidance.png"), width=2000, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "corr_discrimination_avoidance.png"), width=2000, height=2000, units="px")
 
 
 # Percentage of saccades going towards the stimuli
@@ -1000,7 +998,7 @@ ggplot(saccades.acq.roi.summary, aes(x = condition, y = Mean, fill = condition))
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "saccades_proportion_roi.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "saccades_proportion_roi.png"), width=1800, height=2000, units="px")
 
 saccades.acq.prop %>%
   mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
@@ -1019,13 +1017,13 @@ saccades.acq.prop <- saccades.acq.analysis %>%
   filter(!contains_blink) %>%
   summarise(relative_frequency_ROI = mean(ROI), .by=c(subject, condition)) 
 
-saccades.acq.prop.wide <- saccades.acq.prop %>% 
-  pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
-
-saccades.acq.prop.wide <- saccades.acq.prop.wide %>% 
-  left_join(scores, by="subject")
-
-write.csv2(saccades.acq.prop.wide, file.path(path, "saccades_acq_wide.csv"), row.names=FALSE, quote=FALSE)
+# saccades.acq.prop.wide <- saccades.acq.prop %>% 
+#   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
+# 
+# saccades.acq.prop.wide <- saccades.acq.prop.wide %>% 
+#   left_join(scores, by="subject")
+# 
+# write.csv2(saccades.acq.prop.wide, file.path(path, "saccades_acq_wide.csv"), row.names=FALSE, quote=FALSE)
 
 saccades.acq.prop <- saccades.acq.analysis %>% 
   # filter (trial >= 32) %>%
@@ -1050,7 +1048,7 @@ ggplot(saccades.acq.roi.summary, aes(x = condition, y = Mean, fill = condition))
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "microsaccades_proportion_roi.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "microsaccades_proportion_roi.png"), width=1800, height=2000, units="px")
 
 saccades.acq.prop %>% 
   group_by(subject, condition_social, condition_threat) %>% 
@@ -1087,7 +1085,7 @@ ggplot(saccades.acq.roi.summary, aes(x = block, y = Mean, group = condition, col
   scale_color_viridis_d() +
   scale_x_continuous(breaks=c(0,1,2), labels=c("Block 1\n1-32", "Block 2\n33-72", "Block 3\n73-112"))
 
-ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "saccades_proportion_roi_block.png"), width=2800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "saccades_proportion_roi_block.png"), width=2800, height=2000, units="px")
 
 
 # # Percentage of saccades going towards the quadrant
@@ -1138,7 +1136,7 @@ ggplot(saccades.acq.lat.roi.summary, aes(x = condition, y = Mean, fill = conditi
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "saccades_latency_roi.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "saccades_latency_roi.png"), width=1800, height=2000, units="px")
 
 saccades.acq.lat.roi %>%
   left_join(saccades.acq.lat.roi.filter, by=c("subject")) %>%
@@ -1228,7 +1226,7 @@ ggplot(saccades.acq.len.roi.summary, aes(x = condition, y = Mean, fill = conditi
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "saccades_length_roi.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "saccades_length_roi.png"), width=1800, height=2000, units="px")
 
 
 saccades.acq.len.roi %>%
@@ -1260,7 +1258,7 @@ ggplot(saccades.acq.len.roi.summary, aes(x = condition_threat, y = Mean, group =
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "saccades_length_roi_interaction.png"), width=2000, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "saccades_length_roi_interaction.png"), width=2000, height=2000, units="px")
 
 
 # # Latency to first saccade going towards the quadrant of stimuli
@@ -1410,7 +1408,7 @@ ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = conditi
   scale_fill_viridis_d() + 
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "test", "fixations_dwell_time_on_test.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "test", "fixations_dwell_time_on_test.png"), width=1800, height=2000, units="px")
 
 fixations.test.dwell %>%
   group_by(subject, condition_social, condition_threat) %>% 
@@ -1509,7 +1507,7 @@ ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "test", "saccades_proportion_roi.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "test", "saccades_proportion_roi.png"), width=1800, height=2000, units="px")
 
 
 saccades.test.prop %>%
@@ -1546,7 +1544,7 @@ ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "test", "microsaccades_proportion_roi_allsaccades.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "test", "microsaccades_proportion_roi_allsaccades.png"), width=1800, height=2000, units="px")
 
 saccades.test.prop %>%
   left_join(saccades.test.roi.filter, by=c("subject")) %>%
@@ -1587,7 +1585,7 @@ ggplot(saccades.test.lat.roi.summary, aes(x = condition, y = Mean, fill = condit
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "test", "saccades_latency_off_test.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "test", "saccades_latency_off_test.png"), width=1800, height=2000, units="px")
 
 saccades.test.lat.roi %>%
   left_join(saccades.test.lat.roi.filter, by=c("subject")) %>%
@@ -1619,4 +1617,4 @@ ggplot(saccades.test.lat.roi.summary, aes(x = condition_threat, y = Mean, group 
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "avoidance-task", "test", "saccades_latency_roi_interaction.png"), width=2000, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Gaze", "test", "saccades_latency_roi_interaction.png"), width=2000, height=2000, units="px")

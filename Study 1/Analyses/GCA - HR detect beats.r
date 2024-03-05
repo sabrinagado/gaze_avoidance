@@ -50,8 +50,14 @@ requirePackage("tidyverse")
 requirePackage("signal", load=F)
 
 #input
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+setwd('..')
+path = getwd()
+
+path.physio = file.path(path, "Physio")
+
 if (exists("path.phys")==F)
-  path.phys = "../Physio/HR/" #TODO enter input path here
+  path.phys = file.path(path.physio, "HR") #TODO enter input path here
 if (path.phys %>% endsWith("/") == F) path.phys = "/" %>% paste0(path.phys, .)
 
 if (exists("exclusions.phys.trials")==F) exclusions.phys.trials = list()
@@ -60,12 +66,12 @@ if (exists("trials.n")==F) trials.n = .Machine$integer.max #number of trials tha
 
 #output
 if (exists("path.rpeaks")==F)
-  path.rpeaks = "../Physio/Peak_Export/"
+  path.rpeaks = file.path(path.physio, "Peak_Export")
 if (path.rpeaks %>% endsWith("/") == F) path.rpeaks = "/" %>% paste0(path.rpeaks, .)
 path.rpeaks.postfix = "_rpeaks.csv"
 dir.create(path.rpeaks, showWarnings=F) #make sure that path.rpeaks exists
 
-path.screenshots = "../Physio/Peak_Screenshots/" %>% paste0(path.rpeaks, "../", .) #paste0(ifelse(exists("path.rds"), path.rds, path.phys), .)
+path.screenshots = file.path(path.physio, "Peak_Screenshots") %>% paste0(path.rpeaks, "../", .) #paste0(ifelse(exists("path.rds"), path.rds, path.phys), .)
 dir.create(path.screenshots, showWarnings=F)
 
 #graphics.off()
@@ -256,9 +262,9 @@ plimit = 0.003
   
 }
 
-filemat = list.files("../Physio/Raw/", pattern="*.txt") # Das sollte der Ordner sein, in dem deine ganzen Files liegen. Pro VP ein File.
+filemat = list.files(file.path(path.physio, "Raw"), pattern="*.txt") # Das sollte der Ordner sein, in dem deine ganzen Files liegen. Pro VP ein File.
 
-trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
+trigger_mat <- read.csv2(file.path(path.physio, "Trigger", "conditions.csv")) %>%
   mutate(subject = sprintf("gca_%02d", subject),
          trigger = ifelse(phase == "acquisition" & condition == "CSneg, social",2,
                           ifelse(phase == "acquisition" & condition == "CSpos, social",3,
@@ -278,7 +284,7 @@ trigger_mat <- read.csv2("../Physio/Trigger/conditions.csv") %>%
 
       # subject_inmat = filemat[[22]]
 
-      physio <- read.csv(paste0("../Physio/Raw/",subject_inmat), sep="\t", header = F) %>% #read export
+      physio <- read.csv(file.path(path.physio, "Raw", subject_inmat), sep="\t", header = F) %>% #read export
         rename(EDA = V1, ECG = V2, ImgAcq = V3, ImgTest = V4, Shock = V5, Reward = V6, NoFeedback = V7) %>%
         mutate(sample = 1:n())
 

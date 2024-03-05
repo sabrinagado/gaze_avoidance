@@ -282,7 +282,8 @@ ga_unified %>% filter(valid == TRUE) %>%
       theme_bw() +
       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383")))) # , "#e874ff", "#ffdd74"
   }
-ggsave("../Plots/Pupil/cs_test_cluster.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave(file.path(path, "Plots", "Pupil", "cs_test_cluster.png") ,type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+
 
 
 # BINS
@@ -368,7 +369,7 @@ pupil_df_long_test %>%
       theme_bw() +
       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383"))))  # , "#e874ff", "#ffdd74"
   }
-ggsave("../Plots/Pupil/cs_test_bins.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave(file.path(path, "Plots", "Pupil", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 # # Acquisition
 # # Long format for statistical testing
@@ -566,7 +567,7 @@ eda_unified %>%
       theme_bw() # +
     # scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
   }
-ggsave("../Plots/EDA/cs_test_cluster.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave(file.path(path, "Plots", "EDA", "cs_test_cluster.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 # BINS
@@ -651,7 +652,7 @@ eda_df_long_test %>%
       theme_bw() +
       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
   }
-ggsave("../Plots/EDA/cs_test_bins.png",type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave(file.path(path, "Plots", "EDA", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 # # Acquisition
 # # Long format for statistical testing
@@ -852,7 +853,7 @@ heart %>%
       theme_bw() +
       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
   }
-ggsave(paste0("../Plots/HR/cs_test_cluster.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave(file.path(path, "Plots", "HR", "cs_test_cluster.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 # BINS
@@ -938,7 +939,7 @@ hr_df_long_test %>%
       theme_bw() +
       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
   }
-ggsave(paste0("../Plots/HR/cs_test_bins.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave(file.path(path, "Plots", "HR", "cs_test_binsr.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 # # Acquisition
