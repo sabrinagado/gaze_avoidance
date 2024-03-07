@@ -29,11 +29,12 @@ requirePackage = function(name, load=T) {
 
 { # Variables ---------------------------------------------------------------
   # a priori exclusions for all variables
-  exclusions = c() %>% unique() %>% sort()
+  exclusions = c(1) %>% unique() %>% sort()
   
-  acq1End = 32 # no pain during first 20 trials
-  acq2End = acq1End + 80 # acquisition for 80 trials
-  testEnd = acq2End + 40
+  acq1End = 32
+  acq2End = acq1End + 32
+  test1End = acq2End + 48
+  test2End = test1End + 48
   # trials.n = 112 # number of trials that shall be analyzed (if more trials, last ones will be taken)
   
   sample.rate = 1000 #samples/second
@@ -47,11 +48,7 @@ requirePackage = function(name, load=T) {
   image.test.height = 450 * 1.2 # height of picture in test phase in px
   image.test.width = 426 * 1.2 # width of picture in test phase in px
   
-  vps = vps <- seq(1, 14)
   exclusions.eye.num = c() %>% c(exclusions) #a priori exclusions, e.g. calibration not successful
-  # numToEye = function(nums) return(nums %>% formatC(width=2, format="d", flag="0") %>% paste0("gca_", .)) #add leading zeros and prefix "vp"
-  # exclusions.eye = exclusions.eye.num %>% numToEye()
-  vps <- vps[!(vps %in% exclusions.eye.num)]
   
   #baseline validation
   baseline = c(700, 1000) #Baseline in ms relative to trial onset; min(baseline) = start; max(baseline) = end
@@ -93,15 +90,19 @@ requirePackage = function(name, load=T) {
   path = getwd()
   
   #load behavioral data (logs)
-  path.logs = file.path(path, "Experiment", "gaze_avoidance_task", "data")
-  files.log.prefix = "gca_avoidance_task_"
+  path.logs = file.path(path, "Experiment", "attentional_competition_task", "data")
+  files.log.prefix = "attentional_competition_task_"
   files.log.extension = ".log"
   
-  files.rating.prefix = "gca_avoidance_task_"
+  path.conds = file.path(path, "Experiment", "attentional_competition_task", "data")
+  files.cond.prefix = "attentional_competition_task_"
+  files.cond.extension = ".csv"
+  
+  files.rating.prefix = "attentional_competition_task_"
   files.rating.extension = ".csv"
   
-  path.eye = file.path(path, "Experiment", "gaze_avoidance_task", "data") #eye tracking data
-  path.pupil = file.path(path, "Experiment", "gaze_avoidance_task", "data") #pupil data
+  path.eye = file.path(path, "Experiment", "attentional_competition_task", "data") #eye tracking data
+  path.pupil = file.path(path, "Experiment", "attentional_competition_task", "data") #pupil data
   path.plots = file.path(path, "Plots", "Gaze")
   
   # Get Scores
@@ -113,7 +114,13 @@ requirePackage = function(name, load=T) {
   
   # Files
   files.rating = list.files(path.logs, pattern=paste0("^", files.rating.prefix, ".*", files.rating.extension, "$"), full.names=TRUE)
+  files.rating <- files.rating[-c(exclusions)]
+  
   files.log = list.files(path.logs, pattern=paste0("^", files.log.prefix, ".*", files.log.extension, "$"), full.names=TRUE)
+  files.log <- files.log[-c(exclusions)]
+  
+  files.cond = list.files(path.conds, pattern=paste0("^", files.cond.prefix, ".*", files.cond.extension, "$"), full.names=TRUE)
+  files.cond <- files.cond[-c(exclusions)]
 }
 
 { # Functions ---------------------------------------------------------------
@@ -299,56 +306,42 @@ requirePackage = function(name, load=T) {
   #   as.numeric(theta.deg)
   # }
   
-  loadConditions = function(files.log.path) {
+  loadConditions = function(files.cond.path) {
     conds <- data.frame(
       subject = integer(0),
       trial = integer(0),
       phase = character(0),
       condition = character(0),
-      look = numeric(0),
+      score = integer(0),
       outcome = character()
     )
-    for (file.log.path in files.log.path) {
-      # file.log.path = files.log[1]
-      log = read_delim(file.log.path, delim="\t", col_names=F, locale=locale(decimal_mark=","), na=".", show_col_types=F)
-      names(log) = c("time","type","log_message")
-      log = log %>% filter(type == "INFO ")
-      log <- log %>%
-        group_by(log_message) %>%
-        mutate(trial = row_number()) %>%
-        ungroup()
-      log <- log %>% 
-        mutate(trial = ifelse(log_message == "FixationCross", trial, NA)) %>% 
-        fill(trial)
-      log <- log %>%
-        slice(which(log_message == "FixationCross"):n())
-      log <- log %>%
-        filter(!grepl("Rating", log_message)) %>% 
-        filter(!grepl("saved", log_message) )%>% 
-        filter(!grepl("Fixation", log_message))
-      log <- log %>%
-        mutate(condition = log_message %>% sub("ImageOnset_", "", .)) %>% 
-        mutate(condition = if_else(str_detect(log_message, "Feedback"), log_message, condition) %>% sub("FeedbackOnset_", "", .)) %>% 
-        mutate(condition = if_else(str_detect(log_message, "Test"), log_message, condition) %>% sub("TestImageOnset_", "", .)) %>% 
-        mutate(event = "condition") %>%
-        mutate(event = if_else(str_detect(log_message, "Feedback"), "outcome", event)) %>% 
-        mutate(phase = "acquisition") %>%
-        mutate(phase = if_else(str_detect(log_message, "Test"), "test", phase))
-      log <- log %>%
-        pivot_wider(names_from = event, values_from = condition) %>% 
-        fill(outcome, .direction = "up")
-      log <- log %>%
-        filter(!grepl("Feedback", log_message))
-      log <- log %>% 
-        mutate(look = if_else(str_detect(outcome, "lookedat"), 1, if_else(str_detect(outcome, "no_look"), 0, NA)))
-      log <- log %>% 
-        mutate(subject = file.log.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
-      log <- log %>%
-        select(subject, trial, phase, condition, look)
-      log <- log %>% 
-        mutate(outcome = ifelse(look == 1 & str_detect(condition, "plus"), "shock", ifelse(look == 1 & str_detect(condition, "minus"), "reward", NA)))
+    for (file.cond.path in files.cond.path) {
+      # file.cond.path = files.cond.path[1]
+      cond = read_csv(file.cond.path)
+      cond <- cond %>% drop_na("score")
+      cond <- cond %>%
+        select(stim, stim1, stim2, stim3, stim4, score, outcome)
+      cond <- cond %>% 
+        mutate(condition = ifelse(is.na(stim), "all", stim),
+               subject = file.cond.path %>% sub(".*attentional_competition_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
+      cond <- cond %>% 
+        mutate(new_trial = ifelse((stim1 != lag(stim1)) | (stim2 != lag(stim2)) | (stim3 != lag(stim3)) | (stim4 != lag(stim4)), TRUE, FALSE)) %>% 
+        mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial))
       
-      conds <- rbind(conds, log)
+      if (sum(cond$new_trial) < 160) {
+        cond$new_trial = TRUE
+      }
+      cond <- cond %>% 
+        filter(new_trial)
+      cond <- cond %>% 
+        mutate(trial = seq(1, nrow(cond)))
+      cond <- cond %>% 
+        mutate(outcome = ifelse(trial <= acq2End, outcome, NA),
+               phase = ifelse(trial <= acq2End, "acquisition", "test"))
+      cond <- cond %>%
+        select(subject, trial, phase, condition, score, outcome)
+      
+      conds <- rbind(conds, cond)
     }
     
     conds <- conds %>% arrange(subject, trial)
@@ -367,21 +360,23 @@ requirePackage = function(name, load=T) {
       # file.rating.path = files.rating[1]
       rating = read_csv(file.rating.path)
       rating <- rating %>%
-        select(stimtype, sliderStim.response)
+        select(stim, sliderStim.response)
       rating <- na.omit(rating)
       rating <- rating %>%
-        group_by(stimtype) %>%
+        group_by(stim) %>%
         mutate(timepoint = row_number()) %>%
         ungroup()
+      rating <- rating %>%
+        mutate(timepoint = ifelse(grepl("new", stim), 3, timepoint))
       rating <- rating %>%
         mutate(phase = "baseline") %>%
         mutate(phase = ifelse(timepoint==2, "acquisition", phase)) %>% 
         mutate(phase = ifelse(timepoint==3, "test", phase))
       
       rating <- rating %>% 
-        mutate(subject = file.rating.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
+        mutate(subject = file.rating.path %>% sub(".*attentional_competition_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
       rating <- rating %>%
-        select(subject, phase, stimtype, sliderStim.response)
+        select(subject, phase, stim, sliderStim.response)
       names(rating) = c("subject","phase","condition", "rating")
       
       ratings <- rbind(rating, ratings)
@@ -396,7 +391,7 @@ requirePackage = function(name, load=T) {
     fixations = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
     names(fixations) = c("subject","trial","trial_label","start","end","x","y", "eye")
     fixations = fixations %>%
-      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(),
+      mutate(subject = subject %>% sub("attentional_competition_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(),
              y = screen.height - y)
     fixations = fixations[c("subject","trial","start","end","x","y", "eye")]
     fixations <- fixations %>% arrange(subject, trial)
@@ -407,7 +402,7 @@ requirePackage = function(name, load=T) {
     saccades = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
     names(saccades) = c("subject","trial","trial_label", "contains_blink", "start_time", "end_time", "start_x", "start_y","end_x","end_y")
     saccades = saccades %>%
-      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(),
+      mutate(subject = subject %>% sub("attentional_competition_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(),
              start_y = screen.height - start_y, end_y = screen.height - end_y)
     saccades = saccades[c("subject","trial","contains_blink", "start_time", "end_time", "start_x", "start_y","end_x","end_y")]
     saccades <- saccades %>% arrange(subject, trial)
@@ -418,7 +413,7 @@ requirePackage = function(name, load=T) {
     messages = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
     names(messages) = c("subject", "trial", "trial_label", "time","event")
     messages = messages %>%
-      mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
+      mutate(subject = subject %>% sub("attentional_competition_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
     messages = messages[c("subject", "trial", "time","event")]
     messages <- messages %>% arrange(subject, trial)
     return(messages)
@@ -599,10 +594,11 @@ requirePackage = function(name, load=T) {
     return(result_list)
   }
   
-  loadRois = function(files.roi.path) {
-    roi <- data.frame(
+  loadRoisAcq = function(files.roi.path) {
+    rois_acq <- data.frame(
       subject = integer(0),
       trial = integer(0),
+      stim = character(0),
       roi.xleft = integer(0),
       roi.xright = integer(0),
       roi.ybottom = integer(0),
@@ -613,10 +609,10 @@ requirePackage = function(name, load=T) {
       quadrant.ytop = integer(0)
     )
     for (file.roi.path in files.roi.path) {
-      # file.roi.path = files.roi.path[1]
+      # file.roi.path = files.roi.path[3]
       roi_acq = read_csv(file.roi.path)
       roi_acq <- roi_acq %>%
-        select(position, trialtype)
+        select(position, stim)
       roi_acq <- na.omit(roi_acq)
       # In normalised (‘norm’) units the window ranges in both x and y from -1 to +1. That is, the top right of the window has coordinates (1,1), the bottom left is (-1,-1).
       roi_acq <- roi_acq %>%
@@ -634,28 +630,110 @@ requirePackage = function(name, load=T) {
                quadrant.ytop = ifelse(y_position_norm < 0, 0, screen.height / 2),
                quadrant.ybottom = ifelse(y_position_norm < 0, screen.height / 2, screen.height))
       roi_acq <- roi_acq %>% 
-        mutate(subject = file.roi.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
+        mutate(subject = file.roi.path %>% sub(".*attentional_competition_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
       roi_acq <- roi_acq %>%
-        select(subject, trial, roi.xleft, roi.xright, roi.ybottom, roi.ytop, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop)
+        select(subject, trial, stim, roi.xleft, roi.xright, roi.ybottom, roi.ytop, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop)
       
-      roi <- rbind(roi, roi_acq)
-      
-      roi_test <- data.frame(
-        subject = rep(file.roi.path %>% sub(".*gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(), 40),
-        trial = seq(113, 152),
-        roi.xleft = rep(screen.width / 2 - image.test.width / 2, 40),
-        roi.xright = rep(screen.width / 2 + image.test.width / 2, 40),
-        roi.ytop = rep(screen.height / 2 - image.test.height / 2, 40),
-        roi.ybottom = rep(screen.height / 2 + image.test.height / 2, 40),
-        quadrant.xleft = NA,
-        quadrant.xright = NA,
-        quadrant.ytop = NA,
-        quadrant.ybottom = NA)
-      
-      roi <- rbind(roi, roi_test)
+      rois_acq <- rbind(rois_acq, roi_acq)
     }
     
-    return(roi)
+    return(rois_acq)
+  }
+  
+  loadRoisTest = function(files.roi.path) {
+    rois_test <- data.frame(
+      subject = integer(0),
+      trial = integer(0),
+      stim1 = character(0),
+      roi1.xleft = integer(0),
+      roi1.xright = integer(0),
+      roi1.ybottom = integer(0),
+      roi1.ytop = integer(0),
+      stim2 = character(0),
+      roi2.xleft = integer(0),
+      roi2.xright = integer(0),
+      roi2.ybottom = integer(0),
+      roi2.ytop = integer(0),
+      stim3 = character(0),
+      roi3.xleft = integer(0),
+      roi3.xright = integer(0),
+      roi3.ybottom = integer(0),
+      roi3.ytop = integer(0),
+      stim4 = character(0),
+      roi4.xleft = integer(0),
+      roi4.xright = integer(0),
+      roi4.ybottom = integer(0),
+      roi4.ytop = integer(0)
+    )
+    for (file.roi.path in files.roi.path) {
+      # file.roi.path = files.roi.path[3]
+      roi_test = read_csv(file.roi.path)
+      roi_test <- roi_test %>%
+        select(position1, stim1, position2, stim2, position3, stim3, position4, stim4)
+      
+      roi_test <- na.omit(roi_test)
+      roi_test <- roi_test %>% 
+        mutate(new_trial = ifelse((stim1 != lag(stim1)) | (stim2 != lag(stim2)) | (stim3 != lag(stim3)) | (stim4 != lag(stim4)), TRUE, FALSE)) %>% 
+        mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial))
+      
+      if (sum(roi_test$new_trial) < 96) {
+        roi_test$new_trial = TRUE
+      }
+      roi_test <- roi_test %>% 
+        filter(new_trial) %>% 
+        select(-new_trial)
+      
+      # In normalised (‘norm’) units the window ranges in both x and y from -1 to +1. That is, the top right of the window has coordinates (1,1), the bottom left is (-1,-1).
+      roi_test <- roi_test %>%
+        mutate(trial = seq(acq2End+1, test2End),
+               x_position1_norm = position1 %>% sub("\\(", "", .) %>% sub(", .*", "", .) %>% as.numeric(),
+               y_position1_norm = position1 %>% sub(".*, ", "", .) %>% sub("\\)", "", .) %>% as.numeric(),
+               x_position1 = screen.width / 2 + (x_position1_norm * screen.width / 2),
+               y_position1 = screen.height / 2 + (y_position1_norm * screen.height / 2),
+               roi1.xleft = x_position1 - image.acq.width / 2,
+               roi1.xright = x_position1 + image.acq.width / 2,
+               roi1.ytop = y_position1 - image.acq.height / 2,
+               roi1.ybottom = y_position1 + image.acq.height / 2,
+               
+               x_position2_norm = position2 %>% sub("\\(", "", .) %>% sub(", .*", "", .) %>% as.numeric(),
+               y_position2_norm = position2 %>% sub(".*, ", "", .) %>% sub("\\)", "", .) %>% as.numeric(),
+               x_position2 = screen.width / 2 + (x_position2_norm * screen.width / 2),
+               y_position2 = screen.height / 2 + (y_position2_norm * screen.height / 2),
+               roi2.xleft = x_position2 - image.acq.width / 2,
+               roi2.xright = x_position2 + image.acq.width / 2,
+               roi2.ytop = y_position2 - image.acq.height / 2,
+               roi2.ybottom = y_position2 + image.acq.height / 2,
+               
+               x_position3_norm = position3 %>% sub("\\(", "", .) %>% sub(", .*", "", .) %>% as.numeric(),
+               y_position3_norm = position3 %>% sub(".*, ", "", .) %>% sub("\\)", "", .) %>% as.numeric(),
+               x_position3 = screen.width / 2 + (x_position3_norm * screen.width / 2),
+               y_position3 = screen.height / 2 + (y_position3_norm * screen.height / 2),
+               roi3.xleft = x_position3 - image.acq.width / 2,
+               roi3.xright = x_position3 + image.acq.width / 2,
+               roi3.ytop = y_position3 - image.acq.height / 2,
+               roi3.ybottom = y_position3 + image.acq.height / 2,
+               
+               x_position4_norm = position4 %>% sub("\\(", "", .) %>% sub(", .*", "", .) %>% as.numeric(),
+               y_position4_norm = position4 %>% sub(".*, ", "", .) %>% sub("\\)", "", .) %>% as.numeric(),
+               x_position4 = screen.width / 2 + (x_position4_norm * screen.width / 2),
+               y_position4 = screen.height / 2 + (y_position4_norm * screen.height / 2),
+               roi4.xleft = x_position4 - image.acq.width / 2,
+               roi4.xright = x_position4 + image.acq.width / 2,
+               roi4.ytop = y_position4 - image.acq.height / 2,
+               roi4.ybottom = y_position4 + image.acq.height / 2)
+      
+      roi_test <- roi_test %>% 
+        mutate(subject = file.roi.path %>% sub(".*attentional_competition_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer())
+      roi_test <- roi_test %>%
+        select(subject, trial,
+               stim1, roi1.xleft, roi1.xright, roi1.ybottom, roi1.ytop,
+               stim2, roi2.xleft, roi2.xright, roi2.ybottom, roi2.ytop,
+               stim3, roi3.xleft, roi3.xright, roi3.ybottom, roi3.ytop,
+               stim4, roi4.xleft, roi4.xright, roi4.ybottom, roi4.ytop)
+      rois_test <- rbind(rois_test, roi_test)
+    }
+    
+    return(rois_test)
   }
   
   checkRoi <- function(x, y, rect_xleft, rect_xright, rect_ybottom, rect_ytop) {
@@ -663,10 +741,12 @@ requirePackage = function(name, load=T) {
   }
 }
 
-discrimination <- read.csv(file.path(path, "Behavior", "discrimination.csv"))
+discrimination <- read.csv2(file.path(path, "Behavior", "discrimination.csv"))
 
-rep_str = c('cs_minus_ns'='CSpos, non-social','cs_minus_s'='CSpos, social',
-            'cs_plus_ns'='CSneg, non-social', 'cs_plus_s'='CSneg, social')
+rep_str = c('cs_pos_ns_new'='CSpos, non-social, new','cs_pos_s_new'='CSpos, social, new',
+            'cs_neg_ns_new'='CSneg, non-social, new', 'cs_neg_s_new'='CSneg, social, new',
+            'cs_pos_ns'='CSpos, non-social','cs_pos_s'='CSpos, social',
+            'cs_neg_ns'='CSneg, non-social', 'cs_neg_s'='CSneg, social')
 
 ###############################################################################
 # Ratings
@@ -684,7 +764,9 @@ ratings = loadRatings(files.rating, files.log)  %>% # ratings
 
 ratings <- ratings %>%
   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>%
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>%
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "new", "old")) %>% 
+  mutate(condition_novelty = factor(condition_novelty, levels=c("old", "new")))
 
 ratings <- ratings %>%
   left_join(scores, by="subject")
@@ -692,14 +774,17 @@ ratings <- ratings %>%
 write.csv2(ratings, file.path(path, "Ratings", "ratings.csv"), row.names=FALSE, quote=FALSE)
 
 for (p in c("Baseline", "Acquisition", "Test")) {
-  # p = "Baseline"
+  # p = "Test"
   ratings.phase <- ratings %>%
     filter(phase == tolower(p))
 
   ratings.phase.summary <- ratings.phase %>%
-    summarise(Mean = mean(rating), SD = sd(rating), .by=condition)
+    summarise(Mean = mean(rating), SD = sd(rating), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+    mutate(condition = str_remove(condition, ", new"))
+  ratings.phase <- ratings.phase %>% 
+    mutate(condition = str_remove(condition, ", new"))
 
-  ggplot(ratings.phase.summary, aes(x = condition, y = Mean, fill = condition)) +
+  plot <- ggplot(ratings.phase.summary, aes(x = condition, y = Mean, fill = condition)) +
     geom_col(position = "dodge", width = 0.7) +
     geom_errorbar(
       aes(ymin = Mean - SD, ymax = Mean + SD),
@@ -712,8 +797,13 @@ for (p in c("Baseline", "Acquisition", "Test")) {
     theme(legend.position = "none") +
     scale_fill_viridis_d() +
     scale_color_viridis_d()
-
-  ggsave(file.path(path, "Plots", "Ratings", paste0("ratings_", tolower(p), ".png")), width=1500, height=2000, units="px")
+  
+  if(p=="Test") {
+    plot + facet_grid(cols = vars(condition_novelty))
+    ggsave(file.path(path, "Plots", "Ratings", paste0("ratings_", tolower(p), ".png")), width=2800, height=2000, units="px")
+  } else {
+    ggsave(file.path(path, "Plots", "Ratings", paste0("ratings_", tolower(p), ".png")), width=1500, height=2000, units="px")
+  }
 
   print(p)
   ratings.phase %>%
@@ -722,7 +812,7 @@ for (p in c("Baseline", "Acquisition", "Test")) {
     ez::ezANOVA(dv=.(rating),
                 wid=.(subject),
                 within=.(condition_social, condition_threat),
-                between=.(SPAI),
+                # between=.(SPAI),
                 detailed=T, type=3) %>%
     apa::anova_apa()
   print(cor(ratings.phase$rating, ratings.phase$SPAI))
@@ -732,13 +822,14 @@ for (p in c("Baseline", "Acquisition", "Test")) {
 ###############################################################################
 # Eye-Tracking
 ###############################################################################
-conditions = loadConditions(files.log) %>%  # conditions
+conditions = loadConditions(files.cond) %>%  # conditions
   mutate(across('condition', str_replace_all, rep_str))
 write.csv2(conditions, file.path(path, "Physio", "Trigger", "conditions.csv"), row.names=FALSE, quote=FALSE)
 
-rois = loadRois(files.rating) # rois
+roisAcq = loadRoisAcq(files.cond) # rois
+roisTest = loadRoisTest(files.cond) # rois
 
-path.eye = file.path(path, "Experiment", "gaze_avoidance_task", "data") # eye tracking data
+path.eye = file.path(path, "Experiment", "attentional_competition_task", "data") # eye tracking data
 messages = loadMessages(file.path(path.eye, "messages.txt")) %>% # messages for timepoints
   mutate(across('event', str_replace_all, rep_str)) %>% 
   filter(time != 0)
@@ -751,7 +842,13 @@ fixations = loadFixations(file.path(path.eye, "fixations.txt"), screen.height) %
             by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
   left_join(messages %>% filter(grepl("FeedbackOnset", event)) %>% # get feedback onset
               rename(feedbackOnset = time) %>% select(-event),
-            by=c("subject", "trial")) %>% arrange(subject, trial)
+            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
+  left_join(messages %>% filter(grepl("ImageTestOnset", event)) %>% # get test onset
+              rename(picTestOnset = time) %>% distinct(subject, trial, .keep_all=T) %>% select(-event),
+            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
+  mutate(picOnset = ifelse(is.na(picOnset), picTestOnset, picOnset)) %>% 
+  select(-picTestOnset) %>% 
+  mutate(feedbackOnset = ifelse(is.na(feedbackOnset), picOnset + 2000, feedbackOnset))
 vpn.eye = fixations$subject %>% unique() %>% setdiff(exclusions.eye.num) %>% sort()
 
 ###############################################################################
@@ -798,12 +895,18 @@ saccades = loadSaccades(file.path(path.eye, "saccades.txt"), screen.height) %>%
             by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
   left_join(messages %>% filter(grepl("FeedbackOnset", event)) %>% # get feedback onset
               rename(feedbackOnset = time) %>% select(-event),
-            by=c("subject", "trial")) %>% arrange(subject, trial)
+            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
+  left_join(messages %>% filter(grepl("ImageTestOnset", event)) %>% # get test onset
+              rename(picTestOnset = time) %>% distinct(subject, trial, .keep_all=T) %>% select(-event),
+            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
+  mutate(picOnset = ifelse(is.na(picOnset), picTestOnset, picOnset)) %>% 
+  select(-picTestOnset) %>% 
+  mutate(feedbackOnset = ifelse(is.na(feedbackOnset), picOnset + 2000, feedbackOnset))
 
 # Baseline OK?
 saccades.acq.valid <- saccades %>% 
   left_join(baseline.acq.trials %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial")) %>% 
-  filter(trial <= 112) %>% 
+  filter(trial <= acq2End) %>% 
   filter(!subject %in% excluded_subjects)
 
 # Correction for baseline deviations 
@@ -825,14 +928,14 @@ saccades.acq.valid = saccades.acq.valid %>% filter(start_time < feedbackOnset)
 
 # Outcome OK?
 saccades.acq.valid <- saccades.acq.valid %>% 
-  left_join(rois, by=c("subject", "trial"))
+  left_join(roisAcq, by=c("subject", "trial"))
 
 saccades.acq.valid <- saccades.acq.valid %>% 
   mutate(ROI = checkRoi(end_x_corr, end_y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop),
          Quadrant = checkRoi(end_x_corr, end_y_corr, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop))
 
 saccades.acq.valid <- saccades.acq.valid %>% 
-  mutate(outcome_corr = ifelse(ROI & str_detect(condition, "neg"), "shock", ifelse(ROI & str_detect(condition, "pos"), "reward", NA)))
+  mutate(outcome_corr = ifelse(ROI & str_detect(condition, "neg"), "loss", ifelse(ROI & str_detect(condition, "pos"), "reward", NA)))
 
 saccades.acq.valid <- saccades.acq.valid %>% 
   group_by(subject) %>%
@@ -855,7 +958,7 @@ saccades.acq.analysis = saccades.acq.valid %>%
   mutate(angle = visangle(start_x_corr_cm, start_y_corr_cm, end_x_corr_cm, end_y_corr_cm, distance))
 
 saccades.acq.analysis <- saccades.acq.analysis %>% 
-  mutate(block = ifelse(trial <= 32, 0, ifelse(trial <= 32 + 40, 1, 2))) %>% 
+  mutate(block = ifelse(trial <= acq1End, 0, 1)) %>% 
   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
 
@@ -946,7 +1049,7 @@ ggplot(avoidance.acq.prop.summary, aes(x = block, y = Mean, group = condition, c
   theme_minimal() +
   scale_fill_viridis_d() +
   scale_color_viridis_d() +
-  scale_x_continuous(breaks=c(0,1,2), labels=c("Block 1\n1-32", "Block 2\n33-72", "Block 3\n73-112"))
+  scale_x_continuous(breaks=c(0,1), labels=c("Block 1\n1-32", "Block 2\n33-64"))
 
 ggsave(file.path(path, "Plots", "Gaze", "acquisition", "avoidance_proportion_roi_block.png"), width=2800, height=2000, units="px")
 
@@ -1005,7 +1108,7 @@ saccades.acq.prop %>%
   ez::ezANOVA(dv=.(relative_frequency_ROI),
               wid=.(subject),
               within=.(condition_social, condition_threat),
-              between=.(SPAI),
+              # between=.(SPAI),
               detailed=T, type=3) %>%
   apa::anova_apa()
 
@@ -1056,7 +1159,7 @@ saccades.acq.prop %>%
   ez::ezANOVA(dv=.(relative_frequency_ROI),
               wid=.(subject), 
               within=.(condition_social, condition_threat), 
-              between=.(SPAI),
+              # between=.(SPAI),
               detailed=T, type=3) %>% 
   apa::anova_apa()
 
@@ -1293,9 +1396,9 @@ ggsave(file.path(path, "Plots", "Gaze", "acquisition", "saccades_length_roi_inte
 # Test
 ###############################################################################
 # Determine valid test trials by fixation time (invalid trials need not be evaluated by their baseline)
-end.testtrial = 11000
+end.testtrial = 2000
 eye.valid.trial = fixations  %>% filter(grepl("test", phase)) %>% # filter for test trials
-  mutate(end.testtrial = end.testtrial - picOnset, # realign such that 0 = picture onset
+  mutate(end.testtrial = end.testtrial, # realign such that 0 = picture onset
          start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
          start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
          end = ifelse(end > end.testtrial, end.testtrial, end), # discard fraction of fixation after end
@@ -1328,105 +1431,14 @@ excluded_subjects = baseline.test.summary %>% filter(included == FALSE)
 excluded_subjects = as.numeric(excluded_subjects$subject)
 print(paste0("Number of excluded subjects (Test): ", length(excluded_subjects)))
 
-# Baseline OK?
-fixations.test.valid <- fixations.test.valid %>% 
-  left_join(baseline.test.trials %>% mutate(trial = trial + 112) %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial")) %>% 
-  filter(!subject %in% excluded_subjects)
-
-# Correction for baseline deviations 
-fixations.test.valid <- fixations.test.valid %>% 
-  mutate(x_corr = x + x_divergence,
-         y_corr = y + y_divergence)
-
-# Correct for picture onset
-fixations.test.valid = fixations.test.valid %>%
-  mutate(end.testtrial = end.testtrial - picOnset,
-         start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
-         start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
-         end = ifelse(end > end.testtrial, end.testtrial, end), # discard fraction of fixation after end
-         picOnset = picOnset - picOnset,
-         dur = end - start)
-
-fixations.test.valid = fixations.test.valid %>% filter(dur > 0)
-
-# Add ROIs
-fixations.test.valid <- fixations.test.valid %>% 
-  left_join(rois, by=c("subject", "trial"))
-
-fixations.test.valid <- fixations.test.valid %>% 
-  mutate(ROI = checkRoi(x_corr, y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop)) %>% 
-  ungroup
-
-fixations.test.valid <- fixations.test.valid %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
-
-# # Add scores and write saccades to CSV
-fixations.test.valid <- fixations.test.valid %>%
-  left_join(scores, by="subject")
-
-write.csv2(fixations.test.valid, file.path(path, "Gaze", "fixations_test.csv"), row.names=FALSE, quote=FALSE)
-
-# Proportional Dwell Time On The Stimulus
-fixations.test.dwell <- fixations.test.valid %>%
-  filter(blok) %>%
-  mutate(dwell.time.total = sum(dur), .by=c(subject, condition)) %>% 
-  filter(ROI) %>%
-  mutate(dwell.time.roi = sum(dur), .by=c(subject, condition)) %>% 
-  summarise(dwell.time.prop = mean(dwell.time.roi/dwell.time.total), .by=c(subject, condition))
-
-# fixations.test.dwell.wide <- fixations.test.dwell %>% 
-#   pivot_wider(names_from = condition, values_from = dwell.time.prop)
-# 
-# fixations.test.dwell.wide <- fixations.test.dwell.wide %>% 
-#   left_join(scores, by="subject")
-# 
-# write.csv2(fixations.test.dwell.wide, file.path(path, "fixations_test_wide.csv"), row.names=FALSE, quote=FALSE)
-
-# Proportional Dwell Time On The Stimulus
-fixations.test.dwell <- fixations.test.valid %>% 
-  filter(blok) %>% 
-  mutate(dwell.time.total = sum(dur), .by=c(subject, SPAI, condition, condition_social, condition_threat)) %>% 
-  filter(ROI) %>%
-  mutate(dwell.time.roi = sum(dur), .by=c(subject, condition)) %>% 
-  # mutate(dwell.time.prop = dwell.time.roi/dwell.time.total)
-  summarise(dwell.time.prop = mean(dwell.time.roi/dwell.time.total), .by=c(subject, SPAI, condition, condition_social, condition_threat)) 
-
-fixations.test.dwell.summary <- fixations.test.dwell %>% 
-  summarise(Mean = mean(dwell.time.prop), SD = sd(dwell.time.prop), .by=condition)
-
-ggplot(fixations.test.dwell.summary, aes(x = condition, y = Mean, fill = condition)) +
-  geom_col(position = "dodge", width = 0.7) +
-  geom_errorbar(
-    aes(ymin = Mean - SD, ymax = Mean + SD),
-    position = position_dodge(width = 0.7),
-    width = 0.25) +
-  geom_point(data=fixations.test.dwell, aes(y = dwell.time.prop), size = 2, shape = 21, color = "black", alpha=0.5, position = position_jitter(width=0.2, height=0.005)) +
-  labs(title = paste("Proportional Dwell Time On the Stimulus (N = ", n_distinct(fixations.test.dwell$subject), ")", sep=""), x = "Conditions", y = "Proportional Dwell Time") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  scale_fill_viridis_d() + 
-  scale_color_viridis_d()
-
-ggsave(file.path(path, "Plots", "Gaze", "test", "fixations_dwell_time_on_test.png"), width=1800, height=2000, units="px")
-
-fixations.test.dwell %>%
-  group_by(subject, condition_social, condition_threat) %>% 
-  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-  ez::ezANOVA(dv=.(dwell.time.prop),
-              wid=.(subject), 
-              within=.(condition_social, condition_threat), 
-              # between=.(SPAI),
-              detailed=T, type=3) %>% 
-  apa::anova_apa()
-
 
 ### SACCADES
 # Baseline OK?
 saccades.test.valid <- saccades %>% 
-  left_join(baseline.test.trials %>% mutate(trial = trial + 112) %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial")) %>% 
-  filter(trial > 112) %>% 
-  filter(!subject %in% excluded_subjects)
+  left_join(baseline.test.trials %>% mutate(trial = trial + acq2End) %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial")) %>% 
+  filter(trial > acq2End) %>% 
+  filter(!subject %in% excluded_subjects) %>% 
+  ungroup
 
 # Correction for baseline deviations 
 saccades.test.valid <- saccades.test.valid %>% 
@@ -1434,22 +1446,33 @@ saccades.test.valid <- saccades.test.valid %>%
          start_y_corr = start_y + y_divergence, end_y_corr = end_y + y_divergence)
          
 # Correct for picture onset
+end.testtrial = 2000
 saccades.test.valid = saccades.test.valid %>%
-  mutate(end.testtrial = end.testtrial - picOnset, # realign such that 0 = picture onset
+  mutate(end.testtrial = end.testtrial, # realign such that 0 = picture onset
          start_time = start_time - picOnset, end_time = end_time - picOnset, # realign such that 0 = picture onset
          start_time = ifelse(start_time < 0, 0, start_time), # discard fraction of fixation before stimulus
          end_time = ifelse(end_time > end.testtrial, end.testtrial, end_time), # discard fraction of fixation after end
          picOnset = picOnset - picOnset,
-         dur = end_time - start_time)
+         dur = end_time - start_time) %>% 
+  select(-feedbackOnset)
 
 saccades.test.valid = saccades.test.valid %>% filter(dur > 0)
 
 # Add ROIs
 saccades.test.valid <- saccades.test.valid %>% 
-  left_join(rois, by=c("subject", "trial"))
+  left_join(roisTest, by=c("subject", "trial"))
 
 saccades.test.valid <- saccades.test.valid %>% 
-  mutate(ROI = checkRoi(end_x_corr, end_y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop))
+  mutate(ROI1 = checkRoi(end_x_corr, end_y_corr, roi1.xleft, roi1.xright, roi1.ybottom, roi1.ytop),
+         ROI2 = checkRoi(end_x_corr, end_y_corr, roi2.xleft, roi2.xright, roi2.ybottom, roi2.ytop),
+         ROI3 = checkRoi(end_x_corr, end_y_corr, roi3.xleft, roi3.xright, roi3.ybottom, roi3.ytop),
+         ROI4 = checkRoi(end_x_corr, end_y_corr, roi4.xleft, roi4.xright, roi4.ybottom, roi4.ytop)) %>% 
+  ungroup
+
+saccades.test.valid <- saccades.test.valid %>% 
+  mutate(condition = ifelse(ROI1, stim1, ifelse(ROI2, stim2, ifelse(ROI3, stim3, ifelse(ROI4, stim4, NA))))) %>%
+  mutate(across('condition', str_replace_all, rep_str))
+
 
 # Calculate lengths of saccades
 saccades.test.analysis = saccades.test.valid %>% 
@@ -1461,7 +1484,9 @@ saccades.test.analysis = saccades.test.valid %>%
 
 saccades.test.analysis <- saccades.test.analysis %>% 
   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "new", "old")) %>% 
+  mutate(condition_novelty = factor(condition_novelty, levels=c("old", "new")))
 
 # Add scores and write saccades to CSV
 saccades.test.analysis <- saccades.test.analysis %>%
@@ -1469,11 +1494,25 @@ saccades.test.analysis <- saccades.test.analysis %>%
 
 write.csv2(saccades.test.analysis, file.path(path, "Gaze", "saccades_test.csv"), row.names=FALSE, quote=FALSE)
 
-# Percentage of saccades going away from the stimuli
+# Percentage of saccades going to the stimuli
 saccades.test.prop <- saccades.test.analysis %>%
   filter(blok) %>%
   filter(!contains_blink) %>%
-  summarise(relative_frequency_ROI = mean(!ROI), .by=c(subject, condition))
+  mutate(condition = as.factor(condition)) %>% 
+  group_by(subject) %>% 
+  count(condition) %>% 
+  summarise(subject=subject, condition=condition, n=n, sum = sum(n)) %>% 
+  mutate(rel_freq = n/sum) %>% 
+  drop_na(condition) %>% 
+  ungroup %>%
+  select(-c(n, sum))
+saccades.test.prop <- bind_rows(saccades.test.prop, saccades.test.prop %>% expand(subject, condition)) %>% 
+  distinct(subject, condition, .keep_all=T) %>% 
+  mutate(rel_freq = replace_na(rel_freq, 0)) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "new", "old")) %>% 
+  mutate(condition_novelty = factor(condition_novelty, levels=c("old", "new")))
 
 # saccades.test.prop.wide <- saccades.test.prop %>%
 #   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
@@ -1483,138 +1522,179 @@ saccades.test.prop <- saccades.test.analysis %>%
 #
 # write.csv2(saccades.test.prop.wide, file.path(path, "saccades_test_wide.csv"), row.names=FALSE, quote=FALSE)
 
-saccades.test.prop <- saccades.test.analysis %>%
-  filter(blok) %>%
-  filter(!contains_blink) %>%
-  summarise(absolute_frequency_ROI = sum(angle >= 1 & !ROI), relative_frequency_ROI = mean(angle >= 1 & !ROI), .by=c(subject, SPAI, condition, condition_social, condition_threat))
-
 saccades.test.roi.summary <- saccades.test.prop %>%
-  summarise(Mean = mean(relative_frequency_ROI), SD = sd(relative_frequency_ROI), .by=condition)
+  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  mutate(condition = str_remove(condition, ", new"))
+
+saccades.test.prop <- saccades.test.prop %>% 
+  mutate(condition = str_remove(condition, ", new"))
 
 saccades.test.roi.filter <- saccades.test.prop %>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
 
-ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+plot <- ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
     width = 0.25) +
-  geom_point(data=saccades.test.prop, aes(y = relative_frequency_ROI), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
-  labs(title = paste("Proportion of Saccades Away from the Stimulus (N = ", n_distinct(saccades.test.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
+  geom_point(data=saccades.test.prop, aes(y = rel_freq), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
+  labs(title = paste("Proportion of Saccades to the Stimulus (N = ", n_distinct(saccades.test.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "Gaze", "test", "saccades_proportion_roi.png"), width=1800, height=2000, units="px")
+plot + facet_grid(cols = vars(condition_novelty))
+ggsave(file.path(path, "Plots", "Gaze", "test", "all_saccades_proportion_roi.png"), width=2800, height=2000, units="px")
 
 
 saccades.test.prop %>%
   left_join(saccades.test.roi.filter, by=c("subject")) %>%
   filter(n_cond == 4) %>%
-  group_by(subject, condition_social, condition_threat) %>%
-  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-  ez::ezANOVA(dv=.(relative_frequency_ROI),
+  group_by(subject, condition_social, condition_threat, condition_novelty) %>%
+  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat), condition_novelty = as.factor(condition_novelty)) %>%
+  ez::ezANOVA(dv=.(rel_freq),
               wid=.(subject),
-              within=.(condition_social, condition_threat),
+              within=.(condition_social, condition_threat, condition_novelty),
               # between=.(SPAI),
               detailed=T, type=3) %>%
   apa::anova_apa()
 
-# Incl. Microsaccades
-saccades.test.prop <- saccades.test.analysis %>%
+# W/o Microsaccades
+saccades.test.analysis.cleaned <- saccades.test.analysis %>% 
+  mutate(condition = ifelse(angle < 1, NA, condition))
+  
+saccades.test.prop <- saccades.test.analysis.cleaned %>%
   filter(blok) %>%
   filter(!contains_blink) %>%
-  summarise(absolute_frequency_ROI = sum(!ROI), relative_frequency_ROI = mean(!ROI), .by=c(subject, SPAI, condition, condition_social, condition_threat))
+  mutate(condition = as.factor(condition)) %>% 
+  group_by(subject) %>% 
+  count(condition) %>% 
+  summarise(subject=subject, condition=condition, n=n, sum = sum(n)) %>% 
+  mutate(rel_freq = n/sum) %>% 
+  drop_na(condition) %>% 
+  ungroup %>%
+  select(-c(n, sum))
+saccades.test.prop <- bind_rows(saccades.test.prop, saccades.test.prop %>% expand(subject, condition)) %>% 
+  distinct(subject, condition, .keep_all=T) %>% 
+  mutate(rel_freq = replace_na(rel_freq, 0)) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "new", "old")) %>% 
+  mutate(condition_novelty = factor(condition_novelty, levels=c("old", "new")))
+
+# saccades.test.prop.wide <- saccades.test.prop %>%
+#   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
+#
+# saccades.test.prop.wide <- saccades.test.prop.wide %>%
+#   left_join(scores, by="subject")
+#
+# write.csv2(saccades.test.prop.wide, file.path(path, "saccades_test_wide.csv"), row.names=FALSE, quote=FALSE)
 
 saccades.test.roi.summary <- saccades.test.prop %>%
-  summarise(Mean = mean(relative_frequency_ROI), SD = sd(relative_frequency_ROI), .by=condition)
+  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  mutate(condition = str_remove(condition, ", new"))
 
-ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+saccades.test.prop <- saccades.test.prop %>% 
+  mutate(condition = str_remove(condition, ", new"))
+
+saccades.test.roi.filter <- saccades.test.prop %>%
+  reframe(n_cond = length(unique(condition)), .by=c(subject))
+
+plot <- ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
     width = 0.25) +
-  geom_point(data=saccades.test.prop, aes(y = relative_frequency_ROI), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
-  labs(title = paste("Proportion of Saccades Away from the Stimulus (N = ", n_distinct(saccades.test.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
+  geom_point(data=saccades.test.prop, aes(y = rel_freq), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
+  labs(title = paste("Proportion of Saccades to the Stimulus (N = ", n_distinct(saccades.test.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "Gaze", "test", "microsaccades_proportion_roi_allsaccades.png"), width=1800, height=2000, units="px")
+plot + facet_grid(cols = vars(condition_novelty))
+ggsave(file.path(path, "Plots", "Gaze", "test", "saccades_proportion_roi.png"), width=2800, height=2000, units="px")
+
 
 saccades.test.prop %>%
   left_join(saccades.test.roi.filter, by=c("subject")) %>%
   filter(n_cond == 4) %>%
-  group_by(subject, condition_social, condition_threat) %>%
-  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-  ez::ezANOVA(dv=.(relative_frequency_ROI),
+  group_by(subject, condition_social, condition_threat, condition_novelty) %>%
+  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat), condition_novelty = as.factor(condition_novelty)) %>%
+  ez::ezANOVA(dv=.(rel_freq),
               wid=.(subject),
-              within=.(condition_social, condition_threat),
+              within=.(condition_social, condition_threat, condition_novelty),
               # between=.(SPAI),
               detailed=T, type=3) %>%
   apa::anova_apa()
 
 
-# Latency to first saccade going away from the stimuli
+# Latency to first saccade
 saccades.test.lat.roi <- saccades.test.analysis %>%
   filter(blok) %>%
   filter(!contains_blink) %>%
-  filter(!ROI & angle >= 1) %>%
-  summarise(latency = mean(start_time), .by=c(subject, SPAI, condition, condition_social, condition_threat))
+  distinct(subject, trial, condition, .keep_all=T) %>% 
+  filter(angle >= 1) %>%
+  summarise(latency = mean(start_time), .by=c(subject, SPAI, condition, condition_social, condition_threat, condition_novelty))%>% 
+  drop_na(condition)
 
 saccades.test.lat.roi.summary <- saccades.test.lat.roi %>%
-  summarise(Mean = mean(latency), SD = sd(latency), .by=c(condition, condition_social, condition_threat))
+  summarise(Mean = mean(latency), SD = sd(latency), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  mutate(condition = str_remove(condition, ", new"))
+
+saccades.test.lat.roi <- saccades.test.lat.roi %>% 
+  mutate(condition = str_remove(condition, ", new"))
 
 saccades.test.lat.roi.filter <- saccades.test.lat.roi%>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
 
-ggplot(saccades.test.lat.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+plot <- ggplot(saccades.test.lat.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
     width = 0.25) +
   geom_point(data=saccades.test.lat.roi, aes(y = latency), size = 2, shape = 21, color = "black", alpha=0.5, position = position_jitter(width=0.2, height=0.005)) +
-  labs(title = paste("Latency to First Saccade Away from the Stimulus (N = ", n_distinct(saccades.test.lat.roi$subject), ")", sep=""), x = "Conditions", y = "Latency [ms]") +
+  labs(title = paste("Latency to First Saccade to the Stimulus (N = ", n_distinct(saccades.test.lat.roi$subject), ")", sep=""), x = "Conditions", y = "Latency [ms]") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-ggsave(file.path(path, "Plots", "Gaze", "test", "saccades_latency_off_test.png"), width=1800, height=2000, units="px")
+plot + facet_grid(cols = vars(condition_novelty))
+ggsave(file.path(path, "Plots", "Gaze", "test", "saccades_latency_test.png"), width=2800, height=2000, units="px")
 
 saccades.test.lat.roi %>%
   left_join(saccades.test.lat.roi.filter, by=c("subject")) %>%
   filter(n_cond == 4) %>%
-  group_by(subject, condition_social, condition_threat) %>%
-  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+  group_by(subject, condition_social, condition_threat, condition_novelty) %>%
+  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat), condition_novelty = as.factor(condition_novelty)) %>%
   ez::ezANOVA(dv=.(latency),
               wid=.(subject),
-              within=.(condition_social, condition_threat),
+              within=.(condition_social, condition_threat, condition_novelty),
               # between=.(SPAI),
               detailed=T, type=3) %>%
   apa::anova_apa()
 
 
-# Zoom in Interaction
-saccades.test.lat.roi.summary <- saccades.test.lat.roi.summary %>%
-  mutate(condition_threat = ifelse(condition_threat == "neg", "negative (Shock)", "positive (Reward)"))
-
-ggplot(saccades.test.lat.roi.summary, aes(x = condition_threat, y = Mean, group = condition_social, color = condition_social)) +
-  geom_point(position = position_dodge(width = 0.5), shape = "square", size = 5) +
-  geom_errorbar(
-    aes(ymin = Mean - SD, ymax = Mean + SD),
-    position = position_dodge(width = 0.5),
-    width = 0.25, linewidth = 1) +
-  geom_line(position = position_dodge(width = 0.5), linewidth = 1) +
-  labs(title = paste("Latency to First Saccade to the Stimulus (N = ", n_distinct(saccades.test.lat.roi$subject), ")", sep=""), x = "Threat Condition", y = "Latency [ms]") +
-  guides(color = guide_legend(title = "Social Conditions")) +
-  theme_minimal() +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d()
-
-ggsave(file.path(path, "Plots", "Gaze", "test", "saccades_latency_roi_interaction.png"), width=2000, height=2000, units="px")
+# # Zoom in Interaction
+# saccades.test.lat.roi.summary <- saccades.test.lat.roi.summary %>%
+#   mutate(condition_threat = ifelse(condition_threat == "neg", "negative (Shock)", "positive (Reward)"))
+# 
+# ggplot(saccades.test.lat.roi.summary, aes(x = condition_threat, y = Mean, group = condition_social, color = condition_social)) +
+#   geom_point(position = position_dodge(width = 0.5), shape = "square", size = 5) +
+#   geom_errorbar(
+#     aes(ymin = Mean - SD, ymax = Mean + SD),
+#     position = position_dodge(width = 0.5),
+#     width = 0.25, linewidth = 1) +
+#   geom_line(position = position_dodge(width = 0.5), linewidth = 1) +
+#   labs(title = paste("Latency to First Saccade to the Stimulus (N = ", n_distinct(saccades.test.lat.roi$subject), ")", sep=""), x = "Threat Condition", y = "Latency [ms]") +
+#   guides(color = guide_legend(title = "Social Conditions")) +
+#   theme_minimal() +
+#   scale_fill_viridis_d() +
+#   scale_color_viridis_d()
+# 
+# ggsave(file.path(path, "Plots", "Gaze", "test", "saccades_latency_roi_interaction.png"), width=2000, height=2000, units="px")

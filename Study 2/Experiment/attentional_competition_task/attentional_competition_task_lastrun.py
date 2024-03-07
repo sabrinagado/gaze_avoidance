@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on Februar 28, 2024, at 10:17
+    on März 05, 2024, at 16:11
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -159,7 +159,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\attentional_competition_task\\attentional_competition_task_lastrun.py',
+    originPath='C:\\Users\\Public\\Documents\\Projects\\GCA 2\\attentional_competition_task\\attentional_competition_task_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -173,7 +173,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 
 # --- Setup the Window ---
 win = visual.Window(
-    size=[2560, 1440], fullscr=True, screen=1, 
+    size=[1680, 1050], fullscr=True, screen=1, 
     winType='pyglet', allowStencil=False,
     monitor='labMonitor', color=[0,0,0], colorSpace='rgb',
     blendMode='avg', useFBO=True, 
@@ -189,12 +189,24 @@ else:
 ioConfig = {}
 
 # Setup eyetracking
-ioConfig['eyetracker.hw.mouse.EyeTracker'] = {
+ioConfig['eyetracker.hw.sr_research.eyelink.EyeTracker'] = {
     'name': 'tracker',
-    'controls': {
-        'move': [],
-        'blink':('MIDDLE_BUTTON',),
-        'saccade_threshold': 0.5,
+    'model_name': 'EYELINK 1000 TOWER',
+    'simulation_mode': False,
+    'network_settings': '100.1.1.1',
+    'default_native_data_file_name': 'EXPFILE',
+    'runtime_settings': {
+        'sampling_rate': 1000.0,
+        'track_eyes': 'RIGHT_EYE',
+        'sample_filtering': {
+            'sample_filtering': 'FILTER_LEVEL_2',
+            'elLiveFiltering': 'FILTER_LEVEL_OFF',
+        },
+        'vog_settings': {
+            'pupil_measure_types': 'PUPIL_AREA',
+            'tracking_mode': 'PUPIL_CR_TRACKING',
+            'pupil_center_algorithm': 'CENTROID_FIT',
+        }
     }
 }
 
@@ -1089,6 +1101,27 @@ for thisComponent in startETCalibrationComponents:
         thisComponent.setAutoDraw(False)
 # the Routine "startETCalibration" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
+# define target for ETCalibration
+ETCalibrationTarget = visual.TargetStim(win, 
+    name='ETCalibrationTarget',
+    radius=0.01, fillColor='', borderColor='black', lineWidth=2.0,
+    innerRadius=0.0035, innerFillColor='white', innerBorderColor='black', innerLineWidth=2.0,
+    colorSpace='rgb', units=None
+)
+# define parameters for ETCalibration
+ETCalibration = hardware.eyetracker.EyetrackerCalibration(win, 
+    eyetracker, ETCalibrationTarget,
+    units=None, colorSpace='rgb',
+    progressMode='time', targetDur=1.0, expandScale=1.2,
+    targetLayout='NINE_POINTS', randomisePos=True, textColor='white',
+    movementAnimation=True, targetDelay=1.0
+)
+# run calibration
+ETCalibration.run()
+# clear any keypresses from during ETCalibration so they don't interfere with the experiment
+defaultKeyboard.clearEvents()
+# the Routine "ETCalibration" was not non-slip safe, so reset the non-slip timer
+routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
 blocks = data.TrialHandler(nReps=1.0, method='random', 
@@ -1529,7 +1562,7 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    learning_trials = data.TrialHandler(nReps=0.0, method='random', 
+    learning_trials = data.TrialHandler(nReps=2.0, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=data.importConditions(posFile),
         seed=None, name='learning_trials')
@@ -1834,7 +1867,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(1.0, log=False)
+                gazeCursor.setOpacity(0.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             
             # check for quit (typically the Esc key)
@@ -2046,7 +2079,7 @@ for thisBlock in blocks:
                     gazeCursor_Feedback.setAutoDraw(False)
             if gazeCursor_Feedback.status == STARTED:  # only update if drawing
                 gazeCursor_Feedback.setFillColor(cursorcolor, log=False)
-                gazeCursor_Feedback.setOpacity(1.0, log=False)
+                gazeCursor_Feedback.setOpacity(0.0, log=False)
                 gazeCursor_Feedback.setPos([eyetracker.getPos()], log=False)
             # start/stop soundFeedback
             if soundFeedback.status == NOT_STARTED and t >= 0-frameTolerance:
@@ -2164,7 +2197,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 0.0 repeats of 'learning_trials'
+    # completed 2.0 repeats of 'learning_trials'
     
     
     # --- Prepare to start Routine "repeatTask" ---
@@ -2349,7 +2382,7 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    trials = data.TrialHandler(nReps=0.0, method='random', 
+    trials = data.TrialHandler(nReps=2.0, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=data.importConditions(posFile),
         seed=None, name='trials')
@@ -2654,7 +2687,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(1.0, log=False)
+                gazeCursor.setOpacity(0.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             
             # check for quit (typically the Esc key)
@@ -2866,7 +2899,7 @@ for thisBlock in blocks:
                     gazeCursor_Feedback.setAutoDraw(False)
             if gazeCursor_Feedback.status == STARTED:  # only update if drawing
                 gazeCursor_Feedback.setFillColor(cursorcolor, log=False)
-                gazeCursor_Feedback.setOpacity(1.0, log=False)
+                gazeCursor_Feedback.setOpacity(0.0, log=False)
                 gazeCursor_Feedback.setPos([eyetracker.getPos()], log=False)
             # start/stop soundFeedback
             if soundFeedback.status == NOT_STARTED and t >= 0-frameTolerance:
@@ -2984,7 +3017,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 0.0 repeats of 'trials'
+    # completed 2.0 repeats of 'trials'
     
     
     # set up handler to look after randomisation of conditions etc
@@ -3773,7 +3806,7 @@ for thisBlock in blocks:
                         gazeCursorTest.setAutoDraw(False)
                 if gazeCursorTest.status == STARTED:  # only update if drawing
                     gazeCursorTest.setFillColor(cursorcolor, log=False)
-                    gazeCursorTest.setOpacity(1.0, log=False)
+                    gazeCursorTest.setOpacity(0.0, log=False)
                     gazeCursorTest.setPos([eyetracker.getPos()], log=False)
                 
                 # check for quit (typically the Esc key)
@@ -4083,7 +4116,7 @@ for thisBlock in blocks:
                         gazeCursorTestFeedback.setAutoDraw(False)
                 if gazeCursorTestFeedback.status == STARTED:  # only update if drawing
                     gazeCursorTestFeedback.setFillColor(cursorcolor, log=False)
-                    gazeCursorTestFeedback.setOpacity(1.0, log=False)
+                    gazeCursorTestFeedback.setOpacity(0.0, log=False)
                     gazeCursorTestFeedback.setPos([eyetracker.getPos()], log=False)
                 # start/stop soundFeedbackTest
                 if soundFeedbackTest.status == NOT_STARTED and t >= 0-frameTolerance:
@@ -4736,7 +4769,7 @@ for thisBlock in blocks:
                         gazeCursorTest.setAutoDraw(False)
                 if gazeCursorTest.status == STARTED:  # only update if drawing
                     gazeCursorTest.setFillColor(cursorcolor, log=False)
-                    gazeCursorTest.setOpacity(1.0, log=False)
+                    gazeCursorTest.setOpacity(0.0, log=False)
                     gazeCursorTest.setPos([eyetracker.getPos()], log=False)
                 
                 # check for quit (typically the Esc key)
@@ -5046,7 +5079,7 @@ for thisBlock in blocks:
                         gazeCursorTestFeedback.setAutoDraw(False)
                 if gazeCursorTestFeedback.status == STARTED:  # only update if drawing
                     gazeCursorTestFeedback.setFillColor(cursorcolor, log=False)
-                    gazeCursorTestFeedback.setOpacity(1.0, log=False)
+                    gazeCursorTestFeedback.setOpacity(0.0, log=False)
                     gazeCursorTestFeedback.setPos([eyetracker.getPos()], log=False)
                 # start/stop soundFeedbackTest
                 if soundFeedbackTest.status == NOT_STARTED and t >= 0-frameTolerance:

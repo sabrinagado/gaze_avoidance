@@ -25,7 +25,7 @@
     <Param val="False" valType="bool" updates="None" name="Show mouse"/>
     <Param val="norm" valType="str" updates="None" name="Units"/>
     <Param val="2022.2.4" valType="str" updates="None" name="Use version"/>
-    <Param val="[2560, 1440]" valType="list" updates="None" name="Window size (pixels)"/>
+    <Param val="[1680, 1050]" valType="list" updates="None" name="Window size (pixels)"/>
     <Param val="avg" valType="str" updates="None" name="blendMode"/>
     <Param val="$[0,0,0]" valType="color" updates="None" name="color"/>
     <Param val="rgb" valType="str" updates="None" name="colorSpace"/>
@@ -41,7 +41,7 @@
     <Param val="PUPIL_CR_TRACKING" valType="str" updates="None" name="elTrackingMode"/>
     <Param val="attentional_competition_task" valType="str" updates="None" name="expName"/>
     <Param val="on Sync" valType="str" updates="None" name="exportHTML"/>
-    <Param val="MouseGaze" valType="str" updates="None" name="eyetracker"/>
+    <Param val="SR Research Ltd" valType="str" updates="None" name="eyetracker"/>
     <Param val="127.0.0.1" valType="str" updates="None" name="gpAddress"/>
     <Param val="4242" valType="num" updates="None" name="gpPort"/>
     <Param val="ioHub" valType="str" updates="None" name="keyboardBackend"/>
@@ -145,7 +145,7 @@
         <Param val="1" valType="num" updates="constant" name="lineWidth"/>
         <Param val="4" valType="int" updates="constant" name="nVertices"/>
         <Param val="gazeCursor" valType="code" updates="None" name="name"/>
-        <Param val="1" valType="num" updates="set every frame" name="opacity"/>
+        <Param val="0" valType="num" updates="set every frame" name="opacity"/>
         <Param val="0" valType="num" updates="constant" name="ori"/>
         <Param val="eyetracker.getPos()" valType="list" updates="set every frame" name="pos"/>
         <Param val="False" valType="bool" updates="None" name="saveStartStop"/>
@@ -295,7 +295,7 @@
         <Param val="1" valType="num" updates="constant" name="lineWidth"/>
         <Param val="4" valType="int" updates="constant" name="nVertices"/>
         <Param val="gazeCursor_Feedback" valType="code" updates="None" name="name"/>
-        <Param val="1" valType="num" updates="set every frame" name="opacity"/>
+        <Param val="0" valType="num" updates="set every frame" name="opacity"/>
         <Param val="0" valType="num" updates="constant" name="ori"/>
         <Param val="eyetracker.getPos()" valType="list" updates="set every frame" name="pos"/>
         <Param val="False" valType="bool" updates="None" name="saveStartStop"/>
@@ -983,34 +983,6 @@
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
     </Routine>
-    <EyetrackerValidationRoutine name="ETValidation">
-      <Param name="borderColor" updates="None" val="black" valType="color"/>
-      <Param name="borderWidth" updates="None" val="2" valType="num"/>
-      <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
-      <Param name="cursorFillColor" updates="None" val="white" valType="color"/>
-      <Param name="disabled" updates="None" val="True" valType="bool"/>
-      <Param name="expandDur" updates="None" val="1" valType="num"/>
-      <Param name="expandScale" updates="None" val="1.2" valType="num"/>
-      <Param name="fillColor" updates="None" val="" valType="color"/>
-      <Param name="innerBorderColor" updates="None" val="black" valType="color"/>
-      <Param name="innerBorderWidth" updates="None" val="2" valType="num"/>
-      <Param name="innerFillColor" updates="None" val="white" valType="color"/>
-      <Param name="innerRadius" updates="None" val="0.0035" valType="num"/>
-      <Param name="movementAnimation" updates="None" val="True" valType="bool"/>
-      <Param name="movementDur" updates="None" val="1.0" valType="num"/>
-      <Param name="name" updates="None" val="ETValidation" valType="code"/>
-      <Param name="outerRadius" updates="None" val="0.01" valType="num"/>
-      <Param name="progressMode" updates="None" val="time" valType="str"/>
-      <Param name="randomisePos" updates="None" val="True" valType="bool"/>
-      <Param name="saveAsImg" updates="None" val="True" valType="bool"/>
-      <Param name="showResults" updates="None" val="False" valType="bool"/>
-      <Param name="targetDelay" updates="None" val="1.0" valType="num"/>
-      <Param name="targetDur" updates="None" val="1" valType="num"/>
-      <Param name="targetLayout" updates="None" val="NINE_POINTS" valType="str"/>
-      <Param name="targetPositions" updates="None" val="NINE_POINTS" valType="list"/>
-      <Param name="textColor" updates="None" val="auto" valType="color"/>
-      <Param name="units" updates="None" val="from exp settings" valType="str"/>
-    </EyetrackerValidationRoutine>
     <Routine name="startTask">
       <CodeComponent name="codeStartTask">
         <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
@@ -1259,30 +1231,6 @@
         <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
       </KeyboardComponent>
     </Routine>
-    <EyetrackerCalibrationRoutine name="ETCalibration">
-      <Param name="borderColor" updates="None" val="black" valType="color"/>
-      <Param name="borderWidth" updates="None" val="2" valType="num"/>
-      <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
-      <Param name="disabled" updates="None" val="True" valType="bool"/>
-      <Param name="expandDur" updates="None" val="1" valType="num"/>
-      <Param name="expandScale" updates="None" val="1.2" valType="num"/>
-      <Param name="fillColor" updates="None" val="" valType="color"/>
-      <Param name="innerBorderColor" updates="None" val="black" valType="color"/>
-      <Param name="innerBorderWidth" updates="None" val="2" valType="num"/>
-      <Param name="innerFillColor" updates="None" val="white" valType="color"/>
-      <Param name="innerRadius" updates="None" val="0.0035" valType="num"/>
-      <Param name="movementAnimation" updates="None" val="True" valType="bool"/>
-      <Param name="movementDur" updates="None" val="1.0" valType="num"/>
-      <Param name="name" updates="None" val="ETCalibration" valType="code"/>
-      <Param name="outerRadius" updates="None" val="0.01" valType="num"/>
-      <Param name="progressMode" updates="None" val="time" valType="str"/>
-      <Param name="randomisePos" updates="None" val="True" valType="bool"/>
-      <Param name="targetDelay" updates="None" val="1.0" valType="num"/>
-      <Param name="targetDur" updates="None" val="1" valType="num"/>
-      <Param name="targetLayout" updates="None" val="NINE_POINTS" valType="str"/>
-      <Param name="textColor" updates="None" val="white" valType="color"/>
-      <Param name="units" updates="None" val="from exp settings" valType="str"/>
-    </EyetrackerCalibrationRoutine>
     <Routine name="test_trial">
       <CodeComponent name="codeTestTrial">
         <Param val="feedback_color = (0,0,0)&amp;#10;feedback_opacity = 0&amp;#10;feedback_audio = &quot;audio/silence.wav&quot;&amp;#10;cursorcolor=&quot;white&quot;&amp;#10;log_msg = &quot;&quot;&amp;#10;&amp;#10;rectsize = (0.2, 0.2)&amp;#10;imagesize_test = [1, 1]&amp;#10;feedback_position = (0, 0)&amp;#10;&amp;#10;score = 0&amp;#10;points = 0&amp;#10;&amp;#10;looked_at_roi1 = False&amp;#10;looked_at_roi2 = False&amp;#10;looked_at_roi3 = False&amp;#10;looked_at_roi4 = False&amp;#10;paused = False&amp;#10;outcome = &quot;&quot;" valType="extendedCode" updates="constant" name="Before Experiment"/>
@@ -1521,7 +1469,7 @@
         <Param val="1" valType="num" updates="constant" name="lineWidth"/>
         <Param val="4" valType="int" updates="constant" name="nVertices"/>
         <Param val="gazeCursorTest" valType="code" updates="None" name="name"/>
-        <Param val="1" valType="num" updates="set every frame" name="opacity"/>
+        <Param val="0" valType="num" updates="set every frame" name="opacity"/>
         <Param val="0" valType="num" updates="constant" name="ori"/>
         <Param val="eyetracker.getPos()" valType="list" updates="set every frame" name="pos"/>
         <Param val="False" valType="bool" updates="None" name="saveStartStop"/>
@@ -1752,7 +1700,7 @@
         <Param val="1" valType="num" updates="constant" name="lineWidth"/>
         <Param val="4" valType="int" updates="constant" name="nVertices"/>
         <Param val="gazeCursorTestFeedback" valType="code" updates="None" name="name"/>
-        <Param val="1" valType="num" updates="set every frame" name="opacity"/>
+        <Param val="0" valType="num" updates="set every frame" name="opacity"/>
         <Param val="0" valType="num" updates="constant" name="ori"/>
         <Param val="eyetracker.getPos()" valType="list" updates="set every frame" name="pos"/>
         <Param val="False" valType="bool" updates="None" name="saveStartStop"/>
@@ -1827,6 +1775,30 @@
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
     </Routine>
+    <EyetrackerCalibrationRoutine name="ETCalibration">
+      <Param name="borderColor" updates="None" val="black" valType="color"/>
+      <Param name="borderWidth" updates="None" val="2" valType="num"/>
+      <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
+      <Param name="disabled" updates="None" val="False" valType="bool"/>
+      <Param name="expandDur" updates="None" val="1" valType="num"/>
+      <Param name="expandScale" updates="None" val="1.2" valType="num"/>
+      <Param name="fillColor" updates="None" val="" valType="color"/>
+      <Param name="innerBorderColor" updates="None" val="black" valType="color"/>
+      <Param name="innerBorderWidth" updates="None" val="2" valType="num"/>
+      <Param name="innerFillColor" updates="None" val="white" valType="color"/>
+      <Param name="innerRadius" updates="None" val="0.0035" valType="num"/>
+      <Param name="movementAnimation" updates="None" val="True" valType="bool"/>
+      <Param name="movementDur" updates="None" val="1.0" valType="num"/>
+      <Param name="name" updates="None" val="ETCalibration" valType="code"/>
+      <Param name="outerRadius" updates="None" val="0.01" valType="num"/>
+      <Param name="progressMode" updates="None" val="time" valType="str"/>
+      <Param name="randomisePos" updates="None" val="True" valType="bool"/>
+      <Param name="targetDelay" updates="None" val="1.0" valType="num"/>
+      <Param name="targetDur" updates="None" val="1" valType="num"/>
+      <Param name="targetLayout" updates="None" val="NINE_POINTS" valType="str"/>
+      <Param name="textColor" updates="None" val="white" valType="color"/>
+      <Param name="units" updates="None" val="from exp settings" valType="str"/>
+    </EyetrackerCalibrationRoutine>
   </Routines>
   <Flow>
     <Routine name="welcome"/>

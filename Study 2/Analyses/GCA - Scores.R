@@ -100,9 +100,8 @@ df_debriefing <- df_scores %>%
 
 # Labbook
 df_labbook <- df_scores %>%
-  select(labbook, digitimer, temperature, humidity) %>% 
-  mutate(across('labbook', str_replace_all, rep_str)) %>% 
-  mutate(digitimer = replace(digitimer, digitimer == 0, NA))
+  select(labbook) %>% 
+  mutate(across('labbook', str_replace_all, rep_str))
 
 # Demographic Information
 df_scores$VP <- as.integer(df_scores$ID)

@@ -20,14 +20,14 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 setwd('..')
 path = getwd()
 
-path.behavior = file.path(path, "Experiment", "gaze_discrimination_task", "data")
+path.behavior = file.path(path, "Experiment", "gaze_discrimination_task2", "data")
 
 filemat = list.files(path.behavior, pattern = "*.csv") # read all files from data-folder into a single list
 
 
 #cycle through all subject csv files
 for (subject in filemat){
-  # subject <- filemat[2]  #use  file for practice and coding changes
+  # subject <- filemat[1]  #use  file for practice and coding changes
    
   start.time <- Sys.time()
   
@@ -36,9 +36,9 @@ for (subject in filemat){
   participant <- vp_data$participant %>% unique()
   
   vp_summary <- vp_data %>% 
-    filter(str_detect(trialtype,"cs_")) %>% 
-    mutate(condition = ifelse(trialtype == comptype, "same", "different"),
-           social = ifelse(trialtype %in% c("cs_plus_s","cs_minus_s"), "social","non-social")) %>%
+    filter(str_detect(stim1,"cs_")) %>% 
+    mutate(condition = ifelse(stim1 == stim2, "same", "different"),
+           social = ifelse(stim1 %in% c("cs_pos_s","cs_neg_s", "cs_pos_s_new","cs_neg_s_new"), "social","non-social")) %>%
     select(participant, condition, social, correctness, key.rt) %>%
     group_by(participant,social,condition) %>%
     summarise(correct_sum = sum(correctness == "correct"),
