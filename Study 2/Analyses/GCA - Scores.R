@@ -106,7 +106,7 @@ df_labbook <- df_scores %>%
 # Demographic Information
 df_scores$VP <- as.integer(df_scores$ID)
 df_demo <- df_scores %>%
-  select(VP, gender, age, motivation, tiredness, handedness)
+  select(VP, gender, age, motivation, tiredness, handedness, motivation_points)
 
 # Create Summary
 df_summary <- bind_cols(df_demo, df_debriefing, df_labbook, df_vas, df_spai, df_sias, df_stai, df_ui)

@@ -1289,6 +1289,84 @@ ggsave(file.path(path, "Plots", "Gaze", "acquisition", "saccades_length_roi_inte
 # ggsave(file.path(path, "Plots", "avoidance-task", "acquisition", "saccades_length_quad.png"), width=1800, height=2400, units="px")
 
 
+### FIXATIONS
+# Baseline OK?
+fixations.acq.valid <- fixations.acq.valid %>% 
+  left_join(baseline.acq.trials %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial")) %>% 
+  filter(trial <= acq2End) %>% 
+  filter(!subject %in% excluded_subjects)
+
+# Correction for baseline deviations 
+fixations.acq.valid <- fixations.acq.valid %>% 
+  mutate(x_corr = x + x_divergence,
+         y_corr = y + y_divergence)
+
+# Correct for picture onset
+fixations.acq.valid = fixations.acq.valid %>%
+  mutate(feedbackOnset = feedbackOnset - picOnset, # realign such that 0 = picture onset
+         start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
+         start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
+         picOnset = picOnset - picOnset,
+         dur = end - start)
+
+fixations.acq.analysis = fixations.acq.valid %>% filter(dur > 0) # drop saccades before picture onset
+
+# ROIs
+fixations.acq.analysis <- fixations.acq.analysis %>% 
+  left_join(rois, by=c("subject", "trial"))
+
+fixations.acq.analysis <- fixations.acq.analysis %>% 
+  mutate(ROI = checkRoi(x_corr,y_corr, roi.xleft, roi.xright, roi.ybottom, roi.ytop),
+         Quadrant = checkRoi(x_corr, y_corr, quadrant.xleft, quadrant.xright, quadrant.ybottom, quadrant.ytop))
+
+# Add scores and write saccades to CSV
+fixations.acq.analysis <- fixations.acq.analysis %>%
+  left_join(scores, by="subject") %>% 
+  ungroup
+
+write.csv2(fixations.acq.analysis, file.path(path, "Gaze", "fixations_acq.csv"), row.names=FALSE, quote=FALSE)
+
+fixations.acq.analysis <- fixations.acq.analysis %>% 
+  mutate(block = ifelse(trial <= acq1End, 0, 1)) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+
+# Mean Dwell Time on stimuli
+fixations.acq.dwell <- fixations.acq.analysis %>%
+  # filter (trial >= 32) %>%
+  filter(blok) %>%
+  filter(ROI) %>% 
+  summarise(mean_dwell_time = mean(dur), .by=c(subject, SPAI, condition, condition_social, condition_threat))
+
+fixations.acq.roi.summary <- fixations.acq.dwell %>%
+  summarise(Mean = mean(mean_dwell_time), SD = sd(mean_dwell_time), .by=condition)
+
+ggplot(fixations.acq.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25) +
+  geom_point(data=fixations.acq.dwell, aes(y = mean_dwell_time), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
+  labs(title = paste("Dwell Times on the Stimulus (N = ", n_distinct(fixations.acq.dwell$subject), ")", sep=""), x = "Conditions", y = "Dwell time [ms]") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d() +
+  scale_color_viridis_d()
+
+ggsave(file.path(path, "Plots", "Gaze", "acquisition", "dwell_time_roi.png"), width=1800, height=2000, units="px")
+
+fixations.acq.dwell %>%
+  filter(subject != 42) %>% 
+  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+  ez::ezANOVA(dv=.(mean_dwell_time),
+              wid=.(subject),
+              within=.(condition_social, condition_threat),
+              # between=.(SPAI),
+              detailed=T, type=3) %>%
+  apa::anova_apa()
+
+
 ###############################################################################
 # Test
 ###############################################################################
