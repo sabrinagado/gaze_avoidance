@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on Februar 23, 2024, at 09:59
+    on März 15, 2024, at 18:36
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -33,6 +33,8 @@ import sys  # to get file system encoding
 import psychopy.iohub as io
 from psychopy.hardware import keyboard
 
+# Run 'Before Experiment' code from code_end
+jittered_duration_cross = 3.5
 # Run 'Before Experiment' code from codeBlank
 jittered_duration_blank = 1.5
 # Run 'Before Experiment' code from codeBlank
@@ -159,7 +161,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\attentional_competition_task\\attentional_competition_task.py',
+    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\Study 2\\Experiment\\attentional_competition_task\\attentional_competition_task.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -230,9 +232,59 @@ text_ETCalibration = visual.TextStim(win=win, name='text_ETCalibration',
     depth=0.0);
 spaceETCalibration = keyboard.Keyboard()
 
+# --- Initialize components for Routine "cross" ---
+fixcross = visual.TextStim(win=win, name='fixcross',
+    text='+',
+    font='Open Sans',
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-1.0);
+
+# --- Initialize components for Routine "search_task" ---
+# Run 'Begin Experiment' code from codeSearchTask
+x_min = -.9
+x_max = .9
+y_min = -.8
+y_max = .7
+x_n = 9
+y_n = 4
+positions = []
+
+for idx_x in range(x_n):
+    for idx_y in range(y_n):
+        positions.append([idx_x / (x_n-1) * (abs(x_min) + x_max) + x_min, idx_y/ (y_n-1) * (abs(y_min) + y_max) + y_min])
+
+jitter = .06
+elements_per_group = 15
+elements = []
+
+width = win.size[0]
+height = win.size[1]
+width_circle = 0.07
+height_circle = 0.07 * (width/height)
+gazeCursorSearch = visual.ShapeStim(
+    win=win, name='gazeCursorSearch',
+    size=(0.01, 0.02), vertices='circle',
+    ori=0.0, pos=[0,0], anchor='center',
+    lineWidth=1.0,     colorSpace='rgb',  lineColor=None, fillColor=[-1.0000, -1.0000, 1.0000],
+    opacity=1.0, depth=-3.0, interpolate=True)
+sound_1 = sound.Sound('audio/white_short.wav', secs=1.0, stereo=True, hamming=True,
+    name='sound_1')
+sound_1.setVolume(1.0)
+
+# --- Initialize components for Routine "crossEnd" ---
+fixcrossE = visual.TextStim(win=win, name='fixcrossE',
+    text='+',
+    font='Open Sans',
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-1.0);
+
 # --- Initialize components for Routine "startExp" ---
 textStartExp = visual.TextStim(win=win, name='textStartExp',
-    text='Die Kalibrierung ist abgeschlossen.\n\nSie werden während des Experiments mehrere Bilder sehen.\nBitte geben Sie nun an, wie Sie sich bei der Betrachtung der Bilder fühlen.\n\nDrücken Sie die Leertaste, um zu starten.',
+    text='Während des Experiments werden Sie mehrere Bilder sehen.\nBitte geben Sie nun an, wie Sie sich bei der Betrachtung der Bilder fühlen.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -288,7 +340,7 @@ spaceStim = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startTask" ---
 textStartTask = visual.TextStim(win=win, name='textStartTask',
-    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines elektrischen Reizes. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren und die elektrischen Reize zu vermeiden.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.\n',
+    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines Verlustes von Punkten. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.\n',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -393,14 +445,14 @@ fixcrossE = visual.TextStim(win=win, name='fixcrossE',
 
 # --- Initialize components for Routine "repeatTask" ---
 textRepeatTask = visual.TextStim(win=win, name='textRepeatTask',
-    text='--- Kurze Pause ---\n\nIm nächsten Block ist Ihre Aufgabe weiterhin Ihren Belohnungsscore zu maximieren und die elektrischen Reize zu vermeiden. ',
+    text='--- Kurze Pause ---\n\nIm nächsten Block ist Ihre Aufgabe weiterhin Ihren Belohnungsscore zu maximieren.',
     font='Open Sans',
     pos=(0, 0.3), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
     depth=-1.0);
 textboxRepeatInstruction = visual.TextBox2(
-     win, text='Den elektrischen Reiz können Sie vermeiden, in dem Sie das entsprechende Bild nicht anschauen.', font='Open Sans',
+     win, text='Sie können den Verlust von Punkten vermeiden, in dem Sie das entsprechende Bild nicht anschauen.', font='Open Sans',
      pos=(0, 0),     letterHeight=0.06,
      size=(None, None), borderWidth=2.0,
      color='white', colorSpace='rgb',
@@ -613,7 +665,7 @@ test_image2 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-3.0)
 test_roi2 = visual.ROI(win, name='test_roi2', device=eyetracker,
     debug=False,
     shape='rectangle',
@@ -625,7 +677,7 @@ test_image3 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-5.0)
 test_roi3 = visual.ROI(win, name='test_roi3', device=eyetracker,
     debug=False,
     shape='rectangle',
@@ -637,7 +689,7 @@ test_image4 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-7.0)
 test_roi4 = visual.ROI(win, name='test_roi4', device=eyetracker,
     debug=False,
     shape='rectangle',
@@ -650,26 +702,19 @@ gazeCursorTest = visual.ShapeStim(
     opacity=1.0, depth=-9.0, interpolate=True)
 
 # --- Initialize components for Routine "test_feedback" ---
-textPointsTest = visual.TextStim(win=win, name='textPointsTest',
-    text='',
-    font='Open Sans',
-    pos=(0, 0.15), height=0.1, wrapWidth=None, ori=0.0, 
-    color='white', colorSpace='rgb', opacity=None, 
-    languageStyle='LTR',
-    depth=-1.0);
 textScoreTest = visual.TextStim(win=win, name='textScoreTest',
     text='',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-2.0);
+    depth=-1.0);
 polygonFeedbackTest = visual.Rect(
     win=win, name='polygonFeedbackTest',
     width=[1.0, 1.0][0], height=[1.0, 1.0][1],
     ori=0.0, pos=[0,0], anchor='center',
     lineWidth=100.0,     colorSpace='rgb',  lineColor='white', fillColor=[0.0000, 0.0000, 0.0000],
-    opacity=1.0, depth=-3.0, interpolate=True)
+    opacity=1.0, depth=-2.0, interpolate=True)
 test_image_feedback1 = visual.ImageStim(
     win=win,
     name='test_image_feedback1', 
@@ -677,7 +722,7 @@ test_image_feedback1 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-3.0)
 test_image_feedback2 = visual.ImageStim(
     win=win,
     name='test_image_feedback2', 
@@ -685,7 +730,7 @@ test_image_feedback2 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-4.0)
 test_iamge_feedback3 = visual.ImageStim(
     win=win,
     name='test_iamge_feedback3', 
@@ -693,7 +738,7 @@ test_iamge_feedback3 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-5.0)
 test_iamge_feedback4 = visual.ImageStim(
     win=win,
     name='test_iamge_feedback4', 
@@ -701,14 +746,14 @@ test_iamge_feedback4 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-6.0)
 gazeCursorTestFeedback = visual.ShapeStim(
     win=win, name='gazeCursorTestFeedback',
     size=(0.01, 0.02), vertices='circle',
     ori=0.0, pos=[0,0], anchor='center',
     lineWidth=1.0,     colorSpace='rgb',  lineColor=None, fillColor='white',
-    opacity=1.0, depth=-8.0, interpolate=True)
-soundFeedbackTest = sound.Sound('A', secs=1, stereo=True, hamming=True,
+    opacity=1.0, depth=-7.0, interpolate=True)
+soundFeedbackTest = sound.Sound('A', secs=0.5, stereo=True, hamming=True,
     name='soundFeedbackTest')
 soundFeedbackTest.setVolume(1.0)
 
@@ -759,7 +804,7 @@ test_image2 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-3.0)
 test_roi2 = visual.ROI(win, name='test_roi2', device=eyetracker,
     debug=False,
     shape='rectangle',
@@ -771,7 +816,7 @@ test_image3 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-5.0)
 test_roi3 = visual.ROI(win, name='test_roi3', device=eyetracker,
     debug=False,
     shape='rectangle',
@@ -783,7 +828,7 @@ test_image4 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-7.0)
 test_roi4 = visual.ROI(win, name='test_roi4', device=eyetracker,
     debug=False,
     shape='rectangle',
@@ -796,26 +841,19 @@ gazeCursorTest = visual.ShapeStim(
     opacity=1.0, depth=-9.0, interpolate=True)
 
 # --- Initialize components for Routine "test_feedback" ---
-textPointsTest = visual.TextStim(win=win, name='textPointsTest',
-    text='',
-    font='Open Sans',
-    pos=(0, 0.15), height=0.1, wrapWidth=None, ori=0.0, 
-    color='white', colorSpace='rgb', opacity=None, 
-    languageStyle='LTR',
-    depth=-1.0);
 textScoreTest = visual.TextStim(win=win, name='textScoreTest',
     text='',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
     languageStyle='LTR',
-    depth=-2.0);
+    depth=-1.0);
 polygonFeedbackTest = visual.Rect(
     win=win, name='polygonFeedbackTest',
     width=[1.0, 1.0][0], height=[1.0, 1.0][1],
     ori=0.0, pos=[0,0], anchor='center',
     lineWidth=100.0,     colorSpace='rgb',  lineColor='white', fillColor=[0.0000, 0.0000, 0.0000],
-    opacity=1.0, depth=-3.0, interpolate=True)
+    opacity=1.0, depth=-2.0, interpolate=True)
 test_image_feedback1 = visual.ImageStim(
     win=win,
     name='test_image_feedback1', 
@@ -823,7 +861,7 @@ test_image_feedback1 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-3.0)
 test_image_feedback2 = visual.ImageStim(
     win=win,
     name='test_image_feedback2', 
@@ -831,7 +869,7 @@ test_image_feedback2 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-4.0)
 test_iamge_feedback3 = visual.ImageStim(
     win=win,
     name='test_iamge_feedback3', 
@@ -839,7 +877,7 @@ test_iamge_feedback3 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-5.0)
 test_iamge_feedback4 = visual.ImageStim(
     win=win,
     name='test_iamge_feedback4', 
@@ -847,14 +885,14 @@ test_iamge_feedback4 = visual.ImageStim(
     ori=0.0, pos=[0,0], size=None,
     color=[1,1,1], colorSpace='rgb', opacity=None,
     flipHoriz=False, flipVert=False,
-    texRes=128.0, interpolate=True, depth=-1.0)
+    texRes=128.0, interpolate=True, depth=-6.0)
 gazeCursorTestFeedback = visual.ShapeStim(
     win=win, name='gazeCursorTestFeedback',
     size=(0.01, 0.02), vertices='circle',
     ori=0.0, pos=[0,0], anchor='center',
     lineWidth=1.0,     colorSpace='rgb',  lineColor=None, fillColor='white',
-    opacity=1.0, depth=-8.0, interpolate=True)
-soundFeedbackTest = sound.Sound('A', secs=1, stereo=True, hamming=True,
+    opacity=1.0, depth=-7.0, interpolate=True)
+soundFeedbackTest = sound.Sound('A', secs=0.5, stereo=True, hamming=True,
     name='soundFeedbackTest')
 soundFeedbackTest.setVolume(1.0)
 
@@ -1103,6 +1141,369 @@ for thisComponent in startETCalibrationComponents:
         thisComponent.setAutoDraw(False)
 # the Routine "startETCalibration" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
+
+# set up handler to look after randomisation of conditions etc
+search_task_trials = data.TrialHandler(nReps=1.0, method='random', 
+    extraInfo=expInfo, originPath=-1,
+    trialList=[None],
+    seed=None, name='search_task_trials')
+thisExp.addLoop(search_task_trials)  # add the loop to the experiment
+thisSearch_task_trial = search_task_trials.trialList[0]  # so we can initialise stimuli with some values
+# abbreviate parameter names if possible (e.g. rgb = thisSearch_task_trial.rgb)
+if thisSearch_task_trial != None:
+    for paramName in thisSearch_task_trial:
+        exec('{} = thisSearch_task_trial[paramName]'.format(paramName))
+
+for thisSearch_task_trial in search_task_trials:
+    currentLoop = search_task_trials
+    # abbreviate parameter names if possible (e.g. rgb = thisSearch_task_trial.rgb)
+    if thisSearch_task_trial != None:
+        for paramName in thisSearch_task_trial:
+            exec('{} = thisSearch_task_trial[paramName]'.format(paramName))
+    
+    # --- Prepare to start Routine "cross" ---
+    continueRoutine = True
+    routineForceEnded = False
+    # update component parameters for each repeat
+    # Run 'Begin Routine' code from codeFixate
+    logging.log(level=logging.INFO, msg=f'FixationCross')
+    eyetracker.setRecordingState(True)
+     
+    if currentLoop.name == "learning_trials":
+        eyetracker.sendMessage("Trial " + str(learning_trials.thisN+1) + ", Condition " + stim)
+        print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], learning_trials.thisN+1, stim))
+    
+    if currentLoop.name == "trials":
+        eyetracker.sendMessage("Trial " + str(trials.thisN+learning_trials.thisN+1) + ", Condition " + stim)
+        print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+learning_trials.thisN+1, stim))
+    
+    if currentLoop.name == "testtrials":
+        eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1))
+        print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials.thisN+1))
+        
+    if currentLoop.name == "testtrials_novelty":
+        eyetracker.sendMessage("Test-Trial " + str(testtrials_novelty.thisN+testtrials.thisN+1))
+        print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials_novelty.thisN+testtrials.thisN+1))
+    # keep track of which components have finished
+    crossComponents = [fixcross]
+    for thisComponent in crossComponents:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "cross" ---
+    while continueRoutine and routineTimer.getTime() < 1.0:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *fixcross* updates
+        if fixcross.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            fixcross.frameNStart = frameN  # exact frame index
+            fixcross.tStart = t  # local t and not account for scr refresh
+            fixcross.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(fixcross, 'tStartRefresh')  # time at next scr refresh
+            fixcross.setAutoDraw(True)
+        if fixcross.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > fixcross.tStartRefresh + 1-frameTolerance:
+                # keep track of stop time/frame for later
+                fixcross.tStop = t  # not accounting for scr refresh
+                fixcross.frameNStop = frameN  # exact frame index
+                fixcross.setAutoDraw(False)
+        
+        # check for quit (typically the Esc key)
+        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+            core.quit()
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in crossComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "cross" ---
+    for thisComponent in crossComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
+    if routineForceEnded:
+        routineTimer.reset()
+    else:
+        routineTimer.addTime(-1.000000)
+    
+    # --- Prepare to start Routine "search_task" ---
+    continueRoutine = True
+    routineForceEnded = False
+    # update component parameters for each repeat
+    # Run 'Begin Routine' code from codeSearchTask
+    logging.log(level=logging.INFO, msg=f'VisualSearchTaskOnset')
+    ioServer.sendMessageEvent(text='VisualSearchTaskOnset')
+    eyetracker.sendMessage('VisualSearchTaskOnset')
+    
+    random_number = random()
+    
+    shuffle(positions)
+    target_positions = positions[0:elements_per_group]
+    distractor_positions = positions[elements_per_group:2 * elements_per_group]
+    
+    thisExp.addData('target_positions', target_positions)
+    thisExp.addData('distractor_positions', distractor_positions)
+    
+    myTargets = []
+    myTargetROIs = []
+    for i in range(elements_per_group):
+        position_x = target_positions[i][0]+np.random.uniform(-1, 1)*jitter
+        position_y = target_positions[i][1]+np.random.uniform(-1, 1)*jitter
+        roi = visual.ROI(win, name='roi', device=eyetracker, debug=False, shape='circle',
+            pos=(position_x, position_y),
+            size=(width_circle, height_circle), anchor='center', ori=0.0)
+        circle = visual.ShapeStim(
+            win=win, name='circle',
+            size=(width_circle, height_circle), vertices='circle',ori=0.0, anchor='center',
+            pos=(position_x, position_y),
+            lineWidth=15.0, colorSpace='rgb',lineColor="white", fillColor="white",
+            opacity=None, depth=-3, interpolate=True)
+        myTargets.append(circle)
+        myTargetROIs.append(roi)
+    
+    for target in myTargets:
+        target.setAutoDraw(True)
+    
+    myDistractors = []
+    myDistractorROIs = []
+    for i in range(elements_per_group):
+        position_x = distractor_positions[i][0]+np.random.uniform(-1, 1)*jitter
+        position_y = distractor_positions[i][1]+np.random.uniform(-1, 1)*jitter
+        roi = visual.ROI(win, name='roi', device=eyetracker, debug=False, shape='circle',
+            pos=(position_x, position_y),
+            size=(width_circle, height_circle), anchor='center', ori=0.0)
+        circle = visual.ShapeStim(
+            win=win, name='circle',
+            size=(width_circle, height_circle), vertices='circle',ori=0.0, anchor='center',
+            pos=(position_x, position_y),
+            lineWidth=15.0, colorSpace='rgb', lineColor="white", fillColor="white",
+            opacity=None, depth=-3, interpolate=True)
+        myDistractors.append(circle)
+        myDistractorROIs.append(roi)
+    
+    for distractor in myDistractors:
+        distractor.setAutoDraw(True)
+    sound_1.setSound('audio/white_short.wav', secs=1.0, hamming=True)
+    sound_1.setVolume(1.0, log=False)
+    # keep track of which components have finished
+    search_taskComponents = [gazeCursorSearch, sound_1]
+    for thisComponent in search_taskComponents:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "search_task" ---
+    while continueRoutine and routineTimer.getTime() < 30.0:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        # Run 'Each Frame' code from codeSearchTask
+        for i, roiTarget in enumerate(myTargetROIs):
+            if roiTarget.isLookedIn:
+                myTargets[i].fillColor = "green"
+                myTargets[i].lineColor = "green"
+            else:
+                myTargets[i].fillColor = "white"
+        
+        for i, roiDistractor in enumerate(myDistractorROIs):
+            if roiDistractor.isLookedIn:
+                myDistractors[i].fillColor = "red"
+                myDistractors[i].lineColor = "red"
+            else:
+                myDistractors[i].fillColor = "white"
+        
+        # Use "p" to pause experiment
+        if event.getKeys(keyList=["p"]) and not paused:
+            print("Experiment Paused - Press 'p' to continue.")
+            paused = True
+            event.waitKeys(keyList=["p"], clearEvents=True)
+            
+            print("Experiment Continued")
+            paused = False
+            event.clearEvents(eventType="keyboard")
+            
+        
+        # *gazeCursorSearch* updates
+        if gazeCursorSearch.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            gazeCursorSearch.frameNStart = frameN  # exact frame index
+            gazeCursorSearch.tStart = t  # local t and not account for scr refresh
+            gazeCursorSearch.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(gazeCursorSearch, 'tStartRefresh')  # time at next scr refresh
+            gazeCursorSearch.setAutoDraw(True)
+        if gazeCursorSearch.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > gazeCursorSearch.tStartRefresh + 30-frameTolerance:
+                # keep track of stop time/frame for later
+                gazeCursorSearch.tStop = t  # not accounting for scr refresh
+                gazeCursorSearch.frameNStop = frameN  # exact frame index
+                gazeCursorSearch.setAutoDraw(False)
+        if gazeCursorSearch.status == STARTED:  # only update if drawing
+            gazeCursorSearch.setOpacity(1.0, log=False)
+            gazeCursorSearch.setPos([eyetracker.getPos()], log=False)
+        # start/stop sound_1
+        if sound_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            sound_1.frameNStart = frameN  # exact frame index
+            sound_1.tStart = t  # local t and not account for scr refresh
+            sound_1.tStartRefresh = tThisFlipGlobal  # on global time
+            # add timestamp to datafile
+            thisExp.addData('sound_1.started', tThisFlipGlobal)
+            sound_1.play(when=win)  # sync with win flip
+        if sound_1.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > sound_1.tStartRefresh + 1.0-frameTolerance:
+                # keep track of stop time/frame for later
+                sound_1.tStop = t  # not accounting for scr refresh
+                sound_1.frameNStop = frameN  # exact frame index
+                # add timestamp to datafile
+                thisExp.timestampOnFlip(win, 'sound_1.stopped')
+                sound_1.stop()
+        
+        # check for quit (typically the Esc key)
+        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+            core.quit()
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in search_taskComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "search_task" ---
+    for thisComponent in search_taskComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # Run 'End Routine' code from codeSearchTask
+    for target in myTargets:
+        target.setAutoDraw(False)
+    
+    for distractor in myDistractors:
+        distractor.setAutoDraw(False)
+    sound_1.stop()  # ensure sound has stopped at end of routine
+    # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
+    if routineForceEnded:
+        routineTimer.reset()
+    else:
+        routineTimer.addTime(-30.000000)
+    
+    # --- Prepare to start Routine "crossEnd" ---
+    continueRoutine = True
+    routineForceEnded = False
+    # update component parameters for each repeat
+    # Run 'Begin Routine' code from code_end
+    eyetracker.setRecordingState(False)
+    jittered_duration_cross = 3.0 + random()
+    # keep track of which components have finished
+    crossEndComponents = [fixcrossE]
+    for thisComponent in crossEndComponents:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "crossEnd" ---
+    while continueRoutine:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *fixcrossE* updates
+        if fixcrossE.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            fixcrossE.frameNStart = frameN  # exact frame index
+            fixcrossE.tStart = t  # local t and not account for scr refresh
+            fixcrossE.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(fixcrossE, 'tStartRefresh')  # time at next scr refresh
+            fixcrossE.setAutoDraw(True)
+        if fixcrossE.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > fixcrossE.tStartRefresh + jittered_duration_cross-frameTolerance:
+                # keep track of stop time/frame for later
+                fixcrossE.tStop = t  # not accounting for scr refresh
+                fixcrossE.frameNStop = frameN  # exact frame index
+                fixcrossE.setAutoDraw(False)
+        
+        # check for quit (typically the Esc key)
+        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+            core.quit()
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in crossEndComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "crossEnd" ---
+    for thisComponent in crossEndComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # the Routine "crossEnd" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+    thisExp.nextEntry()
+    
+# completed 1.0 repeats of 'search_task_trials'
+
 
 # set up handler to look after randomisation of conditions etc
 blocks = data.TrialHandler(nReps=1.0, method='random', 
@@ -1543,7 +1944,7 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    learning_trials = data.TrialHandler(nReps=0.0, method='random', 
+    learning_trials = data.TrialHandler(nReps=2.0, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=data.importConditions(posFile),
         seed=None, name='learning_trials')
@@ -1574,12 +1975,16 @@ for thisBlock in blocks:
             print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], learning_trials.thisN+1, stim))
         
         if currentLoop.name == "trials":
-            eyetracker.sendMessage("Trial " + str(trials.thisN+33) + ", Condition " + stim)
-            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+33, stim))
+            eyetracker.sendMessage("Trial " + str(trials.thisN+learning_trials.thisN+1) + ", Condition " + stim)
+            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+learning_trials.thisN+1, stim))
         
         if currentLoop.name == "testtrials":
             eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1))
             print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials.thisN+1))
+            
+        if currentLoop.name == "testtrials_novelty":
+            eyetracker.sendMessage("Test-Trial " + str(testtrials_novelty.thisN+testtrials.thisN+1))
+            print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials_novelty.thisN+testtrials.thisN+1))
         # keep track of which components have finished
         crossComponents = [fixcross]
         for thisComponent in crossComponents:
@@ -1752,7 +2157,7 @@ for thisBlock in blocks:
         frameN = -1
         
         # --- Run Routine "trial" ---
-        while continueRoutine and routineTimer.getTime() < 5.0:
+        while continueRoutine and routineTimer.getTime() < 3.0:
             # get current time
             t = routineTimer.getTime()
             tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -1789,7 +2194,7 @@ for thisBlock in blocks:
                 image.setAutoDraw(True)
             if image.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > image.tStartRefresh + 5-frameTolerance:
+                if tThisFlipGlobal > image.tStartRefresh + 3-frameTolerance:
                     # keep track of stop time/frame for later
                     image.tStop = t  # not accounting for scr refresh
                     image.frameNStop = frameN  # exact frame index
@@ -1821,7 +2226,7 @@ for thisBlock in blocks:
                 roi.wasLookedIn = False  # if roi is looked at next frame, it is a new look
             if roi.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > roi.tStartRefresh + 5-frameTolerance:
+                if tThisFlipGlobal > roi.tStartRefresh + 3-frameTolerance:
                     # keep track of stop time/frame for later
                     roi.tStop = t  # not accounting for scr refresh
                     roi.frameNStop = frameN  # exact frame index
@@ -1837,7 +2242,7 @@ for thisBlock in blocks:
                 gazeCursor.setAutoDraw(True)
             if gazeCursor.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > gazeCursor.tStartRefresh + 5-frameTolerance:
+                if tThisFlipGlobal > gazeCursor.tStartRefresh + 3-frameTolerance:
                     # keep track of stop time/frame for later
                     gazeCursor.tStop = t  # not accounting for scr refresh
                     gazeCursor.frameNStop = frameN  # exact frame index
@@ -1922,7 +2327,7 @@ for thisBlock in blocks:
         if routineForceEnded:
             routineTimer.reset()
         else:
-            routineTimer.addTime(-5.000000)
+            routineTimer.addTime(-3.000000)
         
         # --- Prepare to start Routine "feedback" ---
         continueRoutine = True
@@ -1957,7 +2362,7 @@ for thisBlock in blocks:
         frameN = -1
         
         # --- Run Routine "feedback" ---
-        while continueRoutine and routineTimer.getTime() < 3.0:
+        while continueRoutine and routineTimer.getTime() < 1.0:
             # get current time
             t = routineTimer.getTime()
             tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -1975,7 +2380,7 @@ for thisBlock in blocks:
                 textPoints.setAutoDraw(True)
             if textPoints.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > textPoints.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > textPoints.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     textPoints.tStop = t  # not accounting for scr refresh
                     textPoints.frameNStop = frameN  # exact frame index
@@ -1993,7 +2398,7 @@ for thisBlock in blocks:
                 textScore.setAutoDraw(True)
             if textScore.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > textScore.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > textScore.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     textScore.tStop = t  # not accounting for scr refresh
                     textScore.frameNStop = frameN  # exact frame index
@@ -2011,7 +2416,7 @@ for thisBlock in blocks:
                 polygon.setAutoDraw(True)
             if polygon.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > polygon.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > polygon.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     polygon.tStop = t  # not accounting for scr refresh
                     polygon.frameNStop = frameN  # exact frame index
@@ -2031,7 +2436,7 @@ for thisBlock in blocks:
                 imageFeedback.setAutoDraw(True)
             if imageFeedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > imageFeedback.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > imageFeedback.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     imageFeedback.tStop = t  # not accounting for scr refresh
                     imageFeedback.frameNStop = frameN  # exact frame index
@@ -2049,14 +2454,14 @@ for thisBlock in blocks:
                 gazeCursor_Feedback.setAutoDraw(True)
             if gazeCursor_Feedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > gazeCursor_Feedback.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > gazeCursor_Feedback.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     gazeCursor_Feedback.tStop = t  # not accounting for scr refresh
                     gazeCursor_Feedback.frameNStop = frameN  # exact frame index
                     gazeCursor_Feedback.setAutoDraw(False)
             if gazeCursor_Feedback.status == STARTED:  # only update if drawing
                 gazeCursor_Feedback.setFillColor(cursorcolor, log=False)
-                gazeCursor_Feedback.setOpacity(1.0, log=False)
+                gazeCursor_Feedback.setOpacity(0.0, log=False)
                 gazeCursor_Feedback.setPos([eyetracker.getPos()], log=False)
             # start/stop soundFeedback
             if soundFeedback.status == NOT_STARTED and t >= 0-frameTolerance:
@@ -2100,7 +2505,7 @@ for thisBlock in blocks:
         if routineForceEnded:
             routineTimer.reset()
         else:
-            routineTimer.addTime(-3.000000)
+            routineTimer.addTime(-1.000000)
         
         # --- Prepare to start Routine "crossEnd" ---
         continueRoutine = True
@@ -2174,7 +2579,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 0.0 repeats of 'learning_trials'
+    # completed 2.0 repeats of 'learning_trials'
     
     
     # --- Prepare to start Routine "repeatTask" ---
@@ -2359,7 +2764,7 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    trials = data.TrialHandler(nReps=0.0, method='random', 
+    trials = data.TrialHandler(nReps=2.0, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=data.importConditions(posFile),
         seed=None, name='trials')
@@ -2390,12 +2795,16 @@ for thisBlock in blocks:
             print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], learning_trials.thisN+1, stim))
         
         if currentLoop.name == "trials":
-            eyetracker.sendMessage("Trial " + str(trials.thisN+33) + ", Condition " + stim)
-            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+33, stim))
+            eyetracker.sendMessage("Trial " + str(trials.thisN+learning_trials.thisN+1) + ", Condition " + stim)
+            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+learning_trials.thisN+1, stim))
         
         if currentLoop.name == "testtrials":
             eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1))
             print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials.thisN+1))
+            
+        if currentLoop.name == "testtrials_novelty":
+            eyetracker.sendMessage("Test-Trial " + str(testtrials_novelty.thisN+testtrials.thisN+1))
+            print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials_novelty.thisN+testtrials.thisN+1))
         # keep track of which components have finished
         crossComponents = [fixcross]
         for thisComponent in crossComponents:
@@ -2568,7 +2977,7 @@ for thisBlock in blocks:
         frameN = -1
         
         # --- Run Routine "trial" ---
-        while continueRoutine and routineTimer.getTime() < 5.0:
+        while continueRoutine and routineTimer.getTime() < 3.0:
             # get current time
             t = routineTimer.getTime()
             tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -2605,7 +3014,7 @@ for thisBlock in blocks:
                 image.setAutoDraw(True)
             if image.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > image.tStartRefresh + 5-frameTolerance:
+                if tThisFlipGlobal > image.tStartRefresh + 3-frameTolerance:
                     # keep track of stop time/frame for later
                     image.tStop = t  # not accounting for scr refresh
                     image.frameNStop = frameN  # exact frame index
@@ -2637,7 +3046,7 @@ for thisBlock in blocks:
                 roi.wasLookedIn = False  # if roi is looked at next frame, it is a new look
             if roi.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > roi.tStartRefresh + 5-frameTolerance:
+                if tThisFlipGlobal > roi.tStartRefresh + 3-frameTolerance:
                     # keep track of stop time/frame for later
                     roi.tStop = t  # not accounting for scr refresh
                     roi.frameNStop = frameN  # exact frame index
@@ -2653,7 +3062,7 @@ for thisBlock in blocks:
                 gazeCursor.setAutoDraw(True)
             if gazeCursor.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > gazeCursor.tStartRefresh + 5-frameTolerance:
+                if tThisFlipGlobal > gazeCursor.tStartRefresh + 3-frameTolerance:
                     # keep track of stop time/frame for later
                     gazeCursor.tStop = t  # not accounting for scr refresh
                     gazeCursor.frameNStop = frameN  # exact frame index
@@ -2738,7 +3147,7 @@ for thisBlock in blocks:
         if routineForceEnded:
             routineTimer.reset()
         else:
-            routineTimer.addTime(-5.000000)
+            routineTimer.addTime(-3.000000)
         
         # --- Prepare to start Routine "feedback" ---
         continueRoutine = True
@@ -2773,7 +3182,7 @@ for thisBlock in blocks:
         frameN = -1
         
         # --- Run Routine "feedback" ---
-        while continueRoutine and routineTimer.getTime() < 3.0:
+        while continueRoutine and routineTimer.getTime() < 1.0:
             # get current time
             t = routineTimer.getTime()
             tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -2791,7 +3200,7 @@ for thisBlock in blocks:
                 textPoints.setAutoDraw(True)
             if textPoints.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > textPoints.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > textPoints.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     textPoints.tStop = t  # not accounting for scr refresh
                     textPoints.frameNStop = frameN  # exact frame index
@@ -2809,7 +3218,7 @@ for thisBlock in blocks:
                 textScore.setAutoDraw(True)
             if textScore.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > textScore.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > textScore.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     textScore.tStop = t  # not accounting for scr refresh
                     textScore.frameNStop = frameN  # exact frame index
@@ -2827,7 +3236,7 @@ for thisBlock in blocks:
                 polygon.setAutoDraw(True)
             if polygon.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > polygon.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > polygon.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     polygon.tStop = t  # not accounting for scr refresh
                     polygon.frameNStop = frameN  # exact frame index
@@ -2847,7 +3256,7 @@ for thisBlock in blocks:
                 imageFeedback.setAutoDraw(True)
             if imageFeedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > imageFeedback.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > imageFeedback.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     imageFeedback.tStop = t  # not accounting for scr refresh
                     imageFeedback.frameNStop = frameN  # exact frame index
@@ -2865,14 +3274,14 @@ for thisBlock in blocks:
                 gazeCursor_Feedback.setAutoDraw(True)
             if gazeCursor_Feedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > gazeCursor_Feedback.tStartRefresh + 3-frameTolerance:
+                if tThisFlipGlobal > gazeCursor_Feedback.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     gazeCursor_Feedback.tStop = t  # not accounting for scr refresh
                     gazeCursor_Feedback.frameNStop = frameN  # exact frame index
                     gazeCursor_Feedback.setAutoDraw(False)
             if gazeCursor_Feedback.status == STARTED:  # only update if drawing
                 gazeCursor_Feedback.setFillColor(cursorcolor, log=False)
-                gazeCursor_Feedback.setOpacity(1.0, log=False)
+                gazeCursor_Feedback.setOpacity(0.0, log=False)
                 gazeCursor_Feedback.setPos([eyetracker.getPos()], log=False)
             # start/stop soundFeedback
             if soundFeedback.status == NOT_STARTED and t >= 0-frameTolerance:
@@ -2916,7 +3325,7 @@ for thisBlock in blocks:
         if routineForceEnded:
             routineTimer.reset()
         else:
-            routineTimer.addTime(-3.000000)
+            routineTimer.addTime(-1.000000)
         
         # --- Prepare to start Routine "crossEnd" ---
         continueRoutine = True
@@ -2990,7 +3399,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 0.0 repeats of 'trials'
+    # completed 2.0 repeats of 'trials'
     
     
     # set up handler to look after randomisation of conditions etc
@@ -3250,7 +3659,7 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    testtrials = data.TrialHandler(nReps=0.0, method='random', 
+    testtrials = data.TrialHandler(nReps=2.0, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=data.importConditions(posFileTest),
         seed=None, name='testtrials')
@@ -3281,12 +3690,16 @@ for thisBlock in blocks:
             print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], learning_trials.thisN+1, stim))
         
         if currentLoop.name == "trials":
-            eyetracker.sendMessage("Trial " + str(trials.thisN+33) + ", Condition " + stim)
-            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+33, stim))
+            eyetracker.sendMessage("Trial " + str(trials.thisN+learning_trials.thisN+1) + ", Condition " + stim)
+            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+learning_trials.thisN+1, stim))
         
         if currentLoop.name == "testtrials":
             eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1))
             print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials.thisN+1))
+            
+        if currentLoop.name == "testtrials_novelty":
+            eyetracker.sendMessage("Test-Trial " + str(testtrials_novelty.thisN+testtrials.thisN+1))
+            print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials_novelty.thisN+testtrials.thisN+1))
         # keep track of which components have finished
         crossComponents = [fixcross]
         for thisComponent in crossComponents:
@@ -3504,7 +3917,7 @@ for thisBlock in blocks:
             frameN = -1
             
             # --- Run Routine "test_trial" ---
-            while continueRoutine and routineTimer.getTime() < 5.0:
+            while continueRoutine and routineTimer.getTime() < 2.0:
                 # get current time
                 t = routineTimer.getTime()
                 tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -3512,9 +3925,9 @@ for thisBlock in blocks:
                 frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
                 # update/draw components on each frame
                 # Run 'Each Frame' code from codeTestTrial
-                if loop_timer.getTime() >= 5.0:
+                if loop_timer.getTime() >= 2.0:
                     continueRoutine = False
-                    loop_test.finished = True
+                    currentLoop.finished = True
                 
                 test_roi1.size = test_image1.size
                 test_roi1.pos = position1
@@ -3570,7 +3983,7 @@ for thisBlock in blocks:
                     test_image1.setAutoDraw(True)
                 if test_image1.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image1.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_image1.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image1.tStop = t  # not accounting for scr refresh
                         test_image1.frameNStop = frameN  # exact frame index
@@ -3602,7 +4015,7 @@ for thisBlock in blocks:
                     test_roi1.wasLookedIn = False  # if test_roi1 is looked at next frame, it is a new look
                 if test_roi1.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_roi1.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_roi1.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_roi1.tStop = t  # not accounting for scr refresh
                         test_roi1.frameNStop = frameN  # exact frame index
@@ -3620,7 +4033,7 @@ for thisBlock in blocks:
                     test_image2.setAutoDraw(True)
                 if test_image2.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image2.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_image2.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image2.tStop = t  # not accounting for scr refresh
                         test_image2.frameNStop = frameN  # exact frame index
@@ -3652,7 +4065,7 @@ for thisBlock in blocks:
                     test_roi2.wasLookedIn = False  # if test_roi2 is looked at next frame, it is a new look
                 if test_roi2.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_roi2.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_roi2.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_roi2.tStop = t  # not accounting for scr refresh
                         test_roi2.frameNStop = frameN  # exact frame index
@@ -3670,7 +4083,7 @@ for thisBlock in blocks:
                     test_image3.setAutoDraw(True)
                 if test_image3.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image3.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_image3.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image3.tStop = t  # not accounting for scr refresh
                         test_image3.frameNStop = frameN  # exact frame index
@@ -3702,7 +4115,7 @@ for thisBlock in blocks:
                     test_roi3.wasLookedIn = False  # if test_roi3 is looked at next frame, it is a new look
                 if test_roi3.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_roi3.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_roi3.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_roi3.tStop = t  # not accounting for scr refresh
                         test_roi3.frameNStop = frameN  # exact frame index
@@ -3720,7 +4133,7 @@ for thisBlock in blocks:
                     test_image4.setAutoDraw(True)
                 if test_image4.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image4.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_image4.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image4.tStop = t  # not accounting for scr refresh
                         test_image4.frameNStop = frameN  # exact frame index
@@ -3752,7 +4165,7 @@ for thisBlock in blocks:
                     test_roi4.wasLookedIn = False  # if test_roi4 is looked at next frame, it is a new look
                 if test_roi4.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_roi4.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_roi4.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_roi4.tStop = t  # not accounting for scr refresh
                         test_roi4.frameNStop = frameN  # exact frame index
@@ -3768,14 +4181,14 @@ for thisBlock in blocks:
                     gazeCursorTest.setAutoDraw(True)
                 if gazeCursorTest.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > gazeCursorTest.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > gazeCursorTest.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         gazeCursorTest.tStop = t  # not accounting for scr refresh
                         gazeCursorTest.frameNStop = frameN  # exact frame index
                         gazeCursorTest.setAutoDraw(False)
                 if gazeCursorTest.status == STARTED:  # only update if drawing
                     gazeCursorTest.setFillColor(cursorcolor, log=False)
-                    gazeCursorTest.setOpacity(1.0, log=False)
+                    gazeCursorTest.setOpacity(0.0, log=False)
                     gazeCursorTest.setPos([eyetracker.getPos()], log=False)
                 
                 # check for quit (typically the Esc key)
@@ -3875,32 +4288,32 @@ for thisBlock in blocks:
             else:
                loop_test.addData('test_roi1.timesOn', "")
                loop_test.addData('test_roi1.timesOff', "")
-            thisExp.addData('test_roi2.numLooks', test_roi2.numLooks)
+            loop_test.addData('test_roi2.numLooks', test_roi2.numLooks)
             if test_roi2.numLooks:
-               thisExp.addData('test_roi2.timesOn', test_roi2.timesOn[0])
-               thisExp.addData('test_roi2.timesOff', test_roi2.timesOff[0])
+               loop_test.addData('test_roi2.timesOn', test_roi2.timesOn[0])
+               loop_test.addData('test_roi2.timesOff', test_roi2.timesOff[0])
             else:
-               thisExp.addData('test_roi2.timesOn', "")
-               thisExp.addData('test_roi2.timesOff', "")
-            thisExp.addData('test_roi3.numLooks', test_roi3.numLooks)
+               loop_test.addData('test_roi2.timesOn', "")
+               loop_test.addData('test_roi2.timesOff', "")
+            loop_test.addData('test_roi3.numLooks', test_roi3.numLooks)
             if test_roi3.numLooks:
-               thisExp.addData('test_roi3.timesOn', test_roi3.timesOn[0])
-               thisExp.addData('test_roi3.timesOff', test_roi3.timesOff[0])
+               loop_test.addData('test_roi3.timesOn', test_roi3.timesOn[0])
+               loop_test.addData('test_roi3.timesOff', test_roi3.timesOff[0])
             else:
-               thisExp.addData('test_roi3.timesOn', "")
-               thisExp.addData('test_roi3.timesOff', "")
-            thisExp.addData('test_roi4.numLooks', test_roi4.numLooks)
+               loop_test.addData('test_roi3.timesOn', "")
+               loop_test.addData('test_roi3.timesOff', "")
+            loop_test.addData('test_roi4.numLooks', test_roi4.numLooks)
             if test_roi4.numLooks:
-               thisExp.addData('test_roi4.timesOn', test_roi4.timesOn[0])
-               thisExp.addData('test_roi4.timesOff', test_roi4.timesOff[0])
+               loop_test.addData('test_roi4.timesOn', test_roi4.timesOn[0])
+               loop_test.addData('test_roi4.timesOff', test_roi4.timesOff[0])
             else:
-               thisExp.addData('test_roi4.timesOn', "")
-               thisExp.addData('test_roi4.timesOff', "")
+               loop_test.addData('test_roi4.timesOn', "")
+               loop_test.addData('test_roi4.timesOff', "")
             # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
             if routineForceEnded:
                 routineTimer.reset()
             else:
-                routineTimer.addTime(-5.000000)
+                routineTimer.addTime(-2.000000)
             
             # --- Prepare to start Routine "test_feedback" ---
             continueRoutine = True
@@ -3912,7 +4325,6 @@ for thisBlock in blocks:
             eyetracker.sendMessage('FeedbackTestOnset')
             eyetracker.sendMessage(outcome)
             
-            textPointsTest.setColor(feedback_color, colorSpace='rgb')
             polygonFeedbackTest.setOpacity(feedback_opacity)
             polygonFeedbackTest.setPos(feedback_position)
             polygonFeedbackTest.setLineColor(feedback_color)
@@ -3924,10 +4336,10 @@ for thisBlock in blocks:
             test_iamge_feedback3.setImage(eval(stim3))
             test_iamge_feedback4.setPos(position4)
             test_iamge_feedback4.setImage(eval(stim4))
-            soundFeedbackTest.setSound(feedback_audio, secs=1, hamming=True)
+            soundFeedbackTest.setSound(feedback_audio, secs=0.5, hamming=True)
             soundFeedbackTest.setVolume(1.0, log=False)
             # keep track of which components have finished
-            test_feedbackComponents = [textPointsTest, textScoreTest, polygonFeedbackTest, test_image_feedback1, test_image_feedback2, test_iamge_feedback3, test_iamge_feedback4, gazeCursorTestFeedback, soundFeedbackTest]
+            test_feedbackComponents = [textScoreTest, polygonFeedbackTest, test_image_feedback1, test_image_feedback2, test_iamge_feedback3, test_iamge_feedback4, gazeCursorTestFeedback, soundFeedbackTest]
             for thisComponent in test_feedbackComponents:
                 thisComponent.tStart = None
                 thisComponent.tStop = None
@@ -3941,7 +4353,7 @@ for thisBlock in blocks:
             frameN = -1
             
             # --- Run Routine "test_feedback" ---
-            while continueRoutine and routineTimer.getTime() < 1.0:
+            while continueRoutine and routineTimer.getTime() < 0.5:
                 # get current time
                 t = routineTimer.getTime()
                 tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -3949,27 +4361,9 @@ for thisBlock in blocks:
                 frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
                 # update/draw components on each frame
                 # Run 'Each Frame' code from codeFeedbackTest
-                if loop_timer.getTime() >= 5.0:
+                if loop_timer.getTime() >= 2.0:
                     continueRoutine = False
-                    loop_test.finished = True
-                
-                # *textPointsTest* updates
-                if textPointsTest.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
-                    # keep track of start time/frame for later
-                    textPointsTest.frameNStart = frameN  # exact frame index
-                    textPointsTest.tStart = t  # local t and not account for scr refresh
-                    textPointsTest.tStartRefresh = tThisFlipGlobal  # on global time
-                    win.timeOnFlip(textPointsTest, 'tStartRefresh')  # time at next scr refresh
-                    textPointsTest.setAutoDraw(True)
-                if textPointsTest.status == STARTED:
-                    # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > textPointsTest.tStartRefresh + 1-frameTolerance:
-                        # keep track of stop time/frame for later
-                        textPointsTest.tStop = t  # not accounting for scr refresh
-                        textPointsTest.frameNStop = frameN  # exact frame index
-                        textPointsTest.setAutoDraw(False)
-                if textPointsTest.status == STARTED:  # only update if drawing
-                    textPointsTest.setText(feedback_points, log=False)
+                    currentLoop.finished = True
                 
                 # *textScoreTest* updates
                 if textScoreTest.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
@@ -3981,7 +4375,7 @@ for thisBlock in blocks:
                     textScoreTest.setAutoDraw(True)
                 if textScoreTest.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > textScoreTest.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > textScoreTest.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         textScoreTest.tStop = t  # not accounting for scr refresh
                         textScoreTest.frameNStop = frameN  # exact frame index
@@ -3999,7 +4393,7 @@ for thisBlock in blocks:
                     polygonFeedbackTest.setAutoDraw(True)
                 if polygonFeedbackTest.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > polygonFeedbackTest.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > polygonFeedbackTest.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         polygonFeedbackTest.tStop = t  # not accounting for scr refresh
                         polygonFeedbackTest.frameNStop = frameN  # exact frame index
@@ -4019,7 +4413,7 @@ for thisBlock in blocks:
                     test_image_feedback1.setAutoDraw(True)
                 if test_image_feedback1.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image_feedback1.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > test_image_feedback1.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image_feedback1.tStop = t  # not accounting for scr refresh
                         test_image_feedback1.frameNStop = frameN  # exact frame index
@@ -4039,7 +4433,7 @@ for thisBlock in blocks:
                     test_image_feedback2.setAutoDraw(True)
                 if test_image_feedback2.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image_feedback2.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > test_image_feedback2.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image_feedback2.tStop = t  # not accounting for scr refresh
                         test_image_feedback2.frameNStop = frameN  # exact frame index
@@ -4059,7 +4453,7 @@ for thisBlock in blocks:
                     test_iamge_feedback3.setAutoDraw(True)
                 if test_iamge_feedback3.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_iamge_feedback3.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > test_iamge_feedback3.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         test_iamge_feedback3.tStop = t  # not accounting for scr refresh
                         test_iamge_feedback3.frameNStop = frameN  # exact frame index
@@ -4079,7 +4473,7 @@ for thisBlock in blocks:
                     test_iamge_feedback4.setAutoDraw(True)
                 if test_iamge_feedback4.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_iamge_feedback4.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > test_iamge_feedback4.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         test_iamge_feedback4.tStop = t  # not accounting for scr refresh
                         test_iamge_feedback4.frameNStop = frameN  # exact frame index
@@ -4097,14 +4491,14 @@ for thisBlock in blocks:
                     gazeCursorTestFeedback.setAutoDraw(True)
                 if gazeCursorTestFeedback.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > gazeCursorTestFeedback.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > gazeCursorTestFeedback.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         gazeCursorTestFeedback.tStop = t  # not accounting for scr refresh
                         gazeCursorTestFeedback.frameNStop = frameN  # exact frame index
                         gazeCursorTestFeedback.setAutoDraw(False)
                 if gazeCursorTestFeedback.status == STARTED:  # only update if drawing
                     gazeCursorTestFeedback.setFillColor(cursorcolor, log=False)
-                    gazeCursorTestFeedback.setOpacity(1.0, log=False)
+                    gazeCursorTestFeedback.setOpacity(0.0, log=False)
                     gazeCursorTestFeedback.setPos([eyetracker.getPos()], log=False)
                 # start/stop soundFeedbackTest
                 if soundFeedbackTest.status == NOT_STARTED and t >= 0-frameTolerance:
@@ -4115,7 +4509,7 @@ for thisBlock in blocks:
                     soundFeedbackTest.play()  # start the sound (it finishes automatically)
                 if soundFeedbackTest.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > soundFeedbackTest.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > soundFeedbackTest.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         soundFeedbackTest.tStop = t  # not accounting for scr refresh
                         soundFeedbackTest.frameNStop = frameN  # exact frame index
@@ -4148,7 +4542,7 @@ for thisBlock in blocks:
             if routineForceEnded:
                 routineTimer.reset()
             else:
-                routineTimer.addTime(-1.000000)
+                routineTimer.addTime(-0.500000)
         # completed 100.0 repeats of 'loop_test'
         
         
@@ -4224,13 +4618,13 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 0.0 repeats of 'testtrials'
+    # completed 2.0 repeats of 'testtrials'
     
     
     # set up handler to look after randomisation of conditions etc
     testtrials_novelty = data.TrialHandler(nReps=1.0, method='random', 
         extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions(posFileTestNew, selection=randint(0,119)),
+        trialList=data.importConditions(posFileTestNew, selection=np.concatenate((np.random.permutation(np.arange(0, 24))[0:8], np.random.permutation(np.arange(24, 48))[0:10], np.random.permutation(np.arange(48, 72))[0:10], np.random.permutation(np.arange(72, 96))[0:10], np.random.permutation(np.arange(96, 120))[0:10]))),
         seed=None, name='testtrials_novelty')
     thisExp.addLoop(testtrials_novelty)  # add the loop to the experiment
     thisTesttrials_novelty = testtrials_novelty.trialList[0]  # so we can initialise stimuli with some values
@@ -4259,12 +4653,16 @@ for thisBlock in blocks:
             print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], learning_trials.thisN+1, stim))
         
         if currentLoop.name == "trials":
-            eyetracker.sendMessage("Trial " + str(trials.thisN+33) + ", Condition " + stim)
-            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+33, stim))
+            eyetracker.sendMessage("Trial " + str(trials.thisN+learning_trials.thisN+1) + ", Condition " + stim)
+            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+learning_trials.thisN+1, stim))
         
         if currentLoop.name == "testtrials":
             eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1))
             print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials.thisN+1))
+            
+        if currentLoop.name == "testtrials_novelty":
+            eyetracker.sendMessage("Test-Trial " + str(testtrials_novelty.thisN+testtrials.thisN+1))
+            print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials_novelty.thisN+testtrials.thisN+1))
         # keep track of which components have finished
         crossComponents = [fixcross]
         for thisComponent in crossComponents:
@@ -4482,7 +4880,7 @@ for thisBlock in blocks:
             frameN = -1
             
             # --- Run Routine "test_trial" ---
-            while continueRoutine and routineTimer.getTime() < 5.0:
+            while continueRoutine and routineTimer.getTime() < 2.0:
                 # get current time
                 t = routineTimer.getTime()
                 tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -4490,9 +4888,9 @@ for thisBlock in blocks:
                 frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
                 # update/draw components on each frame
                 # Run 'Each Frame' code from codeTestTrial
-                if loop_timer.getTime() >= 5.0:
+                if loop_timer.getTime() >= 2.0:
                     continueRoutine = False
-                    loop_test.finished = True
+                    currentLoop.finished = True
                 
                 test_roi1.size = test_image1.size
                 test_roi1.pos = position1
@@ -4548,7 +4946,7 @@ for thisBlock in blocks:
                     test_image1.setAutoDraw(True)
                 if test_image1.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image1.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_image1.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image1.tStop = t  # not accounting for scr refresh
                         test_image1.frameNStop = frameN  # exact frame index
@@ -4580,7 +4978,7 @@ for thisBlock in blocks:
                     test_roi1.wasLookedIn = False  # if test_roi1 is looked at next frame, it is a new look
                 if test_roi1.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_roi1.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_roi1.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_roi1.tStop = t  # not accounting for scr refresh
                         test_roi1.frameNStop = frameN  # exact frame index
@@ -4598,7 +4996,7 @@ for thisBlock in blocks:
                     test_image2.setAutoDraw(True)
                 if test_image2.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image2.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_image2.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image2.tStop = t  # not accounting for scr refresh
                         test_image2.frameNStop = frameN  # exact frame index
@@ -4630,7 +5028,7 @@ for thisBlock in blocks:
                     test_roi2.wasLookedIn = False  # if test_roi2 is looked at next frame, it is a new look
                 if test_roi2.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_roi2.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_roi2.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_roi2.tStop = t  # not accounting for scr refresh
                         test_roi2.frameNStop = frameN  # exact frame index
@@ -4648,7 +5046,7 @@ for thisBlock in blocks:
                     test_image3.setAutoDraw(True)
                 if test_image3.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image3.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_image3.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image3.tStop = t  # not accounting for scr refresh
                         test_image3.frameNStop = frameN  # exact frame index
@@ -4680,7 +5078,7 @@ for thisBlock in blocks:
                     test_roi3.wasLookedIn = False  # if test_roi3 is looked at next frame, it is a new look
                 if test_roi3.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_roi3.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_roi3.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_roi3.tStop = t  # not accounting for scr refresh
                         test_roi3.frameNStop = frameN  # exact frame index
@@ -4698,7 +5096,7 @@ for thisBlock in blocks:
                     test_image4.setAutoDraw(True)
                 if test_image4.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image4.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_image4.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image4.tStop = t  # not accounting for scr refresh
                         test_image4.frameNStop = frameN  # exact frame index
@@ -4730,7 +5128,7 @@ for thisBlock in blocks:
                     test_roi4.wasLookedIn = False  # if test_roi4 is looked at next frame, it is a new look
                 if test_roi4.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_roi4.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > test_roi4.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         test_roi4.tStop = t  # not accounting for scr refresh
                         test_roi4.frameNStop = frameN  # exact frame index
@@ -4746,14 +5144,14 @@ for thisBlock in blocks:
                     gazeCursorTest.setAutoDraw(True)
                 if gazeCursorTest.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > gazeCursorTest.tStartRefresh + 5-frameTolerance:
+                    if tThisFlipGlobal > gazeCursorTest.tStartRefresh + 2-frameTolerance:
                         # keep track of stop time/frame for later
                         gazeCursorTest.tStop = t  # not accounting for scr refresh
                         gazeCursorTest.frameNStop = frameN  # exact frame index
                         gazeCursorTest.setAutoDraw(False)
                 if gazeCursorTest.status == STARTED:  # only update if drawing
                     gazeCursorTest.setFillColor(cursorcolor, log=False)
-                    gazeCursorTest.setOpacity(1.0, log=False)
+                    gazeCursorTest.setOpacity(0.0, log=False)
                     gazeCursorTest.setPos([eyetracker.getPos()], log=False)
                 
                 # check for quit (typically the Esc key)
@@ -4853,32 +5251,32 @@ for thisBlock in blocks:
             else:
                loop_test_novelty.addData('test_roi1.timesOn', "")
                loop_test_novelty.addData('test_roi1.timesOff', "")
-            thisExp.addData('test_roi2.numLooks', test_roi2.numLooks)
+            loop_test_novelty.addData('test_roi2.numLooks', test_roi2.numLooks)
             if test_roi2.numLooks:
-               thisExp.addData('test_roi2.timesOn', test_roi2.timesOn[0])
-               thisExp.addData('test_roi2.timesOff', test_roi2.timesOff[0])
+               loop_test_novelty.addData('test_roi2.timesOn', test_roi2.timesOn[0])
+               loop_test_novelty.addData('test_roi2.timesOff', test_roi2.timesOff[0])
             else:
-               thisExp.addData('test_roi2.timesOn', "")
-               thisExp.addData('test_roi2.timesOff', "")
-            thisExp.addData('test_roi3.numLooks', test_roi3.numLooks)
+               loop_test_novelty.addData('test_roi2.timesOn', "")
+               loop_test_novelty.addData('test_roi2.timesOff', "")
+            loop_test_novelty.addData('test_roi3.numLooks', test_roi3.numLooks)
             if test_roi3.numLooks:
-               thisExp.addData('test_roi3.timesOn', test_roi3.timesOn[0])
-               thisExp.addData('test_roi3.timesOff', test_roi3.timesOff[0])
+               loop_test_novelty.addData('test_roi3.timesOn', test_roi3.timesOn[0])
+               loop_test_novelty.addData('test_roi3.timesOff', test_roi3.timesOff[0])
             else:
-               thisExp.addData('test_roi3.timesOn', "")
-               thisExp.addData('test_roi3.timesOff', "")
-            thisExp.addData('test_roi4.numLooks', test_roi4.numLooks)
+               loop_test_novelty.addData('test_roi3.timesOn', "")
+               loop_test_novelty.addData('test_roi3.timesOff', "")
+            loop_test_novelty.addData('test_roi4.numLooks', test_roi4.numLooks)
             if test_roi4.numLooks:
-               thisExp.addData('test_roi4.timesOn', test_roi4.timesOn[0])
-               thisExp.addData('test_roi4.timesOff', test_roi4.timesOff[0])
+               loop_test_novelty.addData('test_roi4.timesOn', test_roi4.timesOn[0])
+               loop_test_novelty.addData('test_roi4.timesOff', test_roi4.timesOff[0])
             else:
-               thisExp.addData('test_roi4.timesOn', "")
-               thisExp.addData('test_roi4.timesOff', "")
+               loop_test_novelty.addData('test_roi4.timesOn', "")
+               loop_test_novelty.addData('test_roi4.timesOff', "")
             # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
             if routineForceEnded:
                 routineTimer.reset()
             else:
-                routineTimer.addTime(-5.000000)
+                routineTimer.addTime(-2.000000)
             
             # --- Prepare to start Routine "test_feedback" ---
             continueRoutine = True
@@ -4890,7 +5288,6 @@ for thisBlock in blocks:
             eyetracker.sendMessage('FeedbackTestOnset')
             eyetracker.sendMessage(outcome)
             
-            textPointsTest.setColor(feedback_color, colorSpace='rgb')
             polygonFeedbackTest.setOpacity(feedback_opacity)
             polygonFeedbackTest.setPos(feedback_position)
             polygonFeedbackTest.setLineColor(feedback_color)
@@ -4902,10 +5299,10 @@ for thisBlock in blocks:
             test_iamge_feedback3.setImage(eval(stim3))
             test_iamge_feedback4.setPos(position4)
             test_iamge_feedback4.setImage(eval(stim4))
-            soundFeedbackTest.setSound(feedback_audio, secs=1, hamming=True)
+            soundFeedbackTest.setSound(feedback_audio, secs=0.5, hamming=True)
             soundFeedbackTest.setVolume(1.0, log=False)
             # keep track of which components have finished
-            test_feedbackComponents = [textPointsTest, textScoreTest, polygonFeedbackTest, test_image_feedback1, test_image_feedback2, test_iamge_feedback3, test_iamge_feedback4, gazeCursorTestFeedback, soundFeedbackTest]
+            test_feedbackComponents = [textScoreTest, polygonFeedbackTest, test_image_feedback1, test_image_feedback2, test_iamge_feedback3, test_iamge_feedback4, gazeCursorTestFeedback, soundFeedbackTest]
             for thisComponent in test_feedbackComponents:
                 thisComponent.tStart = None
                 thisComponent.tStop = None
@@ -4919,7 +5316,7 @@ for thisBlock in blocks:
             frameN = -1
             
             # --- Run Routine "test_feedback" ---
-            while continueRoutine and routineTimer.getTime() < 1.0:
+            while continueRoutine and routineTimer.getTime() < 0.5:
                 # get current time
                 t = routineTimer.getTime()
                 tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -4927,27 +5324,9 @@ for thisBlock in blocks:
                 frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
                 # update/draw components on each frame
                 # Run 'Each Frame' code from codeFeedbackTest
-                if loop_timer.getTime() >= 5.0:
+                if loop_timer.getTime() >= 2.0:
                     continueRoutine = False
-                    loop_test.finished = True
-                
-                # *textPointsTest* updates
-                if textPointsTest.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
-                    # keep track of start time/frame for later
-                    textPointsTest.frameNStart = frameN  # exact frame index
-                    textPointsTest.tStart = t  # local t and not account for scr refresh
-                    textPointsTest.tStartRefresh = tThisFlipGlobal  # on global time
-                    win.timeOnFlip(textPointsTest, 'tStartRefresh')  # time at next scr refresh
-                    textPointsTest.setAutoDraw(True)
-                if textPointsTest.status == STARTED:
-                    # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > textPointsTest.tStartRefresh + 1-frameTolerance:
-                        # keep track of stop time/frame for later
-                        textPointsTest.tStop = t  # not accounting for scr refresh
-                        textPointsTest.frameNStop = frameN  # exact frame index
-                        textPointsTest.setAutoDraw(False)
-                if textPointsTest.status == STARTED:  # only update if drawing
-                    textPointsTest.setText(feedback_points, log=False)
+                    currentLoop.finished = True
                 
                 # *textScoreTest* updates
                 if textScoreTest.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
@@ -4959,7 +5338,7 @@ for thisBlock in blocks:
                     textScoreTest.setAutoDraw(True)
                 if textScoreTest.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > textScoreTest.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > textScoreTest.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         textScoreTest.tStop = t  # not accounting for scr refresh
                         textScoreTest.frameNStop = frameN  # exact frame index
@@ -4977,7 +5356,7 @@ for thisBlock in blocks:
                     polygonFeedbackTest.setAutoDraw(True)
                 if polygonFeedbackTest.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > polygonFeedbackTest.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > polygonFeedbackTest.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         polygonFeedbackTest.tStop = t  # not accounting for scr refresh
                         polygonFeedbackTest.frameNStop = frameN  # exact frame index
@@ -4997,7 +5376,7 @@ for thisBlock in blocks:
                     test_image_feedback1.setAutoDraw(True)
                 if test_image_feedback1.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image_feedback1.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > test_image_feedback1.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image_feedback1.tStop = t  # not accounting for scr refresh
                         test_image_feedback1.frameNStop = frameN  # exact frame index
@@ -5017,7 +5396,7 @@ for thisBlock in blocks:
                     test_image_feedback2.setAutoDraw(True)
                 if test_image_feedback2.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_image_feedback2.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > test_image_feedback2.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         test_image_feedback2.tStop = t  # not accounting for scr refresh
                         test_image_feedback2.frameNStop = frameN  # exact frame index
@@ -5037,7 +5416,7 @@ for thisBlock in blocks:
                     test_iamge_feedback3.setAutoDraw(True)
                 if test_iamge_feedback3.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_iamge_feedback3.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > test_iamge_feedback3.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         test_iamge_feedback3.tStop = t  # not accounting for scr refresh
                         test_iamge_feedback3.frameNStop = frameN  # exact frame index
@@ -5057,7 +5436,7 @@ for thisBlock in blocks:
                     test_iamge_feedback4.setAutoDraw(True)
                 if test_iamge_feedback4.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > test_iamge_feedback4.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > test_iamge_feedback4.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         test_iamge_feedback4.tStop = t  # not accounting for scr refresh
                         test_iamge_feedback4.frameNStop = frameN  # exact frame index
@@ -5075,14 +5454,14 @@ for thisBlock in blocks:
                     gazeCursorTestFeedback.setAutoDraw(True)
                 if gazeCursorTestFeedback.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > gazeCursorTestFeedback.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > gazeCursorTestFeedback.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         gazeCursorTestFeedback.tStop = t  # not accounting for scr refresh
                         gazeCursorTestFeedback.frameNStop = frameN  # exact frame index
                         gazeCursorTestFeedback.setAutoDraw(False)
                 if gazeCursorTestFeedback.status == STARTED:  # only update if drawing
                     gazeCursorTestFeedback.setFillColor(cursorcolor, log=False)
-                    gazeCursorTestFeedback.setOpacity(1.0, log=False)
+                    gazeCursorTestFeedback.setOpacity(0.0, log=False)
                     gazeCursorTestFeedback.setPos([eyetracker.getPos()], log=False)
                 # start/stop soundFeedbackTest
                 if soundFeedbackTest.status == NOT_STARTED and t >= 0-frameTolerance:
@@ -5093,7 +5472,7 @@ for thisBlock in blocks:
                     soundFeedbackTest.play()  # start the sound (it finishes automatically)
                 if soundFeedbackTest.status == STARTED:
                     # is it time to stop? (based on global clock, using actual start)
-                    if tThisFlipGlobal > soundFeedbackTest.tStartRefresh + 1-frameTolerance:
+                    if tThisFlipGlobal > soundFeedbackTest.tStartRefresh + 0.5-frameTolerance:
                         # keep track of stop time/frame for later
                         soundFeedbackTest.tStop = t  # not accounting for scr refresh
                         soundFeedbackTest.frameNStop = frameN  # exact frame index
@@ -5126,7 +5505,7 @@ for thisBlock in blocks:
             if routineForceEnded:
                 routineTimer.reset()
             else:
-                routineTimer.addTime(-1.000000)
+                routineTimer.addTime(-0.500000)
             thisExp.nextEntry()
             
         # completed 100.0 repeats of 'loop_test_novelty'

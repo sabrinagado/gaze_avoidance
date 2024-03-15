@@ -25,7 +25,7 @@
     <Param val="False" valType="bool" updates="None" name="Show mouse"/>
     <Param val="norm" valType="str" updates="None" name="Units"/>
     <Param val="2022.2.4" valType="str" updates="None" name="Use version"/>
-    <Param val="[1680, 1050]" valType="list" updates="None" name="Window size (pixels)"/>
+    <Param val="[2560, 1440]" valType="list" updates="None" name="Window size (pixels)"/>
     <Param val="avg" valType="str" updates="None" name="blendMode"/>
     <Param val="$[0,0,0]" valType="color" updates="None" name="color"/>
     <Param val="rgb" valType="str" updates="None" name="colorSpace"/>
@@ -41,7 +41,7 @@
     <Param val="PUPIL_CR_TRACKING" valType="str" updates="None" name="elTrackingMode"/>
     <Param val="attentional_competition_task" valType="str" updates="None" name="expName"/>
     <Param val="on Sync" valType="str" updates="None" name="exportHTML"/>
-    <Param val="SR Research Ltd" valType="str" updates="None" name="eyetracker"/>
+    <Param val="MouseGaze" valType="str" updates="None" name="eyetracker"/>
     <Param val="127.0.0.1" valType="str" updates="None" name="gpAddress"/>
     <Param val="4242" valType="num" updates="None" name="gpPort"/>
     <Param val="ioHub" valType="str" updates="None" name="keyboardBackend"/>
@@ -145,7 +145,7 @@
         <Param val="1" valType="num" updates="constant" name="lineWidth"/>
         <Param val="4" valType="int" updates="constant" name="nVertices"/>
         <Param val="gazeCursor" valType="code" updates="None" name="name"/>
-        <Param val="0" valType="num" updates="set every frame" name="opacity"/>
+        <Param val="1" valType="num" updates="set every frame" name="opacity"/>
         <Param val="0" valType="num" updates="constant" name="ori"/>
         <Param val="eyetracker.getPos()" valType="list" updates="set every frame" name="pos"/>
         <Param val="False" valType="bool" updates="None" name="saveStartStop"/>
@@ -1022,7 +1022,7 @@
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
         <Param val="" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
-        <Param val="Wir starten nun mit dem Experiment.&amp;#10;&amp;#10;Sie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines Verlustes von Punkten. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren.&amp;#10;&amp;#10;Bitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.&amp;#10;&amp;#10;Drücken Sie die Leertaste, um zu starten.&amp;#10;" valType="str" updates="constant" name="text"/>
+        <Param val="Im nächsten Teil werden Sie in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines Verlustes von Punkten. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren.&amp;#10;&amp;#10;Bitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.&amp;#10;&amp;#10;Drücken Sie die Leertaste, um zu starten.&amp;#10;" valType="str" updates="constant" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
@@ -1067,7 +1067,7 @@
         <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
         <Param val="" valType="code" updates="constant" name="stopVal"/>
         <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
-        <Param val="Die Kalibrierung ist abgeschlossen.&amp;#10;&amp;#10;Sie werden während des Experiments mehrere Bilder sehen.&amp;#10;Bitte geben Sie nun an, wie Sie sich bei der Betrachtung der Bilder fühlen.&amp;#10;&amp;#10;Drücken Sie die Leertaste, um zu starten." valType="str" updates="constant" name="text"/>
+        <Param val="Die Kalibrierung ist abgeschlossen.&amp;#10;&amp;#10;Während des Experiments werden Sie mehrere Bilder sehen.&amp;#10;Bitte geben Sie nun an, wie Sie sich bei der Betrachtung der Bilder fühlen.&amp;#10;&amp;#10;Drücken Sie die Leertaste, um zu starten." valType="str" updates="constant" name="text"/>
         <Param val="from exp settings" valType="str" updates="None" name="units"/>
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
@@ -1775,11 +1775,57 @@
         <Param val="" valType="num" updates="constant" name="wrapWidth"/>
       </TextComponent>
     </Routine>
+    <Routine name="search_task">
+      <CodeComponent name="codeSearchTask">
+        <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
+        <Param val="x_min = -.9&amp;#10;x_max = .9&amp;#10;y_min = -.8&amp;#10;y_max = .7&amp;#10;x_n = 9&amp;#10;y_n = 4&amp;#10;positions = []&amp;#10;&amp;#10;for idx_x in range(x_n):&amp;#10;    for idx_y in range(y_n):&amp;#10;        positions.append([idx_x / (x_n-1) * (abs(x_min) + x_max) + x_min, idx_y/ (y_n-1) * (abs(y_min) + y_max) + y_min])&amp;#10;&amp;#10;jitter = .06&amp;#10;elements_per_group = 15&amp;#10;elements = []&amp;#10;&amp;#10;width = win.size[0]&amp;#10;height = win.size[1]&amp;#10;width_circle = 0.07&amp;#10;height_circle = 0.07 * (width/height)" valType="extendedCode" updates="constant" name="Begin Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
+        <Param val="logging.log(level=logging.INFO, msg=f'VisualSearchTaskOnset')&amp;#10;ioServer.sendMessageEvent(text='VisualSearchTaskOnset')&amp;#10;eyetracker.sendMessage('VisualSearchTaskOnset')&amp;#10;&amp;#10;random_number = random()&amp;#10;&amp;#10;shuffle(positions)&amp;#10;target_positions = positions[0:elements_per_group]&amp;#10;distractor_positions = positions[elements_per_group:2 * elements_per_group]&amp;#10;&amp;#10;thisExp.addData('target_positions', target_positions)&amp;#10;thisExp.addData('distractor_positions', distractor_positions)&amp;#10;&amp;#10;myTargets = []&amp;#10;myTargetROIs = []&amp;#10;for i in range(elements_per_group):&amp;#10;    position_x = target_positions[i][0]+np.random.uniform(-1, 1)*jitter&amp;#10;    position_y = target_positions[i][1]+np.random.uniform(-1, 1)*jitter&amp;#10;    roi = visual.ROI(win, name='roi', device=eyetracker, debug=False, shape='circle',&amp;#10;        pos=(position_x, position_y),&amp;#10;        size=(width_circle, height_circle), anchor='center', ori=0.0)&amp;#10;    circle = visual.ShapeStim(&amp;#10;        win=win, name='circle',&amp;#10;        size=(width_circle, height_circle), vertices='circle',ori=0.0, anchor='center',&amp;#10;        pos=(position_x, position_y),&amp;#10;        lineWidth=20.0, colorSpace='rgb',lineColor=&quot;white&quot;, fillColor=&quot;white&quot;,&amp;#10;        opacity=None, depth=-3, interpolate=True)&amp;#10;    myTargets.append(circle)&amp;#10;    myTargetROIs.append(roi)&amp;#10;&amp;#10;for target in myTargets:&amp;#10;    target.setAutoDraw(True)&amp;#10;&amp;#10;myDistractors = []&amp;#10;myDistractorROIs = []&amp;#10;myDistractorNoises = []&amp;#10;for i in range(elements_per_group):&amp;#10;    position_x = distractor_positions[i][0]+np.random.uniform(-1, 1)*jitter&amp;#10;    position_y = distractor_positions[i][1]+np.random.uniform(-1, 1)*jitter&amp;#10;    roi = visual.ROI(win, name='roi', device=eyetracker, debug=False, shape='circle',&amp;#10;        pos=(position_x, position_y),&amp;#10;        size=(width_circle, height_circle), anchor='center', ori=0.0)&amp;#10;    circle = visual.ShapeStim(&amp;#10;        win=win, name='circle',&amp;#10;        size=(width_circle, height_circle), vertices='circle',ori=0.0, anchor='center',&amp;#10;        pos=(position_x, position_y),&amp;#10;        lineWidth=20.0, colorSpace='rgb', lineColor=&quot;white&quot;, fillColor=&quot;white&quot;,&amp;#10;        opacity=None, depth=-3, interpolate=True)&amp;#10;    noise = sound.Sound('audio/white.wav', secs=0.05, stereo=True, hamming=True, name='noise')&amp;#10;    noise.setVolume(1.0)&amp;#10;    myDistractors.append(circle)&amp;#10;    myDistractorROIs.append(roi)&amp;#10;    myDistractorNoises.append(noise)&amp;#10;&amp;#10;for distractor in myDistractors:&amp;#10;    distractor.setAutoDraw(True)&amp;#10;    &amp;#10;" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="Py" valType="str" updates="None" name="Code Type"/>
+        <Param val="for i, roiTarget in enumerate(myTargetROIs):&amp;#10;    if roiTarget.isLookedIn:&amp;#10;        myTargets[i].fillColor = &quot;green&quot;&amp;#10;        myTargets[i].lineColor = &quot;green&quot;&amp;#10;    else:&amp;#10;        myTargets[i].fillColor = &quot;white&quot;&amp;#10;&amp;#10;for i, roiDistractor in enumerate(myDistractorROIs):&amp;#10;    if roiDistractor.isLookedIn:&amp;#10;        myDistractors[i].fillColor = &quot;red&quot;&amp;#10;        myDistractors[i].lineColor = &quot;red&quot;&amp;#10;        myDistractorNoises[i].play()&amp;#10;    else:&amp;#10;        myDistractors[i].fillColor = &quot;white&quot;&amp;#10;        myDistractorNoises[i].stop()&amp;#10;&amp;#10;# Use &quot;p&quot; to pause experiment&amp;#10;if event.getKeys(keyList=[&quot;p&quot;]) and not paused:&amp;#10;    print(&quot;Experiment Paused - Press 'p' to continue.&quot;)&amp;#10;    paused = True&amp;#10;    event.waitKeys(keyList=[&quot;p&quot;], clearEvents=True)&amp;#10;    &amp;#10;    print(&quot;Experiment Continued&quot;)&amp;#10;    paused = False&amp;#10;    event.clearEvents(eventType=&quot;keyboard&quot;)&amp;#10;    " valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End JS Routine"/>
+        <Param val="for target in myTargets:&amp;#10;    target.setAutoDraw(False)&amp;#10;&amp;#10;for distractor in myDistractors:&amp;#10;    distractor.setAutoDraw(False)" valType="extendedCode" updates="constant" name="End Routine"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="codeSearchTask" valType="code" updates="None" name="name"/>
+      </CodeComponent>
+      <PolygonComponent name="gazeCursorSearch">
+        <Param val="center" valType="str" updates="constant" name="anchor"/>
+        <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
+        <Param val="1" valType="num" updates="constant" name="contrast"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="" valType="code" updates="None" name="durationEstim"/>
+        <Param val="-1.0000, -1.0000, 1.0000" valType="color" updates="constant" name="fillColor"/>
+        <Param val="linear" valType="str" updates="constant" name="interpolate"/>
+        <Param val="None" valType="color" updates="constant" name="lineColor"/>
+        <Param val="1" valType="num" updates="constant" name="lineWidth"/>
+        <Param val="4" valType="int" updates="constant" name="nVertices"/>
+        <Param val="gazeCursorSearch" valType="code" updates="None" name="name"/>
+        <Param val="1" valType="num" updates="set every frame" name="opacity"/>
+        <Param val="0" valType="num" updates="constant" name="ori"/>
+        <Param val="eyetracker.getPos()" valType="list" updates="set every frame" name="pos"/>
+        <Param val="False" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="circle" valType="str" updates="None" name="shape"/>
+        <Param val="(0.01, 0.02)" valType="list" updates="constant" name="size"/>
+        <Param val="" valType="code" updates="None" name="startEstim"/>
+        <Param val="time (s)" valType="str" updates="None" name="startType"/>
+        <Param val="0.0" valType="code" updates="None" name="startVal"/>
+        <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
+        <Param val="60" valType="code" updates="constant" name="stopVal"/>
+        <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
+        <Param val="from exp settings" valType="str" updates="None" name="units"/>
+        <Param val="" valType="list" updates="constant" name="vertices"/>
+      </PolygonComponent>
+    </Routine>
     <EyetrackerCalibrationRoutine name="ETCalibration">
       <Param name="borderColor" updates="None" val="black" valType="color"/>
       <Param name="borderWidth" updates="None" val="2" valType="num"/>
       <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
-      <Param name="disabled" updates="None" val="False" valType="bool"/>
+      <Param name="disabled" updates="None" val="True" valType="bool"/>
       <Param name="expandDur" updates="None" val="1" valType="num"/>
       <Param name="expandScale" updates="None" val="1.2" valType="num"/>
       <Param name="fillColor" updates="None" val="" valType="color"/>
@@ -1799,6 +1845,68 @@
       <Param name="textColor" updates="None" val="white" valType="color"/>
       <Param name="units" updates="None" val="from exp settings" valType="str"/>
     </EyetrackerCalibrationRoutine>
+    <Routine name="startSearchTask">
+      <TextComponent name="textStartSearch">
+        <Param val="white" valType="color" updates="constant" name="color"/>
+        <Param val="rgb" valType="str" updates="constant" name="colorSpace"/>
+        <Param val="1" valType="num" updates="constant" name="contrast"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="" valType="code" updates="None" name="durationEstim"/>
+        <Param val="None" valType="str" updates="constant" name="flip"/>
+        <Param val="Open Sans" valType="str" updates="constant" name="font"/>
+        <Param val="LTR" valType="str" updates="None" name="languageStyle"/>
+        <Param val="0.06" valType="num" updates="constant" name="letterHeight"/>
+        <Param val="textStartSearch" valType="code" updates="None" name="name"/>
+        <Param val="" valType="num" updates="constant" name="opacity"/>
+        <Param val="0" valType="num" updates="constant" name="ori"/>
+        <Param val="(0, 0)" valType="list" updates="constant" name="pos"/>
+        <Param val="True" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="" valType="code" updates="None" name="startEstim"/>
+        <Param val="time (s)" valType="str" updates="None" name="startType"/>
+        <Param val="0.0" valType="code" updates="None" name="startVal"/>
+        <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
+        <Param val="" valType="code" updates="constant" name="stopVal"/>
+        <Param val="True" valType="bool" updates="None" name="syncScreenRefresh"/>
+        <Param val="Wir starten nun mit dem Experiment.&amp;#10;&amp;#10;Sie werden zunächste mehrere Kreise sehen. &amp;#10;Diese reagieren auf Ihr Blickverhalten.&amp;#10;&amp;#10;Drücken Sie die Leertaste, um zu starten." valType="str" updates="constant" name="text"/>
+        <Param val="from exp settings" valType="str" updates="None" name="units"/>
+        <Param val="" valType="num" updates="constant" name="wrapWidth"/>
+      </TextComponent>
+      <KeyboardComponent name="spaceStartSearchTask">
+        <Param val="'space', 'enter'" valType="list" updates="constant" name="allowedKeys"/>
+        <Param val="" valType="str" updates="constant" name="correctAns"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="True" valType="bool" updates="constant" name="discard previous"/>
+        <Param val="" valType="code" updates="None" name="durationEstim"/>
+        <Param val="True" valType="bool" updates="constant" name="forceEndRoutine"/>
+        <Param val="spaceStartSearchTask" valType="code" updates="None" name="name"/>
+        <Param val="False" valType="bool" updates="None" name="saveStartStop"/>
+        <Param val="" valType="code" updates="None" name="startEstim"/>
+        <Param val="time (s)" valType="str" updates="None" name="startType"/>
+        <Param val="0.0" valType="code" updates="None" name="startVal"/>
+        <Param val="duration (s)" valType="str" updates="None" name="stopType"/>
+        <Param val="" valType="code" updates="constant" name="stopVal"/>
+        <Param val="nothing" valType="str" updates="constant" name="store"/>
+        <Param val="False" valType="bool" updates="constant" name="storeCorrect"/>
+        <Param val="True" valType="bool" updates="constant" name="syncScreenRefresh"/>
+      </KeyboardComponent>
+      <CodeComponent name="codeStartSearchTask">
+        <Param val="" valType="extendedCode" updates="constant" name="Before Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Before JS Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Begin Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Begin JS Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Begin JS Routine"/>
+        <Param val="print(&quot;Start Experiment Screen. Press Space to continue.&quot;)" valType="extendedCode" updates="constant" name="Begin Routine"/>
+        <Param val="Py" valType="str" updates="None" name="Code Type"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Each Frame"/>
+        <Param val="" valType="extendedCode" updates="constant" name="Each JS Frame"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End JS Experiment"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End JS Routine"/>
+        <Param val="" valType="extendedCode" updates="constant" name="End Routine"/>
+        <Param val="False" valType="bool" updates="None" name="disabled"/>
+        <Param val="codeStartSearchTask" valType="code" updates="None" name="name"/>
+      </CodeComponent>
+    </Routine>
   </Routines>
   <Flow>
     <Routine name="welcome"/>
@@ -1829,6 +1937,22 @@
     </LoopInitiator>
     <Routine name="stimRating"/>
     <LoopTerminator name="ratingtrials1"/>
+    <Routine name="startSearchTask"/>
+    <LoopInitiator loopType="TrialHandler" name="search_task_trials">
+      <Param name="Selected rows" updates="None" val="" valType="str"/>
+      <Param name="conditions" updates="None" val="None" valType="str"/>
+      <Param name="conditionsFile" updates="None" val="" valType="file"/>
+      <Param name="endPoints" updates="None" val="[0, 1]" valType="num"/>
+      <Param name="isTrials" updates="None" val="True" valType="bool"/>
+      <Param name="loopType" updates="None" val="random" valType="str"/>
+      <Param name="nReps" updates="None" val="1" valType="num"/>
+      <Param name="name" updates="None" val="search_task_trials" valType="code"/>
+      <Param name="random seed" updates="None" val="" valType="code"/>
+    </LoopInitiator>
+    <Routine name="cross"/>
+    <Routine name="search_task"/>
+    <Routine name="crossEnd"/>
+    <LoopTerminator name="search_task_trials"/>
     <Routine name="startTask"/>
     <Routine name="blank"/>
     <LoopInitiator loopType="TrialHandler" name="learning_trials">

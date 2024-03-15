@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on März 12, 2024, at 14:42
+    on März 15, 2024, at 18:46
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -33,6 +33,8 @@ import sys  # to get file system encoding
 import psychopy.iohub as io
 from psychopy.hardware import keyboard
 
+# Run 'Before Experiment' code from code_end
+jittered_duration_cross = 3.5
 # Run 'Before Experiment' code from codeBlank
 jittered_duration_blank = 1.5
 # Run 'Before Experiment' code from codeBlank
@@ -159,7 +161,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\Public\\Documents\\Projects\\GCA 2\\attentional_competition_task\\attentional_competition_task_lastrun.py',
+    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\Study 2\\Experiment\\attentional_competition_task\\attentional_competition_task_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -173,7 +175,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 
 # --- Setup the Window ---
 win = visual.Window(
-    size=[1680, 1050], fullscr=True, screen=1, 
+    size=[2560, 1440], fullscr=True, screen=1, 
     winType='pyglet', allowStencil=False,
     monitor='labMonitor', color=[0,0,0], colorSpace='rgb',
     blendMode='avg', useFBO=True, 
@@ -189,24 +191,12 @@ else:
 ioConfig = {}
 
 # Setup eyetracking
-ioConfig['eyetracker.hw.sr_research.eyelink.EyeTracker'] = {
+ioConfig['eyetracker.hw.mouse.EyeTracker'] = {
     'name': 'tracker',
-    'model_name': 'EYELINK 1000 TOWER',
-    'simulation_mode': False,
-    'network_settings': '100.1.1.1',
-    'default_native_data_file_name': 'EXPFILE',
-    'runtime_settings': {
-        'sampling_rate': 1000.0,
-        'track_eyes': 'RIGHT_EYE',
-        'sample_filtering': {
-            'sample_filtering': 'FILTER_LEVEL_2',
-            'elLiveFiltering': 'FILTER_LEVEL_OFF',
-        },
-        'vog_settings': {
-            'pupil_measure_types': 'PUPIL_AREA',
-            'tracking_mode': 'PUPIL_CR_TRACKING',
-            'pupil_center_algorithm': 'CENTROID_FIT',
-        }
+    'controls': {
+        'move': [],
+        'blink':('MIDDLE_BUTTON',),
+        'saccade_threshold': 0.5,
     }
 }
 
@@ -244,7 +234,7 @@ spaceETCalibration = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startExp" ---
 textStartExp = visual.TextStim(win=win, name='textStartExp',
-    text='Die Kalibrierung ist abgeschlossen.\n\nSie werden während des Experiments mehrere Bilder sehen.\nBitte geben Sie nun an, wie Sie sich bei der Betrachtung der Bilder fühlen.\n\nDrücken Sie die Leertaste, um zu starten.',
+    text='Die Kalibrierung ist abgeschlossen.\n\nWährend des Experiments werden Sie mehrere Bilder sehen.\nBitte geben Sie nun an, wie Sie sich bei der Betrachtung der Bilder fühlen.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -298,9 +288,66 @@ textSpaceStim = visual.TextStim(win=win, name='textSpaceStim',
     depth=-6.0);
 spaceStim = keyboard.Keyboard()
 
+# --- Initialize components for Routine "startSearchTask" ---
+textStartSearch = visual.TextStim(win=win, name='textStartSearch',
+    text='Wir starten nun mit dem Experiment.\n\nSie werden zunächste mehrere Kreise sehen. \nDiese reagieren auf Ihr Blickverhalten.\n\nDrücken Sie die Leertaste, um zu starten.',
+    font='Open Sans',
+    pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=0.0);
+spaceStartSearchTask = keyboard.Keyboard()
+
+# --- Initialize components for Routine "cross" ---
+fixcross = visual.TextStim(win=win, name='fixcross',
+    text='+',
+    font='Open Sans',
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-1.0);
+
+# --- Initialize components for Routine "search_task" ---
+# Run 'Begin Experiment' code from codeSearchTask
+x_min = -.9
+x_max = .9
+y_min = -.8
+y_max = .7
+x_n = 9
+y_n = 4
+positions = []
+
+for idx_x in range(x_n):
+    for idx_y in range(y_n):
+        positions.append([idx_x / (x_n-1) * (abs(x_min) + x_max) + x_min, idx_y/ (y_n-1) * (abs(y_min) + y_max) + y_min])
+
+jitter = .06
+elements_per_group = 15
+elements = []
+
+width = win.size[0]
+height = win.size[1]
+width_circle = 0.07
+height_circle = 0.07 * (width/height)
+gazeCursorSearch = visual.ShapeStim(
+    win=win, name='gazeCursorSearch',
+    size=(0.01, 0.02), vertices='circle',
+    ori=0.0, pos=[0,0], anchor='center',
+    lineWidth=1.0,     colorSpace='rgb',  lineColor=None, fillColor=[-1.0000, -1.0000, 1.0000],
+    opacity=1.0, depth=-1.0, interpolate=True)
+
+# --- Initialize components for Routine "crossEnd" ---
+fixcrossE = visual.TextStim(win=win, name='fixcrossE',
+    text='+',
+    font='Open Sans',
+    pos=(0, 0), height=0.1, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=-1.0);
+
 # --- Initialize components for Routine "startTask" ---
 textStartTask = visual.TextStim(win=win, name='textStartTask',
-    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines Verlustes von Punkten. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.\n',
+    text='Im nächsten Teil werden Sie in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines Verlustes von Punkten. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.\n',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -1101,27 +1148,6 @@ for thisComponent in startETCalibrationComponents:
         thisComponent.setAutoDraw(False)
 # the Routine "startETCalibration" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
-# define target for ETCalibration
-ETCalibrationTarget = visual.TargetStim(win, 
-    name='ETCalibrationTarget',
-    radius=0.01, fillColor='', borderColor='black', lineWidth=2.0,
-    innerRadius=0.0035, innerFillColor='white', innerBorderColor='black', innerLineWidth=2.0,
-    colorSpace='rgb', units=None
-)
-# define parameters for ETCalibration
-ETCalibration = hardware.eyetracker.EyetrackerCalibration(win, 
-    eyetracker, ETCalibrationTarget,
-    units=None, colorSpace='rgb',
-    progressMode='time', targetDur=1.0, expandScale=1.2,
-    targetLayout='NINE_POINTS', randomisePos=True, textColor='white',
-    movementAnimation=True, targetDelay=1.0
-)
-# run calibration
-ETCalibration.run()
-# clear any keypresses from during ETCalibration so they don't interfere with the experiment
-defaultKeyboard.clearEvents()
-# the Routine "ETCalibration" was not non-slip safe, so reset the non-slip timer
-routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
 blocks = data.TrialHandler(nReps=1.0, method='random', 
@@ -1395,6 +1421,446 @@ for thisBlock in blocks:
         thisExp.nextEntry()
         
     # completed 1.0 repeats of 'ratingtrials1'
+    
+    
+    # --- Prepare to start Routine "startSearchTask" ---
+    continueRoutine = True
+    routineForceEnded = False
+    # update component parameters for each repeat
+    spaceStartSearchTask.keys = []
+    spaceStartSearchTask.rt = []
+    _spaceStartSearchTask_allKeys = []
+    # Run 'Begin Routine' code from codeStartSearchTask
+    print("Start Experiment Screen. Press Space to continue.")
+    # keep track of which components have finished
+    startSearchTaskComponents = [textStartSearch, spaceStartSearchTask]
+    for thisComponent in startSearchTaskComponents:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    frameN = -1
+    
+    # --- Run Routine "startSearchTask" ---
+    while continueRoutine:
+        # get current time
+        t = routineTimer.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *textStartSearch* updates
+        if textStartSearch.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            textStartSearch.frameNStart = frameN  # exact frame index
+            textStartSearch.tStart = t  # local t and not account for scr refresh
+            textStartSearch.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(textStartSearch, 'tStartRefresh')  # time at next scr refresh
+            # add timestamp to datafile
+            thisExp.timestampOnFlip(win, 'textStartSearch.started')
+            textStartSearch.setAutoDraw(True)
+        
+        # *spaceStartSearchTask* updates
+        waitOnFlip = False
+        if spaceStartSearchTask.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            spaceStartSearchTask.frameNStart = frameN  # exact frame index
+            spaceStartSearchTask.tStart = t  # local t and not account for scr refresh
+            spaceStartSearchTask.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(spaceStartSearchTask, 'tStartRefresh')  # time at next scr refresh
+            spaceStartSearchTask.status = STARTED
+            # keyboard checking is just starting
+            waitOnFlip = True
+            win.callOnFlip(spaceStartSearchTask.clock.reset)  # t=0 on next screen flip
+            win.callOnFlip(spaceStartSearchTask.clearEvents, eventType='keyboard')  # clear events on next screen flip
+        if spaceStartSearchTask.status == STARTED and not waitOnFlip:
+            theseKeys = spaceStartSearchTask.getKeys(keyList=['space', 'enter'], waitRelease=False)
+            _spaceStartSearchTask_allKeys.extend(theseKeys)
+            if len(_spaceStartSearchTask_allKeys):
+                spaceStartSearchTask.keys = _spaceStartSearchTask_allKeys[-1].name  # just the last key pressed
+                spaceStartSearchTask.rt = _spaceStartSearchTask_allKeys[-1].rt
+                # a response ends the routine
+                continueRoutine = False
+        
+        # check for quit (typically the Esc key)
+        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+            core.quit()
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            routineForceEnded = True
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in startSearchTaskComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # --- Ending Routine "startSearchTask" ---
+    for thisComponent in startSearchTaskComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # the Routine "startSearchTask" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+    
+    # set up handler to look after randomisation of conditions etc
+    search_task_trials = data.TrialHandler(nReps=1.0, method='random', 
+        extraInfo=expInfo, originPath=-1,
+        trialList=[None],
+        seed=None, name='search_task_trials')
+    thisExp.addLoop(search_task_trials)  # add the loop to the experiment
+    thisSearch_task_trial = search_task_trials.trialList[0]  # so we can initialise stimuli with some values
+    # abbreviate parameter names if possible (e.g. rgb = thisSearch_task_trial.rgb)
+    if thisSearch_task_trial != None:
+        for paramName in thisSearch_task_trial:
+            exec('{} = thisSearch_task_trial[paramName]'.format(paramName))
+    
+    for thisSearch_task_trial in search_task_trials:
+        currentLoop = search_task_trials
+        # abbreviate parameter names if possible (e.g. rgb = thisSearch_task_trial.rgb)
+        if thisSearch_task_trial != None:
+            for paramName in thisSearch_task_trial:
+                exec('{} = thisSearch_task_trial[paramName]'.format(paramName))
+        
+        # --- Prepare to start Routine "cross" ---
+        continueRoutine = True
+        routineForceEnded = False
+        # update component parameters for each repeat
+        # Run 'Begin Routine' code from codeFixate
+        logging.log(level=logging.INFO, msg=f'FixationCross')
+        eyetracker.setRecordingState(True)
+         
+        if currentLoop.name == "learning_trials":
+            eyetracker.sendMessage("Trial " + str(learning_trials.thisN+1) + ", Condition " + stim)
+            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], learning_trials.thisN+1, stim))
+        
+        if currentLoop.name == "trials":
+            eyetracker.sendMessage("Trial " + str(trials.thisN+learning_trials.thisN+1) + ", Condition " + stim)
+            print("VP %s TRIALID %d CONDITION %s"%(expInfo['participant'], trials.thisN+learning_trials.thisN+1, stim))
+        
+        if currentLoop.name == "testtrials":
+            eyetracker.sendMessage("Test-Trial " + str(testtrials.thisN+1))
+            print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials.thisN+1))
+            
+        if currentLoop.name == "testtrials_novelty":
+            eyetracker.sendMessage("Test-Trial " + str(testtrials_novelty.thisN+testtrials.thisN+1))
+            print("VP %s TESTTRIALID %d"%(expInfo['participant'], testtrials_novelty.thisN+testtrials.thisN+1))
+        # keep track of which components have finished
+        crossComponents = [fixcross]
+        for thisComponent in crossComponents:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "cross" ---
+        while continueRoutine and routineTimer.getTime() < 1.0:
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            
+            # *fixcross* updates
+            if fixcross.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                fixcross.frameNStart = frameN  # exact frame index
+                fixcross.tStart = t  # local t and not account for scr refresh
+                fixcross.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(fixcross, 'tStartRefresh')  # time at next scr refresh
+                fixcross.setAutoDraw(True)
+            if fixcross.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > fixcross.tStartRefresh + 1-frameTolerance:
+                    # keep track of stop time/frame for later
+                    fixcross.tStop = t  # not accounting for scr refresh
+                    fixcross.frameNStop = frameN  # exact frame index
+                    fixcross.setAutoDraw(False)
+            
+            # check for quit (typically the Esc key)
+            if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+                core.quit()
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in crossComponents:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "cross" ---
+        for thisComponent in crossComponents:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
+        if routineForceEnded:
+            routineTimer.reset()
+        else:
+            routineTimer.addTime(-1.000000)
+        
+        # --- Prepare to start Routine "search_task" ---
+        continueRoutine = True
+        routineForceEnded = False
+        # update component parameters for each repeat
+        # Run 'Begin Routine' code from codeSearchTask
+        logging.log(level=logging.INFO, msg=f'VisualSearchTaskOnset')
+        ioServer.sendMessageEvent(text='VisualSearchTaskOnset')
+        eyetracker.sendMessage('VisualSearchTaskOnset')
+        
+        random_number = random()
+        
+        shuffle(positions)
+        target_positions = positions[0:elements_per_group]
+        distractor_positions = positions[elements_per_group:2 * elements_per_group]
+        
+        thisExp.addData('target_positions', target_positions)
+        thisExp.addData('distractor_positions', distractor_positions)
+        
+        myTargets = []
+        myTargetROIs = []
+        for i in range(elements_per_group):
+            position_x = target_positions[i][0]+np.random.uniform(-1, 1)*jitter
+            position_y = target_positions[i][1]+np.random.uniform(-1, 1)*jitter
+            roi = visual.ROI(win, name='roi', device=eyetracker, debug=False, shape='circle',
+                pos=(position_x, position_y),
+                size=(width_circle, height_circle), anchor='center', ori=0.0)
+            circle = visual.ShapeStim(
+                win=win, name='circle',
+                size=(width_circle, height_circle), vertices='circle',ori=0.0, anchor='center',
+                pos=(position_x, position_y),
+                lineWidth=15.0, colorSpace='rgb',lineColor="white", fillColor="white",
+                opacity=None, depth=-3, interpolate=True)
+            myTargets.append(circle)
+            myTargetROIs.append(roi)
+        
+        for target in myTargets:
+            target.setAutoDraw(True)
+        
+        myDistractors = []
+        myDistractorROIs = []
+        myDistractorNoises = []
+        for i in range(elements_per_group):
+            position_x = distractor_positions[i][0]+np.random.uniform(-1, 1)*jitter
+            position_y = distractor_positions[i][1]+np.random.uniform(-1, 1)*jitter
+            roi = visual.ROI(win, name='roi', device=eyetracker, debug=False, shape='circle',
+                pos=(position_x, position_y),
+                size=(width_circle, height_circle), anchor='center', ori=0.0)
+            circle = visual.ShapeStim(
+                win=win, name='circle',
+                size=(width_circle, height_circle), vertices='circle',ori=0.0, anchor='center',
+                pos=(position_x, position_y),
+                lineWidth=15.0, colorSpace='rgb', lineColor="white", fillColor="white",
+                opacity=None, depth=-3, interpolate=True)
+            noise = sound.Sound('audio/white.wav', secs=0.05, stereo=True, hamming=True, name='noise')
+            noise.setVolume(1.0)
+            myDistractors.append(circle)
+            myDistractorROIs.append(roi)
+            myDistractorNoises.append(noise)
+        
+        for distractor in myDistractors:
+            distractor.setAutoDraw(True)
+            
+        
+        # keep track of which components have finished
+        search_taskComponents = [gazeCursorSearch]
+        for thisComponent in search_taskComponents:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "search_task" ---
+        while continueRoutine and routineTimer.getTime() < 60.0:
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            # Run 'Each Frame' code from codeSearchTask
+            for i, roiTarget in enumerate(myTargetROIs):
+                if roiTarget.isLookedIn:
+                    myTargets[i].fillColor = "green"
+                    myTargets[i].lineColor = "green"
+                else:
+                    myTargets[i].fillColor = "white"
+            
+            for i, roiDistractor in enumerate(myDistractorROIs):
+                if roiDistractor.isLookedIn:
+                    myDistractors[i].fillColor = "red"
+                    myDistractors[i].lineColor = "red"
+                    myDistractorNoises[i].play()
+                else:
+                    myDistractors[i].fillColor = "white"
+                    myDistractorNoises[i].stop()
+            
+            # Use "p" to pause experiment
+            if event.getKeys(keyList=["p"]) and not paused:
+                print("Experiment Paused - Press 'p' to continue.")
+                paused = True
+                event.waitKeys(keyList=["p"], clearEvents=True)
+                
+                print("Experiment Continued")
+                paused = False
+                event.clearEvents(eventType="keyboard")
+                
+            
+            # *gazeCursorSearch* updates
+            if gazeCursorSearch.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                gazeCursorSearch.frameNStart = frameN  # exact frame index
+                gazeCursorSearch.tStart = t  # local t and not account for scr refresh
+                gazeCursorSearch.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(gazeCursorSearch, 'tStartRefresh')  # time at next scr refresh
+                gazeCursorSearch.setAutoDraw(True)
+            if gazeCursorSearch.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > gazeCursorSearch.tStartRefresh + 60-frameTolerance:
+                    # keep track of stop time/frame for later
+                    gazeCursorSearch.tStop = t  # not accounting for scr refresh
+                    gazeCursorSearch.frameNStop = frameN  # exact frame index
+                    gazeCursorSearch.setAutoDraw(False)
+            if gazeCursorSearch.status == STARTED:  # only update if drawing
+                gazeCursorSearch.setOpacity(1.0, log=False)
+                gazeCursorSearch.setPos([eyetracker.getPos()], log=False)
+            
+            # check for quit (typically the Esc key)
+            if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+                core.quit()
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in search_taskComponents:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "search_task" ---
+        for thisComponent in search_taskComponents:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        # Run 'End Routine' code from codeSearchTask
+        for target in myTargets:
+            target.setAutoDraw(False)
+        
+        for distractor in myDistractors:
+            distractor.setAutoDraw(False)
+        # using non-slip timing so subtract the expected duration of this Routine (unless ended on request)
+        if routineForceEnded:
+            routineTimer.reset()
+        else:
+            routineTimer.addTime(-60.000000)
+        
+        # --- Prepare to start Routine "crossEnd" ---
+        continueRoutine = True
+        routineForceEnded = False
+        # update component parameters for each repeat
+        # Run 'Begin Routine' code from code_end
+        eyetracker.setRecordingState(False)
+        jittered_duration_cross = 3.0 + random()
+        # keep track of which components have finished
+        crossEndComponents = [fixcrossE]
+        for thisComponent in crossEndComponents:
+            thisComponent.tStart = None
+            thisComponent.tStop = None
+            thisComponent.tStartRefresh = None
+            thisComponent.tStopRefresh = None
+            if hasattr(thisComponent, 'status'):
+                thisComponent.status = NOT_STARTED
+        # reset timers
+        t = 0
+        _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+        frameN = -1
+        
+        # --- Run Routine "crossEnd" ---
+        while continueRoutine:
+            # get current time
+            t = routineTimer.getTime()
+            tThisFlip = win.getFutureFlipTime(clock=routineTimer)
+            tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+            frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+            # update/draw components on each frame
+            
+            # *fixcrossE* updates
+            if fixcrossE.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                fixcrossE.frameNStart = frameN  # exact frame index
+                fixcrossE.tStart = t  # local t and not account for scr refresh
+                fixcrossE.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(fixcrossE, 'tStartRefresh')  # time at next scr refresh
+                fixcrossE.setAutoDraw(True)
+            if fixcrossE.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > fixcrossE.tStartRefresh + jittered_duration_cross-frameTolerance:
+                    # keep track of stop time/frame for later
+                    fixcrossE.tStop = t  # not accounting for scr refresh
+                    fixcrossE.frameNStop = frameN  # exact frame index
+                    fixcrossE.setAutoDraw(False)
+            
+            # check for quit (typically the Esc key)
+            if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+                core.quit()
+            
+            # check if all components have finished
+            if not continueRoutine:  # a component has requested a forced-end of Routine
+                routineForceEnded = True
+                break
+            continueRoutine = False  # will revert to True if at least one component still running
+            for thisComponent in crossEndComponents:
+                if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                    continueRoutine = True
+                    break  # at least one component has not yet finished
+            
+            # refresh the screen
+            if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+                win.flip()
+        
+        # --- Ending Routine "crossEnd" ---
+        for thisComponent in crossEndComponents:
+            if hasattr(thisComponent, "setAutoDraw"):
+                thisComponent.setAutoDraw(False)
+        # the Routine "crossEnd" was not non-slip safe, so reset the non-slip timer
+        routineTimer.reset()
+        thisExp.nextEntry()
+        
+    # completed 1.0 repeats of 'search_task_trials'
     
     
     # --- Prepare to start Routine "startTask" ---
@@ -1867,7 +2333,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(0.0, log=False)
+                gazeCursor.setOpacity(1.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             
             # check for quit (typically the Esc key)
@@ -2687,7 +3153,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(0.0, log=False)
+                gazeCursor.setOpacity(1.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             
             # check for quit (typically the Esc key)
