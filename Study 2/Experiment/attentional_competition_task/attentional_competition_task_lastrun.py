@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on März 15, 2024, at 18:46
+    on März 18, 2024, at 10:11
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -1514,7 +1514,7 @@ for thisBlock in blocks:
     routineTimer.reset()
     
     # set up handler to look after randomisation of conditions etc
-    search_task_trials = data.TrialHandler(nReps=1.0, method='random', 
+    search_task_trials = data.TrialHandler(nReps=2.0, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=[None],
         seed=None, name='search_task_trials')
@@ -1652,7 +1652,7 @@ for thisBlock in blocks:
                 win=win, name='circle',
                 size=(width_circle, height_circle), vertices='circle',ori=0.0, anchor='center',
                 pos=(position_x, position_y),
-                lineWidth=15.0, colorSpace='rgb',lineColor="white", fillColor="white",
+                lineWidth=20.0, colorSpace='rgb',lineColor="white", fillColor="white",
                 opacity=None, depth=-3, interpolate=True)
             myTargets.append(circle)
             myTargetROIs.append(roi)
@@ -1673,7 +1673,7 @@ for thisBlock in blocks:
                 win=win, name='circle',
                 size=(width_circle, height_circle), vertices='circle',ori=0.0, anchor='center',
                 pos=(position_x, position_y),
-                lineWidth=15.0, colorSpace='rgb', lineColor="white", fillColor="white",
+                lineWidth=20.0, colorSpace='rgb', lineColor="white", fillColor="white",
                 opacity=None, depth=-3, interpolate=True)
             noise = sound.Sound('audio/white.wav', secs=0.05, stereo=True, hamming=True, name='noise')
             noise.setVolume(1.0)
@@ -1860,7 +1860,7 @@ for thisBlock in blocks:
         routineTimer.reset()
         thisExp.nextEntry()
         
-    # completed 1.0 repeats of 'search_task_trials'
+    # completed 2.0 repeats of 'search_task_trials'
     
     
     # --- Prepare to start Routine "startTask" ---
