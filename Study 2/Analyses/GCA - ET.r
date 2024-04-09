@@ -29,7 +29,7 @@ requirePackage = function(name, load=T) {
 
 { # Variables ---------------------------------------------------------------
   # a priori exclusions for all variables
-  exclusions = c(1) %>% unique() %>% sort()
+  exclusions = c(100) %>% unique() %>% sort()
   
   acq1End = 32
   acq2End = acq1End + 32
@@ -44,9 +44,6 @@ requirePackage = function(name, load=T) {
   
   image.acq.height = 450 # height of picture in acq phase in px
   image.acq.width = 426 # width of picture in acq phase in px
-  
-  image.test.height = 450 * 1.2 # height of picture in test phase in px
-  image.test.width = 426 * 1.2 # width of picture in test phase in px
   
   exclusions.eye.num = c() %>% c(exclusions) #a priori exclusions, e.g. calibration not successful
   
@@ -400,7 +397,7 @@ requirePackage = function(name, load=T) {
   
   loadSaccades = function(filePath, screen.height) {
     saccades = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
-    names(saccades) = c("subject","trial","trial_label", "contains_blink", "start_time", "end_time", "start_x", "start_y","end_x","end_y")
+    names(saccades) = c("subject","trial","trial_label", "contains_blink", "start_time", "end_time", "start_x", "end_x", "start_y","end_y")
     saccades = saccades %>%
       mutate(subject = subject %>% sub("attentional_competition_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(),
              start_y = screen.height - start_y, end_y = screen.height - end_y)
@@ -609,7 +606,7 @@ requirePackage = function(name, load=T) {
       quadrant.ytop = integer(0)
     )
     for (file.roi.path in files.roi.path) {
-      # file.roi.path = files.roi.path[3]
+      # file.roi.path = files.roi.path[1]
       roi_acq = read_csv(file.roi.path)
       roi_acq <- roi_acq %>%
         select(position, stim)
@@ -831,11 +828,15 @@ roisTest = loadRoisTest(files.cond) # rois
 
 path.eye = file.path(path, "Experiment", "attentional_competition_task", "data") # eye tracking data
 messages = loadMessages(file.path(path.eye, "messages.txt")) %>% # messages for timepoints
+  mutate(trial = trial - 2) %>% 
+  filter(trial > 0) %>% 
   mutate(across('event', str_replace_all, rep_str)) %>% 
   filter(time != 0)
 write.csv2(messages, file.path(path, "Gaze", "messages.csv"), row.names=FALSE, quote=FALSE)
 
 fixations = loadFixations(file.path(path.eye, "fixations.txt"), screen.height) %>% # fixations
+  mutate(trial = trial - 2) %>% 
+  filter(trial > 0) %>% 
   left_join(conditions, by=c("subject", "trial")) %>% # get conditions & other variables
   left_join(messages %>% filter(grepl("ImageOnset", event)) %>% # get image onset
               rename(picOnset = time) %>% select(-event),
@@ -890,6 +891,8 @@ print(paste0("Number of excluded subjects (Acquisition): ", length(excluded_subj
 
 ### SACCADES
 saccades = loadSaccades(file.path(path.eye, "saccades.txt"), screen.height) %>% 
+  mutate(trial = trial - 2) %>% 
+  filter(trial > 0) %>%
   left_join(conditions, by=c("subject", "trial")) %>% # get conditions & other variables
   left_join(messages %>% filter(grepl("ImageOnset", event)) %>% # get image onset
               rename(picOnset = time) %>% select(-event),
@@ -903,6 +906,12 @@ saccades = loadSaccades(file.path(path.eye, "saccades.txt"), screen.height) %>%
   mutate(picOnset = ifelse(is.na(picOnset), picTestOnset, picOnset)) %>% 
   select(-picTestOnset) %>% 
   mutate(feedbackOnset = ifelse(is.na(feedbackOnset), picOnset + 2000, feedbackOnset))
+
+# ggplot(saccades, aes(x = end_x, y = end_y, color = subject)) +
+#   geom_point(size=0.1) +
+#   xlim(0, screen.width) +
+#   ylim(0, screen.height)
+# ggsave(file.path(path, "Plots", "Gaze", "fixations.png"), width=screen.width, height=screen.height, units="px")
 
 # Baseline OK?
 saccades.acq.valid <- saccades %>% 
@@ -971,7 +980,6 @@ saccades.acq.analysis %>%
   summarise(mean_outcome_trial = mean(outcomeok), .by=c(subject, trial)) %>% 
   summarise(mean_outcome_subj = (1-mean(mean_outcome_trial)) * 100, .by=c(subject)) %>% 
   summarise(mean_outcome = mean(mean_outcome_subj), sd_outcome = sd(mean_outcome_subj))
-
 
 # Add scores and write saccades to CSV
 saccades.acq.analysis <- saccades.acq.analysis %>%
@@ -1873,3 +1881,4 @@ fixations.test.dwell %>%
               # between=.(SPAI),
               detailed=T, type=3) %>%
   apa::anova_apa()
+

@@ -405,11 +405,11 @@ requirePackage = function(name, load=T) {
   
   loadSaccades = function(filePath, screen.height) {
     saccades = read_delim(filePath, delim="\t", col_names=F, skip=1, locale=locale(decimal_mark=","), na=".", show_col_types=F)
-    names(saccades) = c("subject","trial","trial_label", "contains_blink", "start_time", "end_time", "start_x", "start_y","end_x","end_y")
+    names(saccades) = c("subject","trial","trial_label", "contains_blink", "start_time", "end_time", "start_x", "end_x", "start_y", "end_y")
     saccades = saccades %>%
       mutate(subject = subject %>% sub("gca_avoidance_task_", "", .) %>% sub("_20.*", "", .) %>% as.integer(),
              start_y = screen.height - start_y, end_y = screen.height - end_y)
-    saccades = saccades[c("subject","trial","contains_blink", "start_time", "end_time", "start_x", "start_y","end_x","end_y")]
+    saccades = saccades[c("subject","trial","contains_blink", "start_time", "end_time", "start_x", "start_y", "end_x", "end_y")]
     saccades <- saccades %>% arrange(subject, trial)
     return(saccades)
   }
@@ -818,6 +818,12 @@ saccades.acq.valid = saccades.acq.valid %>%
          start_time = ifelse(start_time < 0, 0, start_time), # discard fraction of fixation before stimulus
          picOnset = picOnset - picOnset,
          dur = end_time - start_time)
+
+# ggplot(saccades.acq.valid %>% filter(blok), aes(x = end_x, y = end_y, color = subject)) +
+#   geom_point(size=0.1) + 
+#   xlim(0, screen.width) + 
+#   ylim(0, screen.height)
+# ggsave(file.path(path, "Plots", "Gaze", "saccade_acq_end_points.png"), width=screen.width, height=screen.height, units="px")
 
 saccades.acq.valid = saccades.acq.valid %>% filter(dur > 0) # drop saccades before picture onset
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on März 18, 2024, at 10:11
+    on April 08, 2024, at 14:25
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -161,7 +161,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\Study 2\\Experiment\\attentional_competition_task\\attentional_competition_task_lastrun.py',
+    originPath='C:\\Users\\Public\\Documents\\Projects\\GCA 2\\attentional_competition_task\\attentional_competition_task_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -191,12 +191,24 @@ else:
 ioConfig = {}
 
 # Setup eyetracking
-ioConfig['eyetracker.hw.mouse.EyeTracker'] = {
+ioConfig['eyetracker.hw.sr_research.eyelink.EyeTracker'] = {
     'name': 'tracker',
-    'controls': {
-        'move': [],
-        'blink':('MIDDLE_BUTTON',),
-        'saccade_threshold': 0.5,
+    'model_name': 'EYELINK 1000 TOWER',
+    'simulation_mode': False,
+    'network_settings': '100.1.1.1',
+    'default_native_data_file_name': 'EXPFILE',
+    'runtime_settings': {
+        'sampling_rate': 1000.0,
+        'track_eyes': 'RIGHT_EYE',
+        'sample_filtering': {
+            'sample_filtering': 'FILTER_LEVEL_2',
+            'elLiveFiltering': 'FILTER_LEVEL_OFF',
+        },
+        'vog_settings': {
+            'pupil_measure_types': 'PUPIL_AREA',
+            'tracking_mode': 'PUPIL_CR_TRACKING',
+            'pupil_center_algorithm': 'CENTROID_FIT',
+        }
     }
 }
 
@@ -290,7 +302,7 @@ spaceStim = keyboard.Keyboard()
 
 # --- Initialize components for Routine "startSearchTask" ---
 textStartSearch = visual.TextStim(win=win, name='textStartSearch',
-    text='Wir starten nun mit dem Experiment.\n\nSie werden zunächste mehrere Kreise sehen. \nDiese reagieren auf Ihr Blickverhalten.\n\nDrücken Sie die Leertaste, um zu starten.',
+    text='Zuerst möchten wir Ihnen das grundsätzliche Prinzip unserer Studie verdeutlichen: Die präsentierten Bilder reagieren auf Ihr Blickverhalten.\n\nDafür werden Sie nun mehrere Kreise sehen, welche ebenso auf Ihre Blicke reagieren. Probieren Sie dies nun in Ruhe aus.\n\nDrücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -347,7 +359,7 @@ fixcrossE = visual.TextStim(win=win, name='fixcrossE',
 
 # --- Initialize components for Routine "startTask" ---
 textStartTask = visual.TextStim(win=win, name='textStartTask',
-    text='Im nächsten Teil werden Sie in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines Verlustes von Punkten. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.\n',
+    text='Wir starten nun mit dem Experiment.\n\nSie werden in jedem Durchgang in einer der vier Ecken des Bildschirms ein Bild präsentiert bekommen. Über Ihr Blickverhalten können Sie eine Belohnung in Form von Punkten erhalten. Allerdings lauert auch die Gefahr eines Verlustes von Punkten. Ihr Ziel ist es Ihren Belohnungsscore zu maximieren.\n\nBitte fixieren Sie am Anfang jedes Durchgangs das Fixationskreuz.\n\nDrücken Sie die Leertaste, um zu starten.\n',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -1148,6 +1160,27 @@ for thisComponent in startETCalibrationComponents:
         thisComponent.setAutoDraw(False)
 # the Routine "startETCalibration" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
+# define target for ETCalibration
+ETCalibrationTarget = visual.TargetStim(win, 
+    name='ETCalibrationTarget',
+    radius=0.01, fillColor='', borderColor='black', lineWidth=2.0,
+    innerRadius=0.0035, innerFillColor='white', innerBorderColor='black', innerLineWidth=2.0,
+    colorSpace='rgb', units=None
+)
+# define parameters for ETCalibration
+ETCalibration = hardware.eyetracker.EyetrackerCalibration(win, 
+    eyetracker, ETCalibrationTarget,
+    units=None, colorSpace='rgb',
+    progressMode='time', targetDur=1.0, expandScale=1.2,
+    targetLayout='NINE_POINTS', randomisePos=True, textColor='white',
+    movementAnimation=True, targetDelay=1.0
+)
+# run calibration
+ETCalibration.run()
+# clear any keypresses from during ETCalibration so they don't interfere with the experiment
+defaultKeyboard.clearEvents()
+# the Routine "ETCalibration" was not non-slip safe, so reset the non-slip timer
+routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
 blocks = data.TrialHandler(nReps=1.0, method='random', 
@@ -1432,6 +1465,7 @@ for thisBlock in blocks:
     _spaceStartSearchTask_allKeys = []
     # Run 'Begin Routine' code from codeStartSearchTask
     print("Start Experiment Screen. Press Space to continue.")
+    win.mouseVisible = False
     # keep track of which components have finished
     startSearchTaskComponents = [textStartSearch, spaceStartSearchTask]
     for thisComponent in startSearchTaskComponents:
@@ -1700,7 +1734,7 @@ for thisBlock in blocks:
         frameN = -1
         
         # --- Run Routine "search_task" ---
-        while continueRoutine and routineTimer.getTime() < 60.0:
+        while continueRoutine and routineTimer.getTime() < 30.0:
             # get current time
             t = routineTimer.getTime()
             tThisFlip = win.getFutureFlipTime(clock=routineTimer)
@@ -1745,13 +1779,13 @@ for thisBlock in blocks:
                 gazeCursorSearch.setAutoDraw(True)
             if gazeCursorSearch.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > gazeCursorSearch.tStartRefresh + 60-frameTolerance:
+                if tThisFlipGlobal > gazeCursorSearch.tStartRefresh + 30-frameTolerance:
                     # keep track of stop time/frame for later
                     gazeCursorSearch.tStop = t  # not accounting for scr refresh
                     gazeCursorSearch.frameNStop = frameN  # exact frame index
                     gazeCursorSearch.setAutoDraw(False)
             if gazeCursorSearch.status == STARTED:  # only update if drawing
-                gazeCursorSearch.setOpacity(1.0, log=False)
+                gazeCursorSearch.setOpacity(0.0, log=False)
                 gazeCursorSearch.setPos([eyetracker.getPos()], log=False)
             
             # check for quit (typically the Esc key)
@@ -1786,7 +1820,7 @@ for thisBlock in blocks:
         if routineForceEnded:
             routineTimer.reset()
         else:
-            routineTimer.addTime(-60.000000)
+            routineTimer.addTime(-30.000000)
         
         # --- Prepare to start Routine "crossEnd" ---
         continueRoutine = True
@@ -2333,7 +2367,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(1.0, log=False)
+                gazeCursor.setOpacity(0.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             
             # check for quit (typically the Esc key)
@@ -3153,7 +3187,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(1.0, log=False)
+                gazeCursor.setOpacity(0.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             
             # check for quit (typically the Esc key)
