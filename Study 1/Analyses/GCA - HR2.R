@@ -17,9 +17,9 @@ sample.rate = 100
 minhr =  45 #minimum plausible heart rate
 maxhr = 120 #maximum plausible heart rate
 
-hr_bins = T #calculate HR in 1s bins after CS onset
+hr_bins = T #calculate HR in 0.5s bins after CS onset
 baselineWindow = c(-.5, 0) #correct for Baseline in this time window
-step_plotting = 0.1
+step_plotting = 0.5
 scaling.window = c(seq(-4, 12, by=step_plotting)) # Scoring bins in seconds (real time scaling; may be non-integer)
 bin_width = 0.5
 bin.window = c(seq(0, 10, by=bin_width)) # Scoring bins in seconds (real time scaling; may be non-integer)

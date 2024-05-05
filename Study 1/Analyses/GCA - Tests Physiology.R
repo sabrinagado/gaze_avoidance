@@ -10,6 +10,7 @@ library(afex)
 library(lme4)
 library(lmerTest)
 library(apa)
+library(cowplot)
 
 # For parallelization
 library(parallel)
@@ -24,10 +25,10 @@ rep_str = c('10' = "Shock",
             '3' = 'CSpos, social, Acq',
             '4' = 'CSneg, non-social, Acq',
             '5' = 'CSpos, non-social, Acq',
-            '6' = 'CSneg, social, Test',
-            '7' = 'CSpos, social, Test',
-            '8' = 'CSneg, non-social, Test',
-            '9' = 'CSpos, non-social, Test')
+            '6' = 'CSneg, social',
+            '7' = 'CSpos, social',
+            '8' = 'CSneg, non-social',
+            '9' = 'CSpos, non-social')
 
 # Functions --------------------------------------------------------------------
 
@@ -163,6 +164,10 @@ pt_null_distribution <- function(data, dv, within, factor1, factor2, trial, time
   return(null_distributions)
 }
 
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+setwd('..')
+path = getwd()
+
 ################################################################################
 # PUPIL ------------------------------------------------------------------------
 ################################################################################
@@ -260,7 +265,7 @@ save(clusters_F_main1, clusters_F_main2, clusters_F_int,
 
 load("pupil_cluster.RData")
 
-ga_unified %>% filter(valid == TRUE) %>%
+plot_pupil_cluster <- ga_unified %>% filter(valid == TRUE) %>%
   filter(ID %in% responder) %>%
   .$diameter %>% bind_rows() %>%
   mutate(condition = as.factor(condition)) %>%
@@ -277,99 +282,99 @@ ga_unified %>% filter(valid == TRUE) %>%
       # geom_segment(data = clusters_F_main1, aes(x=times_start, xend = times_end, y=-93, yend=-93, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
       # geom_segment(data = clusters_F_int, aes(x=times_start, xend = times_end, y=-96, yend=-96, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
       scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Pupil Diameter [mm]", limits=c(-0.115, 0.1), breaks=c(-0.1, -0.05, 0, 0.05, 0.1), minor_breaks=c(-0.1, -0.075, -0.05, -0.025, 0, 0.025, 0.05, 0.075, 0.1)) +
-      scale_color_viridis_d(aesthetics = c("colour", "fill")) +
+      scale_y_continuous("∆ Pupil Diameter [mm]", limits=c(-0.115, 0.1), breaks=c(-0.1, -0.05, 0, 0.05, 0.1), minor_breaks=c(-0.1, -0.075, -0.05, -0.025, 0, 0.025, 0.05, 0.075, 0.1)) +
+      scale_color_viridis_d(NULL, aesthetics = c("colour", "fill")) +
       theme_bw() +
-      scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383")))) # , "#e874ff", "#ffdd74"
+      scale_size_manual(NULL, values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383")))) # , "#e874ff", "#ffdd74"
   }
 ggsave(file.path(path, "Plots", "Pupil", "cs_test_cluster.png") ,type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 
-# BINS
-pupil_df_long_test <- pupil_df %>%
-  filter(ID %in% responder) %>%
-  pivot_longer(dilation_0:dilation_19, names_to = "timebin", values_to ="diameter") %>%
-  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
-  # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
-  filter(condition %in% c(6,7,8,9)) %>%
-  mutate(across('condition', str_replace_all, rep_str)) %>% 
-  select(ID, trial, condition, timebin, diameter) %>% 
-  mutate(diameter = as.numeric(diameter)) %>% 
-  mutate(time = timebin * 0.5) %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
-
-pupil_df_long_test %>%
-  # filter(time >= 2) %>% 
-  drop_na(diameter) %>% 
-  group_by(ID, time, condition_social, condition_threat) %>%
-  mutate(ID = as.factor(ID), time = as.factor(time), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-  ez::ezANOVA(dv=.(diameter),
-              wid=.(ID),
-              within=.(time, condition_social, condition_threat),
-              detailed=T, type=2) %>%
-  apa::anova_apa()
-
-main_effect_threat = list()
-main_effect_social = list()
-interaction_effect = list()
-alpha = .05 / length(unique(pupil_df_long_test$time))
-for (timepoint in unique(pupil_df_long_test$time)) {
-  # timepoint = 0
-  data = pupil_df_long_test %>% 
-    filter(time == timepoint) %>% 
-    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-    group_by(ID, condition_social, condition_threat)
-  
-  # data %>% aov_ez(dv="diameter", id="ID", within = c("condition_social","condition_threat"))
-  
-  model = lmer(diameter ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
-  anova = anova(model, type=2)
-  
-  p_threat = anova["condition_threat", "Pr(>F)"]
-  p_social = anova["condition_social", "Pr(>F)"]
-  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
-  
-  if (p_threat < alpha) {
-    main_effect_threat = c(main_effect_threat, timepoint)
-  }
-  if (p_social < alpha) {
-    main_effect_social = c(main_effect_social, timepoint)
-  }
-  if (p_interaction < alpha) {
-    interaction_effect = c(interaction_effect, timepoint)
-  }
-}
-main_effect_threat = as.numeric(main_effect_threat)
-main_effect_social = as.numeric(main_effect_social)
-interaction_effect = as.numeric(interaction_effect)
-
-main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
-main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
-interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
-
-pupil_df_long_test %>% 
-  # filter(condition %in% c(6,7,8,9)) %>%
-  # mutate(across('condition', str_replace_all, rep_str)) %>%
-  group_by(condition, time) %>% 
-  summarise(diameter.se = sd(diameter, na.rm=T)/sqrt(n()), diameter.mean = mean(diameter, na.rm=T)) %>% 
-  mutate(time = time + 0.25 %>% as.character() %>% as.numeric()) %>% 
-  {ggplot(., aes(x=time, y=diameter.mean)) +
-      geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
-      geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
-      geom_line(aes(colour=condition)) +
-      geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se, colour=condition, fill=condition), color = NA, alpha=.2) +
-      geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-0.11, yend=-0.11, size="Main Effect Social"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
-      # geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-63, yend=-63, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
-      # geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-66, yend=-66, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
-      scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Pupil Diameter [mm]", limits=c(-0.115, 0.1), breaks=c(-0.1, -0.05, 0, 0.05, 0.1), minor_breaks=c(-0.1, -0.075, -0.05, -0.025, 0, 0.025, 0.05, 0.075, 0.1)) +
-      scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw() +
-      scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383"))))  # , "#e874ff", "#ffdd74"
-  }
-ggsave(file.path(path, "Plots", "Pupil", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+# # BINS
+# pupil_df_long_test <- pupil_df %>%
+#   filter(ID %in% responder) %>%
+#   pivot_longer(dilation_0:dilation_19, names_to = "timebin", values_to ="diameter") %>%
+#   separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
+#   # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
+#   filter(condition %in% c(6,7,8,9)) %>%
+#   mutate(across('condition', str_replace_all, rep_str)) %>% 
+#   select(ID, trial, condition, timebin, diameter) %>% 
+#   mutate(diameter = as.numeric(diameter)) %>% 
+#   mutate(time = timebin * 0.5) %>% 
+#   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+#   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+# 
+# pupil_df_long_test %>%
+#   # filter(time >= 2) %>% 
+#   drop_na(diameter) %>% 
+#   group_by(ID, time, condition_social, condition_threat) %>%
+#   mutate(ID = as.factor(ID), time = as.factor(time), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+#   ez::ezANOVA(dv=.(diameter),
+#               wid=.(ID),
+#               within=.(time, condition_social, condition_threat),
+#               detailed=T, type=2) %>%
+#   apa::anova_apa()
+# 
+# main_effect_threat = list()
+# main_effect_social = list()
+# interaction_effect = list()
+# alpha = .05 / length(unique(pupil_df_long_test$time))
+# for (timepoint in unique(pupil_df_long_test$time)) {
+#   # timepoint = 0
+#   data = pupil_df_long_test %>% 
+#     filter(time == timepoint) %>% 
+#     mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+#     group_by(ID, condition_social, condition_threat)
+#   
+#   # data %>% aov_ez(dv="diameter", id="ID", within = c("condition_social","condition_threat"))
+#   
+#   model = lmer(diameter ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
+#   anova = anova(model, type=2)
+#   
+#   p_threat = anova["condition_threat", "Pr(>F)"]
+#   p_social = anova["condition_social", "Pr(>F)"]
+#   p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
+#   
+#   if (p_threat < alpha) {
+#     main_effect_threat = c(main_effect_threat, timepoint)
+#   }
+#   if (p_social < alpha) {
+#     main_effect_social = c(main_effect_social, timepoint)
+#   }
+#   if (p_interaction < alpha) {
+#     interaction_effect = c(interaction_effect, timepoint)
+#   }
+# }
+# main_effect_threat = as.numeric(main_effect_threat)
+# main_effect_social = as.numeric(main_effect_social)
+# interaction_effect = as.numeric(interaction_effect)
+# 
+# main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
+# main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
+# interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
+# 
+# pupil_df_long_test %>% 
+#   # filter(condition %in% c(6,7,8,9)) %>%
+#   # mutate(across('condition', str_replace_all, rep_str)) %>%
+#   group_by(condition, time) %>% 
+#   summarise(diameter.se = sd(diameter, na.rm=T)/sqrt(n()), diameter.mean = mean(diameter, na.rm=T)) %>% 
+#   mutate(time = time + 0.25 %>% as.character() %>% as.numeric()) %>% 
+#   {ggplot(., aes(x=time, y=diameter.mean)) +
+#       geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
+#       geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
+#       geom_line(aes(colour=condition)) +
+#       geom_ribbon(aes(ymin=diameter.mean-diameter.se, ymax=diameter.mean+diameter.se, colour=condition, fill=condition), color = NA, alpha=.2) +
+#       geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-0.11, yend=-0.11, size="Main Effect Social"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+#       # geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-63, yend=-63, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+#       # geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-66, yend=-66, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
+#       scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
+#       scale_y_continuous("Pupil Diameter [mm]", limits=c(-0.115, 0.1), breaks=c(-0.1, -0.05, 0, 0.05, 0.1), minor_breaks=c(-0.1, -0.075, -0.05, -0.025, 0, 0.025, 0.05, 0.075, 0.1)) +
+#       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
+#       theme_bw() +
+#       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383"))))  # , "#e874ff", "#ffdd74"
+#   }
+# ggsave(file.path(path, "Plots", "Pupil", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 # # Acquisition
 # # Long format for statistical testing
@@ -545,7 +550,7 @@ save(clusters_F_main1, clusters_F_main2, clusters_F_int,
 
 load("eda_cluster.RData")
 
-eda_unified %>%
+plot_eda_cluster <- eda_unified %>%
   filter(ID %in% responder) %>%
   .$EDA %>% bind_rows() %>%
   mutate(condition = as.factor(condition)) %>% 
@@ -562,7 +567,7 @@ eda_unified %>%
       # geom_segment(data = clusters_F_main1, aes(x=times_start, xend = times_end, y=-0.23, yend=-0.23, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
       # geom_segment(data = clusters_F_int, aes(x=times_start, xend = times_end, y=-0.26, yend=-0.26, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
       scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Skin Conductance") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
+      scale_y_continuous("∆ Skin Conductance [μS]") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
       theme_bw() # +
     # scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
@@ -570,89 +575,89 @@ eda_unified %>%
 ggsave(file.path(path, "Plots", "EDA", "cs_test_cluster.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
-# BINS
-# Long format for statistical testing
-eda_df_long_test <- eda_df %>%
-  filter(ID %in% responder) %>%
-  pivot_longer(scl_0:scl_19, names_to = "timebin", values_to ="EDA") %>%
-  separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
-  # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
-  filter(condition %in% c(6,7,8,9)) %>%
-  mutate(across('condition', str_replace_all, rep_str)) %>% 
-  select(ID, trial, condition, timebin, EDA) %>%
-  mutate(time = timebin * 0.5) %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
-
-
-eda_df_long_test %>%
-  # filter(time >= 2) %>% 
-  drop_na(EDA) %>% 
-  group_by(ID, time, condition_social, condition_threat) %>%
-  mutate(ID = as.factor(ID), time = as.factor(time), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-  ez::ezANOVA(dv=.(EDA),
-              wid=.(ID),
-              within=.(time, condition_social, condition_threat),
-              detailed=T, type=2) %>%
-  apa::anova_apa()
-
-main_effect_threat = list()
-main_effect_social = list()
-interaction_effect = list()
-alpha = .05 / length(unique(eda_df_long_test$time))
-for (timepoint in unique(eda_df_long_test$time)) {
-  # timepoint = 0
-  data = eda_df_long_test %>% 
-    filter(time == timepoint) %>% 
-    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-    group_by(ID, condition_social, condition_threat)
-  
-  model = lmer(EDA ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
-  anova = anova(model, type=2)
-  
-  p_threat = anova["condition_threat", "Pr(>F)"]
-  p_social = anova["condition_social", "Pr(>F)"]
-  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
-  
-  if (p_threat < alpha) {
-    main_effect_threat = c(main_effect_threat, timepoint)
-  }
-  if (p_social < alpha) {
-    main_effect_social = c(main_effect_social, timepoint)
-  }
-  if (p_interaction < alpha) {
-    interaction_effect = c(interaction_effect, timepoint)
-  }
-}
-main_effect_threat = as.numeric(main_effect_threat)
-main_effect_social = as.numeric(main_effect_social)
-interaction_effect = as.numeric(interaction_effect)
-
-main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
-main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
-interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
-
-eda_df_long_test %>% 
-  # filter(condition %in% c(6,7,8,9)) %>%
-  # mutate(across('condition', str_replace_all, rep_str)) %>%
-  group_by(condition, time) %>% 
-  summarise(EDA.se = sd(EDA, na.rm=T)/sqrt(n()), EDA.mean = mean(EDA, na.rm=T)) %>% 
-  mutate(time = time + 0.25 %>% as.character() %>% as.numeric()) %>% 
-  {ggplot(., aes(x=time, y=EDA.mean)) +
-      geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
-      geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
-      geom_line(aes(colour=condition)) +
-      geom_ribbon(aes(ymin=EDA.mean-EDA.se, ymax=EDA.mean+EDA.se, colour=condition, fill=condition), color = NA, alpha=.2) +
-      geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-0.23, yend=-0.23, size="Main Effect Social"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
-      geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-0.26, yend=-0.26, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
-      geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-0.29, yend=-0.29, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
-      scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Skin Conductance") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
-      scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw() +
-      scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
-  }
-ggsave(file.path(path, "Plots", "EDA", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+# # BINS
+# # Long format for statistical testing
+# eda_df_long_test <- eda_df %>%
+#   filter(ID %in% responder) %>%
+#   pivot_longer(scl_0:scl_19, names_to = "timebin", values_to ="EDA") %>%
+#   separate(timebin,c("quark","timebin")) %>% mutate(timebin = as.numeric(timebin)) %>%
+#   # filter(timebin > 4 & timebin < 21) %>% #filter(valid == T) %>%
+#   filter(condition %in% c(6,7,8,9)) %>%
+#   mutate(across('condition', str_replace_all, rep_str)) %>% 
+#   select(ID, trial, condition, timebin, EDA) %>%
+#   mutate(time = timebin * 0.5) %>% 
+#   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+#   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+# 
+# 
+# eda_df_long_test %>%
+#   # filter(time >= 2) %>% 
+#   drop_na(EDA) %>% 
+#   group_by(ID, time, condition_social, condition_threat) %>%
+#   mutate(ID = as.factor(ID), time = as.factor(time), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+#   ez::ezANOVA(dv=.(EDA),
+#               wid=.(ID),
+#               within=.(time, condition_social, condition_threat),
+#               detailed=T, type=2) %>%
+#   apa::anova_apa()
+# 
+# main_effect_threat = list()
+# main_effect_social = list()
+# interaction_effect = list()
+# alpha = .05 / length(unique(eda_df_long_test$time))
+# for (timepoint in unique(eda_df_long_test$time)) {
+#   # timepoint = 0
+#   data = eda_df_long_test %>% 
+#     filter(time == timepoint) %>% 
+#     mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+#     group_by(ID, condition_social, condition_threat)
+#   
+#   model = lmer(EDA ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
+#   anova = anova(model, type=2)
+#   
+#   p_threat = anova["condition_threat", "Pr(>F)"]
+#   p_social = anova["condition_social", "Pr(>F)"]
+#   p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
+#   
+#   if (p_threat < alpha) {
+#     main_effect_threat = c(main_effect_threat, timepoint)
+#   }
+#   if (p_social < alpha) {
+#     main_effect_social = c(main_effect_social, timepoint)
+#   }
+#   if (p_interaction < alpha) {
+#     interaction_effect = c(interaction_effect, timepoint)
+#   }
+# }
+# main_effect_threat = as.numeric(main_effect_threat)
+# main_effect_social = as.numeric(main_effect_social)
+# interaction_effect = as.numeric(interaction_effect)
+# 
+# main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
+# main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
+# interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
+# 
+# eda_df_long_test %>% 
+#   # filter(condition %in% c(6,7,8,9)) %>%
+#   # mutate(across('condition', str_replace_all, rep_str)) %>%
+#   group_by(condition, time) %>% 
+#   summarise(EDA.se = sd(EDA, na.rm=T)/sqrt(n()), EDA.mean = mean(EDA, na.rm=T)) %>% 
+#   mutate(time = time + 0.25 %>% as.character() %>% as.numeric()) %>% 
+#   {ggplot(., aes(x=time, y=EDA.mean)) +
+#       geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
+#       geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
+#       geom_line(aes(colour=condition)) +
+#       geom_ribbon(aes(ymin=EDA.mean-EDA.se, ymax=EDA.mean+EDA.se, colour=condition, fill=condition), color = NA, alpha=.2) +
+#       geom_segment(data = main_effect_social, aes(x=times_start, xend = times_end, y=-0.23, yend=-0.23, size="Main Effect Social"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+#       geom_segment(data = main_effect_threat, aes(x=times_start, xend = times_end, y=-0.26, yend=-0.26, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+#       geom_segment(data = interaction_effect, aes(x=times_start, xend = times_end, y=-0.29, yend=-0.29, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
+#       scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
+#       scale_y_continuous("Skin Conductance") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
+#       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
+#       theme_bw() +
+#       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
+#   }
+# ggsave(file.path(path, "Plots", "EDA", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 # # Acquisition
 # # Long format for statistical testing
@@ -731,19 +736,19 @@ ggsave(file.path(path, "Plots", "EDA", "cs_test_bins.png"),type="cairo-png", wid
 ################################################################################
 # HR ---------------------------------------------------------------------------
 ################################################################################
-sample_rate = 10
+sample_rate = 2
 
 # Prepare data -----------------------------------------------------------------
 
 heart.wide <- readRDS("HR.RData")
 
-step_plotting = 0.1
-scaling.window = c(seq(-4, 12, by=step_plotting))
+step_plotting = 0.5
+scaling.window = scaling.window = c(seq(-4, 12, by=step_plotting))
 baselineWindow = c(-.5, 0) #correct for Baseline in this time window
 
 # CLUSTER
 hr_long <- heart.wide %>%
-  pivot_longer(hr.1:hr.160, names_to = "samplepoint", values_to ="HR", names_prefix="hr.") %>%
+  pivot_longer(hr.1:hr.32, names_to = "samplepoint", values_to ="HR", names_prefix="hr.") %>%
   mutate(samplepoint = as.numeric(samplepoint)) %>%
   filter(condition %in% c(6,7,8,9)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>%
@@ -755,7 +760,7 @@ hr_long <- heart.wide %>%
   filter(time >= 0, time < 10)
 
 heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")) %>% tibble() %>% 
-  mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(scaling.window)} %>% round(2) %>% as.factor(),
+  mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(scaling.window)} %>% round(2), # %>% as.factor(),
          condition = as.factor(condition)) %>% 
   select(-contains("hr.bin."))
 
@@ -833,8 +838,9 @@ save(clusters_F_main1, clusters_F_main2, clusters_F_int,
 
 load("hr_cluster.RData")
 
-heart %>% 
+plot_hr_cluster <- heart %>% 
   filter(condition %in% c(6,7,8,9)) %>%
+  filter(time <= 10) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>%
   group_by(condition, time) %>% 
   summarise(HR.se = sd(HRchange, na.rm=T)/sqrt(n()), HR.mean = mean(HRchange, na.rm=T)) %>% 
@@ -847,8 +853,8 @@ heart %>%
       # geom_segment(data = clusters_F_main2, aes(x=times_start, xend = times_end, y=-2.7, yend=-2.7, size="Main Effect Social"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
       # geom_segment(data = clusters_F_main1, aes(x=times_start, xend = times_end, y=-3, yend=-3, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
       # geom_segment(data = clusters_F_int, aes(x=times_start, xend = times_end, y=-3.3, yend=-3.3, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
-      scale_x_continuous("Time [s]",limits=c(-4, 12), minor_breaks=c(-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10), breaks=c(-4,-2,0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Heart Rate") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
+      scale_x_continuous("Time [s]",limits=c(-1, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
+      scale_y_continuous("∆ Heart Rate [BPM]") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
       theme_bw() +
       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
@@ -856,90 +862,90 @@ heart %>%
 ggsave(file.path(path, "Plots", "HR", "cs_test_cluster.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
-# BINS
-# Long format for statistical testing
-hr_df_long_test <- heart.wide %>%
-  # filter(outcome == "no outcome") %>%
-  #filter(ID %in% responder) %>%
-  pivot_longer(hr.bin.1:hr.bin.20, names_to = "timebin", values_to ="HR", names_prefix="hr.bin.") %>%
-  mutate(timebin = as.numeric(timebin)) %>%
-  filter(condition %in% c(6,7,8,9)) %>%
-  mutate(across('condition', str_replace_all, rep_str)) %>%
-  mutate(ID = subject) %>% 
-  select(ID, trial, condition, outcome, timebin, HR) %>%
-  mutate(time = (timebin - 1) * 0.5) %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
-
-hr_df_long_test %>%
-  # filter(time >= 2) %>% 
-  drop_na(HR) %>% 
-  group_by(ID, time, condition_social, condition_threat) %>%
-  mutate(ID = as.factor(ID), time = as.factor(time), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-  ez::ezANOVA(dv=.(HR),
-              wid=.(ID),
-              within=.(time, condition_social, condition_threat),
-              detailed=T, type=2) %>%
-  apa::anova_apa()
-
-main_effect_threat = list()
-main_effect_social = list()
-interaction_effect = list()
-alpha = .05 / length(unique(hr_df_long_test$time))
-for (timepoint in unique(hr_df_long_test$time)) {
-  # timepoint = 0
-  data = hr_df_long_test %>% 
-    filter(time == timepoint) %>% 
-    mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-    group_by(ID, condition_social, condition_threat)
-  
-  model = lmer(HR ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
-  anova = anova(model, type=2)
-  
-  p_threat = anova["condition_threat", "Pr(>F)"]
-  p_social = anova["condition_social", "Pr(>F)"]
-  p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
-  
-  if (p_threat < alpha) {
-    main_effect_threat = c(main_effect_threat, timepoint)
-  }
-  if (p_social < alpha) {
-    main_effect_social = c(main_effect_social, timepoint)
-  }
-  if (p_interaction < alpha) {
-    interaction_effect = c(interaction_effect, timepoint)
-  }
-}
-main_effect_threat = as.numeric(main_effect_threat)
-main_effect_social = as.numeric(main_effect_social)
-interaction_effect = as.numeric(interaction_effect)
-
-main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
-main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
-interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
-
-
-hr_df_long_test %>% 
-  # filter(condition %in% c(6,7,8,9)) %>%
-  # mutate(across('condition', str_replace_all, rep_str)) %>%
-  group_by(condition, time) %>% 
-  summarise(HR.se = sd(HR, na.rm=T)/sqrt(n()), HR.mean = mean(HR, na.rm=T)) %>% 
-  mutate(time = time + 0.25 %>% as.character() %>% as.numeric()) %>% 
-  {ggplot(., aes(x=time, y=HR.mean)) +
-      geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
-      geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
-      geom_line(aes(colour=condition)) +
-      geom_ribbon(aes(ymin=HR.mean-HR.se, ymax=HR.mean+HR.se, colour=condition, fill=condition), color = NA, alpha=.2) +
-      geom_segment(data = main_effect_social, aes(x=times_start + 0.25, xend = times_end + 0.25, y=-2.7, yend=-2.7, size="Main Effect Social"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
-      geom_segment(data = main_effect_threat, aes(x=times_start+ 0.25, xend = times_end + 0.25, y=-3, yend=-3, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
-      geom_segment(data = interaction_effect, aes(x=times_start+ 0.25, xend = times_end + 0.25, y=-3.3, yend=-3.3, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
-      scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
-      scale_y_continuous("Heart Rate") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
-      scale_color_viridis_d(aesthetics = c("colour", "fill")) +
-      theme_bw() +
-      scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
-  }
-ggsave(file.path(path, "Plots", "HR", "cs_test_binsr.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+# # BINS
+# # Long format for statistical testing
+# hr_df_long_test <- heart.wide %>%
+#   # filter(outcome == "no outcome") %>%
+#   #filter(ID %in% responder) %>%
+#   pivot_longer(hr.bin.1:hr.bin.20, names_to = "timebin", values_to ="HR", names_prefix="hr.bin.") %>%
+#   mutate(timebin = as.numeric(timebin)) %>%
+#   filter(condition %in% c(6,7,8,9)) %>%
+#   mutate(across('condition', str_replace_all, rep_str)) %>%
+#   mutate(ID = subject) %>% 
+#   select(ID, trial, condition, outcome, timebin, HR) %>%
+#   mutate(time = (timebin - 1) * 0.5) %>% 
+#   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+#   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+# 
+# hr_df_long_test %>%
+#   # filter(time >= 2) %>% 
+#   drop_na(HR) %>% 
+#   group_by(ID, time, condition_social, condition_threat) %>%
+#   mutate(ID = as.factor(ID), time = as.factor(time), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+#   ez::ezANOVA(dv=.(HR),
+#               wid=.(ID),
+#               within=.(time, condition_social, condition_threat),
+#               detailed=T, type=2) %>%
+#   apa::anova_apa()
+# 
+# main_effect_threat = list()
+# main_effect_social = list()
+# interaction_effect = list()
+# alpha = .05 / length(unique(hr_df_long_test$time))
+# for (timepoint in unique(hr_df_long_test$time)) {
+#   # timepoint = 0
+#   data = hr_df_long_test %>% 
+#     filter(time == timepoint) %>% 
+#     mutate(ID = as.factor(ID), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+#     group_by(ID, condition_social, condition_threat)
+#   
+#   model = lmer(HR ~ condition_social + condition_threat + condition_social:condition_threat + (1|ID), data)
+#   anova = anova(model, type=2)
+#   
+#   p_threat = anova["condition_threat", "Pr(>F)"]
+#   p_social = anova["condition_social", "Pr(>F)"]
+#   p_interaction = anova["condition_social:condition_threat", "Pr(>F)"]
+#   
+#   if (p_threat < alpha) {
+#     main_effect_threat = c(main_effect_threat, timepoint)
+#   }
+#   if (p_social < alpha) {
+#     main_effect_social = c(main_effect_social, timepoint)
+#   }
+#   if (p_interaction < alpha) {
+#     interaction_effect = c(interaction_effect, timepoint)
+#   }
+# }
+# main_effect_threat = as.numeric(main_effect_threat)
+# main_effect_social = as.numeric(main_effect_social)
+# interaction_effect = as.numeric(interaction_effect)
+# 
+# main_effect_threat = tibble(times_start = as.numeric(main_effect_threat), times_end = as.numeric(main_effect_threat) + 0.5)
+# main_effect_social = tibble(times_start = as.numeric(main_effect_social), times_end = as.numeric(main_effect_social) + 0.5)
+# interaction_effect = tibble(times_start = as.numeric(interaction_effect), times_end = as.numeric(interaction_effect) + 0.5)
+# 
+# 
+# hr_df_long_test %>% 
+#   # filter(condition %in% c(6,7,8,9)) %>%
+#   # mutate(across('condition', str_replace_all, rep_str)) %>%
+#   group_by(condition, time) %>% 
+#   summarise(HR.se = sd(HR, na.rm=T)/sqrt(n()), HR.mean = mean(HR, na.rm=T)) %>% 
+#   mutate(time = time + 0.25 %>% as.character() %>% as.numeric()) %>% 
+#   {ggplot(., aes(x=time, y=HR.mean)) +
+#       geom_vline(xintercept=0, color="black",linetype="solid") + #zero = picture onset
+#       geom_vline(xintercept=10, color="black",linetype="solid") + #picture offset
+#       geom_line(aes(colour=condition)) +
+#       geom_ribbon(aes(ymin=HR.mean-HR.se, ymax=HR.mean+HR.se, colour=condition, fill=condition), color = NA, alpha=.2) +
+#       geom_segment(data = main_effect_social, aes(x=times_start + 0.25, xend = times_end + 0.25, y=-2.7, yend=-2.7, size="Main Effect Social"), colour = "#ff8383", linewidth = 1, inherit.aes=FALSE) +
+#       geom_segment(data = main_effect_threat, aes(x=times_start+ 0.25, xend = times_end + 0.25, y=-3, yend=-3, size="Main Effect Threat"), colour = "#e874ff", linewidth = 1, inherit.aes=FALSE) +
+#       geom_segment(data = interaction_effect, aes(x=times_start+ 0.25, xend = times_end + 0.25, y=-3.3, yend=-3.3, size="Social x Threat Interaction "), colour = "#ffdd74", linewidth = 1, inherit.aes=FALSE) +
+#       scale_x_continuous("Time [s]",limits=c(-0.5, 11), minor_breaks=c(0,1,2,3,4,5,6,7,8,9,10), breaks=c(0, 2, 4, 6, 8, 10)) +
+#       scale_y_continuous("Heart Rate") + #, breaks=c(-80,-40, 0, 40), minor_breaks=c(-80, -60, -40, -20, 0, 20, 40, 60)) +
+#       scale_color_viridis_d(aesthetics = c("colour", "fill")) +
+#       theme_bw() +
+#       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
+#   }
+# ggsave(file.path(path, "Plots", "HR", "cs_test_binsr.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 # # Acquisition
@@ -1013,3 +1019,10 @@ ggsave(file.path(path, "Plots", "HR", "cs_test_binsr.png"), type="cairo-png", wi
 #   }
 # ggsave(paste0("../Plots/HR/cs_acq.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
+physio_plot <- plot_grid(plot_pupil_cluster + theme(legend.position="none"), plot_eda_cluster + theme(legend.position="none"), plot_hr_cluster + theme(legend.position="none"), ncol = 3, labels=c("A", "B", "C"), align="vh")
+legend <- get_legend(plot_pupil_cluster + guides(color = guide_legend(nrow = 1)) + theme(legend.position = "bottom"))
+
+# add the legend underneath the row we made earlier. Give it 10% of the height of one plot (via rel_heights).
+plot_grid(physio_plot, legend, ncol = 1, rel_heights = c(1, .1))
+
+ggsave(file.path(path, "Plots", paste0("physio_test.png")), width=3500, height=1200, units="px")

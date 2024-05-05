@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on April 08, 2024, at 14:17
+    on Mai 01, 2024, at 11:19
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -132,7 +132,7 @@ defaultKeyboard = keyboard.Keyboard(backend='iohub')
 
 # --- Initialize components for Routine "welcome" ---
 textStart = visual.TextStim(win=win, name='textStart',
-    text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\njetzt beginnt der zweite Teil unseres Experiments.\n\nBitte drücken Sie die Leertaste, um zu starten.',
+    text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\nwillkommen zum ersten Teil unseres Experiments.\n\nBitte drücken Sie die Leertaste, um zu starten.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 
@@ -429,7 +429,7 @@ fixcrossEnd = visual.TextStim(win=win, name='fixcrossEnd',
 
 # --- Initialize components for Routine "end" ---
 textEnd = visual.TextStim(win=win, name='textEnd',
-    text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\nvielen Dank für Ihre Teilnahme an unserem Experiment.\n\nDer zweite Teil ist nun auch beendet. \nSie können der Versuchsleitung Bescheid sagen.',
+    text='Sehr geehrter Teilnehmer, sehr geehrte Teilnehmerin,\ndieser Teil des Experiments ist beendet. \n\nBitte melden Sie sich bei der Versuchsleitung.',
     font='Open Sans',
     pos=(0, 0), height=0.06, wrapWidth=None, ori=0.0, 
     color='white', colorSpace='rgb', opacity=None, 

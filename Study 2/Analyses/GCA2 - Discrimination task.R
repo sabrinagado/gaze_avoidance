@@ -32,13 +32,18 @@ for (subject in filemat){
   start.time <- Sys.time()
   
   vp_data <- read.csv(file.path(path.behavior, subject)) # read data from files per subject
+  if (!"key.rt" %in% colnames(vp_data)) {
+    vp_data <- vp_data %>% 
+      mutate(key.rt = NA)
+  }
   
   participant <- vp_data$participant %>% unique()
   
   vp_summary <- vp_data %>% 
     filter(str_detect(stim1,"cs_")) %>% 
     mutate(condition = ifelse(stim1 == stim2, "same", "different"),
-           social = ifelse(stim1 %in% c("cs_pos_s","cs_neg_s", "cs_pos_s_new","cs_neg_s_new"), "social","non-social")) %>%
+           social = ifelse(stim1 %in% c("cs_pos_s","cs_neg_s", "cs_pos_s_new","cs_neg_s_new"), "social","non-social")) %>% 
+           # novel = ifelse(stim1 %in% c("cs_pos_ns_new","cs_neg_ns_new", "cs_pos_s_new","cs_neg_s_new"), "novel","familiar")) %>%
     select(participant, condition, social, correctness, key.rt) %>%
     group_by(participant,social,condition) %>%
     summarise(correct_sum = sum(correctness == "correct"),
@@ -82,6 +87,13 @@ vps_summary <- vps_summary %>%
 vps_summary_grouped = vps_summary %>%
   summarise(correct_mean = mean(correct_mean), rt_mean = mean(rt_mean) * 1000, .by=c(participant, social))
 
+vps_summary_grouped %>%
+  summarise(correct_sd = sd(correct_mean) * 100, correct_mean = mean(correct_mean) * 100, .by=c(social))
+
+vps_summary_grouped %>%
+  t_test(data=., correct_mean ~ social, paired = T, alternative = "two.sided") %>% 
+  apa::t_apa()
+
 vps_summary_grouped %>% 
   group_by(social) %>%
   summarise(correct = mean(correct_mean, na.rm = T), se = sd(correct_mean)/sqrt(n())) %>% 
@@ -93,48 +105,55 @@ vps_summary_grouped %>%
   # geom_beeswarm(data = vps_summary, aes(x = social, y = correct_mean), alpha = 0.5, mapping = aes(x = social)) + 
   labs(title = paste("Proportion of Correct Discrimination (N = ", n_distinct(vps_summary_grouped$participant), ")", sep=""), x = "Category", y = "% correct") +
   # scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1.05)) +
-  scale_x_discrete("Category", labels = c("non-social","social")) +
+  scale_x_discrete(NULL, labels = c("non-social","social")) +
   scale_fill_viridis_d("Condition", end = 0.25, begin = 0.25, guide = "none" ) + 
   theme_minimal() + 
   scale_fill_viridis_d() + 
   scale_color_viridis_d() +
   theme(legend.position = "none")
-ggsave(file.path(path, "Plots", "Discrimination", "ga_correct.png"), width=1800, height=2000, units="px")
+ggsave(file.path(path, "Plots", "Discrimination", "ga_correct.png"), width=1600, height=1600, units="px")
 
-vps_summary %>%
-  ez::ezANOVA(dv=.(correct_mean),
-              wid=.(participant),
-              within=.(social, condition),
-              # between=.(SPAI),
-              detailed=T, type=3) %>%
-  apa::anova_apa() %>%
-  ungroup()
+# vps_summary %>%
+#   ez::ezANOVA(dv=.(correct_mean),
+#               wid=.(participant),
+#               within=.(social, condition),
+#               # between=.(SPAI),
+#               detailed=T, type=3) %>%
+#   apa::anova_apa() %>%
+#   ungroup()
 
-# Response Times
-vps_summary_grouped %>%
-  group_by(social) %>%
-  summarise(correct = mean(rt_mean, na.rm = T), se = sd(rt_mean)/sqrt(n())) %>%
-  ggplot(aes(x = social, y = correct, fill = social)) +
-  geom_col(position = position_dodge()) +
-  geom_errorbar(aes(ymax = correct + se, ymin = correct - se), width = 0.4) +
-  geom_point(data = vps_summary_grouped, aes(x = social, y = rt_mean), size = 2, shape = 21, color = "black", alpha=0.3, position = position_jitter(width=0.2, height=0.005)) +
-  labs(title = paste("Reaction Times (N = ", n_distinct(vps_summary_grouped$participant), ")", sep=""), x = "Category", y = "RT [ms]") +
-  scale_x_discrete("Category", labels = c("non-social","social")) +
-  scale_fill_viridis_d("Condition",end = 0.25,begin = 0.25, guide = "none" ) +
-  theme_minimal() +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d() +
-  theme(legend.position = "none")
-ggsave(file.path(path, "Plots", "Discrimination", "ga_rt.png"), width=1800, height=2000, units="px")
-
-vps_summary %>%
-  ez::ezANOVA(dv=.(rt_mean),
-              wid=.(participant),
-              within=.(social, condition),
-              # between=.(SPAI),
-              detailed=T, type=3) %>%
-  apa::anova_apa() %>%
-  ungroup()
+# # Response Times
+# vps_summary_grouped %>%
+#   summarise(correct_rt = sd(rt_mean) * 100, correct_rt = mean(rt_mean) * 100, .by=c(social))
+# 
+# vps_summary_grouped %>%
+#   t_test(data=., rt_mean ~ social, paired = T, alternative = "two.sided") %>%
+#   apa::t_apa()
+# 
+# vps_summary_grouped %>%
+#   group_by(social) %>%
+#   summarise(correct = mean(rt_mean, na.rm = T), se = sd(rt_mean)/sqrt(n())) %>%
+#   ggplot(aes(x = social, y = correct, fill = social)) +
+#   geom_col(position = position_dodge()) +
+#   geom_errorbar(aes(ymax = correct + se, ymin = correct - se), width = 0.4) +
+#   geom_point(data = vps_summary_grouped, aes(x = social, y = rt_mean), size = 2, shape = 21, color = "black", alpha=0.3, position = position_jitter(width=0.2, height=0.005)) +
+#   labs(title = paste("Reaction Times (N = ", n_distinct(vps_summary_grouped$participant), ")", sep=""), x = "Category", y = "RT [ms]") +
+#   scale_x_discrete("Category", labels = c("non-social","social")) +
+#   scale_fill_viridis_d("Condition",end = 0.25,begin = 0.25, guide = "none" ) +
+#   theme_minimal() +
+#   scale_fill_viridis_d() +
+#   scale_color_viridis_d() +
+#   theme(legend.position = "none")
+# ggsave(file.path(path, "Plots", "Discrimination", "ga_rt.png"), width=1800, height=2000, units="px")
+# 
+# vps_summary %>%
+#   ez::ezANOVA(dv=.(rt_mean),
+#               wid=.(participant),
+#               within=.(social, condition),
+#               # between=.(SPAI),
+#               detailed=T, type=3) %>%
+#   apa::anova_apa() %>%
+#   ungroup()
 
 
 vps.discrimination.score <- vps_summary %>%
