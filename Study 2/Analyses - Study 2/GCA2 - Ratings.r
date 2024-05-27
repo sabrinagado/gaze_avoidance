@@ -156,6 +156,23 @@ requirePackage = function(name, load=T) {
     
     return(ratings)
   }
+  
+  partial_eta_squared_ci <- function(x)
+  {
+    # Calculate upper and lower limit of Lambda for 90%-CI
+    limits <- MBESS::conf.limits.ncf(x$F, .95, x$DFn, x$DFd)
+    
+    # Convert Lambda to partial eta-squared
+    ci <- c(limits$Lower.Limit, limits$Upper.Limit) /
+      (c(limits$Lower.Limit, limits$Upper.Limit) + x$DFn + x$DFd + 1)
+    
+    # Replace NA with zero (`conf.limits.ncf` returns NA instead of 0)
+    ci[is.na(ci)] <- 0
+    
+    ci <- sprintf("%.2f", round(ci, 2))
+    
+    paste0("[", ci[1], "; ", ci[2], "]")
+  }
 }
 
 rep_str = c('cs_pos_ns_new'='CSpos,\nnon-social,\nnew','cs_pos_s_new'='CSpos,\nsocial,\nnew',
@@ -187,6 +204,7 @@ ratings <- ratings %>%
   left_join(scores, by="subject")
 
 write.csv2(ratings, file.path(path, "Ratings", "ratings.csv"), row.names=FALSE, quote=FALSE)
+
 plots <- list()
 i = 1
 
@@ -220,33 +238,45 @@ for (p in c("Baseline", "Acquisition", "Test")) {
     theme_minimal() +
     theme(legend.position = "none") +
     scale_fill_viridis_d() +
-    scale_color_viridis_d()
+    scale_color_viridis_d() + 
+    coord_cartesian(ylim = c(1, 10)) + 
+    scale_y_continuous(limits=c(0, 10), breaks=c(2, 4, 6, 8, 10), minor_breaks=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
   
   if(p=="Test") {
     plot <- plot + facet_grid(cols = vars(condition_novelty))
     ggsave(file.path(path, "Plots", "Ratings", paste0("ratings_", tolower(p), ".png")), width=2800, height=2000, units="px")
-    ratings.phase %>%
+    anova <- ratings.phase %>%
       group_by(subject, condition_social, condition_threat, condition_novelty) %>%
       mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat), condition_novelty = as.factor(condition_novelty)) %>%
       ez::ezANOVA(dv=.(rating),
                   wid=.(subject),
                   within=.(condition_social, condition_threat, condition_novelty),
                   # between=.(SPAI),
-                  detailed=T, type=3) %>%
-      apa::anova_apa()
+                  detailed=T, type=3)
+    anova %>% apa::anova_apa()
+    print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
+    print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+    print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # novelty
+    print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # social * threat
+    print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # social * novelty
+    print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # threat * novelty
+    print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # social * threat * novelty
     print(cor(ratings.phase$rating, ratings.phase$SPAI))
     
   } else {
     ggsave(file.path(path, "Plots", "Ratings", paste0("ratings_", tolower(p), ".png")), width=1500, height=2000, units="px")
-    ratings.phase %>%
+    anova <- ratings.phase %>%
       group_by(subject, condition_social, condition_threat) %>%
       mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
       ez::ezANOVA(dv=.(rating),
                   wid=.(subject),
                   within=.(condition_social, condition_threat),
                   # between=.(SPAI),
-                  detailed=T, type=3) %>%
-      apa::anova_apa()
+                  detailed=T, type=3)
+    anova %>% apa::anova_apa()
+    print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
+    print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+    print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # interaction
     print(cor(ratings.phase$rating, ratings.phase$SPAI))
   }
   

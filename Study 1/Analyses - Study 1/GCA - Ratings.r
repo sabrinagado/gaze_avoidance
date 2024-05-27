@@ -99,6 +99,23 @@ requirePackage = function(name, load=T) {
     
     return(ratings)
   }
+  
+  partial_eta_squared_ci <- function(x)
+  {
+    # Calculate upper and lower limit of Lambda for 90%-CI
+    limits <- MBESS::conf.limits.ncf(x$F, .95, x$DFn, x$DFd)
+    
+    # Convert Lambda to partial eta-squared
+    ci <- c(limits$Lower.Limit, limits$Upper.Limit) /
+      (c(limits$Lower.Limit, limits$Upper.Limit) + x$DFn + x$DFd + 1)
+    
+    # Replace NA with zero (`conf.limits.ncf` returns NA instead of 0)
+    ci[is.na(ci)] <- 0
+    
+    ci <- sprintf("%.2f", round(ci, 2))
+    
+    paste0("[", ci[1], "; ", ci[2], "]")
+  }
 }
 
 
@@ -156,35 +173,41 @@ for (p in c("Baseline", "Acquisition", "Test")) {
     theme_minimal() +
     theme(legend.position = "none") +
     scale_fill_viridis_d() +
-    scale_color_viridis_d()
+    scale_color_viridis_d() + 
+    coord_cartesian(ylim = c(1, 10)) + 
+    scale_y_continuous(limits=c(0, 10), breaks=c(2, 4, 6, 8, 10), minor_breaks=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 
   # ggsave(file.path(path, "Plots", "Ratings", paste0("ratings_", tolower(p), ".png")), width=1500, height=2000, units="px")
   plots[[i]] <- plot
 
   print(p)
-  ratings.phase %>%
+  anova <- ratings.phase %>%
     group_by(subject, condition_social, condition_threat) %>%
     mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
     ez::ezANOVA(dv=.(rating),
                 wid=.(subject),
                 within=.(condition_social, condition_threat),
-                between=.(SPAI),
-                detailed=T, type=3) %>%
-    apa::anova_apa()
+                # between=.(SPAI),
+                detailed=T, type=3)
+  anova %>% apa::anova_apa()
+  print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
+  print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+  print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # interaction
   
-  print("t-test threat")
-  ratings.phase %>%
-    summarize(rating = mean(rating), .by=c(subject, condition_threat)) %>% 
-    t_test(data=., rating ~ condition_threat, paired = T, alternative = "two.sided") %>% 
-    apa::t_apa()
   
-  print("t-test stimulus")
-  ratings.phase %>%
-    summarize(rating = mean(rating), .by=c(subject, condition_social)) %>% 
-    t_test(data=., rating ~ condition_social, paired = T, alternative = "two.sided") %>% 
-    apa::t_apa()
-  
-  print(cor(ratings.phase$rating, ratings.phase$SPAI))
+  # print("t-test threat")
+  # ratings.phase %>%
+  #   summarize(rating = mean(rating), .by=c(subject, condition_threat)) %>% 
+  #   t_test(data=., rating ~ condition_threat, paired = T, alternative = "two.sided") %>% 
+  #   apa::t_apa()
+  # 
+  # print("t-test stimulus")
+  # ratings.phase %>%
+  #   summarize(rating = mean(rating), .by=c(subject, condition_social)) %>% 
+  #   t_test(data=., rating ~ condition_social, paired = T, alternative = "two.sided") %>% 
+  #   apa::t_apa()
+  # 
+  # print(cor(ratings.phase$rating, ratings.phase$SPAI))
   i = i + 1
 }
 

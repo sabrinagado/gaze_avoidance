@@ -117,6 +117,8 @@ prop.table(table(df_summary$gender)) * 100
 
 table(df_summary$handedness)
 
+print(paste("Motivation for Points = ", mean(df_summary$motivation_points, na.rm=TRUE), ", SD = ",sd(df_summary$motivation_points, na.rm=TRUE), ", Range = ", min(df_summary$motivation_points, na.rm=TRUE), " - ", max(df_summary$motivation_points, na.rm=TRUE)))
+
 # Write summary to CSV
 write.csv2(df_summary, file.path(path, "Questionnaires", "demo_scores.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
 

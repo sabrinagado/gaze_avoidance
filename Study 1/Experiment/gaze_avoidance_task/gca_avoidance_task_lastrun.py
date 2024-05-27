@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2022.2.4),
-    on Dezember 12, 2023, at 17:07
+    on Mai 27, 2024, at 13:35
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -111,7 +111,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expName, expInfo['participant
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\gaze_avoidance_task\\gca_avoidance_task_lastrun.py',
+    originPath='C:\\Users\\sag22id\\Documents\\Projects\\GCA\\gca_avoidance\\Study 1\\Experiment\\gaze_avoidance_task\\gca_avoidance_task_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -2059,7 +2059,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(1.0, log=False)
+                gazeCursor.setOpacity(0.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             # *portImage* updates
             if portImage.status == NOT_STARTED and t >= 0.0-frameTolerance:
@@ -2292,7 +2292,7 @@ for thisBlock in blocks:
                     gazeCursor_Feedback.setAutoDraw(False)
             if gazeCursor_Feedback.status == STARTED:  # only update if drawing
                 gazeCursor_Feedback.setFillColor(cursorcolor, log=False)
-                gazeCursor_Feedback.setOpacity(0.0, log=False)
+                gazeCursor_Feedback.setOpacity(1.0, log=False)
                 gazeCursor_Feedback.setPos([eyetracker.getPos()], log=False)
             # start/stop soundFeedback
             if soundFeedback.status == NOT_STARTED and t >= 0-frameTolerance:
@@ -2953,7 +2953,7 @@ for thisBlock in blocks:
                     gazeCursor.setAutoDraw(False)
             if gazeCursor.status == STARTED:  # only update if drawing
                 gazeCursor.setFillColor(cursorcolor, log=False)
-                gazeCursor.setOpacity(1.0, log=False)
+                gazeCursor.setOpacity(0.0, log=False)
                 gazeCursor.setPos([eyetracker.getPos()], log=False)
             # *portImage* updates
             if portImage.status == NOT_STARTED and t >= 0.0-frameTolerance:
@@ -3186,7 +3186,7 @@ for thisBlock in blocks:
                     gazeCursor_Feedback.setAutoDraw(False)
             if gazeCursor_Feedback.status == STARTED:  # only update if drawing
                 gazeCursor_Feedback.setFillColor(cursorcolor, log=False)
-                gazeCursor_Feedback.setOpacity(0.0, log=False)
+                gazeCursor_Feedback.setOpacity(1.0, log=False)
                 gazeCursor_Feedback.setPos([eyetracker.getPos()], log=False)
             # start/stop soundFeedback
             if soundFeedback.status == NOT_STARTED and t >= 0-frameTolerance:
