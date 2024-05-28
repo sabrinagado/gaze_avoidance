@@ -938,6 +938,16 @@ saccades.acq.prop <- saccades.acq.analysis %>%
   filter(!contains_blink) %>%
   summarise(absolute_frequency_ROI = sum(angle >= 1 & ROI & start_time < feedbackOnset), relative_frequency_ROI = mean(angle >= 1 & ROI & start_time < feedbackOnset), relative_frequency_Quadrant = mean(Quadrant & start_time < feedbackOnset), .by=c(subject, SPAI, condition, condition_social, condition_threat))
 
+# saccades.acq.prop.wide <- saccades.acq.prop %>%
+#   select(c(subject, condition, relative_frequency_ROI)) %>%
+#   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
+# 
+# saccades.acq.prop.wide <- saccades.acq.prop.wide %>%
+#   left_join(scores, by="subject") %>% 
+#   rename_with(~ gsub(",\n", "_", .x, fixed = TRUE))
+# 
+# write.csv2(saccades.acq.prop.wide, file.path(path, "sacc_prop_acq_wide.csv"), row.names=FALSE, quote=FALSE)
+
 saccades.acq.roi.summary <- saccades.acq.prop %>%
   summarise(Mean = mean(relative_frequency_ROI), SD = sd(relative_frequency_ROI), .by=condition)
 
@@ -986,14 +996,6 @@ saccades.acq.prop %>%
 #   filter(outcomeok) %>%
 #   filter(!contains_blink) %>%
 #   summarise(relative_frequency_ROI = mean(ROI), .by=c(subject, condition)) 
-# 
-# # saccades.acq.prop.wide <- saccades.acq.prop %>% 
-# #   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
-# # 
-# # saccades.acq.prop.wide <- saccades.acq.prop.wide %>% 
-# #   left_join(scores, by="subject")
-# # 
-# # write.csv2(saccades.acq.prop.wide, file.path(path, "saccades_acq_wide.csv"), row.names=FALSE, quote=FALSE)
 # 
 # saccades.acq.prop <- saccades.acq.analysis %>% 
 #   # filter (trial >= 32) %>%
@@ -1476,12 +1478,14 @@ saccades.test.prop <- bind_rows(saccades.test.prop, saccades.test.prop %>% tidyr
   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 
 # saccades.test.prop.wide <- saccades.test.prop %>%
-#   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
-#
+#   select(c(subject, condition, rel_freq)) %>%
+#   pivot_wider(names_from = condition, values_from = rel_freq)
+# 
 # saccades.test.prop.wide <- saccades.test.prop.wide %>%
-#   left_join(scores, by="subject")
-#
-# write.csv2(saccades.test.prop.wide, file.path(path, "saccades_test_wide.csv"), row.names=FALSE, quote=FALSE)
+#   left_join(scores, by="subject") %>% 
+#   rename_with(~ gsub(",\n", "_", .x, fixed = TRUE))
+# 
+# write.csv2(saccades.test.prop.wide, file.path(path, "sacc_prop_test_wide.csv"), row.names=FALSE, quote=FALSE)
 
 saccades.test.roi.summary <- saccades.test.prop %>%
   summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
@@ -1551,13 +1555,6 @@ print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # social * threat * novelty
 #   mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
 #   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 # 
-# # saccades.test.prop.wide <- saccades.test.prop %>%
-# #   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
-# #
-# # saccades.test.prop.wide <- saccades.test.prop.wide %>%
-# #   left_join(scores, by="subject")
-# #
-# # write.csv2(saccades.test.prop.wide, file.path(path, "saccades_test_wide.csv"), row.names=FALSE, quote=FALSE)
 # 
 # saccades.test.roi.summary <- saccades.test.prop %>%
 #   summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
@@ -1600,40 +1597,42 @@ print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # social * threat * novelty
 #   apa::anova_apa()
 
 # # Percentage of first saccades
-# saccades.test.prop <- saccades.test.analysis %>% 
-#   mutate(condition = ifelse(angle < 1, NA, condition)) %>% 
+# saccades.test.prop <- saccades.test.analysis %>%
+#   mutate(condition = ifelse(angle < 1, NA, condition)) %>%
 #   filter(blok) %>%
 #   filter(!contains_blink) %>%
-#   mutate(condition = as.factor(condition)) %>% 
-#   group_by(subject, trial) %>% 
-#   drop_na(condition) %>% 
-#   mutate(new_trial = ifelse((trial != lag(trial)), TRUE, FALSE)) %>% 
-#   mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial)) %>% 
-#   filter(new_trial) %>% 
+#   mutate(condition = as.factor(condition)) %>%
+#   group_by(subject, trial) %>%
+#   drop_na(condition) %>%
+#   mutate(new_trial = ifelse((trial != lag(trial)), TRUE, FALSE)) %>%
+#   mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial)) %>%
+#   filter(new_trial) %>%
 #   select(-new_trial) %>%
-#   ungroup %>% 
-#   group_by(subject) %>% 
-#   count(condition) %>% 
-#   summarise(subject=subject, condition=condition, n=n, sum = test2End-acq2End) %>% 
-#   mutate(rel_freq = n/(sum)) %>% 
+#   ungroup %>%
+#   group_by(subject) %>%
+#   count(condition) %>%
+#   summarise(subject=subject, condition=condition, n=n, sum = test2End-acq2End) %>%
+#   mutate(rel_freq = n/(sum)) %>%
 #   ungroup %>%
 #   summarise(rel_freq = mean(rel_freq), .by=c(subject, condition))
 # 
-# saccades.test.prop <- bind_rows(saccades.test.prop, saccades.test.prop %>% tidyr::expand(subject, condition)) %>% 
-#   distinct(subject, condition, .keep_all=T) %>% 
-#   mutate(rel_freq = replace_na(rel_freq, 0)) %>% 
-#   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-#   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
-#   mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
+# saccades.test.prop <- bind_rows(saccades.test.prop, saccades.test.prop %>% tidyr::expand(subject, condition)) %>%
+#   distinct(subject, condition, .keep_all=T) %>%
+#   mutate(rel_freq = replace_na(rel_freq, 0)) %>%
+#   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>%
+#   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>%
+#   mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>%
 #   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 # 
 # # saccades.test.prop.wide <- saccades.test.prop %>%
-# #   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
-# #
+# #   select(c(subject, condition, rel_freq)) %>% 
+# #   pivot_wider(names_from = condition, values_from = rel_freq)
+# # 
 # # saccades.test.prop.wide <- saccades.test.prop.wide %>%
-# #   left_join(scores, by="subject")
-# #
-# # write.csv2(saccades.test.prop.wide, file.path(path, "saccades_test_wide.csv"), row.names=FALSE, quote=FALSE)
+# #   left_join(scores, by="subject") %>% 
+# #   rename_with(~ gsub(",\n", "_", .x, fixed = TRUE))
+# # 
+# # write.csv2(saccades.test.prop.wide, file.path(path, "first_sacc_prop_test_wide.csv"), row.names=FALSE, quote=FALSE)
 # 
 # saccades.test.roi.summary <- saccades.test.prop %>%
 #   summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
@@ -1704,12 +1703,14 @@ saccades.test.prop <- bind_rows(saccades.test.prop, saccades.test.prop %>% tidyr
   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 
 # saccades.test.prop.wide <- saccades.test.prop %>%
-#   pivot_wider(names_from = condition, values_from = relative_frequency_ROI)
-#
+#   select(c(subject, condition, rel_freq)) %>%
+#   pivot_wider(names_from = condition, values_from = rel_freq)
+# 
 # saccades.test.prop.wide <- saccades.test.prop.wide %>%
-#   left_join(scores, by="subject")
-#
-# write.csv2(saccades.test.prop.wide, file.path(path, "saccades_test_wide.csv"), row.names=FALSE, quote=FALSE)
+#   left_join(scores, by="subject") %>%
+#   rename_with(~ gsub(",\n", "_", .x, fixed = TRUE))
+# 
+# write.csv2(saccades.test.prop.wide, file.path(path, "first_sacc_prop_test_wide_novelty.csv"), row.names=FALSE, quote=FALSE)
 
 saccades.test.roi.filter <- saccades.test.prop %>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
@@ -1777,6 +1778,16 @@ saccades.test.lat.roi <- saccades.test.lat.roi%>%
   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
   mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
+
+# saccades.test.lat.roi.wide <- saccades.test.lat.roi %>%
+#   select(c(subject, condition, latency)) %>%
+#   pivot_wider(names_from = condition, values_from = latency)
+# 
+# saccades.test.lat.roi.wide <- saccades.test.lat.roi.wide %>%
+#   left_join(scores, by="subject") %>%
+#   rename_with(~ gsub(",\n", "_", .x, fixed = TRUE))
+# 
+# write.csv2(saccades.test.lat.roi.wide, file.path(path, "first_sacc_lat_test_wide_novelty.csv"), row.names=FALSE, quote=FALSE)
 
 saccades.test.lat.roi.summary <- saccades.test.lat.roi %>%
   summarise(Mean = mean(latency), SD = sd(latency), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 

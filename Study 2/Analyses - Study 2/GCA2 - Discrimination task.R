@@ -160,3 +160,20 @@ vps.discrimination.score <- vps_summary %>%
   summarise(discrimination = mean(correct_mean), .by=c("participant", "social"))
 names(vps.discrimination.score) = c("subject","condition_social","discrimination")
 write.csv2(vps.discrimination.score, file.path(path, "Behavior", "discrimination.csv"), row.names=FALSE, quote=FALSE)
+
+
+# disc.wide <- vps.discrimination.score %>%
+#   pivot_wider(names_from = condition_social, values_from = discrimination)
+# 
+# # Get Scores
+# path.scores = file.path(path, "Questionnaires", "demo_scores.csv")
+# scores = read_delim(path.scores, delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
+# scores$subject <- scores$VP
+# scores <- scores %>%
+#   select(subject, gender, age, motivation_points, SPAI, SIAS, STAI_T, UI, motivation, tiredness)
+# 
+# disc.wide <- disc.wide %>%
+#   left_join(scores, by="subject") %>% 
+#   arrange(subject)
+# 
+# write.csv2(disc.wide, file.path(path, "discrimination.csv"), row.names=FALSE, quote=FALSE)

@@ -186,11 +186,12 @@ rep_str = c('cs_pos_ns_new'='CSpos,\nnon-social,\nnew','cs_pos_s_new'='CSpos,\ns
 ratings = loadRatings(files.rating, files.log)  %>% # ratings
   mutate(across('condition', str_replace_all, rep_str))
 
-# ratings.wide <- ratings %>% 
+# ratings.wide <- ratings %>%
 #   pivot_wider(names_from = condition, values_from = rating)
 # 
-# ratings.wide <- ratings.wide %>% 
-#   left_join(scores, by="subject")
+# ratings.wide <- ratings.wide %>%
+#   left_join(scores, by="subject") %>%
+#   rename_with(~ gsub(",\n", "_", .x, fixed = TRUE))
 # 
 # write.csv2(ratings.wide, file.path(path, "ratings_wide.csv"), row.names=FALSE, quote=FALSE)
 
