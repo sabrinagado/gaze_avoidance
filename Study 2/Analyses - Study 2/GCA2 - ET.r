@@ -110,7 +110,8 @@ requirePackage = function(name, load=T) {
   scores = read_delim(path.scores, delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
   scores$subject <- scores$VP
   scores <- scores %>%
-    select(subject, gender, age, motivation_points, SPAI, SIAS, STAI_T, UI, motivation, tiredness)
+    select(subject, gender, age, motivation_points, SPAI, SIAS, STAI_T, UI, motivation, tiredness) %>% 
+    mutate(motivation_points = as.numeric(motivation_points))
   
   # Files
   files.rating = list.files(path.logs, pattern=paste0("^", files.rating.prefix, ".*", files.rating.extension, "$"), full.names=TRUE)
@@ -932,6 +933,7 @@ write.csv2(saccades.acq.analysis, file.path(path, "Gaze", "saccades_acq.csv"), r
 
 # Percentage of saccades going towards the stimuli
 saccades.acq.prop <- saccades.acq.analysis %>%
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
   # filter (trial >= 32) %>%
   filter(blok) %>%
   filter(outcomeok) %>%
@@ -971,17 +973,17 @@ anova <- saccades.acq.prop %>%
   mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
   ez::ezANOVA(dv=.(relative_frequency_ROI),
               wid=.(subject),
-              within=.(condition_social, condition_threat),
+              within=.(condition_threat, condition_social),
               # between=.(SPAI),
               detailed=T, type=3)
 anova %>% apa::anova_apa()
-print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
-print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat x social
 
 saccades.acq.prop %>%
   filter(condition_threat == "neg") %>%
-  t_test(data=., relative_frequency_ROI ~ condition_social, paired = T, alternative = "two.sided") %>% 
+  apa::t_test(data=., relative_frequency_ROI ~ condition_social, paired = T, alternative = "two.sided") %>% 
   apa::t_apa()
 
 # saccades.acq.prop %>%
@@ -1061,6 +1063,7 @@ saccades.acq.prop %>%
 
 # Latency to first saccade going towards the stimuli
 saccades.acq.lat.roi <- saccades.acq.analysis %>%
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
   # filter (trial >= 32) %>%
   filter(blok) %>%
   filter(outcomeok) %>%
@@ -1099,12 +1102,12 @@ anova <- saccades.acq.lat.roi %>%
   mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
   ez::ezANOVA(dv=.(latency),
               wid=.(subject),
-              within=.(condition_social, condition_threat),
+              within=.(condition_threat, condition_social),
               # between=.(SPAI),
               detailed=T, type=3)
 anova %>% apa::anova_apa()
-print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
-print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat x social
 
 # saccades.acq.lat.roi %>%
@@ -1308,6 +1311,7 @@ fixations.acq.analysis <- fixations.acq.analysis %>%
 
 # Mean Dwell Time on stimuli
 fixations.acq.dwell <- fixations.acq.analysis %>%
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
   # filter (trial >= 32) %>%
   filter(blok) %>%
   filter(ROI) %>% 
@@ -1340,12 +1344,12 @@ anova <- fixations.acq.dwell %>%
   mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
   ez::ezANOVA(dv=.(mean_dwell_time),
               wid=.(subject),
-              within=.(condition_social, condition_threat),
+              within=.(condition_threat, condition_social),
               # between=.(SPAI),
               detailed=T, type=3)
 anova %>% apa::anova_apa()
-print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
-print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat x social
 
 
@@ -1456,54 +1460,50 @@ saccades.test.analysis <- saccades.test.analysis %>%
 write.csv2(saccades.test.analysis, file.path(path, "Gaze", "saccades_test.csv"), row.names=FALSE, quote=FALSE)
 
 # Percentage of saccades going to the stimuli
-saccades.test.prop <- saccades.test.analysis %>% 
+
+## Trials without novel stimuli
+saccades.test1.prop <- saccades.test.analysis %>%
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
+  # filter ((trial > acq2End) & (trial <= test1End)) %>%
   mutate(condition = ifelse(angle < 1, NA, condition)) %>% 
+  filter(!(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new"))) %>%
   filter(blok) %>%
   filter(!contains_blink) %>%
-  mutate(condition = as.factor(condition)) %>% 
-  group_by(subject, trial) %>% 
-  count(condition) %>% 
-  summarise(subject=subject, trial=trial, condition=condition, n=n, sum = sum(n)) %>% 
-  mutate(rel_freq = n/sum) %>% 
-  drop_na(condition) %>% 
+  mutate(condition = as.factor(condition)) %>%
+  group_by(subject) %>%
+  count(condition) %>%
+  summarise(subject=subject, condition=condition, n=n, sum = sum(n)) %>%
+  mutate(rel_freq = n/sum) %>%
+  drop_na(condition) %>%
   ungroup %>%
   summarise(rel_freq = mean(rel_freq), .by=c(subject, condition))
 
-saccades.test.prop <- bind_rows(saccades.test.prop, saccades.test.prop %>% tidyr::expand(subject, condition)) %>% 
-  distinct(subject, condition, .keep_all=T) %>% 
-  mutate(rel_freq = replace_na(rel_freq, 0)) %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
-  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
+saccades.test1.prop <- bind_rows(saccades.test1.prop, saccades.test1.prop %>% tidyr::expand(subject, condition)) %>%
+  distinct(subject, condition, .keep_all=T) %>%
+  mutate(rel_freq = replace_na(rel_freq, 0)) %>%
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>%
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>%
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>%
   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 
-# saccades.test.prop.wide <- saccades.test.prop %>%
-#   select(c(subject, condition, rel_freq)) %>%
-#   pivot_wider(names_from = condition, values_from = rel_freq)
-# 
-# saccades.test.prop.wide <- saccades.test.prop.wide %>%
-#   left_join(scores, by="subject") %>% 
-#   rename_with(~ gsub(",\n", "_", .x, fixed = TRUE))
-# 
-# write.csv2(saccades.test.prop.wide, file.path(path, "sacc_prop_test_wide.csv"), row.names=FALSE, quote=FALSE)
-
-saccades.test.roi.summary <- saccades.test.prop %>%
-  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+saccades.test1.roi.summary <- saccades.test1.prop %>%
+  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
-saccades.test.prop <- saccades.test.prop %>% 
+saccades.test1.prop <- saccades.test1.prop %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
-saccades.test.roi.filter <- saccades.test.prop %>%
+saccades.test1.roi.filter <- saccades.test1.prop %>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
 
-plot_prop_sacc <- ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+
+plot_prop_sacc_familiar <- ggplot(saccades.test1.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
     width = 0.25) +
-  geom_point(data=saccades.test.prop, aes(y = rel_freq), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
+  geom_point(data=saccades.test1.prop, aes(y = rel_freq), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
   # labs(title = paste("Proportion of Saccades to the Stimulus (N = ", n_distinct(saccades.test.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
   labs(title = "Proportion of Saccades", x = NULL, y = "Proportion") +
   theme_minimal() +
@@ -1511,28 +1511,94 @@ plot_prop_sacc <- ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean,
   scale_fill_viridis_d() +
   scale_color_viridis_d()
 
-plot_prop_sacc <- plot_prop_sacc + facet_grid(cols = vars(condition_novelty))
+
+anova <- saccades.test1.prop %>%
+  left_join(saccades.test1.roi.filter, by=c("subject")) %>%
+  filter(n_cond == 4) %>%
+  group_by(subject, condition_social, condition_threat) %>%
+  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+  ez::ezANOVA(dv=.(rel_freq),
+              wid=.(subject),
+              within=.(condition_threat, condition_social),
+              # between=.(SPAI),
+              detailed=T, type=3)
+anova %>% apa::anova_apa()
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
+print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat * social
+
+
+## Trials with novel stimuli
+saccades.test2.prop <- saccades.test.analysis %>%
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
+  # filter ((trial > test1End) & (trial <= test2End)) %>%
+  mutate(condition = ifelse(angle < 1, NA, condition)) %>% 
+  filter(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new")) %>% 
+  filter(blok) %>%
+  filter(!contains_blink) %>%
+  mutate(condition = as.factor(condition)) %>%
+  group_by(subject) %>%
+  count(condition) %>%
+  summarise(subject=subject, condition=condition, n=n, sum = sum(n)) %>%
+  mutate(rel_freq = n/sum) %>%
+  drop_na(condition) %>%
+  ungroup %>%
+  summarise(rel_freq = mean(rel_freq), .by=c(subject, condition))
+
+saccades.test2.prop <- bind_rows(saccades.test2.prop, saccades.test2.prop %>% tidyr::expand(subject, condition)) %>%
+  distinct(subject, condition, .keep_all=T) %>%
+  mutate(rel_freq = replace_na(rel_freq, 0)) %>%
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>%
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>%
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>%
+  mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
+
+saccades.test2.roi.summary <- saccades.test2.prop %>%
+  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+saccades.test2.prop <- saccades.test2.prop %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+saccades.test2.roi.filter <- saccades.test2.prop %>%
+  reframe(n_cond = length(unique(condition)), .by=c(subject))
+
+plot_prop_sacc_novel <- ggplot(saccades.test2.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25) +
+  geom_point(data=saccades.test2.prop, aes(y = rel_freq), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
+  # labs(title = paste("Proportion of Saccades to the Stimulus (N = ", n_distinct(saccades.test.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
+  labs(title = "Proportion of Saccades", x = NULL, y = "Proportion") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d() +
+  scale_color_viridis_d()
+
+plot_prop_sacc_novel <- plot_prop_sacc_novel + facet_grid(cols = vars(condition_novelty))
 ggsave(file.path(path, "Plots", "Gaze", "test", "all_saccades_proportion_roi.png"), width=2800, height=2000, units="px")
 
-anova <- saccades.test.prop %>%
-  left_join(saccades.test.roi.filter, by=c("subject")) %>%
+
+anova <- saccades.test2.prop %>%
+  left_join(saccades.test2.roi.filter, by=c("subject")) %>%
   filter(n_cond == 4) %>%
   group_by(subject, condition_social, condition_threat, condition_novelty) %>%
   mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat), condition_novelty = as.factor(condition_novelty)) %>%
   ez::ezANOVA(dv=.(rel_freq),
               wid=.(subject),
-              within=.(condition_social, condition_threat, condition_novelty),
+              within=.(condition_threat, condition_social, condition_novelty),
               # between=.(SPAI),
               detailed=T, type=3)
 anova %>% apa::anova_apa()
-print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
-print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # novelty
-print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # social * threat
-print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # social * novelty
-print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # threat * novelty
-print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # social * threat * novelty
-
+print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # threat * social
+print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # threat * novelty
+print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # social * novelty
+print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # threat * social * novelty
 
 # # With Microsaccades
 # saccades.test.prop <- saccades.test.analysis %>%
@@ -1674,13 +1740,87 @@ print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # social * threat * novelty
 #   apa::anova_apa()
 
 # First Saccades Novelty
-saccades.test.prop <- saccades.test.analysis %>% 
+
+## Trials without novel stimuli
+saccades.test1.prop <- saccades.test.analysis %>% 
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
+  # filter ((trial > acq2End) & (trial <= test1End)) %>%
+  filter(!(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new"))) %>%
   mutate(condition = ifelse(angle < 1, NA, condition)) %>% 
   filter(blok) %>%
   filter(!contains_blink) %>%
   mutate(condition = as.factor(condition)) %>% 
   group_by(subject, trial) %>% 
+  drop_na(condition) %>% 
+  mutate(new_trial = ifelse((trial != lag(trial)), TRUE, FALSE)) %>% 
+  mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial)) %>% 
+  filter(new_trial) %>% 
+  select(-new_trial) %>%
+  ungroup %>% 
+  group_by(subject) %>% 
+  count(condition) %>% 
+  summarise(subject=subject, condition=condition, n=n, sum = test1End - acq2End) %>% 
+  mutate(rel_freq = n/(sum)) %>% 
+  ungroup %>%
+  summarise(rel_freq = mean(rel_freq), .by=c(subject, condition))
+
+saccades.test1.prop <- bind_rows(saccades.test1.prop, saccades.test1.prop %>% tidyr::expand(subject, condition)) %>% 
+  distinct(subject, condition, .keep_all=T) %>% 
+  mutate(rel_freq = replace_na(rel_freq, 0)) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
+  mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
+
+saccades.test1.roi.filter <- saccades.test1.prop %>%
+  reframe(n_cond = length(unique(condition)), .by=c(subject))
+
+saccades.test1.roi.summary <- saccades.test1.prop %>%
+  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat)) %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+saccades.test1.prop <- saccades.test1.prop %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+plot_prop_first_sacc_familiar <- ggplot(saccades.test1.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_errorbar(
+    aes(ymin = Mean - SD, ymax = Mean + SD),
+    position = position_dodge(width = 0.7),
+    width = 0.25) +
+  geom_point(data=saccades.test1.prop, aes(y = rel_freq), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
+  # labs(title = paste("Proportion of Saccades to the Stimulus (N = ", n_distinct(saccades.test.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
+  labs(title = "Proportion of First Saccades", x = NULL, y = "Proportion") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d() +
+  scale_color_viridis_d()
+
+anova <- saccades.test1.prop %>%
+  left_join(saccades.test1.roi.filter, by=c("subject")) %>%
+  # filter(n_cond == 8) %>%
+  group_by(subject, condition_social, condition_threat) %>%
+  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+  ez::ezANOVA(dv=.(rel_freq),
+              wid=.(subject),
+              within=.(condition_threat, condition_social),
+              # between=.(SPAI),
+              detailed=T, type=3)
+anova %>% apa::anova_apa()
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
+print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat * social
+
+## Trials with novel stimuli
+saccades.test2.prop <- saccades.test.analysis %>% 
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
+  # filter ((trial > test1End) & (trial <= test2End)) %>%
   filter(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new")) %>% 
+  mutate(condition = ifelse(angle < 1, NA, condition)) %>% 
+  filter(blok) %>%
+  filter(!contains_blink) %>%
+  mutate(condition = as.factor(condition)) %>% 
+  group_by(subject, trial) %>% 
   drop_na(condition) %>% 
   mutate(new_trial = ifelse((trial != lag(trial)), TRUE, FALSE)) %>% 
   mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial)) %>% 
@@ -1694,7 +1834,7 @@ saccades.test.prop <- saccades.test.analysis %>%
   ungroup %>%
   summarise(rel_freq = mean(rel_freq), .by=c(subject, condition))
 
-saccades.test.prop <- bind_rows(saccades.test.prop, saccades.test.prop %>% tidyr::expand(subject, condition)) %>% 
+saccades.test2.prop <- bind_rows(saccades.test2.prop, saccades.test2.prop %>% tidyr::expand(subject, condition)) %>% 
   distinct(subject, condition, .keep_all=T) %>% 
   mutate(rel_freq = replace_na(rel_freq, 0)) %>% 
   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
@@ -1712,25 +1852,25 @@ saccades.test.prop <- bind_rows(saccades.test.prop, saccades.test.prop %>% tidyr
 # 
 # write.csv2(saccades.test.prop.wide, file.path(path, "first_sacc_prop_test_wide_novelty.csv"), row.names=FALSE, quote=FALSE)
 
-saccades.test.roi.filter <- saccades.test.prop %>%
+saccades.test2.roi.filter <- saccades.test2.prop %>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
 
-saccades.test.roi.summary <- saccades.test.prop %>%
+saccades.test2.roi.summary <- saccades.test2.prop %>%
   summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
-saccades.test.prop <- saccades.test.prop %>% 
+saccades.test2.prop <- saccades.test2.prop %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
-plot_prop_first_sacc_nov <- ggplot(saccades.test.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
+plot_prop_first_sacc_nov <- ggplot(saccades.test2.roi.summary, aes(x = condition, y = Mean, fill = condition)) +
   geom_col(position = "dodge", width = 0.7) +
   geom_errorbar(
     aes(ymin = Mean - SD, ymax = Mean + SD),
     position = position_dodge(width = 0.7),
     width = 0.25) +
-  geom_point(data=saccades.test.prop, aes(y = rel_freq), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
+  geom_point(data=saccades.test2.prop, aes(y = rel_freq), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
   # labs(title = paste("Proportion of Saccades to the Stimulus (N = ", n_distinct(saccades.test.prop$subject), ")", sep=""), x = "Conditions", y = "Proportion") +
-  labs(title = "Proportion of First Saccades in Trials with a Novel Stimulus", x = NULL, y = "Proportion") +
+  labs(title = "Proportion of First Saccades", x = NULL, y = "Proportion") +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_viridis_d() +
@@ -1739,28 +1879,29 @@ plot_prop_first_sacc_nov <- ggplot(saccades.test.roi.summary, aes(x = condition,
 plot_prop_first_sacc_nov <- plot_prop_first_sacc_nov + facet_grid(cols = vars(condition_novelty))
 ggsave(file.path(path, "Plots", "Gaze", "test", "first_saccades_proportion_roi_nov.png"), width=2800, height=2000, units="px")
 
-anova <- saccades.test.prop %>%
-  left_join(saccades.test.roi.filter, by=c("subject")) %>%
+anova <- saccades.test2.prop %>%
+  left_join(saccades.test2.roi.filter, by=c("subject")) %>%
   # filter(n_cond == 8) %>%
   group_by(subject, condition_social, condition_threat, condition_novelty) %>%
   mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat), condition_novelty = as.factor(condition_novelty)) %>%
   ez::ezANOVA(dv=.(rel_freq),
               wid=.(subject),
-              within=.(condition_social, condition_threat, condition_novelty),
+              within=.(condition_threat, condition_social, condition_novelty),
               # between=.(SPAI),
               detailed=T, type=3)
 anova %>% apa::anova_apa()
-print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
-print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # novelty
-print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # social * threat
-print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # social * novelty
-print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # threat * novelty
-print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # social * threat * novelty
+print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # threat * social
+print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # threat * novelty
+print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # social * novelty
+print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # threat * social * novelty
 
 
 # Latency to first saccade
 saccades.test.lat.roi <- saccades.test.analysis %>%
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
   filter(blok) %>%
   filter(!contains_blink) %>%
   distinct(subject, trial, condition, .keep_all=T) %>% 
@@ -1821,26 +1962,27 @@ anova <- saccades.test.lat.roi %>%
   mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat), condition_novelty = as.factor(condition_novelty)) %>%
   ez::ezANOVA(dv=.(latency),
               wid=.(subject),
-              within=.(condition_social, condition_threat, condition_novelty),
+              within=.(condition_threat, condition_social, condition_novelty),
               # between_covariates=.(SPAI), observed=.(SPAI),
               detailed=T, type=3)
 anova %>% apa::anova_apa()
-print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
-print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # novelty
-print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # social * threat
-print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # social * novelty
-print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # threat * novelty
-print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # social * threat * novelty
+print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # threat * social
+print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # threat * novelty
+print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # social * novelty
+print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # threat * social * novelty
+
 
 saccades.test.lat.roi %>%
   filter(condition_social == "social") %>%
-  t_test(data=., latency ~ condition_threat, paired = T, alternative = "two.sided") %>% 
+  apa::t_test(data=., latency ~ condition_threat, paired = T, alternative = "two.sided") %>% 
   apa::t_apa()
 
 saccades.test.lat.roi %>%
   filter(condition_threat == "neg") %>%
-  t_test(data=., latency ~ condition_social, paired = T, alternative = "two.sided") %>% 
+  apa::t_test(data=., latency ~ condition_social, paired = T, alternative = "two.sided") %>% 
   apa::t_apa()
 
 # ezDesign(data=saccades.test.lat.roi, x=condition_social, y=condition_threat, col=condition_novelty)
@@ -1903,6 +2045,7 @@ fixations.test.analysis <- fixations.test.analysis %>%
 
 # Mean Dwell Time on stimuli
 fixations.test.dwell <- fixations.test.analysis %>%
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
   filter(blok) %>%
   filter(!is.na(condition)) %>% 
   summarise(mean_dwell_time = mean(dur), .by=c(subject, SPAI, condition, condition_social, condition_threat, condition_novelty))
@@ -1950,22 +2093,25 @@ anova <- fixations.test.dwell %>%
   mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat), condition_novelty = as.factor(condition_novelty)) %>%
   ez::ezANOVA(dv=.(mean_dwell_time),
               wid=.(subject),
-              within=.(condition_social, condition_threat, condition_novelty),
+              within=.(condition_threat, condition_social, condition_novelty),
               # between=.(SPAI),
               detailed=T, type=3)
 anova %>% apa::anova_apa()
-print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
-print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # novelty
-print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # social * threat
-print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # social * novelty
-print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # threat * novelty
-print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # social * threat * novelty
+print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # threat * social
+print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # threat * novelty
+print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # social * novelty
+print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # threat * social * novelty
 
 # ezDesign(data=fixations.test.dwell, x=condition_social, y=condition_threat, col=condition_novelty)
 
-prop_sacc <- plot_grid(plot_prop_sacc, plot_prop_first_sacc_nov, ncol = 2, labels=c("A", "B"), align="vh")
-ggsave(file.path(path, "Plots", "Gaze", "test", "prop_sacc.png"), width=3500, height=1200, units="px")
+prop_sacc_novel <- plot_grid(plot_prop_sacc_novel, plot_prop_first_sacc_nov, ncol = 2, labels=c("A", "B"), align="vh")
+ggsave(file.path(path, "Plots", "Gaze", "test", "prop_sacc_novel.png"), width=3500, height=1200, units="px")
+
+prop_sacc_familiar <- plot_grid(plot_prop_sacc_familiar, plot_prop_first_sacc_familiar, ncol = 2, labels=c("A", "B"), align="vh")
+ggsave(file.path(path, "Plots", "Gaze", "test", "prop_sacc_familiar.png"), width=3500, height=1200, units="px")
 
 lat_dwell_plot <- plot_grid(plot_lat_sacc, plot_fix_test, ncol = 2, labels=c("A", "B"), align="vh")
 ggsave(file.path(path, "Plots", "Gaze", "test", "lat_dwell_test.png"), width=3500, height=1200, units="px")

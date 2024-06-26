@@ -62,7 +62,8 @@ requirePackage = function(name, load=T) {
   scores = read_delim(path.scores, delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
   scores$subject <- scores$VP
   scores <- scores %>%
-    select(subject, gender, age, motivation_points, SPAI, SIAS, STAI_T, UI, motivation, tiredness)
+    select(subject, gender, age, motivation_points, SPAI, SIAS, STAI_T, UI, motivation, tiredness) %>% 
+    mutate(motivation_points = as.numeric(motivation_points))
   
   # Files
   files.rating = list.files(path.logs, pattern=paste0("^", files.rating.prefix, ".*", files.rating.extension, "$"), full.names=TRUE)
@@ -206,6 +207,10 @@ ratings <- ratings %>%
 
 write.csv2(ratings, file.path(path, "Ratings", "ratings.csv"), row.names=FALSE, quote=FALSE)
 
+# # Filter for Motivation
+# ratings <- ratings %>% filter(motivation_points > 4)
+
+
 plots <- list()
 i = 1
 
@@ -232,8 +237,8 @@ for (p in c("Baseline", "Acquisition", "Test")) {
       aes(ymin = Mean - SD, ymax = Mean + SD),
       position = position_dodge(width = 0.7),
       width = 0.25) +
-    geom_line(data=ratings.phase, aes(y = rating, group = subject), alpha=0.1) +
-    geom_point(data=ratings.phase, aes(y = rating), size = 2, shape = 21, color = "black", alpha=0.3) + #, position=position_jitter(width=0.05)) +
+    #geom_line(data=ratings.phase, aes(y = rating, group = subject), alpha=0.1) +
+    geom_point(data=ratings.phase, aes(y = rating), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
     # labs(title = paste("Rating ", p, " Phase (N = ", n_distinct(ratings.phase$subject), ")", sep=""), x = "Conditions", y = "Rating") +
     labs(title = paste(p, "Phase", sep=" "), x = NULL, y = y_label) +
     theme_minimal() +
@@ -251,17 +256,17 @@ for (p in c("Baseline", "Acquisition", "Test")) {
       mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat), condition_novelty = as.factor(condition_novelty)) %>%
       ez::ezANOVA(dv=.(rating),
                   wid=.(subject),
-                  within=.(condition_social, condition_threat, condition_novelty),
+                  within=.(condition_threat, condition_social, condition_novelty),
                   # between=.(SPAI),
                   detailed=T, type=3)
     anova %>% apa::anova_apa()
-    print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
-    print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+    print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+    print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
     print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # novelty
-    print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # social * threat
-    print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # social * novelty
-    print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # threat * novelty
-    print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # social * threat * novelty
+    print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # threat * social
+    print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # threat * novelty
+    print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # social * novelty
+    print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # threat * social * novelty
     print(cor(ratings.phase$rating, ratings.phase$SPAI))
     
   } else {
@@ -271,12 +276,12 @@ for (p in c("Baseline", "Acquisition", "Test")) {
       mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
       ez::ezANOVA(dv=.(rating),
                   wid=.(subject),
-                  within=.(condition_social, condition_threat),
+                  within=.(condition_threat, condition_social),
                   # between=.(SPAI),
                   detailed=T, type=3)
     anova %>% apa::anova_apa()
-    print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # social
-    print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # threat
+    print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+    print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
     print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # interaction
     print(cor(ratings.phase$rating, ratings.phase$SPAI))
   }
