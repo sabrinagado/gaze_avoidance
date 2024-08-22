@@ -796,8 +796,25 @@ fixations = loadFixations(file.path(path.eye, "fixations.txt"), screen.height) %
   mutate(feedbackOnset = ifelse(is.na(feedbackOnset), picOnset + 2000, feedbackOnset))
 vpn.eye = fixations$subject %>% unique() %>% setdiff(exclusions.eye.num) %>% sort()
 
+saccades = loadSaccades(file.path(path.eye, "saccades.txt"), screen.height) %>% 
+  mutate(trial = trial - 2) %>% 
+  filter(trial > 0) %>%
+  left_join(conditions, by=c("subject", "trial")) %>% # get conditions & other variables
+  left_join(messages %>% filter(grepl("ImageOnset", event)) %>% # get image onset
+              rename(picOnset = time) %>% select(-event),
+            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
+  left_join(messages %>% filter(grepl("FeedbackOnset", event)) %>% # get feedback onset
+              rename(feedbackOnset = time) %>% select(-event),
+            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
+  left_join(messages %>% filter(grepl("ImageTestOnset", event)) %>% # get test onset
+              rename(picTestOnset = time) %>% distinct(subject, trial, .keep_all=T) %>% select(-event),
+            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
+  mutate(picOnset = ifelse(is.na(picOnset), picTestOnset, picOnset)) %>% 
+  select(-picTestOnset) %>% 
+  mutate(feedbackOnset = ifelse(is.na(feedbackOnset), picOnset + 2000, feedbackOnset))
+
 ###############################################################################
-# Acquisition
+# Acquisition-----
 ###############################################################################
 # determine valid acquisition trials by fixation time (invalid trials need not be evaluated by their baseline)
 eye.valid.trial = fixations %>% filter(grepl("acquisition", phase)) %>% # filter for acq trials
@@ -832,25 +849,7 @@ excluded_subjects = baseline.acq.summary %>% filter(included == FALSE)
 excluded_subjects = as.numeric(excluded_subjects$subject)
 print(paste0("Number of excluded subjects (Acquisition): ", length(excluded_subjects)))
 
-
 ### SACCADES
-saccades = loadSaccades(file.path(path.eye, "saccades.txt"), screen.height) %>% 
-  mutate(trial = trial - 2) %>% 
-  filter(trial > 0) %>%
-  left_join(conditions, by=c("subject", "trial")) %>% # get conditions & other variables
-  left_join(messages %>% filter(grepl("ImageOnset", event)) %>% # get image onset
-              rename(picOnset = time) %>% select(-event),
-            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
-  left_join(messages %>% filter(grepl("FeedbackOnset", event)) %>% # get feedback onset
-              rename(feedbackOnset = time) %>% select(-event),
-            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
-  left_join(messages %>% filter(grepl("ImageTestOnset", event)) %>% # get test onset
-              rename(picTestOnset = time) %>% distinct(subject, trial, .keep_all=T) %>% select(-event),
-            by=c("subject", "trial")) %>% arrange(subject, trial) %>% 
-  mutate(picOnset = ifelse(is.na(picOnset), picTestOnset, picOnset)) %>% 
-  select(-picTestOnset) %>% 
-  mutate(feedbackOnset = ifelse(is.na(feedbackOnset), picOnset + 2000, feedbackOnset))
-
 # ggplot(saccades, aes(x = end_x, y = end_y, color = subject)) +
 #   geom_point(size=0.1) +
 #   xlim(0, screen.width) +
@@ -1358,7 +1357,7 @@ ggsave(file.path(path, "Plots", "Gaze", "acquisition", paste0("gaze_acq.png")), 
 
 
 ###############################################################################
-# Competition
+# Attentional Competition ----
 ###############################################################################
 # Determine valid test trials by fixation time (invalid trials need not be evaluated by their baseline)
 end.testtrial = 2000
@@ -1538,8 +1537,10 @@ saccades.test2.prop <- saccades.test.analysis %>%
   filter(!contains_blink) %>%
   mutate(condition = as.factor(condition)) %>%
   group_by(subject) %>%
+  # group_by(subject, trial) %>%
   count(condition) %>%
   summarise(subject=subject, condition=condition, n=n, sum = sum(n)) %>%
+  # summarise(subject=subject, trial=trial, condition=condition, n=n, sum = sum(n)) %>%
   mutate(rel_freq = n/sum) %>%
   drop_na(condition) %>%
   ungroup %>%
@@ -1763,6 +1764,25 @@ saccades.test1.prop <- saccades.test.analysis %>%
   mutate(rel_freq = n/(sum)) %>% 
   ungroup %>%
   summarise(rel_freq = mean(rel_freq), .by=c(subject, condition))
+
+# # Average Latency First Saccade
+# saccades.test1.lat <- saccades.test.analysis %>% 
+#   # filter(motivation_points > 4) %>%  # Filter for Motivation
+#   # filter ((trial > acq2End) & (trial <= test1End)) %>%
+#   filter(!(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new"))) %>%
+#   mutate(condition = ifelse(angle < 1, NA, condition)) %>% 
+#   filter(blok) %>%
+#   filter(!contains_blink) %>%
+#   mutate(condition = as.factor(condition)) %>% 
+#   group_by(subject, trial) %>% 
+#   drop_na(condition) %>% 
+#   mutate(new_trial = ifelse((trial != lag(trial)), TRUE, FALSE)) %>% 
+#   mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial)) %>% 
+#   filter(new_trial) %>% 
+#   select(-new_trial) %>%
+#   ungroup %>%
+#   summarise(min_lat = min(start_time), mean_lat = mean(start_time), std_lat = sd(start_time))
+
 
 saccades.test1.prop <- bind_rows(saccades.test1.prop, saccades.test1.prop %>% tidyr::expand(subject, condition)) %>% 
   distinct(subject, condition, .keep_all=T) %>% 
