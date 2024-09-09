@@ -50,11 +50,7 @@ requirePackage("tidyverse")
 requirePackage("signal", load=F)
 
 #input
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-setwd('..')
-path = getwd()
-
-path.physio = file.path(path, "Physio")
+path.physio = file.path("Study 1", "Physio")
 
 if (exists("path.phys")==F)
   path.phys = file.path(path.physio, "HR") #TODO enter input path here

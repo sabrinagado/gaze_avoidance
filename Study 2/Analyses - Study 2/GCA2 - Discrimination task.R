@@ -16,21 +16,17 @@ vps_summary = tibble()
 code_times = c()
 
 # read experiment files
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-setwd('..')
-path = getwd()
-
-path.behavior = file.path(path, "Experiment", "gaze_discrimination_task2", "data")
+path.behavior = file.path("Study 2", "Experiment", "gaze_discrimination_task2", "data")
 
 filemat = list.files(path.behavior, pattern = "*.csv") # read all files from data-folder into a single list
 
 
 #cycle through all subject csv files
+cat("\n", "Read in subject csv files for discrimination performance:", "\n")
+pb <- txtProgressBar(min = 1, max = length(filemat), style = 3)
+i = 1
 for (subject in filemat){
   # subject <- filemat[1]  #use  file for practice and coding changes
-   
-  start.time <- Sys.time()
-  
   vp_data <- read.csv(file.path(path.behavior, subject)) # read data from files per subject
   if (!"key.rt" %in% colnames(vp_data)) {
     vp_data <- vp_data %>% 
@@ -45,10 +41,10 @@ for (subject in filemat){
            social = ifelse(stim1 %in% c("cs_pos_s","cs_neg_s", "cs_pos_s_new","cs_neg_s_new"), "social","non-social")) %>% 
            # novel = ifelse(stim1 %in% c("cs_pos_ns_new","cs_neg_ns_new", "cs_pos_s_new","cs_neg_s_new"), "novel","familiar")) %>%
     select(participant, condition, social, correctness, key.rt) %>%
-    group_by(participant,social,condition) %>%
     summarise(correct_sum = sum(correctness == "correct"),
               correct_mean = sum(correctness == "correct")/n(),
-              rt_mean = mean(key.rt,na.rm = T))
+              rt_mean = mean(key.rt,na.rm = T),
+              .by = c(participant, social, condition))
   
   # Create summary data
   vps_summary <- rbind(vps_summary,vp_summary)
@@ -60,25 +56,14 @@ for (subject in filemat){
     scale_x_discrete("Category") +
     scale_fill_viridis_d("Condition",end = 0.75) + 
     theme_classic()
-  ggsave(file.path(path, "Plots", "Discrimination", "individuals", paste0(participant, ".png")))
-    
+  ggsave(file.path("Study 2", "Plots", "Discrimination", "individuals", paste0(participant, ".png")), width=6, height=5)
   
-  # stuff for calculating computing duration
-  end.time <- Sys.time()  
-  time.taken <- end.time - start.time
-  code_times = c(code_times,round(as.numeric(time.taken),1))
-  mean_code_time = mean(code_times)
+  setTxtProgressBar(pb, i)
+  i = i+1
   
-  
-  if(match(subject,filemat) == 1) {
-    print(paste0(round(match(subject,filemat)/length(filemat)*100,1), "% ..... ",
-                 match(subject,filemat), " of ", length(filemat), " files processed!"))
-  } else {
-    print(paste0(round(match(subject,filemat)/length(filemat)*100,1), "% ..... ",
-                 match(subject,filemat), " of ", length(filemat), " files processed! ..... ", 
-                 round((mean_code_time*length(filemat)-mean_code_time * match(subject,filemat))/60,1), " min remaining"))
-  }
-} #end-loop
+}
+
+close(pb)
 
 vps_summary <- vps_summary %>% 
   ungroup
@@ -87,12 +72,13 @@ vps_summary <- vps_summary %>%
 vps_summary_grouped = vps_summary %>%
   summarise(correct_mean = mean(correct_mean), rt_mean = mean(rt_mean) * 1000, .by=c(participant, social))
 
-vps_summary_grouped %>%
-  summarise(correct_sd = sd(correct_mean) * 100, correct_mean = mean(correct_mean) * 100, .by=c(social))
+print(vps_summary_grouped %>% summarise(correct_sd = sd(correct_mean) * 100, correct_mean = mean(correct_mean) * 100, .by=c(social)))
 
-vps_summary_grouped %>%
-  t_test(data=., correct_mean ~ social, paired = T, alternative = "two.sided") %>% 
-  apa::t_apa()
+cat("\n\n", "T-test of Discrimination task", "\n")
+vps_summary_grouped.test <- vps_summary_grouped %>%
+  mutate(social = str_remove_all(social, "-")) %>% 
+  pivot_wider(id_cols = participant, names_from = social, values_from = correct_mean)
+apa::t_test(vps_summary_grouped.test$social, vps_summary_grouped.test$nonsocial, alternative = "two.sided", paired=TRUE) %>% apa::t_apa()
 
 vps_summary_grouped %>% 
   group_by(social) %>%
@@ -107,73 +93,12 @@ vps_summary_grouped %>%
   # scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1.05)) +
   scale_x_discrete(NULL, labels = c("non-social","social")) +
   scale_fill_viridis_d("Condition", end = 0.25, begin = 0.25, guide = "none" ) + 
-  theme_minimal() + 
-  scale_fill_viridis_d() + 
+  theme_minimal() +
   scale_color_viridis_d() +
   theme(legend.position = "none")
-ggsave(file.path(path, "Plots", "Discrimination", "ga_correct.png"), width=1600, height=1600, units="px")
-
-# vps_summary %>%
-#   ez::ezANOVA(dv=.(correct_mean),
-#               wid=.(participant),
-#               within=.(social, condition),
-#               # between=.(SPAI),
-#               detailed=T, type=3) %>%
-#   apa::anova_apa() %>%
-#   ungroup()
-
-# # Response Times
-# vps_summary_grouped %>%
-#   summarise(correct_rt = sd(rt_mean) * 100, correct_rt = mean(rt_mean) * 100, .by=c(social))
-# 
-# vps_summary_grouped %>%
-#   t_test(data=., rt_mean ~ social, paired = T, alternative = "two.sided") %>%
-#   apa::t_apa()
-# 
-# vps_summary_grouped %>%
-#   group_by(social) %>%
-#   summarise(correct = mean(rt_mean, na.rm = T), se = sd(rt_mean)/sqrt(n())) %>%
-#   ggplot(aes(x = social, y = correct, fill = social)) +
-#   geom_col(position = position_dodge()) +
-#   geom_errorbar(aes(ymax = correct + se, ymin = correct - se), width = 0.4) +
-#   geom_point(data = vps_summary_grouped, aes(x = social, y = rt_mean), size = 2, shape = 21, color = "black", alpha=0.3, position = position_jitter(width=0.2, height=0.005)) +
-#   labs(title = paste("Reaction Times (N = ", n_distinct(vps_summary_grouped$participant), ")", sep=""), x = "Category", y = "RT [ms]") +
-#   scale_x_discrete("Category", labels = c("non-social","social")) +
-#   scale_fill_viridis_d("Condition",end = 0.25,begin = 0.25, guide = "none" ) +
-#   theme_minimal() +
-#   scale_fill_viridis_d() +
-#   scale_color_viridis_d() +
-#   theme(legend.position = "none")
-# ggsave(file.path(path, "Plots", "Discrimination", "ga_rt.png"), width=1800, height=2000, units="px")
-# 
-# vps_summary %>%
-#   ez::ezANOVA(dv=.(rt_mean),
-#               wid=.(participant),
-#               within=.(social, condition),
-#               # between=.(SPAI),
-#               detailed=T, type=3) %>%
-#   apa::anova_apa() %>%
-#   ungroup()
-
+ggsave(file.path("Study 2", "Plots", "Discrimination", "ga_correct.png"), width=1600, height=1600, units="px")
 
 vps.discrimination.score <- vps_summary %>%
   summarise(discrimination = mean(correct_mean), .by=c("participant", "social"))
 names(vps.discrimination.score) = c("subject","condition_social","discrimination")
-write.csv2(vps.discrimination.score, file.path(path, "Behavior", "discrimination.csv"), row.names=FALSE, quote=FALSE)
-
-
-# disc.wide <- vps.discrimination.score %>%
-#   pivot_wider(names_from = condition_social, values_from = discrimination)
-# 
-# # Get Scores
-# path.scores = file.path(path, "Questionnaires", "demo_scores.csv")
-# scores = read_delim(path.scores, delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
-# scores$subject <- scores$VP
-# scores <- scores %>%
-#   select(subject, gender, age, motivation_points, SPAI, SIAS, STAI_T, UI, motivation, tiredness)
-# 
-# disc.wide <- disc.wide %>%
-#   left_join(scores, by="subject") %>% 
-#   arrange(subject)
-# 
-# write.csv2(disc.wide, file.path(path, "discrimination.csv"), row.names=FALSE, quote=FALSE)
+write.csv2(vps.discrimination.score, file.path("Study 2", "Behavior", "discrimination.csv"), row.names=FALSE, quote=FALSE)

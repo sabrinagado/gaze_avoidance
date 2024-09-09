@@ -146,11 +146,7 @@ eda_inflection_list = list()
 eda_df = tibble()
 eda_unified = tibble()
 
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-setwd('..')
-path = getwd()
-
-path.physio = file.path(path, "Physio")
+path.physio = file.path("Study 1", "Physio")
 
 filemat = list.files(file.path(path.physio, "Raw"), pattern="*.txt") # Das sollte der Ordner sein, in dem deine ganzen Files liegen. Pro VP ein File.
 
@@ -440,7 +436,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
           # geom_point(data=minmax_unified,aes(x=time.min,y=EDA.min),shape=25,size=1) +
           # geom_point(data=minmax_unified,aes(x=time.max,y=EDA.max),shape=24,size=1) +
           ggtitle(as.integer(substr(filename, 5, 6))) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>%
-      ggsave(file.path(path, "Plots", "EDA", "UCS", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
+      ggsave(file.path("Study 1", "Plots", "EDA", "UCS", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
     
   }
   
@@ -752,7 +748,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
           xlab("Time") + ylab("EDA") +
           ggtitle(as.integer(substr(filename, 5, 6))) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
       #print()
-      ggsave(file.path(path, "Plots", "EDA", "CS", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
+      ggsave(file.path("Study 1", "Plots", "EDA", "CS", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
     
     print("CR plotting complete!")
   }

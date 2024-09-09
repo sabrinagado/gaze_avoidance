@@ -164,10 +164,6 @@ pt_null_distribution <- function(data, dv, within, factor1, factor2, trial, time
   return(null_distributions)
 }
 
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-setwd('..')
-path = getwd()
-
 ################################################################################
 # PUPIL ------------------------------------------------------------------------
 ################################################################################
@@ -287,7 +283,7 @@ plot_pupil_cluster <- ga_unified %>% filter(valid == TRUE) %>%
       theme_bw() +
       scale_size_manual(NULL, values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383")))) # , "#e874ff", "#ffdd74"
   }
-ggsave(file.path(path, "Plots", "Pupil", "cs_test_cluster.png") ,type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave(file.path("Study 1", "Plots", "Pupil", "cs_test_cluster.png") ,type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 
@@ -374,7 +370,7 @@ ggsave(file.path(path, "Plots", "Pupil", "cs_test_cluster.png") ,type="cairo-png
 #       theme_bw() +
 #       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383"))))  # , "#e874ff", "#ffdd74"
 #   }
-# ggsave(file.path(path, "Plots", "Pupil", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+# ggsave(file.path("Study 1", "Plots", "Pupil", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 # # Acquisition
 # # Long format for statistical testing
@@ -572,7 +568,7 @@ plot_eda_cluster <- eda_unified %>%
       theme_bw() # +
     # scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
   }
-ggsave(file.path(path, "Plots", "EDA", "cs_test_cluster.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave(file.path("Study 1", "Plots", "EDA", "cs_test_cluster.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 # # BINS
@@ -657,7 +653,7 @@ ggsave(file.path(path, "Plots", "EDA", "cs_test_cluster.png"),type="cairo-png", 
 #       theme_bw() +
 #       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
 #   }
-# ggsave(file.path(path, "Plots", "EDA", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+# ggsave(file.path("Study 1", "Plots", "EDA", "cs_test_bins.png"),type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 # # Acquisition
 # # Long format for statistical testing
@@ -859,7 +855,7 @@ plot_hr_cluster <- heart %>%
       theme_bw() +
       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
   }
-ggsave(file.path(path, "Plots", "HR", "cs_test_cluster.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+ggsave(file.path("Study 1", "Plots", "HR", "cs_test_cluster.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 # # BINS
@@ -945,7 +941,7 @@ ggsave(file.path(path, "Plots", "HR", "cs_test_cluster.png"), type="cairo-png", 
 #       theme_bw() +
 #       scale_size_manual("effects", values=rep(1,4), guide=guide_legend(override.aes = list(colour=c("#ff8383", "#e874ff", "#ffdd74"))))
 #   }
-# ggsave(file.path(path, "Plots", "HR", "cs_test_binsr.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
+# ggsave(file.path("Study 1", "Plots", "HR", "cs_test_binsr.png"), type="cairo-png", width=2500/400, height=1080/300, dpi=300)
 
 
 # # Acquisition
@@ -1025,4 +1021,4 @@ legend <- get_legend(plot_pupil_cluster + guides(color = guide_legend(nrow = 1))
 # add the legend underneath the row we made earlier. Give it 10% of the height of one plot (via rel_heights).
 plot_grid(physio_plot, legend, ncol = 1, rel_heights = c(1, .1))
 
-ggsave(file.path(path, "Plots", paste0("physio_test.png")), width=3500, height=1200, units="px")
+ggsave(file.path("Study 1", "Plots", paste0("physio_test.png")), width=3500, height=1200, units="px")

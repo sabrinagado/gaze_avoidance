@@ -9,13 +9,8 @@ library(tidyr)
 library(tidyverse)
 library(cowplot)
 
-# Set working directory
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-setwd('..')
-path = getwd()
-
 # Read data from Excel file
-df_scores <- read_excel(file.path(path, "Questionnaires", "questionnaires.xlsx"))
+df_scores <- read_excel(file.path("Study 2", "Questionnaires", "questionnaires.xlsx"))
 
 # Recode variables from numeric to string
 df_scores$gender <- recode(df_scores$gender, `1` = "male", `2` = "female", `3` = "diverse")
@@ -111,24 +106,23 @@ df_demo <- df_scores %>%
 
 # Create Summary
 df_summary <- bind_cols(df_demo, df_debriefing, df_labbook, df_vas, df_spai, df_sias, df_stai, df_ui)
-print(paste("Age = ", round(mean(df_summary$age), 1), ", SD = ", round(sd(df_summary$age), 1), ", Range = ", round(min(df_summary$age)), " - ", round(max(df_summary$age))))
-table(df_summary$gender)
-prop.table(table(df_summary$gender)) * 100
+cat("Age = ", round(mean(df_summary$age), 1), ", SD = ", round(sd(df_summary$age), 1), ", Range = ", round(min(df_summary$age)), " - ", round(max(df_summary$age)), "\n")
+print(table(df_summary$gender))
+print(round(prop.table(table(df_summary$gender)), 3) * 100)
+print(table(df_summary$handedness))
 
-table(df_summary$handedness)
-
-print(paste("Motivation for Points = ", mean(df_summary$motivation_points, na.rm=TRUE), ", SD = ",sd(df_summary$motivation_points, na.rm=TRUE), ", Range = ", min(df_summary$motivation_points, na.rm=TRUE), " - ", max(df_summary$motivation_points, na.rm=TRUE)))
+cat("Motivation for Points = ", round(mean(df_summary$motivation_points, na.rm=TRUE), 2), ", SD = ", round(sd(df_summary$motivation_points, na.rm=TRUE), 2), ", Range = ", min(df_summary$motivation_points, na.rm=TRUE), " - ", max(df_summary$motivation_points, na.rm=TRUE), "\n")
 
 # Write summary to CSV
-write.csv2(df_summary, file.path(path, "Questionnaires", "demo_scores.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
+write.csv2(df_summary, file.path("Study 2", "Questionnaires", "demo_scores.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
 
 # # Write summary to CSV for jamovi
 # df_summary <- df_summary %>% 
 #   select(-c(purpose, variables, labbook))
-# write.csv2(df_summary, file.path(path, "Questionnaires", "demo_scores_jamovi.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
+# write.csv2(df_summary, file.path("Study 2", "Questionnaires", "demo_scores_jamovi.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
 
 # Histogram
-plot_spai <- ggplot(df_summary, aes(x = SPAI)) +
+plot_spai_exp2 <- ggplot(df_summary, aes(x = SPAI)) +
   geom_histogram(aes(y = ..density..), binwidth = 0.2, color="grey", size=0.3) +
   geom_vline(aes(xintercept = median(SPAI), color = "Median"), size=1) +
   geom_vline(aes(xintercept = 2.79, color = "Cut-Off (Remission)"), size=1) +
@@ -137,22 +131,22 @@ plot_spai <- ggplot(df_summary, aes(x = SPAI)) +
   labs(x = "SPAI (Social Anxiety)", y = "Density") +
   theme_minimal() +
   scale_colour_manual(values = c("Cut-Off (Remission)" ='yellowgreen', "Median" ='deepskyblue4'), name="")
-ggsave(file.path(path, "Plots", "Distribution_SPAI.png"),  width=1800, height=1000, units="px")
+# ggsave(file.path("Study 2", "Plots", "Distribution_SPAI.png"),  width=1800, height=1000, units="px")
 
 
-plot_sias <- ggplot(df_summary, aes(x = SIAS)) +
-  geom_histogram(aes(y = ..density..), binwdith=2, color="grey", size=0.3) +
-  geom_vline(aes(xintercept = median(SIAS), color = "Median"), size=1) +
-  geom_vline(aes(xintercept = 30, color = "Clinical Cut-Off"), size=1) +
-  geom_density(size = 0.5, color="darkgrey") +
-  scale_x_continuous(limits = c(0, 65), breaks = seq(0, 65, 5)) +
-  labs(x = "SIAS (Social Anxiety)", y = "Density") +
-  theme_minimal() +
-  scale_colour_manual(values = c("Clinical Cut-Off" ='yellowgreen', "Median" ='deepskyblue4'), name="")
-ggsave(file.path(path, "Plots", "Distribution_SIAS.png"),  width=1800, height=1000, units="px")
+# plot_sias <- ggplot(df_summary, aes(x = SIAS)) +
+#   geom_histogram(aes(y = ..density..), binwdith=2, color="grey", size=0.3) +
+#   geom_vline(aes(xintercept = median(SIAS), color = "Median"), size=1) +
+#   geom_vline(aes(xintercept = 30, color = "Clinical Cut-Off"), size=1) +
+#   geom_density(size = 0.5, color="darkgrey") +
+#   scale_x_continuous(limits = c(0, 65), breaks = seq(0, 65, 5)) +
+#   labs(x = "SIAS (Social Anxiety)", y = "Density") +
+#   theme_minimal() +
+#   scale_colour_manual(values = c("Clinical Cut-Off" ='yellowgreen', "Median" ='deepskyblue4'), name="")
+# ggsave(file.path("Study 2", "Plots", "Distribution_SIAS.png"),  width=1800, height=1000, units="px")
 
 
-plot_stai <- ggplot(df_summary, aes(x = STAI_T)) +
+plot_stai_exp2 <- ggplot(df_summary, aes(x = STAI_T)) +
   geom_histogram(aes(y = ..density..), color="grey", size=0.3) +
   geom_vline(aes(xintercept = median(STAI_T), color = "Median"), size=1) +
   geom_vline(aes(xintercept = 39, color = "Clinical Cut-Off"), size=1) +
@@ -161,7 +155,7 @@ plot_stai <- ggplot(df_summary, aes(x = STAI_T)) +
   labs(x = "STAI (Trait Anxiety)", y = "Density") +
   theme_minimal() +
   scale_colour_manual(values = c("Clinical Cut-Off" ='yellowgreen', "Median" ='deepskyblue4'), name="")
-ggsave(file.path(path, "Plots", "Distribution_STAI.png"),  width=1800, height=1000, units="px")
+# ggsave(file.path("Study 2", "Plots", "Distribution_STAI.png"),  width=1800, height=1000, units="px")
 
-score_plot <- plot_grid(plot_spai, plot_stai, ncol = 2, labels=c("C", "D"), align="vh")
-ggsave(file.path(path, "Plots", "scores.png"),  width=3500, height=1000, units="px")
+# score_plot <- plot_grid(plot_spai, plot_stai, ncol = 2, labels=c("C", "D"), align="vh")
+# ggsave(file.path("Study 2", "Plots", "scores.png"),  width=3500, height=1000, units="px")

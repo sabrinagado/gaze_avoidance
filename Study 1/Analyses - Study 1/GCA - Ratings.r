@@ -14,7 +14,6 @@ requirePackage = function(name, load=T) {
 
 { #install packages needed ---------------------------------------------------------------
   requirePackage("scales", load=F)
-  requirePackage("cowplot", load=F)
   requirePackage("readxl", load=F)
   requirePackage("apaTables", load=F)
   requirePackage("schoRsch", load=F)
@@ -39,13 +38,8 @@ requirePackage = function(name, load=T) {
   vps <- vps[!(vps %in% exclusions.eye.num)]
 }
 
-{ # Paths -------------------------------------------------------------------
-  setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-  setwd('..')
-  path = getwd()
-  
-  #load behavioral data (logs)
-  path.logs = file.path(path, "Experiment", "gaze_avoidance_task", "data")
+{ #load behavioral data (logs)
+  path.logs = file.path("Study 1", "Experiment", "gaze_avoidance_task", "data")
   files.log.prefix = "gca_avoidance_task_"
   files.log.extension = ".log"
   
@@ -53,7 +47,7 @@ requirePackage = function(name, load=T) {
   files.rating.extension = ".csv"
   
   # Get Scores
-  path.scores = file.path(path, "Questionnaires", "demo_scores.csv")
+  path.scores = file.path("Study 1", "Questionnaires", "demo_scores.csv")
   scores = read_delim(path.scores, delim=";", locale=locale(decimal_mark=","), na=".", show_col_types=F)
   scores$subject <- scores$VP
   scores <- scores %>%
@@ -71,9 +65,14 @@ requirePackage = function(name, load=T) {
       condition = character(0),
       rating = numeric(0)
     )
+    
+    cat("\n", "Read in subject csv files for ratings:", "\n")
+    pb <- txtProgressBar(min = 1, max = length(files.rating.path), style = 3)
+    i = 1
     for (file.rating.path in files.rating.path) {
       # file.rating.path = files.rating[1]
-      rating = read_csv(file.rating.path)
+      rating = suppressMessages(read_csv(file.rating.path, show_col_types=F))
+      
       rating <- rating %>%
         select(stimtype, sliderStim.response)
       rating <- na.omit(rating)
@@ -93,7 +92,12 @@ requirePackage = function(name, load=T) {
       names(rating) = c("subject","phase","condition", "rating")
       
       ratings <- rbind(rating, ratings)
+      
+      setTxtProgressBar(pb, i)
+      i = i+1
     }
+    
+    close(pb)
     
     ratings <- ratings %>% arrange(subject)
     
@@ -143,73 +147,57 @@ ratings <- ratings %>%
 ratings <- ratings %>%
   left_join(scores, by="subject")
 
-write.csv2(ratings, file.path(path, "Ratings", "ratings.csv"), row.names=FALSE, quote=FALSE)
+write.csv2(ratings, file.path("Study 1", "Ratings", "ratings.csv"), row.names=FALSE, quote=FALSE)
 
-plots <- list()
-i = 1
 for (p in c("Baseline", "Acquisition", "Test")) {
   # p = "Baseline"
+  cat("\n\n", "Analyses of the ratings in the", tolower(p), "phase\n")
+  
   ratings.phase <- ratings %>%
     filter(phase == tolower(p))
 
   ratings.phase.summary <- ratings.phase %>%
     summarise(Mean = mean(rating), SD = sd(rating), .by=condition)
-  if (p == "Baseline") {
-    y_label = "Rating"
-  } else {
-    y_label = NULL
-  }
-
-  plot <- ggplot(ratings.phase.summary, aes(x = condition, y = Mean, fill = condition)) +
-    geom_col(position = "dodge", width = 0.7) +
-    geom_errorbar(
-      aes(ymin = Mean - SD, ymax = Mean + SD),
-      position = position_dodge(width = 0.7),
-      width = 0.25) +
-    #geom_line(data=ratings.phase, aes(y = rating, group = subject), alpha=0.1) +
-    geom_point(data=ratings.phase, aes(y = rating), size = 2, shape = 21, color = "black", alpha=0.1, position = position_jitter(width=0.2, height=0.005)) +
-    # labs(title = paste("Rating ", p, " Phase (N = ", n_distinct(ratings.phase$subject), ")", sep=""), x = "Conditions", y = "Rating") +
-    labs(title = paste(p, "Phase", sep=" "), x = NULL, y = y_label) +
-    theme_minimal() +
-    theme(legend.position = "none") +
-    scale_fill_viridis_d() +
-    scale_color_viridis_d() + 
-    coord_cartesian(ylim = c(1, 10)) + 
-    scale_y_continuous(limits=c(0, 10), breaks=c(2, 4, 6, 8, 10), minor_breaks=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-
-  # ggsave(file.path(path, "Plots", "Ratings", paste0("ratings_", tolower(p), ".png")), width=1500, height=2000, units="px")
-  plots[[i]] <- plot
-
-  print(p)
+  if (p == "Baseline") {y_label = "Rating"} else {y_label = NULL}
+  
   anova <- ratings.phase %>%
-    group_by(subject, condition_social, condition_threat) %>%
+    # group_by(subject, condition_social, condition_threat) %>%
     mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
     ez::ezANOVA(dv=.(rating),
                 wid=.(subject),
                 within=.(condition_threat, condition_social),
                 # between=.(SPAI),
-                detailed=T, type=3)
+                detailed=T,
+                type=3)
   anova %>% apa::anova_apa()
   print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
   print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
   print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # interaction
   
-  
-  # print("t-test threat")
-  # ratings.phase %>%
-  #   summarize(rating = mean(rating), .by=c(subject, condition_threat)) %>% 
-  #   t_test(data=., rating ~ condition_threat, paired = T, alternative = "two.sided") %>% 
-  #   apa::t_apa()
-  # 
-  # print("t-test stimulus")
-  # ratings.phase %>%
-  #   summarize(rating = mean(rating), .by=c(subject, condition_social)) %>% 
-  #   t_test(data=., rating ~ condition_social, paired = T, alternative = "two.sided") %>% 
-  #   apa::t_apa()
-  # 
-  # print(cor(ratings.phase$rating, ratings.phase$SPAI))
-  i = i + 1
+  cat("\n\n", "Correlation between ratings and SPAI\n")
+  print(cor.test(ratings.phase$rating, ratings.phase$SPAI) %>% apa::cor_apa())
 }
 
-rating_plot <- plot_grid(plots[[1]], plots[[2]], plots[[3]], ncol = 3)
-ggsave(file.path(path, "Plots", "Ratings", paste0("Ratings.png")), width=3500, height=1200, units="px")
+ratings <- ratings %>% mutate(phase = str_to_title(phase))
+ratings <- ratings %>% mutate(phase = factor(phase, levels=c("Baseline", "Acquisition", "Test"), ordered=TRUE))
+
+ratings <- ratings %>% mutate(condition = str_replace_all(condition, "\n", " "))
+
+ratings.summary <- ratings %>%
+  summarise(mean_rating = mean(rating), sd_rating = sd(rating), .by=c(phase, condition))
+
+plot_ratings_exp1 <- ggplot(ratings.summary, aes(x = phase, y = mean_rating, group = condition, color=condition)) +
+  geom_point(data = ratings, aes(x = phase, y = rating, group = condition, color = condition), 
+             position = position_jitterdodge(jitter.width = 0.1, dodge.width = 0.7), alpha = 0.2, size=1) +
+  geom_line(position = position_dodge(width = 0.7), linewidth = 0.5) +
+  geom_point(position = position_dodge(width = 0.7), shape = "square", size=3) +
+  geom_errorbar(
+    aes(ymin = mean_rating - sd_rating, ymax = mean_rating + sd_rating),
+    position = position_dodge(width = 0.7),
+    width = 0.25, linewidth = 0.5) +
+  labs(y = "Rating", x = "") +
+  guides(color = guide_legend(title = ""), size="none") +
+  theme_minimal() +
+  # theme(legend.position="bottom") +
+  scale_fill_viridis_d() +
+  scale_color_viridis_d()

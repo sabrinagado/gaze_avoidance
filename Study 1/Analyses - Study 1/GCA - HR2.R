@@ -70,11 +70,7 @@ bin.window = c(seq(0, 10, by=bin_width)) # Scoring bins in seconds (real time sc
   }
 }
 
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-setwd('..')
-path = getwd()
-
-path.physio = file.path(path, "Physio")
+path.physio = file.path("Study 1", "Physio")
 
 trigger_mat <- read.csv2(file.path(path.physio, "Trigger", "conditions.csv")) %>%
   mutate(subject = sprintf("gca_%02d", subject),

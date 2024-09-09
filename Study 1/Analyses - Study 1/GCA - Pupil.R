@@ -80,11 +80,7 @@ baselineWindow = c(-0.5, 0)
   }
 }
 
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-setwd('..')
-path = getwd()
-
-path.physio = file.path(path, "Physio")
+path.physio = file.path("Study 1", "Physio")
 
 data = read.csv2(file.path(path.physio, "pupil.txt"), sep ="\t", dec = ",", na.strings=".")
 
@@ -136,7 +132,7 @@ pupil_df = tibble()
 ga_unified = tibble()
 code_times = c()
 
-path.msg = file.path(path, "Gaze")
+path.msg = file.path("Study 1", "Gaze")
 messages = read.csv2(file.path(path.msg, "messages.csv"), sep =";")
 messages <- messages %>% 
   filter(grepl("Onset", event))
