@@ -339,7 +339,7 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
       geom_point(data=eda_minima, color="blue") + 
       ggtitle(filename)
     if (check_minmax_plots) sclPlot %>% print()
-    if (saveSclPlotsToFile) sclPlot %>% ggsave(paste0("../Plots/EDA/", filename, ".png"), plot=., device="png", width=1920/50, height=1080/300, dpi=300)
+    if (saveSclPlotsToFile) sclPlot %>% ggsave(paste0("../Study 1/Plots/EDA/", filename, ".png"), plot=., device="png", width=1920/50, height=1080/300, dpi=300)
   }
   
   # UCR Scoring    
@@ -769,20 +769,13 @@ for (subject_inmat in filemat){ #Jetzt rechnet er den Spaß für jedes File durc
 
 
 
-# for (t in 1:nrow(eda_unified)) {
-#   eda_unified$EDA[[t]] = eda_unified$EDA[[t]] %>% 
-#     mutate(EDA_bl = EDA - eda_unified$Baseline[[t]], ID = eda_unified$ID[[t]])
-# }
-# 
-# rm(eda, eda_vp)
-
 # Read or Save eda_unified and eda_df for further processing
 
-saveRDS(eda_unified,"EDA_unified.RData")
-saveRDS(eda_df,"EDA_df.RData")
+saveRDS(eda_unified, file.path("Study 1", "Physio", "EDA_unified.RData"))
+saveRDS(eda_df,file.path("Study 1", "Physio", "EDA_df.RData"))
 
-eda_unified <- readRDS("EDA_unified.RData")
-eda_df <- readRDS("EDA_df.Rdata")
+eda_unified <- readRDS(file.path("Study 1", "Physio", "EDA_unified.RData"))
+eda_df <- readRDS(file.path("Study 1", "Physio", "EDA_df.Rdata"))
 
 responder <- eda_df %>%
  mutate(scl_bl = abs(SCL-Baseline)) %>%

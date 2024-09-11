@@ -9,6 +9,8 @@ library(tidyr)
 library(tidyverse)
 library(cowplot)
 
+theme_set(theme_minimal(base_size = 16))
+
 # Read data from Excel file
 df_scores <- read_excel(file.path("Study 2", "Questionnaires", "questionnaires.xlsx"))
 
@@ -129,7 +131,7 @@ plot_spai_exp2 <- ggplot(df_summary, aes(x = SPAI)) +
   geom_density(size = 0.5, color="darkgrey") +
   scale_x_continuous(limits = c(0, 6), breaks = seq(0, 6, 1)) +
   labs(x = "SPAI (Social Anxiety)", y = "Density") +
-  theme_minimal() +
+  # theme_minimal() +
   scale_colour_manual(values = c("Cut-Off (Remission)" ='yellowgreen', "Median" ='deepskyblue4'), name="")
 # ggsave(file.path("Study 2", "Plots", "Distribution_SPAI.png"),  width=1800, height=1000, units="px")
 
@@ -153,7 +155,7 @@ plot_stai_exp2 <- ggplot(df_summary, aes(x = STAI_T)) +
   geom_density(size = 0.5, color="darkgrey") +
   scale_x_continuous(limits = c(20, 70), breaks = seq(20, 70, 5)) +
   labs(x = "STAI (Trait Anxiety)", y = "Density") +
-  theme_minimal() +
+  # theme_minimal() +
   scale_colour_manual(values = c("Clinical Cut-Off" ='yellowgreen', "Median" ='deepskyblue4'), name="")
 # ggsave(file.path("Study 2", "Plots", "Distribution_STAI.png"),  width=1800, height=1000, units="px")
 

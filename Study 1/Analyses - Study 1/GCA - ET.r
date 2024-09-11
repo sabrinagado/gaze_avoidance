@@ -4,6 +4,8 @@
 # Code adapted from Mario Reutter & Janna Teigeler
 ###############################################################################
 
+theme_set(theme_minimal(base_size = 16))
+
 if(!require(tidyverse)) install.packages("tidyverse"); library(tidyverse)
 
 requirePackage = function(name, load=T) {
@@ -27,6 +29,8 @@ requirePackage = function(name, load=T) {
   requirePackage("emmeans", load=T)
   requirePackage("cowplot", load=T)
 }
+
+theme_set(theme_minimal(base_size = 16))
 
 { # Variables ---------------------------------------------------------------
   # a priori exclusions for all variables
@@ -866,7 +870,7 @@ plot_saccades_acq_exp1 <- ggplot(saccades.acq.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Proportion of Approach Trials", sep=""), x = NULL, y = "Proportion") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -927,7 +931,7 @@ ggplot(avoidance_corr.acq.prop, aes(x = discrimination, y = relative_frequency_c
   geom_smooth(method = "lm", aes(fill=Category), alpha = 0.1) +
   # labs(title = paste("Correlation of Discrimination and Avoidance Performance (N = ", n_distinct(avoidance_corr.acq.prop$subject), ")", sep=""), x = "Discrimination Score", y = "Performance Score") +
   labs(title = "Correlation of Discrimination and Performance", x = "Discrimination Score", y = "Performance Score") +
-  theme_minimal() +
+  # theme_minimal() +
   scale_fill_viridis_d() +
   scale_color_viridis_d() +
   theme(legend.position="top", legend.box = "horizontal", legend.title=element_blank())
@@ -964,7 +968,7 @@ plot_latencies_acq_exp1 <- ggplot(saccades.acq.lat.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Latency of First Saccade", sep=""), x = NULL, y = "Latency [ms]") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1018,7 +1022,7 @@ plot_lengths_acq_exp1 <- ggplot(saccades.acq.len.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Average Length of Saccades", sep=""), x = NULL, y = "Length [degree visual angle]") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1109,7 +1113,7 @@ plot_fixations_acq_exp1 <- ggplot(fixations.acq.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Dwell Time", sep=""), x = NULL, y = "Dwell time [ms]") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1237,7 +1241,7 @@ plot_fixations_test_exp1 <- ggplot(fixations.test.dwell.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Proportional Dwell Time", sep=""), x = NULL, y = "Proportion") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1337,8 +1341,8 @@ plot_sacc_test_exp1 <- ggplot(saccades.test.roi.summary %>%
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
-  labs(title = paste("Proportion of Saccades Away from Stimulus", sep=""), x = NULL, y = "Proportion") +
-  theme_minimal() +
+  labs(title = paste("Prop. of Sacc. Away from Stimulus", sep=""), x = NULL, y = "Proportion") +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 

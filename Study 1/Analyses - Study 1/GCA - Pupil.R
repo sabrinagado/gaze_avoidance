@@ -396,7 +396,7 @@ for (subject_inmat in codes){
           xlab("Time") + ylab("Diameter") +
           ggtitle(filename) + theme_bw() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))} %>% 
       #print()
-      ggsave(paste0("../Plots/Pupil/subject_level/", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
+      ggsave(paste0("../Study 1/Plots/Pupil/subject_level/", filename, ".png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
     
     unified %>% filter(valid) %>% 
       .$diameter %>% bind_rows() %>%
@@ -410,7 +410,7 @@ for (subject_inmat in codes){
           xlab("Time") + ylab("Diameter") +
           ggtitle(filename) + theme_bw() + theme(plot.title = element_text(hjust = 0.5))} %>% 
       #print()
-      ggsave(paste0("../Plots/Pupil/subject_level/", filename, "_average.png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
+      ggsave(paste0("../Study 1/Plots/Pupil/subject_level/", filename, "_average.png"), plot=., device="png", width=1920/150, height=1080/150, dpi=300)
     
     print("Cr plotting successful!")
     
@@ -441,8 +441,8 @@ for (subject_inmat in codes){
   
 } # end inmat for loop
 
-saveRDS(ga_unified,"ET_pupil_ga_unified.RData")
-saveRDS(pupil_df,"ET_pupil_df.RData")
+saveRDS(ga_unified, file.path("Study 1", "Physio", "ET_pupil_ga_unified.RData"))
+saveRDS(pupil_df, file.path("Study 1", "Physio", "ET_pupil_df.RData"))
 
 pupil_df <- pupil_df %>% 
   mutate(valid = as.logical(valid))

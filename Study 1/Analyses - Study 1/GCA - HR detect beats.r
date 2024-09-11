@@ -784,29 +784,29 @@ while(T) {
 
 # { # Error detection ---------------------------------------------------------
 #   # range of heart rate changes (in percent) across all subjects
-#   ranges = list.files(path.rpeaks, full.names = T) %>% 
+#   ranges = list.files(path.rpeaks, full.names = T) %>%
 #     # .[c(-88)] %>% #exclude due to extrasystoles
 #     # .[-c(63, 86)] %>% #exclude subjects from range analysis if they have already been checked manually
 #     sapply(function(x) { allrpeak = read.csv2(x); allHr = 60/diff(allrpeak$rpeaks); allHrMod = tail(allHr / lag(allHr), -1); return(range(allHrMod))})
 #   ranges %>% as.vector() %>% range() %>% {(. - 1) * 100} %>% round(2) %>% paste0("%", collapse=", ") %>% cat("\nRange of all heart range changes (beat-by-beat, in percent): ", ., "\n")
 #   ranges %>% colnames() %>% .[ranges %>% which.min() %>% {. / 2} %>% ceiling()] %>% paste("Min:", .) %>% cat("\n")
 #   ranges %>% colnames() %>% .[ranges %>% which.max() %>% {. / 2} %>% ceiling()] %>% paste("Max:", .) %>% cat("\n")
-#   
+# 
 #   #find minimum in percental heart range change for last subject
 #   #time.min = allrpeak[which.min(allHrMod)]; {time.min > analysis.sequence} %>% which() %>% tail(1) %>% paste0("Segment ", ., " (of ", length(analysis.sequence), ")")
-#   
-#   
-#   #check 
+# 
+# 
+#   #check
 #   filemat = list.files("../Physio/HR/", pattern="*.txt") # Das sollte der Ordner sein, in dem deine ganzen Files liegen. Pro VP ein File.
-#   
+# 
 #   for (subject_inmat in filemat){
 #     # subject_inmat = filemat[[1]]
-#    
+# 
 #     print(subject_inmat)
-#     read.table(paste0("../Physio/HR/",subject_inmat),sep=" ") %>% 
+#     read.table(paste0("../Physio/HR/",subject_inmat),sep=" ") %>%
 #       group_by(V3) %>%
-#       filter((V3 > 1) & (V3 < 10)) %>% 
+#       filter((V3 > 1) & (V3 < 10)) %>%
 #       summarise(count = n()) %>% print()
-#       
+# 
 #   }
 # }

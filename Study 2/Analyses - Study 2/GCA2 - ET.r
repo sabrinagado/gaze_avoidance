@@ -30,6 +30,8 @@ requirePackage = function(name, load=T) {
   # requirePackage("lmerTest", load=T)
 }
 
+theme_set(theme_minimal(base_size = 16))
+
 { # Variables ---------------------------------------------------------------
   # a priori exclusions for all variables
   exclusions = c(100) %>% unique() %>% sort()
@@ -976,7 +978,7 @@ plot_saccades_acq_exp2 <- ggplot(saccades.acq.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Proportion of Approach Trials", sep=""), x = NULL, y = "Proportion") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1033,7 +1035,7 @@ ggplot(avoidance_corr.acq.prop, aes(x = discrimination, y = relative_frequency_c
   geom_smooth(method = "lm", aes(fill=Category), alpha = 0.1) +
   # labs(title = paste("Correlation of Discrimination and Avoidance Performance (N = ", n_distinct(avoidance_corr.acq.prop$subject), ")", sep=""), x = "Discrimination Score", y = "Performance Score") +
   labs(title = "Correlation of Discrimination and Performance", x = "Discrimination Score", y = "Performance Score") +
-  theme_minimal() +
+  # theme_minimal() +
   scale_fill_viridis_d() +
   scale_color_viridis_d() +
   theme(legend.position="top", legend.box = "horizontal", legend.title=element_blank())
@@ -1071,7 +1073,7 @@ plot_latencies_acq_exp2 <- ggplot(saccades.acq.lat.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Latency of First Saccade", sep=""), x = NULL, y = "Latency [ms]") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1126,7 +1128,7 @@ plot_lengths_acq_exp2 <- ggplot(saccades.acq.len.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Average Length of Saccades", sep=""), x = NULL, y = "Length [degree visual angle]") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1222,7 +1224,7 @@ plot_fixations_acq_exp2 <- ggplot(fixations.acq.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Dwell Time", sep=""), x = NULL, y = "Dwell time [ms]") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1289,6 +1291,63 @@ excluded_subjects = as.numeric(excluded_subjects$subject)
 cat("\n", "Number of excluded subjects (Test): ", length(excluded_subjects), "\n")
 
 
+fixations.test.valid = eye.valid.trial %>% filter(valid > validFixTime.trial) %>% 
+  left_join(fixations %>% mutate(trial = as.numeric(trial)), by=c("subject", "trial")) %>% select(-valid)
+
+# Baseline OK?
+fixations.test.valid <- fixations.test.valid %>% 
+  left_join(baseline.test.trials %>% mutate(trial = trial + acq2End) %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial")) %>% 
+  filter(trial > acq2End) %>% 
+  filter(!subject %in% excluded_subjects) %>% 
+  ungroup
+
+# Correction for baseline deviations 
+fixations.test.valid <- fixations.test.valid %>% 
+  mutate(x_corr = x + x_divergence,
+         y_corr = y + y_divergence)
+
+# Correct for picture onset
+end.testtrial = 2000
+fixations.test.valid = fixations.test.valid %>%
+  mutate(end.testtrial = end.testtrial, # realign such that 0 = picture onset
+         start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
+         start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
+         end = ifelse(end > end.testtrial, end.testtrial, end), # discard fraction of fixation after end
+         picOnset = picOnset - picOnset,
+         dur = end - start) %>% 
+  select(-feedbackOnset)
+
+fixations.test.analysis = fixations.test.valid %>% filter(dur > 0) # drop saccades before picture onset
+
+# ROIs
+fixations.test.analysis <- fixations.test.analysis %>% 
+  left_join(roisTest, by=c("subject", "trial"))
+
+fixations.test.analysis <- fixations.test.analysis %>% 
+  mutate(ROI1 = checkRoi(x_corr, y_corr, roi1.xleft, roi1.xright, roi1.ybottom, roi1.ytop),
+         ROI2 = checkRoi(x_corr, y_corr, roi2.xleft, roi2.xright, roi2.ybottom, roi2.ytop),
+         ROI3 = checkRoi(x_corr, y_corr, roi3.xleft, roi3.xright, roi3.ybottom, roi3.ytop),
+         ROI4 = checkRoi(x_corr, y_corr, roi4.xleft, roi4.xright, roi4.ybottom, roi4.ytop)) %>% 
+  ungroup
+
+fixations.test.analysis <- fixations.test.analysis %>% 
+  mutate(condition = ifelse(ROI1, stim1, ifelse(ROI2, stim2, ifelse(ROI3, stim3, ifelse(ROI4, stim4, NA))))) %>%
+  mutate(across('condition', str_replace_all, rep_str))
+
+# Add scores and write saccades to CSV
+fixations.test.analysis <- fixations.test.analysis %>%
+  left_join(scores, by="subject") %>% 
+  ungroup
+
+write.csv2(fixations.test.analysis, file.path("Study 2", "Gaze", "fixations_test.csv"), row.names=FALSE, quote=FALSE)
+
+fixations.test.analysis <- fixations.test.analysis %>%
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
+  mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
+
+
 ### SACCADES
 # Baseline OK?
 saccades.test.valid <- saccades %>% 
@@ -1351,9 +1410,12 @@ saccades.test.analysis <- saccades.test.analysis %>%
 
 write.csv2(saccades.test.analysis, file.path("Study 2", "Gaze", "saccades_test.csv"), row.names=FALSE, quote=FALSE)
 
-# Percentage of saccades going to the stimuli
 
-## Trials without novel stimuli
+###############################################################################
+# Trials without novel stimuli ----
+###############################################################################
+
+# Percentage of saccades going to the stimuli
 saccades.test1.prop <- saccades.test.analysis %>%
   # filter(motivation_points > 4) %>%  # Filter for Motivation
   # filter ((trial > acq2End) & (trial <= test1End)) %>%
@@ -1402,7 +1464,7 @@ plot_prop_sacc_familiar_exp2 <- ggplot(saccades.test1.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Proportion of Saccades", x = NULL, y = "Proportion") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1424,8 +1486,245 @@ print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
 print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat * social
 
+# Percentage of FIRST saccades going to the stimuli
+saccades.test1.prop <- saccades.test.analysis %>% 
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
+  # filter ((trial > acq2End) & (trial <= test1End)) %>%
+  filter(!(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new"))) %>%
+  mutate(condition = ifelse(angle < 1, NA, condition)) %>% 
+  filter(blok) %>%
+  filter(!contains_blink) %>%
+  mutate(condition = as.factor(condition)) %>% 
+  group_by(subject, trial) %>% 
+  drop_na(condition) %>% 
+  mutate(new_trial = ifelse((trial != lag(trial)), TRUE, FALSE)) %>% 
+  mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial)) %>% 
+  filter(new_trial) %>% 
+  select(-new_trial) %>%
+  ungroup %>% 
+  group_by(subject) %>% 
+  count(condition) %>% 
+  summarise(subject=subject, condition=condition, n=n, sum = test1End - acq2End) %>% 
+  mutate(rel_freq = n/(sum)) %>% 
+  ungroup %>%
+  summarise(rel_freq = mean(rel_freq), .by=c(subject, condition))
 
-## Trials with novel stimuli
+
+saccades.test1.prop <- bind_rows(saccades.test1.prop, saccades.test1.prop %>% tidyr::expand(subject, condition)) %>% 
+  distinct(subject, condition, .keep_all=T) %>% 
+  mutate(rel_freq = replace_na(rel_freq, 0)) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
+  mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
+
+saccades.test1.roi.filter <- saccades.test1.prop %>%
+  reframe(n_cond = length(unique(condition)), .by=c(subject))
+
+saccades.test1.roi.summary <- saccades.test1.prop %>%
+  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat)) %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+saccades.test1.prop <- saccades.test1.prop %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+plot_prop_first_sacc_familiar_exp2 <- ggplot(saccades.test1.roi.summary %>% 
+                                               mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                                                      condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>% 
+                                               mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))), aes(x = condition_social, y = Mean, group = condition_threat, color=condition_threat, fill = condition_threat)) +
+  geom_point(data = saccades.test1.prop %>%
+               mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                      condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>% 
+               mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+             aes(x = condition_social, y = rel_freq, group = condition_threat, color = condition_threat), 
+             position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
+  geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
+  geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
+  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  labs(title = "Proportion of First Saccades", x = NULL, y = "Proportion") +
+  # theme_minimal() +
+  theme(legend.position="right") + 
+  theme(legend.title=element_blank()) +
+  scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
+  scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
+
+cat("\n\n", "Analyses of the proportion of first saccades towards each stimulus category (trials WITHOUT novel stimuli) during the whole trial in the attentional-competition phase", "\n")
+anova <- saccades.test1.prop %>%
+  left_join(saccades.test1.roi.filter, by=c("subject")) %>%
+  # filter(n_cond == 8) %>%
+  group_by(subject, condition_social, condition_threat) %>%
+  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+  ez::ezANOVA(dv=.(rel_freq),
+              wid=.(subject),
+              within=.(condition_threat, condition_social),
+              # between=.(SPAI),
+              detailed=T, type=3)
+anova %>% apa::anova_apa()
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
+print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat * social
+
+
+# Latency to first saccade
+saccades.test.lat.roi <- saccades.test.analysis %>%
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
+  filter(!(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new"))) %>%
+  filter(blok) %>%
+  filter(!contains_blink) %>%
+  distinct(subject, trial, condition, .keep_all=T) %>% 
+  filter(angle >= 1) %>%
+  summarise(latency = mean(start_time), .by=c(subject, SPAI, condition, condition_social, condition_threat, condition_novelty))%>% 
+  drop_na(condition)
+
+saccades.test.lat.roi.filter <- saccades.test.lat.roi%>%
+  reframe(n_cond = length(unique(condition)), .by=c(subject))
+
+saccades.test.lat.roi <- saccades.test.lat.roi%>%
+  complete(subject, condition) %>% 
+  mutate(latency = replace_na(latency, 2000)) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
+  mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
+
+
+saccades.test.lat.roi.summary <- saccades.test.lat.roi %>%
+  summarise(Mean = mean(latency), SD = sd(latency), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+saccades.test.lat.roi <- saccades.test.lat.roi %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+plot_lat_sacc_familiar_exp2 <- ggplot(saccades.test.lat.roi.summary %>% 
+                          mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                                 condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos"),
+                                 condition_novelty = recode(condition_novelty, "familiar" = "Familiar", "novel" = "Novel")) %>% 
+                          mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))), 
+                        aes(x = condition_social, y = Mean, group = condition_threat, color=condition_threat, fill = condition_threat)) +
+  geom_point(data = saccades.test.lat.roi %>%
+               mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                      condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos"),
+                      condition_novelty = recode(condition_novelty, "familiar" = "Familiar", "novel" = "Novel")) %>% 
+               mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+             aes(x = condition_social, y = latency, group = condition_threat, color = condition_threat), 
+             position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
+  geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
+  geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
+  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  labs(title = "Latency to First Saccade", x = NULL, y = "Latency [ms]") +
+  # theme_minimal() +
+  theme(legend.position="right") + 
+  theme(legend.title=element_blank()) +
+  scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
+  scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
+
+
+cat("\n\n", "Analyses of the latencies of the first saccade towards the stimuli in the attentional-competition phase", "\n")
+anova <- saccades.test.lat.roi %>%
+  # # Either filter for complete cases, default: replace missing conditions with max. latency (2 s)
+  # left_join(saccades.test.lat.roi.filter, by=c("subject")) %>%
+  # filter(n_cond == 8) %>% 
+  group_by(subject, condition_social, condition_threat, condition_novelty) %>%
+  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+  ez::ezANOVA(dv=.(latency),
+              wid=.(subject),
+              within=.(condition_threat, condition_social),
+              # between_covariates=.(SPAI), observed=.(SPAI),
+              detailed=T, type=3)
+anova %>% apa::anova_apa()
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
+print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat * social
+
+
+saccades.test.lat.roi.test <- saccades.test.lat.roi %>%
+  filter(condition_social == "social") %>%
+  summarise(latency = mean(latency), .by=c(condition_threat, subject)) %>% 
+  pivot_wider(id_cols = subject, names_from = condition_threat, values_from = latency)
+apa::t_test(saccades.test.lat.roi.test$neg, saccades.test.lat.roi.test$pos, alternative = "two.sided", paired=TRUE) %>% apa::t_apa()
+
+saccades.test.lat.roi.test <- saccades.test.lat.roi %>%
+  filter(condition_threat == "neg") %>%
+  mutate(condition_social = str_remove_all(condition_social, "-")) %>% 
+  summarise(latency = mean(latency), .by=c(condition_social, subject)) %>% 
+  pivot_wider(id_cols = subject, names_from = condition_social, values_from = latency)
+apa::t_test(saccades.test.lat.roi.test$social, saccades.test.lat.roi.test$nonsocial, alternative = "two.sided", paired=TRUE) %>% apa::t_apa()
+
+
+# Mean Dwell Time on stimuli
+fixations.test.dwell <- fixations.test.analysis %>%
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
+  filter(!(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new"))) %>%
+  filter(blok) %>%
+  filter(!is.na(condition)) %>% 
+  summarise(mean_dwell_time = mean(dur), .by=c(subject, SPAI, condition, condition_social, condition_threat, condition_novelty))
+
+fixations.test.dwell.filter <- fixations.test.dwell %>%
+  reframe(n_cond = length(unique(condition)), .by=c(subject))
+
+fixations.test.dwell <- fixations.test.dwell %>%
+  complete(subject, condition) %>% 
+  mutate(mean_dwell_time = replace_na(mean_dwell_time, 0)) %>% 
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
+  mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
+
+fixations.test.roi.summary <- fixations.test.dwell %>%
+  summarise(Mean = mean(mean_dwell_time), SD = sd(mean_dwell_time), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+fixations.test.dwell <- fixations.test.dwell %>% 
+  mutate(condition = str_remove(condition, ",\nnew"))
+
+plot_fix_test_familiar_exp2 <- ggplot(fixations.test.roi.summary %>% 
+                          mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                                 condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos"),
+                                 condition_novelty = recode(condition_novelty, "familiar" = "Familiar", "novel" = "Novel")) %>% 
+                          mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))), 
+                        aes(x = condition_social, y = Mean, group = condition_threat, color=condition_threat, fill = condition_threat)) +
+  geom_point(data = fixations.test.dwell %>%
+               mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                      condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos"),
+                      condition_novelty = recode(condition_novelty, "familiar" = "Familiar", "novel" = "Novel")) %>% 
+               mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+             aes(x = condition_social, y = mean_dwell_time, group = condition_threat, color = condition_threat), 
+             position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
+  geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
+  geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
+  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  labs(title = "Dwell Times", x = NULL, y = "Dwell time [ms]") +
+  # theme_minimal() +
+  theme(legend.position="right") + 
+  theme(legend.title=element_blank()) +
+  scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
+  scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
+
+# ggsave(file.path("Study 2", "Plots", "Gaze", "test", "dwell_time_test.png"), width=2800, height=2000, units="px")
+
+cat("\n\n", "Analyses of the dwell time on the stimuli in the attentional-competition phase", "\n")
+anova <- fixations.test.dwell %>%
+  # # Filter for complete cases, default: replace missing conditions with min. dwell time (0 s)
+  # left_join(fixations.test.dwell.filter, by=c("subject")) %>%
+  # filter(n_cond == 8) %>%
+  group_by(subject, condition_social, condition_threat, condition_novelty) %>%
+  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
+  ez::ezANOVA(dv=.(mean_dwell_time),
+              wid=.(subject),
+              within=.(condition_threat, condition_social),
+              # between=.(SPAI),
+              detailed=T, type=3)
+anova %>% apa::anova_apa()
+print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
+print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
+print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat * social
+
+
+###############################################################################
+# Trials with novel stimuli ----
+###############################################################################
+
+# Percentage of saccades going to the stimuli
 saccades.test2.prop <- saccades.test.analysis %>%
   # filter(motivation_points > 4) %>%  # Filter for Motivation
   # filter ((trial > test1End) & (trial <= test2End)) %>%
@@ -1478,7 +1777,7 @@ plot_prop_sacc_novel <- ggplot(saccades.test2.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Proportion of Saccades", x = NULL, y = "Proportion") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1509,86 +1808,7 @@ print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # social * novelty
 print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # threat * social * novelty
 
 
-# First Saccades Novelty
-## Trials without novel stimuli
-saccades.test1.prop <- saccades.test.analysis %>% 
-  # filter(motivation_points > 4) %>%  # Filter for Motivation
-  # filter ((trial > acq2End) & (trial <= test1End)) %>%
-  filter(!(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new"))) %>%
-  mutate(condition = ifelse(angle < 1, NA, condition)) %>% 
-  filter(blok) %>%
-  filter(!contains_blink) %>%
-  mutate(condition = as.factor(condition)) %>% 
-  group_by(subject, trial) %>% 
-  drop_na(condition) %>% 
-  mutate(new_trial = ifelse((trial != lag(trial)), TRUE, FALSE)) %>% 
-  mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial)) %>% 
-  filter(new_trial) %>% 
-  select(-new_trial) %>%
-  ungroup %>% 
-  group_by(subject) %>% 
-  count(condition) %>% 
-  summarise(subject=subject, condition=condition, n=n, sum = test1End - acq2End) %>% 
-  mutate(rel_freq = n/(sum)) %>% 
-  ungroup %>%
-  summarise(rel_freq = mean(rel_freq), .by=c(subject, condition))
-
-
-saccades.test1.prop <- bind_rows(saccades.test1.prop, saccades.test1.prop %>% tidyr::expand(subject, condition)) %>% 
-  distinct(subject, condition, .keep_all=T) %>% 
-  mutate(rel_freq = replace_na(rel_freq, 0)) %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
-  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
-  mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
-
-saccades.test1.roi.filter <- saccades.test1.prop %>%
-  reframe(n_cond = length(unique(condition)), .by=c(subject))
-
-saccades.test1.roi.summary <- saccades.test1.prop %>%
-  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat)) %>% 
-  mutate(condition = str_remove(condition, ",\nnew"))
-
-saccades.test1.prop <- saccades.test1.prop %>% 
-  mutate(condition = str_remove(condition, ",\nnew"))
-
-plot_prop_first_sacc_familiar_exp2 <- ggplot(saccades.test1.roi.summary %>% 
-                                      mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
-                                             condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>% 
-                                      mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))), aes(x = condition_social, y = Mean, group = condition_threat, color=condition_threat, fill = condition_threat)) +
-  geom_point(data = saccades.test1.prop %>%
-               mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
-                      condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>% 
-               mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
-             aes(x = condition_social, y = rel_freq, group = condition_threat, color = condition_threat), 
-             position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
-  geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
-  geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
-  labs(title = "Proportion of First Saccades", x = NULL, y = "Proportion") +
-  theme_minimal() +
-  theme(legend.position="right") + 
-  theme(legend.title=element_blank()) +
-  scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
-  scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
-
-cat("\n\n", "Analyses of the proportion of first saccades towards each stimulus category (trials WITHOUT novel stimuli) during the whole trial in the attentional-competition phase", "\n")
-anova <- saccades.test1.prop %>%
-  left_join(saccades.test1.roi.filter, by=c("subject")) %>%
-  # filter(n_cond == 8) %>%
-  group_by(subject, condition_social, condition_threat) %>%
-  mutate(subject = as.factor(subject), condition_social = as.factor(condition_social), condition_threat = as.factor(condition_threat)) %>%
-  ez::ezANOVA(dv=.(rel_freq),
-              wid=.(subject),
-              within=.(condition_threat, condition_social),
-              # between=.(SPAI),
-              detailed=T, type=3)
-anova %>% apa::anova_apa()
-print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
-print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
-print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat * social
-
-## Trials with novel stimuli
+# Percentage of FIRST saccades going to the stimuli
 saccades.test2.prop <- saccades.test.analysis %>% 
   # filter(motivation_points > 4) %>%  # Filter for Motivation
   # filter ((trial > test1End) & (trial <= test2End)) %>%
@@ -1646,7 +1866,7 @@ plot_prop_first_sacc_nov <- ggplot(saccades.test2.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Proportion of First Saccades", x = NULL, y = "Proportion") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
@@ -1678,6 +1898,7 @@ print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # threat * social * novelty
 # Latency to first saccade
 saccades.test.lat.roi <- saccades.test.analysis %>%
   # filter(motivation_points > 4) %>%  # Filter for Motivation
+  filter(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new")) %>% 
   filter(blok) %>%
   filter(!contains_blink) %>%
   distinct(subject, trial, condition, .keep_all=T) %>% 
@@ -1704,7 +1925,7 @@ saccades.test.lat.roi.summary <- saccades.test.lat.roi %>%
 saccades.test.lat.roi <- saccades.test.lat.roi %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
-plot_lat_sacc <- ggplot(saccades.test.lat.roi.summary %>% 
+plot_lat_sacc_novel_exp2 <- ggplot(saccades.test.lat.roi.summary %>% 
                                           mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
                                                  condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos"),
                                                  condition_novelty = recode(condition_novelty, "familiar" = "Familiar", "novel" = "Novel")) %>% 
@@ -1721,13 +1942,13 @@ plot_lat_sacc <- ggplot(saccades.test.lat.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Latency to First Saccade", x = NULL, y = "Latency [ms]") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
   scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
 
-plot_lat_sacc_exp2 <- plot_lat_sacc + facet_grid(cols = vars(condition_novelty))
+plot_lat_sacc_novel_exp2 <- plot_lat_sacc_novel_exp2 + facet_grid(cols = vars(condition_novelty))
 # ggsave(file.path("Study 2", "Plots", "Gaze", "test", "saccades_latency_test.png"), width=2800, height=2000, units="px")
 
 cat("\n\n", "Analyses of the latencies of the first saccade towards the stimuli in the attentional-competition phase", "\n")
@@ -1765,67 +1986,12 @@ saccades.test.lat.roi.test <- saccades.test.lat.roi %>%
   pivot_wider(id_cols = subject, names_from = condition_social, values_from = latency)
 apa::t_test(saccades.test.lat.roi.test$social, saccades.test.lat.roi.test$nonsocial, alternative = "two.sided", paired=TRUE) %>% apa::t_apa()
 
-# ezDesign(data=saccades.test.lat.roi, x=condition_social, y=condition_threat, col=condition_novelty)
 
-### FIXATIONS
-fixations.test.valid = eye.valid.trial %>% filter(valid > validFixTime.trial) %>% 
-  left_join(fixations %>% mutate(trial = as.numeric(trial)), by=c("subject", "trial")) %>% select(-valid)
-# Baseline OK?
-fixations.test.valid <- fixations.test.valid %>% 
-  left_join(baseline.test.trials %>% mutate(trial = trial + acq2End) %>% select(subject, trial, x_divergence, y_divergence, blok), by=c("subject", "trial")) %>% 
-  filter(trial > acq2End) %>% 
-  filter(!subject %in% excluded_subjects) %>% 
-  ungroup
-
-# Correction for baseline deviations 
-fixations.test.valid <- fixations.test.valid %>% 
-  mutate(x_corr = x + x_divergence,
-         y_corr = y + y_divergence)
-
-# Correct for picture onset
-end.testtrial = 2000
-fixations.test.valid = fixations.test.valid %>%
-  mutate(end.testtrial = end.testtrial, # realign such that 0 = picture onset
-         start = start - picOnset, end = end - picOnset, # realign such that 0 = picture onset
-         start = ifelse(start < 0, 0, start), # discard fraction of fixation before stimulus
-         end = ifelse(end > end.testtrial, end.testtrial, end), # discard fraction of fixation after end
-         picOnset = picOnset - picOnset,
-         dur = end - start) %>% 
-  select(-feedbackOnset)
-
-fixations.test.analysis = fixations.test.valid %>% filter(dur > 0) # drop saccades before picture onset
-
-# ROIs
-fixations.test.analysis <- fixations.test.analysis %>% 
-  left_join(roisTest, by=c("subject", "trial"))
-
-fixations.test.analysis <- fixations.test.analysis %>% 
-  mutate(ROI1 = checkRoi(x_corr, y_corr, roi1.xleft, roi1.xright, roi1.ybottom, roi1.ytop),
-         ROI2 = checkRoi(x_corr, y_corr, roi2.xleft, roi2.xright, roi2.ybottom, roi2.ytop),
-         ROI3 = checkRoi(x_corr, y_corr, roi3.xleft, roi3.xright, roi3.ybottom, roi3.ytop),
-         ROI4 = checkRoi(x_corr, y_corr, roi4.xleft, roi4.xright, roi4.ybottom, roi4.ytop)) %>% 
-  ungroup
-
-fixations.test.analysis <- fixations.test.analysis %>% 
-  mutate(condition = ifelse(ROI1, stim1, ifelse(ROI2, stim2, ifelse(ROI3, stim3, ifelse(ROI4, stim4, NA))))) %>%
-  mutate(across('condition', str_replace_all, rep_str))
-
-# Add scores and write saccades to CSV
-fixations.test.analysis <- fixations.test.analysis %>%
-  left_join(scores, by="subject") %>% 
-  ungroup
-
-write.csv2(fixations.test.analysis, file.path("Study 2", "Gaze", "fixations_test.csv"), row.names=FALSE, quote=FALSE)
-
-fixations.test.analysis <- fixations.test.analysis %>%
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
-  mutate(condition_novelty = if_else(str_detect(condition, "new"), "novel", "familiar")) %>% 
-  mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 
 # Mean Dwell Time on stimuli
 fixations.test.dwell <- fixations.test.analysis %>%
   # filter(motivation_points > 4) %>%  # Filter for Motivation
+  filter(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new")) %>% 
   filter(blok) %>%
   filter(!is.na(condition)) %>% 
   summarise(mean_dwell_time = mean(dur), .by=c(subject, SPAI, condition, condition_social, condition_threat, condition_novelty))
@@ -1848,7 +2014,7 @@ fixations.test.roi.summary <- fixations.test.dwell %>%
 fixations.test.dwell <- fixations.test.dwell %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
-plot_fix_test <- ggplot(fixations.test.roi.summary %>% 
+plot_fix_test_novel_exp2 <- ggplot(fixations.test.roi.summary %>% 
                           mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
                                  condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos"),
                                  condition_novelty = recode(condition_novelty, "familiar" = "Familiar", "novel" = "Novel")) %>% 
@@ -1865,13 +2031,13 @@ plot_fix_test <- ggplot(fixations.test.roi.summary %>%
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Dwell Times", x = NULL, y = "Dwell time [ms]") +
-  theme_minimal() +
+  # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
   scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
 
-plot_fix_test_exp2 <- plot_fix_test + facet_grid(cols = vars(condition_novelty))
+plot_fix_test_novel_exp2 <- plot_fix_test_novel_exp2 + facet_grid(cols = vars(condition_novelty))
 # ggsave(file.path("Study 2", "Plots", "Gaze", "test", "dwell_time_test.png"), width=2800, height=2000, units="px")
 
 cat("\n\n", "Analyses of the dwell time on the stimuli in the attentional-competition phase", "\n")
@@ -1894,14 +2060,3 @@ print(anova$ANOVA[5,] %>% partial_eta_squared_ci()) # threat * social
 print(anova$ANOVA[6,] %>% partial_eta_squared_ci()) # threat * novelty
 print(anova$ANOVA[7,] %>% partial_eta_squared_ci()) # social * novelty
 print(anova$ANOVA[8,] %>% partial_eta_squared_ci()) # threat * social * novelty
-
-# ezDesign(data=fixations.test.dwell, x=condition_social, y=condition_threat, col=condition_novelty)
-
-# prop_sacc_novel <- plot_grid(plot_prop_sacc_novel, plot_prop_first_sacc_nov, ncol = 2, labels=c("A", "B"), align="vh")
-# ggsave(file.path("Study 2", "Plots", "Gaze", "test", "prop_sacc_novel.png"), width=3500, height=1200, units="px")
-# 
-# prop_sacc_familiar <- plot_grid(plot_prop_sacc_familiar, plot_prop_first_sacc_familiar, ncol = 2, labels=c("A", "B"), align="vh")
-# ggsave(file.path("Study 2", "Plots", "Gaze", "test", "prop_sacc_familiar.png"), width=3500, height=1200, units="px")
-# 
-# lat_dwell_plot <- plot_grid(plot_lat_sacc, plot_fix_test, ncol = 2, labels=c("A", "B"), align="vh")
-# ggsave(file.path("Study 2", "Plots", "Gaze", "test", "lat_dwell_test.png"), width=3500, height=1200, units="px")

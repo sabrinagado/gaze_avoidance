@@ -235,4 +235,4 @@ heart.wide = hr.list %>% bind_rows(.id="subject") %>%
 
 rm(hr.list); row.names(heart.wide) = NULL
 
-saveRDS(heart.wide,"HR.RData")
+saveRDS(heart.wide,file.path("Study 1", "Physio", "HR.RData"))

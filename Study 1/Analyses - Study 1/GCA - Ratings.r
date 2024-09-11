@@ -27,6 +27,8 @@ requirePackage = function(name, load=T) {
   requirePackage("cowplot", load=T)
 }
 
+theme_set(theme_minimal(base_size = 16))
+
 { # Variables ---------------------------------------------------------------
   # a priori exclusions for all variables
   exclusions = c() %>% unique() %>% sort()
@@ -197,7 +199,7 @@ plot_ratings_exp1 <- ggplot(ratings.summary, aes(x = phase, y = mean_rating, gro
     width = 0.25, linewidth = 0.5) +
   labs(y = "Rating", x = "") +
   guides(color = guide_legend(title = ""), size="none") +
-  theme_minimal() +
+  # theme_minimal() +
   # theme(legend.position="bottom") +
   scale_fill_viridis_d() +
   scale_color_viridis_d()

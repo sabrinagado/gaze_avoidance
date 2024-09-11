@@ -12,6 +12,7 @@ library(apa)
 
 
 # global variables
+theme_set(theme_minimal(base_size = 16))
 vps_summary = tibble()
 code_times = c()
 
@@ -51,8 +52,8 @@ for (subject in filemat){
     geom_col(position = position_dodge()) +
     scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1.05)) +
     scale_x_discrete("Category") +
-    scale_fill_viridis_d("Condition",end = 0.75) + 
-    theme_classic()
+    scale_fill_viridis_d("Condition",end = 0.75)
+    # theme_classic()
   ggsave(file.path("Study 1", "Plots", "Discrimination", "individuals", paste0(participant, ".png")), width=6, height=5)
   
   setTxtProgressBar(pb, i)
@@ -89,7 +90,7 @@ vps_summary_grouped %>%
   # scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1.05)) +
   scale_x_discrete(NULL, labels = c("non-social","social")) +
   scale_fill_viridis_d("Condition", end = 0.25, begin = 0.25, guide = "none" ) + 
-  theme_minimal() + 
+  # theme_minimal() + 
   scale_color_viridis_d() +
   theme(legend.position = "none")
 ggsave(file.path("Study 1", "Plots", "Discrimination", "ga_correct.png"), width=1600, height=1600, units="px")
