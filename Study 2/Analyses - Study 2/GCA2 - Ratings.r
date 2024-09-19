@@ -276,7 +276,7 @@ ratings <- ratings %>% mutate(condition = str_remove(condition, ",\nnew"),
                               condition = str_replace_all(condition, "\n", " "))
 
 ratings.summary <- ratings %>%
-  summarise(mean_rating = mean(rating), sd_rating = sd(rating), .by=c(phase, condition))
+  summarise(mean_rating = mean(rating), se_rating = sd(rating)/sqrt(n()), .by=c(phase, condition))
 
 plot_ratings_exp2 <- ggplot(ratings.summary, aes(x = phase, y = mean_rating, group = condition, color=condition)) +
   geom_point(data = ratings, aes(x = phase, y = rating, group = condition, color = condition), 
@@ -284,7 +284,7 @@ plot_ratings_exp2 <- ggplot(ratings.summary, aes(x = phase, y = mean_rating, gro
   geom_line(position = position_dodge(width = 0.7), linewidth = 0.5) +
   geom_point(position = position_dodge(width = 0.7), shape = "square", size=3) +
   geom_errorbar(
-    aes(ymin = mean_rating - sd_rating, ymax = mean_rating + sd_rating),
+    aes(ymin = mean_rating - se_rating, ymax = mean_rating + se_rating),
     position = position_dodge(width = 0.7),
     width = 0.25, linewidth = 0.5) +
   labs(y = "Rating", x = "") +

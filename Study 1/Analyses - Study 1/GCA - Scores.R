@@ -150,7 +150,7 @@ plot_spai_exp1 <- ggplot(df_summary, aes(x = SPAI)) +
 plot_stai_exp1 <- ggplot(df_summary, aes(x = STAI_T)) +
   geom_histogram(aes(y = ..density..), color="grey", size=0.3) +
   geom_vline(aes(xintercept = median(STAI_T), color = "Median"), size=1) +
-  geom_vline(aes(xintercept = 39, color = "Clinical Cut-Off"), size=1) +
+  geom_vline(aes(xintercept = 40, color = "Clinical Cut-Off"), size=1) +
   geom_density(size = 0.5, color="darkgrey") +
   scale_x_continuous(limits = c(20, 70), breaks = seq(20, 70, 5)) +
   labs(x = "STAI (Trait Anxiety)", y = "Density") +

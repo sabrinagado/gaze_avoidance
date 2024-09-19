@@ -186,86 +186,86 @@ pupil_df <- readRDS(file.path("Study 1", "Physio", "ET_pupil_df.Rdata"))
 responder <- pupil_df %>% filter(condition %in% c(1,2,3)) %>% group_by(ID) %>% 
   summarise(dilators = mean(as.numeric(interpolated))) %>% filter(dilators < 0.5) %>% .$ID
 
-# CLUSTER
-pupil_long <- ga_unified %>% 
-  filter(valid == TRUE) %>%
-  filter(ID %in% responder) %>%
-  .$diameter %>% bind_rows() %>%
-  mutate(condition = as.factor(condition)) %>%
-  filter(condition %in% c(6,7,8,9)) %>% 
-  mutate(across('condition', str_replace_all, rep_str)) %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
-  filter(time < 10)
-
-# Calculate null distributions -------------------------------------------------
-# with parallelization:
-# Use parallelization to run the permutations. As this was written for Windows, the doSNOW backend is used in the current implementation.
-cl <- makeCluster(detectCores() - 1)
-clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova", "perform_lmm"))
-registerDoSNOW(cl)
-
-pupil_null_dist <- data.frame()
-
-tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex", "lme4")) %dopar% {
-  y <- pt_null_distribution(pupil_long, dv = "diameter", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
-                                   time = "samplepoint", trial = "trial", id = "subject", nperm = as.integer(ceiling(iterations/length(cl))))
-  return(y)
-}
-stopCluster(cl)
-
-pupil_null_dist <- tmp[1:iterations,]
-
-# # without parallelization:
-# pupil_null_dist <- pt_null_distribution(pupil_long, dv = "diameter", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
-#                                                time = "time", trial = "trial", id = "subject", nperm = iterations)
-
-# Create a tibble with the 95% quantile of cluster lengths under H0
-pupil_critical_length_null_F_main1 <- quantile(pupil_null_dist$F_main1, .95)
-pupil_critical_length_null_F_main2 <- quantile(pupil_null_dist$F_main2, .95)
-pupil_critical_length_null_F_int <- quantile(pupil_null_dist$F_int, .95)
-
-pupil_critical_lengths_null <- data.frame(pupil_critical_length_null_F_main1, pupil_critical_length_null_F_main2, pupil_critical_length_null_F_int)
-colnames(pupil_critical_lengths_null) <- c("F_main1", "F_main2", "F_int")
-
-# Save distributions and stop cluster ----------------------------------------
-save(pupil_null_dist, pupil_critical_lengths_null, file = file.path("Study 1", "Physio", "pupil_null_distributions.RData"))
+# # CLUSTER
+# pupil_long <- ga_unified %>% 
+#   filter(valid == TRUE) %>%
+#   filter(ID %in% responder) %>%
+#   .$diameter %>% bind_rows() %>%
+#   mutate(condition = as.factor(condition)) %>%
+#   filter(condition %in% c(6,7,8,9)) %>% 
+#   mutate(across('condition', str_replace_all, rep_str)) %>% 
+#   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+#   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+#   filter(time < 10)
+# 
+# # Calculate null distributions -------------------------------------------------
+# # with parallelization:
+# # Use parallelization to run the permutations. As this was written for Windows, the doSNOW backend is used in the current implementation.
+# cl <- makeCluster(detectCores() - 1)
+# clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova", "perform_lmm"))
+# registerDoSNOW(cl)
+# 
+# pupil_null_dist <- data.frame()
+# 
+# tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex", "lme4")) %dopar% {
+#   y <- pt_null_distribution(pupil_long, dv = "diameter", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
+#                                    time = "samplepoint", trial = "trial", id = "subject", nperm = as.integer(ceiling(iterations/length(cl))))
+#   return(y)
+# }
+# stopCluster(cl)
+# 
+# pupil_null_dist <- tmp[1:iterations,]
+# 
+# # # without parallelization:
+# # pupil_null_dist <- pt_null_distribution(pupil_long, dv = "diameter", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
+# #                                                time = "time", trial = "trial", id = "subject", nperm = iterations)
+# 
+# # Create a tibble with the 95% quantile of cluster lengths under H0
+# pupil_critical_length_null_F_main1 <- quantile(pupil_null_dist$F_main1, .95)
+# pupil_critical_length_null_F_main2 <- quantile(pupil_null_dist$F_main2, .95)
+# pupil_critical_length_null_F_int <- quantile(pupil_null_dist$F_int, .95)
+# 
+# pupil_critical_lengths_null <- data.frame(pupil_critical_length_null_F_main1, pupil_critical_length_null_F_main2, pupil_critical_length_null_F_int)
+# colnames(pupil_critical_lengths_null) <- c("F_main1", "F_main2", "F_int")
+# 
+# # Save distributions and stop cluster ----------------------------------------
+# save(pupil_null_dist, pupil_critical_lengths_null, file = file.path("Study 1", "Physio", "pupil_null_distributions.RData"))
 
 # Cluster-based permutation tests ---------------------------------------------
 load(file.path("Study 1", "Physio", "pupil_null_distributions.RData"))
 
-# Find clusters
-F_tests <- pt_Ftest_statistic(pupil_long, dv = "diameter", id = "subject", factor1 = "condition_threat", factor2 = "condition_social", time = "samplepoint")
-criticalFs <- pt_critical_F(pupil_long, id = "subject", factor1 = "condition_threat", factor2 = "condition_social")
-critical_F_main1 <- criticalFs[[1]] 
-critical_F_main2 <- criticalFs[[2]]
-critical_F_int <- criticalFs[[3]]
-
-clusters_F_main1 <- clusters_over_time(F_tests$F_main1, critical_F_main1)
-clusters_F_main1 <- clusters_F_main1 %>% 
-  mutate(critical_length = pupil_critical_lengths_null$F_main1) %>% 
-  mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
-  filter(p < .05) %>% 
-  mutate(times_start = start / sample_rate - 0.5,
-         times_end = end / sample_rate - 0.5)
-
-clusters_F_main2 <- clusters_over_time(F_tests$F_main2, critical_F_main2)
-clusters_F_main2 <- clusters_F_main2 %>% 
-  mutate(critical_length = pupil_critical_lengths_null$F_main2) %>% 
-  mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
-  filter(p < .05) %>% 
-  mutate(times_start = start / sample_rate - 0.5,
-         times_end = end / sample_rate - 0.5)
-
-clusters_F_int <- clusters_over_time(F_tests$F_int, critical_F_int)
-clusters_F_int <- clusters_F_int %>% 
-  mutate(critical_length = pupil_critical_lengths_null$F_int) %>% 
-  mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
-  filter(p < .05) %>% 
-  mutate(times_start = start / sample_rate - 0.5,
-         times_end = end / sample_rate - 0.5)
-
-save(clusters_F_main1, clusters_F_main2, clusters_F_int, file = file.path("Study 1", "Physio", "pupil_cluster.RData"))
+# # Find clusters
+# F_tests <- pt_Ftest_statistic(pupil_long, dv = "diameter", id = "subject", factor1 = "condition_threat", factor2 = "condition_social", time = "samplepoint")
+# criticalFs <- pt_critical_F(pupil_long, id = "subject", factor1 = "condition_threat", factor2 = "condition_social")
+# critical_F_main1 <- criticalFs[[1]] 
+# critical_F_main2 <- criticalFs[[2]]
+# critical_F_int <- criticalFs[[3]]
+# 
+# clusters_F_main1 <- clusters_over_time(F_tests$F_main1, critical_F_main1)
+# clusters_F_main1 <- clusters_F_main1 %>% 
+#   mutate(critical_length = pupil_critical_lengths_null$F_main1) %>% 
+#   mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
+#   filter(p < .05) %>% 
+#   mutate(times_start = start / sample_rate - 0.5,
+#          times_end = end / sample_rate - 0.5)
+# 
+# clusters_F_main2 <- clusters_over_time(F_tests$F_main2, critical_F_main2)
+# clusters_F_main2 <- clusters_F_main2 %>% 
+#   mutate(critical_length = pupil_critical_lengths_null$F_main2) %>% 
+#   mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
+#   filter(p < .05) %>% 
+#   mutate(times_start = start / sample_rate - 0.5,
+#          times_end = end / sample_rate - 0.5)
+# 
+# clusters_F_int <- clusters_over_time(F_tests$F_int, critical_F_int)
+# clusters_F_int <- clusters_F_int %>% 
+#   mutate(critical_length = pupil_critical_lengths_null$F_int) %>% 
+#   mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
+#   filter(p < .05) %>% 
+#   mutate(times_start = start / sample_rate - 0.5,
+#          times_end = end / sample_rate - 0.5)
+# 
+# save(clusters_F_main1, clusters_F_main2, clusters_F_int, file = file.path("Study 1", "Physio", "pupil_cluster.RData"))
 
 load(file.path("Study 1", "Physio", "pupil_cluster.RData"))
 
@@ -311,84 +311,84 @@ responder <- eda_df %>%
   summarise(scl_avg = mean(scl_bl)) %>% 
   filter(scl_avg >= .02) %>% .$ID
 
-# CLUSTER
-eda_long <- eda_unified %>%
-  filter(ID %in% responder) %>%
-  .$EDA %>% bind_rows() %>%
-  mutate(condition = as.factor(condition)) %>%
-  filter(condition %in% c(6,7,8,9)) %>%
-  mutate(across('condition', str_replace_all, rep_str)) %>%
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
-
-# Calculate null distributions -------------------------------------------------
-# with parallelization:
-# Use parallelization to run the permutations. As this was written for Windows, the doSNOW backend is used in the current implementation.
-cl <- makeCluster(detectCores() - 1)
-clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova", "perform_lmm"))
-registerDoSNOW(cl)
-
-eda_null_dist <- data.frame()
-
-tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex", "lme4")) %dopar% {
-  y <- pt_null_distribution(eda_long, dv = "EDA", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
-                            time = "samplepoint", trial = "trial", id = "subject", nperm = as.integer(ceiling(iterations/length(cl))))
-  return(y)
-}
-stopCluster(cl)
-
-eda_null_dist <- tmp[1:iterations,]
-
-# # without parallelization:
-# eda_null_dist <- pt_null_distribution(eda_long, dv = "diameter", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
-#                                       time = "time", trial = "trial", id = "subject", nperm = iterations)
-
-# Create a tibble with the 95% quantile of cluster lengths under H0
-eda_critical_length_null_F_main1 <- quantile(eda_null_dist$F_main1, .95)
-eda_critical_length_null_F_main2 <- quantile(eda_null_dist$F_main2, .95)
-eda_critical_length_null_F_int <- quantile(eda_null_dist$F_int, .95)
-
-eda_critical_lengths_null <- data.frame(eda_critical_length_null_F_main1, eda_critical_length_null_F_main2, eda_critical_length_null_F_int)
-colnames(eda_critical_lengths_null) <- c("F_main1", "F_main2", "F_int")
-
-# Save distributions and stop cluster ----------------------------------------
-save(eda_null_dist, eda_critical_lengths_null, file = file.path("Study 1", "Physio", "eda_null_distributions.RData"))
+# # CLUSTER
+# eda_long <- eda_unified %>%
+#   filter(ID %in% responder) %>%
+#   .$EDA %>% bind_rows() %>%
+#   mutate(condition = as.factor(condition)) %>%
+#   filter(condition %in% c(6,7,8,9)) %>%
+#   mutate(across('condition', str_replace_all, rep_str)) %>%
+#   mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
+#   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
+# 
+# # Calculate null distributions -------------------------------------------------
+# # with parallelization:
+# # Use parallelization to run the permutations. As this was written for Windows, the doSNOW backend is used in the current implementation.
+# cl <- makeCluster(detectCores() - 1)
+# clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova", "perform_lmm"))
+# registerDoSNOW(cl)
+# 
+# eda_null_dist <- data.frame()
+# 
+# tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex", "lme4")) %dopar% {
+#   y <- pt_null_distribution(eda_long, dv = "EDA", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
+#                             time = "samplepoint", trial = "trial", id = "subject", nperm = as.integer(ceiling(iterations/length(cl))))
+#   return(y)
+# }
+# stopCluster(cl)
+# 
+# eda_null_dist <- tmp[1:iterations,]
+# 
+# # # without parallelization:
+# # eda_null_dist <- pt_null_distribution(eda_long, dv = "diameter", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
+# #                                       time = "time", trial = "trial", id = "subject", nperm = iterations)
+# 
+# # Create a tibble with the 95% quantile of cluster lengths under H0
+# eda_critical_length_null_F_main1 <- quantile(eda_null_dist$F_main1, .95)
+# eda_critical_length_null_F_main2 <- quantile(eda_null_dist$F_main2, .95)
+# eda_critical_length_null_F_int <- quantile(eda_null_dist$F_int, .95)
+# 
+# eda_critical_lengths_null <- data.frame(eda_critical_length_null_F_main1, eda_critical_length_null_F_main2, eda_critical_length_null_F_int)
+# colnames(eda_critical_lengths_null) <- c("F_main1", "F_main2", "F_int")
+# 
+# # Save distributions and stop cluster ----------------------------------------
+# save(eda_null_dist, eda_critical_lengths_null, file = file.path("Study 1", "Physio", "eda_null_distributions.RData"))
 
 # Cluster-based permutation tests ---------------------------------------------
 load(file.path("Study 1", "Physio", "eda_null_distributions.RData"))
 
-# Find clusters
-F_tests <- pt_Ftest_statistic(eda_long, dv = "EDA", id = "subject", factor1 = "condition_threat", factor2 = "condition_social", time = "samplepoint")
-criticalFs <- pt_critical_F(eda_long, id = "subject", factor1 = "condition_threat", factor2 = "condition_social")
-critical_F_main1 <- criticalFs[[1]] 
-critical_F_main2 <- criticalFs[[2]]
-critical_F_int <- criticalFs[[3]]
-
-clusters_F_main1 <- clusters_over_time(F_tests$F_main1, critical_F_main1)
-clusters_F_main1 <- clusters_F_main1 %>% 
-  mutate(critical_length = eda_critical_lengths_null$F_main1) %>% 
-  mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
-  filter(p < .05) %>% 
-  mutate(times_start = start / sample_rate - 0.5,
-         times_end = end / sample_rate - 0.5)
-
-clusters_F_main2 <- clusters_over_time(F_tests$F_main2, critical_F_main2)
-clusters_F_main2 <- clusters_F_main2 %>% 
-  mutate(critical_length = eda_critical_lengths_null$F_main2) %>% 
-  mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
-  filter(p < .05) %>% 
-  mutate(times_start = start / sample_rate - 0.5,
-         times_end = end / sample_rate - 0.5)
-
-clusters_F_int <- clusters_over_time(F_tests$F_int, critical_F_int)
-clusters_F_int <- clusters_F_int %>% 
-  mutate(critical_length = eda_critical_lengths_null$F_int) %>% 
-  mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
-  filter(p < .05) %>% 
-  mutate(times_start = start / sample_rate - 0.5,
-         times_end = end / sample_rate - 0.5)
-
-save(clusters_F_main1, clusters_F_main2, clusters_F_int, file = file.path("Study 1", "Physio", "eda_cluster.RData"))
+# # Find clusters
+# F_tests <- pt_Ftest_statistic(eda_long, dv = "EDA", id = "subject", factor1 = "condition_threat", factor2 = "condition_social", time = "samplepoint")
+# criticalFs <- pt_critical_F(eda_long, id = "subject", factor1 = "condition_threat", factor2 = "condition_social")
+# critical_F_main1 <- criticalFs[[1]] 
+# critical_F_main2 <- criticalFs[[2]]
+# critical_F_int <- criticalFs[[3]]
+# 
+# clusters_F_main1 <- clusters_over_time(F_tests$F_main1, critical_F_main1)
+# clusters_F_main1 <- clusters_F_main1 %>% 
+#   mutate(critical_length = eda_critical_lengths_null$F_main1) %>% 
+#   mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
+#   filter(p < .05) %>% 
+#   mutate(times_start = start / sample_rate - 0.5,
+#          times_end = end / sample_rate - 0.5)
+# 
+# clusters_F_main2 <- clusters_over_time(F_tests$F_main2, critical_F_main2)
+# clusters_F_main2 <- clusters_F_main2 %>% 
+#   mutate(critical_length = eda_critical_lengths_null$F_main2) %>% 
+#   mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
+#   filter(p < .05) %>% 
+#   mutate(times_start = start / sample_rate - 0.5,
+#          times_end = end / sample_rate - 0.5)
+# 
+# clusters_F_int <- clusters_over_time(F_tests$F_int, critical_F_int)
+# clusters_F_int <- clusters_F_int %>% 
+#   mutate(critical_length = eda_critical_lengths_null$F_int) %>% 
+#   mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
+#   filter(p < .05) %>% 
+#   mutate(times_start = start / sample_rate - 0.5,
+#          times_end = end / sample_rate - 0.5)
+# 
+# save(clusters_F_main1, clusters_F_main2, clusters_F_int, file = file.path("Study 1", "Physio", "eda_cluster.RData"))
 
 load(file.path("Study 1", "Physio", "eda_cluster.RData"))
 
@@ -437,87 +437,87 @@ hr_long <- heart.wide %>%
   mutate(samplepoint = as.numeric(samplepoint)) %>%
   filter(condition %in% c(6,7,8,9)) %>%
   mutate(across('condition', str_replace_all, rep_str)) %>%
-  # mutate(ID = subject) %>% 
+  # mutate(ID = subject) %>%
   select(subject, trial, condition, outcome, samplepoint, HR) %>%
-  mutate(time = ((samplepoint - 1) * step_plotting) + min(scaling.window)) %>% 
-  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>% 
-  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>% 
+  mutate(time = ((samplepoint - 1) * step_plotting) + min(scaling.window)) %>%
+  mutate(condition_social = if_else(str_detect(condition, "non-social"), "non-social", "social")) %>%
+  mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg")) %>%
   filter(time >= 0, time < 10)
 
-heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")) %>% tibble() %>% 
+heart = heart.wide %>% gather(key="time", value="HRchange", matches("hr\\.\\d+")) %>% tibble() %>%
   mutate(time = time %>% gsub("hr.", "", .) %>% as.integer() %>% {. * step_plotting + min(scaling.window)} %>% round(2), # %>% as.factor(),
-         condition = as.factor(condition)) %>% 
+         condition = as.factor(condition)) %>%
   select(-contains("hr.bin."))
 
-# Calculate null distributions -------------------------------------------------
-
-# with parallelization:
-# Use parallelization to run the permutations. As this was written for Windows, the doSNOW backend is used in the current implementation.
-cl <- makeCluster(detectCores() - 1)
-clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova", "perform_lmm"))
-registerDoSNOW(cl)
-
-hr_null_dist <- data.frame()
-
-tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex", "lme4")) %dopar% {
-  y <- pt_null_distribution(hr_long, dv = "HR", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
-                            time = "samplepoint", trial = "trial", id = "subject", nperm = as.integer(ceiling(iterations/length(cl))))
-  return(y)
-}
-
-stopCluster(cl)
-hr_null_dist <- tmp[1:iterations,]
-
-# # without parallelization:
-# hr_null_dist <- pt_null_distribution(hr_long, dv = "HR", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
-#                                                time = "time", trial = "trial", id = "subject", nperm = iterations)
-
-# Create a tibble with the 95% quantile of cluster lengths under H0
-hr_critical_length_null_F_main1 <- quantile(hr_null_dist$F_main1, .95)
-hr_critical_length_null_F_main2 <- quantile(hr_null_dist$F_main2, .95)
-hr_critical_length_null_F_int <- quantile(hr_null_dist$F_int, .95)
-
-hr_critical_lengths_null <- data.frame(hr_critical_length_null_F_main1, hr_critical_length_null_F_main2, hr_critical_length_null_F_int)
-colnames(hr_critical_lengths_null) <- c("F_main1", "F_main2", "F_int")
-
-# Save distributions and stop cluster ----------------------------------------
-save(hr_null_dist, hr_critical_lengths_null, file = file.path("Study 1", "Physio", "hr_null_distributions.RData"))
+# # Calculate null distributions -------------------------------------------------
+# 
+# # with parallelization:
+# # Use parallelization to run the permutations. As this was written for Windows, the doSNOW backend is used in the current implementation.
+# cl <- makeCluster(detectCores() - 1)
+# clusterExport(cl, list("pt_null_distribution", "pt_critical_F", "pt_Ftest_statistic", "perform_anova", "perform_lmm"))
+# registerDoSNOW(cl)
+# 
+# hr_null_dist <- data.frame()
+# 
+# tmp <- foreach(i = 1:length(cl), .combine = "rbind", .packages = c("tidyverse", "afex", "lme4")) %dopar% {
+#   y <- pt_null_distribution(hr_long, dv = "HR", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
+#                             time = "samplepoint", trial = "trial", id = "subject", nperm = as.integer(ceiling(iterations/length(cl))))
+#   return(y)
+# }
+# 
+# stopCluster(cl)
+# hr_null_dist <- tmp[1:iterations,]
+# 
+# # # without parallelization:
+# # hr_null_dist <- pt_null_distribution(hr_long, dv = "HR", within = "condition", factor1 = "condition_threat", factor2 = "condition_social",
+# #                                                time = "time", trial = "trial", id = "subject", nperm = iterations)
+# 
+# # Create a tibble with the 95% quantile of cluster lengths under H0
+# hr_critical_length_null_F_main1 <- quantile(hr_null_dist$F_main1, .95)
+# hr_critical_length_null_F_main2 <- quantile(hr_null_dist$F_main2, .95)
+# hr_critical_length_null_F_int <- quantile(hr_null_dist$F_int, .95)
+# 
+# hr_critical_lengths_null <- data.frame(hr_critical_length_null_F_main1, hr_critical_length_null_F_main2, hr_critical_length_null_F_int)
+# colnames(hr_critical_lengths_null) <- c("F_main1", "F_main2", "F_int")
+# 
+# # Save distributions and stop cluster ----------------------------------------
+# save(hr_null_dist, hr_critical_lengths_null, file = file.path("Study 1", "Physio", "hr_null_distributions.RData"))
 
 # Cluster-based permutation tests ---------------------------------------------
 load(file.path("Study 1", "Physio", "hr_null_distributions.RData"))
 
-# Find clusters
-F_tests <- pt_Ftest_statistic(hr_long, dv = "HR", id = "subject", factor1 = "condition_threat", factor2 = "condition_social", time = "samplepoint")
-criticalFs <- pt_critical_F(hr_long, id = "subject", factor1 = "condition_threat", factor2 = "condition_social")
-critical_F_main1 <- criticalFs[[1]] 
-critical_F_main2 <- criticalFs[[2]]
-critical_F_int <- criticalFs[[3]]
-
-clusters_F_main1 <- clusters_over_time(F_tests$F_main1, critical_F_main1)
-clusters_F_main1 <- clusters_F_main1 %>% 
-  mutate(critical_length = hr_critical_lengths_null$F_main1) %>% 
-  mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
-  filter(p < .05) %>% 
-  mutate(times_start = start / sample_rate - 0.5,
-         times_end = end / sample_rate - 0.5)
-
-clusters_F_main2 <- clusters_over_time(F_tests$F_main2, critical_F_main2)
-clusters_F_main2 <- clusters_F_main2 %>% 
-  mutate(critical_length = hr_critical_lengths_null$F_main2) %>% 
-  mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
-  filter(p < .05) %>% 
-  mutate(times_start = start / sample_rate - 0.5,
-         times_end = end / sample_rate - 0.5)
-
-clusters_F_int <- clusters_over_time(F_tests$F_int, critical_F_int)
-clusters_F_int <- clusters_F_int %>% 
-  mutate(critical_length = hr_critical_lengths_null$F_int) %>% 
-  mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
-  filter(p < .05) %>% 
-  mutate(times_start = start / sample_rate - 0.5,
-         times_end = end / sample_rate - 0.5)
-
-save(clusters_F_main1, clusters_F_main2, clusters_F_int, file = file.path("Study 1", "Physio", "hr_cluster.RData"))
+# # Find clusters
+# F_tests <- pt_Ftest_statistic(hr_long, dv = "HR", id = "subject", factor1 = "condition_threat", factor2 = "condition_social", time = "samplepoint")
+# criticalFs <- pt_critical_F(hr_long, id = "subject", factor1 = "condition_threat", factor2 = "condition_social")
+# critical_F_main1 <- criticalFs[[1]] 
+# critical_F_main2 <- criticalFs[[2]]
+# critical_F_int <- criticalFs[[3]]
+# 
+# clusters_F_main1 <- clusters_over_time(F_tests$F_main1, critical_F_main1)
+# clusters_F_main1 <- clusters_F_main1 %>% 
+#   mutate(critical_length = hr_critical_lengths_null$F_main1) %>% 
+#   mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
+#   filter(p < .05) %>% 
+#   mutate(times_start = start / sample_rate - 0.5,
+#          times_end = end / sample_rate - 0.5)
+# 
+# clusters_F_main2 <- clusters_over_time(F_tests$F_main2, critical_F_main2)
+# clusters_F_main2 <- clusters_F_main2 %>% 
+#   mutate(critical_length = hr_critical_lengths_null$F_main2) %>% 
+#   mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
+#   filter(p < .05) %>% 
+#   mutate(times_start = start / sample_rate - 0.5,
+#          times_end = end / sample_rate - 0.5)
+# 
+# clusters_F_int <- clusters_over_time(F_tests$F_int, critical_F_int)
+# clusters_F_int <- clusters_F_int %>% 
+#   mutate(critical_length = hr_critical_lengths_null$F_int) %>% 
+#   mutate(p = 1 - pempiricalD(length, critical_length)) %>% 
+#   filter(p < .05) %>% 
+#   mutate(times_start = start / sample_rate - 0.5,
+#          times_end = end / sample_rate - 0.5)
+# 
+# save(clusters_F_main1, clusters_F_main2, clusters_F_int, file = file.path("Study 1", "Physio", "hr_cluster.RData"))
 
 load(file.path("Study 1", "Physio", "hr_cluster.RData"))
 

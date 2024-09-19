@@ -924,7 +924,7 @@ saccades.acq.valid <- saccades.acq.valid %>%
   mutate(outcome_corr = coalesce(outcome_corr, "none")) %>%
   mutate(outcomeok = ifelse(outcome == outcome_corr, TRUE, FALSE))
 
-# Calculate lengths of saccades
+# Calculate amplitudes of saccades
 saccades.acq.analysis = saccades.acq.valid %>% 
   mutate(start_x_corr_cm = pixToCm(start_x_corr, screen.width, screen.width.cm),
          end_x_corr_cm = pixToCm(end_x_corr, screen.width, screen.width.cm),
@@ -962,7 +962,7 @@ saccades.acq.prop <- saccades.acq.analysis %>%
   summarise(absolute_frequency_ROI = sum(angle >= 1 & ROI & start_time < feedbackOnset), relative_frequency_ROI = mean(angle >= 1 & ROI & start_time < feedbackOnset), relative_frequency_Quadrant = mean(Quadrant & start_time < feedbackOnset), .by=c(subject, SPAI, condition, condition_social, condition_threat))
 
 saccades.acq.roi.summary <- saccades.acq.prop %>%
-  summarise(Mean = mean(relative_frequency_ROI), SD = sd(relative_frequency_ROI), .by=c(condition, condition_social, condition_threat))
+  summarise(Mean = mean(relative_frequency_ROI), SE = sd(relative_frequency_ROI)/sqrt(n()), .by=c(condition, condition_social, condition_threat))
 
 plot_saccades_acq_exp2 <- ggplot(saccades.acq.roi.summary %>% 
                                     mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
@@ -976,7 +976,7 @@ plot_saccades_acq_exp2 <- ggplot(saccades.acq.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Proportion of Approach Trials", sep=""), x = NULL, y = "Proportion") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -1057,7 +1057,7 @@ saccades.acq.lat.roi.filter <- saccades.acq.lat.roi%>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
 
 saccades.acq.lat.roi.summary <- saccades.acq.lat.roi %>%
-  summarise(Mean = mean(latency), SD = sd(latency), .by=c(condition, condition_social, condition_threat))
+  summarise(Mean = mean(latency), SE = sd(latency)/sqrt(n()), .by=c(condition, condition_social, condition_threat))
 
 plot_latencies_acq_exp2 <- ggplot(saccades.acq.lat.roi.summary %>% 
                                    mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
@@ -1071,7 +1071,7 @@ plot_latencies_acq_exp2 <- ggplot(saccades.acq.lat.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Latency of First Saccade", sep=""), x = NULL, y = "Latency [ms]") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -1098,7 +1098,7 @@ print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat x social
 
 
-# Average lengths of saccades going towards the stimuli
+# Average amplitudes of saccades going towards the stimuli
 saccades.acq.len.roi <- saccades.acq.analysis %>%
   # filter (trial >= 32) %>%
   filter(blok) %>%
@@ -1112,7 +1112,7 @@ saccades.acq.len.roi.filter <- saccades.acq.len.roi%>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
 
 saccades.acq.len.roi.summary <- saccades.acq.len.roi %>%
-  summarise(Mean = mean(length), SD = sd(length), .by=c(condition, condition_social, condition_threat))
+  summarise(Mean = mean(length), SE = sd(length)/sqrt(n()), .by=c(condition, condition_social, condition_threat))
 
 plot_lengths_acq_exp2 <- ggplot(saccades.acq.len.roi.summary %>% 
                                     mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
@@ -1126,8 +1126,8 @@ plot_lengths_acq_exp2 <- ggplot(saccades.acq.len.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
-  labs(title = paste("Average Length of Saccades", sep=""), x = NULL, y = "Length [degree visual angle]") +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
+  labs(title = paste("Average Amplitude of Saccades", sep=""), x = NULL, y = "Length [degree visual angle]") +
   # theme_minimal() +
   theme(legend.position="right") + 
   theme(legend.title=element_blank()) +
@@ -1136,7 +1136,7 @@ plot_lengths_acq_exp2 <- ggplot(saccades.acq.len.roi.summary %>%
 
 # ggsave(file.path("Study 1", "Plots", "Gaze", "acquisition", "saccades_latency_roi.png"), width=1800, height=2000, units="px")
 
-cat("\n\n", "Analyses of the lengths of the saccades towards the stimuli in the acquisition phase", "\n")
+cat("\n\n", "Analyses of the amplitudes of the saccades towards the stimuli in the acquisition phase", "\n")
 anova <- saccades.acq.len.roi %>%
   left_join(saccades.acq.len.roi.filter, by=c("subject")) %>%
   filter(n_cond == 4) %>%
@@ -1208,7 +1208,7 @@ fixations.acq.dwell <- fixations.acq.analysis %>%
   mutate(condition_threat = if_else(str_detect(condition, "pos"), "pos", "neg"))
 
 fixations.acq.roi.summary <- fixations.acq.dwell %>%
-  summarise(Mean = mean(mean_dwell_time), SD = sd(mean_dwell_time), .by=c(condition, condition_social, condition_threat))
+  summarise(Mean = mean(mean_dwell_time), SE = sd(mean_dwell_time)/sqrt(n()), .by=c(condition, condition_social, condition_threat))
 
 plot_fixations_acq_exp2 <- ggplot(fixations.acq.roi.summary %>% 
                                   mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
@@ -1222,7 +1222,7 @@ plot_fixations_acq_exp2 <- ggplot(fixations.acq.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = paste("Dwell Time", sep=""), x = NULL, y = "Dwell time [ms]") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -1390,7 +1390,7 @@ saccades.test.valid <- saccades.test.valid %>%
   mutate(across('condition', str_replace_all, rep_str))
 
 
-# Calculate lengths of saccades
+# Calculate amplitudes of saccades
 saccades.test.analysis = saccades.test.valid %>% 
   mutate(start_x_corr_cm = pixToCm(start_x_corr, screen.width, screen.width.cm),
          end_x_corr_cm = pixToCm(end_x_corr, screen.width, screen.width.cm),
@@ -1441,7 +1441,7 @@ saccades.test1.prop <- bind_rows(saccades.test1.prop, saccades.test1.prop %>% ti
   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 
 saccades.test1.roi.summary <- saccades.test1.prop %>%
-  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat)) %>% 
+  summarise(Mean = mean(rel_freq), SE = sd(rel_freq)/sqrt(n()), .by=c(condition, condition_social, condition_threat)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
 saccades.test1.prop <- saccades.test1.prop %>% 
@@ -1462,7 +1462,7 @@ plot_prop_sacc_familiar_exp2 <- ggplot(saccades.test1.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Proportion of Saccades", x = NULL, y = "Proportion") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -1522,7 +1522,7 @@ saccades.test1.roi.filter <- saccades.test1.prop %>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
 
 saccades.test1.roi.summary <- saccades.test1.prop %>%
-  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat)) %>% 
+  summarise(Mean = mean(rel_freq), SE = sd(rel_freq)/sqrt(n()), .by=c(condition, condition_social, condition_threat)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
 saccades.test1.prop <- saccades.test1.prop %>% 
@@ -1540,7 +1540,7 @@ plot_prop_first_sacc_familiar_exp2 <- ggplot(saccades.test1.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Proportion of First Saccades", x = NULL, y = "Proportion") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -1589,7 +1589,7 @@ saccades.test.lat.roi <- saccades.test.lat.roi%>%
 
 
 saccades.test.lat.roi.summary <- saccades.test.lat.roi %>%
-  summarise(Mean = mean(latency), SD = sd(latency), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  summarise(Mean = mean(latency), SE = sd(latency)/sqrt(n()), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
 saccades.test.lat.roi <- saccades.test.lat.roi %>% 
@@ -1610,7 +1610,7 @@ plot_lat_sacc_familiar_exp2 <- ggplot(saccades.test.lat.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Latency to First Saccade", x = NULL, y = "Latency [ms]") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -1671,7 +1671,7 @@ fixations.test.dwell <- fixations.test.dwell %>%
   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 
 fixations.test.roi.summary <- fixations.test.dwell %>%
-  summarise(Mean = mean(mean_dwell_time), SD = sd(mean_dwell_time), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  summarise(Mean = mean(mean_dwell_time), SE = sd(mean_dwell_time)/sqrt(n()), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
 fixations.test.dwell <- fixations.test.dwell %>% 
@@ -1692,7 +1692,7 @@ plot_fix_test_familiar_exp2 <- ggplot(fixations.test.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Dwell Times", x = NULL, y = "Dwell time [ms]") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -1752,7 +1752,7 @@ saccades.test2.prop <- bind_rows(saccades.test2.prop, saccades.test2.prop %>% ti
   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 
 saccades.test2.roi.summary <- saccades.test2.prop %>%
-  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  summarise(Mean = mean(rel_freq), SE = sd(rel_freq)/sqrt(n()), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
 saccades.test2.prop <- saccades.test2.prop %>% 
@@ -1775,7 +1775,7 @@ plot_prop_sacc_novel <- ggplot(saccades.test2.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Proportion of Saccades", x = NULL, y = "Proportion") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -1844,7 +1844,7 @@ saccades.test2.roi.filter <- saccades.test2.prop %>%
   reframe(n_cond = length(unique(condition)), .by=c(subject))
 
 saccades.test2.roi.summary <- saccades.test2.prop %>%
-  summarise(Mean = mean(rel_freq), SD = sd(rel_freq), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  summarise(Mean = mean(rel_freq), SE = sd(rel_freq)/sqrt(n()), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
 saccades.test2.prop <- saccades.test2.prop %>% 
@@ -1864,7 +1864,7 @@ plot_prop_first_sacc_nov <- ggplot(saccades.test2.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Proportion of First Saccades", x = NULL, y = "Proportion") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -1919,7 +1919,7 @@ saccades.test.lat.roi <- saccades.test.lat.roi%>%
 
 
 saccades.test.lat.roi.summary <- saccades.test.lat.roi %>%
-  summarise(Mean = mean(latency), SD = sd(latency), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  summarise(Mean = mean(latency), SE = sd(latency)/sqrt(n()), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
 saccades.test.lat.roi <- saccades.test.lat.roi %>% 
@@ -1940,7 +1940,7 @@ plot_lat_sacc_novel_exp2 <- ggplot(saccades.test.lat.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Latency to First Saccade", x = NULL, y = "Latency [ms]") +
   # theme_minimal() +
   theme(legend.position="right") + 
@@ -2008,7 +2008,7 @@ fixations.test.dwell <- fixations.test.dwell %>%
   mutate(condition_novelty = factor(condition_novelty, levels=c("familiar", "novel")))
 
 fixations.test.roi.summary <- fixations.test.dwell %>%
-  summarise(Mean = mean(mean_dwell_time), SD = sd(mean_dwell_time), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
+  summarise(Mean = mean(mean_dwell_time), SE = sd(mean_dwell_time)/sqrt(n()), .by=c(condition, condition_social, condition_threat, condition_novelty)) %>% 
   mutate(condition = str_remove(condition, ",\nnew"))
 
 fixations.test.dwell <- fixations.test.dwell %>% 
@@ -2029,7 +2029,7 @@ plot_fix_test_novel_exp2 <- ggplot(fixations.test.roi.summary %>%
              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.1, size=2, shape = 21) +
   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
-  geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = position_dodge(width = 0.6), width = 0.25) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), position = position_dodge(width = 0.6), width = 0.25) +
   labs(title = "Dwell Times", x = NULL, y = "Dwell time [ms]") +
   # theme_minimal() +
   theme(legend.position="right") + 
