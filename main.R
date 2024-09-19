@@ -247,12 +247,14 @@ source(file.path("Study 1", "Analyses - Study 1", "GCA - Tests Physiology.R"))
 
 rm(list=setdiff(ls(), c("plot_pupil_cluster", "plot_eda_cluster", "plot_hr_cluster")))
 
-plot_physio <- plot_grid(plot_pupil_cluster + theme(legend.position="none"), plot_eda_cluster + theme(legend.position="none"), plot_hr_cluster + theme(legend.position="none"), 
+plot_physio <- plot_grid(plot_pupil_cluster + theme(legend.position="none"), plot_eda_cluster + theme(legend.position="none"), plot_hr_cluster + theme(legend.position="none"),
                          ncol = 3, labels=c("A", "B", "C"), align="vh")
 
 # add legend
-legend <- get_legend(plot_pupil_cluster + guides(color = guide_legend(nrow = 1)) + theme(legend.position = "bottom"))
-plot_grid(plot_physio, legend, ncol = 1, rel_heights = c(1, .1))
+legend <- get_legend(plot_pupil_cluster)
+plot_grid(plot_physio, legend, nrow = 1, reL_widths = c(20, 1))
 
-ggsave(file.path("Plots", "physio.svg"), width=10, height=4)
+ggsave(file.path("Plots", "physio.svg"), width=14, height=4)
+
+ggsave(file.path("Plots", "pupil.svg"), plot_pupil_cluster, width=6, height=4)
 
