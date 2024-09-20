@@ -50,7 +50,8 @@ source(file.path("Study 2", "Analyses - Study 2", "GCA2 - Ratings.R"))
 
 rm(list=setdiff(ls(), c("plot_ratings_exp1", "plot_ratings_exp2")))
 
-plot_ratings <- plot_grid(plot_ratings_exp1 + theme(legend.position="none") + ylim(1, 10), plot_ratings_exp2 + theme(legend.position="none") + ylim(1, 10),
+plot_ratings <- plot_grid(plot_ratings_exp1 + theme(legend.position="none") + scale_y_continuous(breaks=c(2, 4, 6, 8, 10), limits=c(1, 10)),
+                          plot_ratings_exp2 + theme(legend.position="none") + scale_y_continuous(breaks=c(2, 4, 6, 8, 10), limits=c(1, 10)),
                           labels = c("A", "B"), nrow = 1, align = 'vh', rel_widths = c(3, 4))
 
 # add title
