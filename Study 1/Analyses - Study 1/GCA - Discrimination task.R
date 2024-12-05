@@ -11,6 +11,12 @@ library(ez)
 library(apa)
 
 
+# Functions
+se <- function(x, na.rm = TRUE) {
+  sd(x, na.rm) / sqrt(if(!na.rm) length(x) else sum(!is.na(x)))
+}
+
+
 # global variables
 theme_set(theme_minimal(base_size = 16))
 vps_summary = tibble()
@@ -79,7 +85,7 @@ apa::t_test(vps_summary_grouped.test$social, vps_summary_grouped.test$nonsocial,
 
 vps_summary_grouped %>% 
   group_by(social) %>%
-  summarise(correct = mean(correct_mean, na.rm = T), se = sd(correct_mean)/sqrt(n())) %>% 
+  summarise(correct = mean(correct_mean, na.rm = T), se = se(correct_mean)) %>% 
   ggplot(aes(x = social, y = correct, fill = social)) +
   geom_hline(yintercept = 0.5, linetype = 2, color = "red") + 
   geom_col(position = position_dodge()) +

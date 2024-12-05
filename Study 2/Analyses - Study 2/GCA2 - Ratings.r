@@ -165,6 +165,10 @@ theme_set(theme_minimal(base_size = 16))
     return(ratings)
   }
   
+  se <- function(x, na.rm = TRUE) {
+    sd(x, na.rm) / sqrt(if(!na.rm) length(x) else sum(!is.na(x)))
+  }
+  
   partial_eta_squared_ci <- function(x)
   {
     # Calculate upper and lower limit of Lambda for 90%-CI
@@ -276,7 +280,7 @@ ratings <- ratings %>% mutate(condition = str_remove(condition, ",\nnew"),
                               condition = str_replace_all(condition, "\n", " "))
 
 ratings.summary <- ratings %>%
-  summarise(mean_rating = mean(rating), se_rating = sd(rating)/sqrt(n()), .by=c(phase, condition))
+  summarise(mean_rating = mean(rating), se_rating = se(rating), .by=c(phase, condition))
 
 plot_ratings_exp2 <- ggplot(ratings.summary, aes(x = phase, y = mean_rating, group = condition, color=condition)) +
   geom_point(data = ratings, aes(x = phase, y = rating, group = condition, color = condition), 
