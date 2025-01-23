@@ -66,7 +66,7 @@ plot_ratings <- plot_grid(plot_titles, plot_ratings, ncol = 1, rel_heights = c(0
 
 # add legend
 legend <- get_legend(plot_ratings_exp1)
-plot_ratings <- plot_grid(plot_ratings, legend, nrow = 1, rel_widths = c(7, 1.3))
+plot_ratings <- plot_grid(plot_ratings, legend, nrow = 1, rel_widths = c(7, 1.2))
 
 ggsave(file.path("Plots", "ratings.svg"), width=12, height=5)
 
@@ -83,7 +83,8 @@ rm(list=setdiff(ls(), c("plot_saccades_acq_exp1", "plot_latencies_acq_exp1", "pl
                         "plot_prop_sacc_familiar_exp2", "plot_prop_sacc_novel_exp2", 
                         "plot_prop_first_sacc_familiar_exp2", "plot_prop_first_sacc_nov_exp2",
                         "plot_lat_sacc_familiar_exp2", "plot_lat_sacc_novel_exp2",
-                        "plot_fix_test_familiar_exp2", "plot_fix_test_novel_exp2")))
+                        "plot_fix_test_familiar_exp2", "plot_fix_test_novel_exp2",
+                        "saccades.acq.prop1", "saccades.acq.prop2")))
 
 # Set ylim
 min_y_sacc = min(c(layer_scales(plot_saccades_acq_exp1)$y$range$range, layer_scales(plot_saccades_acq_exp2)$y$range$range))
@@ -140,7 +141,7 @@ ggsave(file.path("Plots", "gaze_acq.svg"), width=12, height=8)
 
 # Experiment 2
 # familiar
-plot_comp_fam <- plot_grid(plot_prop_sacc_familiar_exp2 + theme(legend.position="none"), plot_prop_first_sacc_familiar_exp2 + theme(legend.position="none"), plot_lat_sacc_familiar_exp2 + theme(legend.position="none"), 
+plot_comp_fam <- plot_grid(plot_prop_sacc_familiar_exp2 + theme(legend.position="none"), plot_lat_sacc_familiar_exp2 + theme(legend.position="none"), plot_fix_test_familiar_exp2 + theme(legend.position="none"),
                       labels = c("A", "B", "C"), nrow = 1, align = 'vh')
 
 # add title
@@ -151,7 +152,7 @@ title_fam <- ggdraw() +
 plot_comp_fam <- plot_grid(title_fam, plot_comp_fam, ncol = 1, rel_heights = c(0.1, 1)) # rel_heights values control vertical title margins
 
 # novel
-plot_comp_nov <- plot_grid(plot_prop_sacc_novel_exp2 + theme(legend.position="none"), plot_prop_first_sacc_nov_exp2 + theme(legend.position="none"), plot_lat_sacc_novel_exp2 + theme(legend.position="none"),
+plot_comp_nov <- plot_grid(plot_prop_sacc_novel_exp2 + theme(legend.position="none"), plot_lat_sacc_novel_exp2 + theme(legend.position="none"), plot_fix_test_novel_exp2 + theme(legend.position="none"),
                            labels = c("D", "E", "F"), nrow = 1, align = 'vh')
 
 # add title
@@ -214,9 +215,9 @@ ggsave(file.path("Plots", "gaze_test_exp1_supplm.svg"), width=12, height=3.5)
 
 # plots competition-phase experiment 2
 # familiar
-plot_comp_fam <- plot_grid(plot_fix_test_familiar_exp2 + theme(legend.position="none"),
+plot_comp_fam <- plot_grid(plot_prop_first_sacc_familiar_exp2 + theme(legend.position="none"),
                            labels = c("A"), nrow = 1, align = 'vh')
-plot_comp_nov <- plot_grid(plot_fix_test_novel_exp2 + theme(legend.position="none"),
+plot_comp_nov <- plot_grid(plot_prop_first_sacc_nov_exp2 + theme(legend.position="none"),
                            labels = c("B"), nrow = 1, align = 'vh')
 
 plot_comp <- plot_grid(plot_comp_fam, plot_comp_nov, nrow = 1) # rel_heights values control vertical title margins
@@ -239,6 +240,35 @@ plot_comp <- plot_grid(plot_comp, legend, nrow = 1, rel_widths = c(12, 1))
 
 ggsave(file.path("Plots", "gaze_comp_exp2_supplm.svg"), width=12, height=4)
 
+# # Cross-Task Comparison regarding aversive US
+# saccades.acq.prop1.av <- saccades.acq.prop1 %>% 
+#   filter(condition_threat == "neg") %>% 
+#   summarise(rel_freq = mean(relative_frequency_ROI), .by=c(subject))
+# 
+# saccades.acq.prop2.av <- saccades.acq.prop2 %>% 
+#   filter(condition_threat == "neg") %>% 
+#   summarise(rel_freq = mean(relative_frequency_ROI), .by=c(subject))
+# 
+# apa::t_test(saccades.acq.prop1.av$rel_freq, saccades.acq.prop2.av$rel_freq, alternative = "two.sided", paired=FALSE) %>% apa::t_apa()
+# 
+# saccades.acq.prop1.av <- saccades.acq.prop1.av %>% mutate(dataset = "Experiment 1") %>% select(c(rel_freq, dataset))
+# saccades.acq.prop2.av <- saccades.acq.prop2.av %>% mutate(dataset = "Experiment 2") %>% select(c(rel_freq, dataset))
+# saccades.acq.prop.av <- rbind(saccades.acq.prop1.av, saccades.acq.prop2.av)
+# 
+# saccades.acq.prop.av.summarise <- saccades.acq.prop.av %>% 
+#   summarise(mean_rel_freq = mean(rel_freq), se_rel_freq = sd(rel_freq)/sqrt(n()), .by=c(dataset))
+# 
+# plot_US_av <- ggplot(saccades.acq.prop.av.summarise, aes(x = dataset, y = mean_rel_freq, group = dataset, color = dataset, fill=dataset)) +
+#   geom_point(data = saccades.acq.prop.av, aes(x = dataset, y = rel_freq, group = dataset, color = dataset), 
+#              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.6), alpha = 0.4, size=2, shape = 21) +
+#   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
+#   geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
+#   geom_errorbar(aes(ymin = mean_rel_freq - se_rel_freq, ymax = mean_rel_freq + se_rel_freq), position = position_dodge(width = 0.6), width = 0.25) +
+#   labs(title = paste("Proportion of Trials with Saccades on CSneg", sep=""), x = NULL, y = "Proportion") +
+#   # theme_minimal() +
+#   theme(legend.position="none") + 
+#   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
+#   scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
 
 ##############################################################################
 # Physiology
@@ -258,4 +288,50 @@ plot_grid(plot_physio, legend, nrow = 1, reL_widths = c(20, 1))
 ggsave(file.path("Plots", "physio.svg"), width=14, height=4)
 
 ggsave(file.path("Plots", "pupil.svg"), plot_pupil_cluster, width=6, height=4)
+
+
+##############################################################################
+# Distance on Screen to Visual Ancle
+###############################################################################
+
+# Define monitor and viewing parameters
+monitor_width_cm <- 53          # Monitor width in cm
+resolution_width_px <- 1920     # Screen resolution width in pixels
+viewing_distance_cm <- 50       # Viewing distance in cm
+
+# Stimulus positions in pixels
+x1 <- 1920/2 - (1920/2 * 0.7)
+y1 <- 1080/2
+x2 <- 1920/2
+y2 <- 1080/2
+
+# Step 1: Calculate pixel distance
+pixel_distance <- sqrt((x2 - x1)^2 + (y2 - y1)^2)
+
+# Step 2: Convert pixel distance to physical distance
+physical_distance_cm <- pixel_distance * (monitor_width_cm / resolution_width_px)
+
+# Step 3: Calculate the visual angle
+visual_angle_rad <- 2 * atan(physical_distance_cm / (2 * viewing_distance_cm))
+visual_angle_deg <- visual_angle_rad * (180 / pi)
+
+cat("Visual angle (degrees):", visual_angle_deg, "Visual angle (rad):", visual_angle_rad, "\n")
+
+# Stimulus positions in pixels
+x1 <- 1920/2 - (1920/2 * 0.7)
+y1 <- 1080/2
+x2 <- 1920/2 + (1920/2 * 0.7)
+y2 <- 1080/2
+
+# Step 1: Calculate pixel distance
+pixel_distance <- sqrt((x2 - x1)^2 + (y2 - y1)^2)
+
+# Step 2: Convert pixel distance to physical distance
+physical_distance_cm <- pixel_distance * (monitor_width_cm / resolution_width_px)
+
+# Step 3: Calculate the visual angle
+visual_angle_rad <- 2 * atan(physical_distance_cm / (2 * viewing_distance_cm))
+visual_angle_deg <- visual_angle_rad * (180 / pi)
+
+cat("Visual angle (degrees):", visual_angle_deg, "Visual angle (rad):", visual_angle_rad, "\n")
 

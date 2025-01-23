@@ -108,22 +108,57 @@ df_demo <- df_scores %>%
   select(VP, gender, age, motivation, tiredness, handedness)
 
 # Create Summary
-df_summary <- bind_cols(df_demo, df_debriefing, df_labbook, df_vas, df_spai, df_sias, df_stai, df_ui)
-cat("Age = ", round(mean(df_summary$age), 1), ", SD = ", round(sd(df_summary$age), 1), ", Range = ", round(min(df_summary$age)), " - ", round(max(df_summary$age)), "\n")
-print(table(df_summary$gender))
-print(round(prop.table(table(df_summary$gender)), 3) * 100)
-print(table(df_summary$handedness))
+df_summary1 <- bind_cols(df_demo, df_debriefing, df_labbook, df_vas, df_spai, df_sias, df_stai, df_ui)
+cat("Age = ", round(mean(df_summary1$age), 1), ", SD = ", round(sd(df_summary1$age), 1), ", Range = ", round(min(df_summary1$age)), " - ", round(max(df_summary1$age)), "\n")
+print(table(df_summary1$gender))
+print(round(prop.table(table(df_summary1$gender)), 3) * 100)
+print(table(df_summary1$handedness))
+
+## Get Scores
+# read experiment files
+path.behavior = file.path("Study 1", "Experiment", "gaze_avoidance_task", "data")
+
+filemat = list.files(path.behavior, pattern = "*.csv") # read all files from data-folder into a single list
+
+# cycle through all subject csv files
+# Initialise a progress bar
+cat("\n", "Read in subject csv files for scores:", "\n")
+vp_scores <- data.frame()
+pb <- txtProgressBar(min = 1, max = length(filemat), style = 3)
+i = 1
+for (subject in filemat){
+  # subject <- filemat[2]  #use  file for practice and coding changes
+  
+  vp_data <- read.csv(file.path(path.behavior, subject)) # read data from files per subject
+  
+  vp_data <- vp_data %>% 
+    filter((learning_trials.thisN >= 0) | (trials.thisN >= 0)) %>% 
+    select(c(participant, score)) %>% 
+    tail(1)
+  
+  vp_scores <- rbind(vp_scores, vp_data)
+  
+  setTxtProgressBar(pb, i)
+  i = i+1
+}
+close(pb)
+
+colnames(vp_scores) <- c("VP", "score")
+
+
+df_summary1 <- df_summary1 %>% left_join(vp_scores, by="VP")
+cat("Score = ", round(mean(df_summary1$score, na.rm=TRUE), 2), ", SD = ", round(sd(df_summary1$score, na.rm=TRUE), 2), ", Range = ", min(df_summary1$score, na.rm=TRUE), " - ", max(df_summary1$score, na.rm=TRUE), "\n")
 
 # Write summary to CSV
-write.csv2(df_summary, file.path("Study 1", "Questionnaires", "demo_scores.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
+write.csv2(df_summary1, file.path("Study 1", "Questionnaires", "demo_scores.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
 
 # # Write summary to CSV for jamovi
-# df_summary <- df_summary %>% 
+# df_summary1 <- df_summary1 %>% 
 #   select(-c(purpose, variables, labbook))
-# write.csv2(df_summary, file.path("Study 1", "Questionnaires", "demo_scores_jamovi.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
+# write.csv2(df_summary1, file.path("Study 1", "Questionnaires", "demo_scores_jamovi.csv"), row.names=FALSE, quote=FALSE, fileEncoding = "UTF-8")
 
 # Histogram
-plot_spai_exp1 <- ggplot(df_summary, aes(x = SPAI)) +
+plot_spai_exp1 <- ggplot(df_summary1, aes(x = SPAI)) +
   geom_histogram(aes(y = ..density..), binwidth = 0.2, color="grey", size=0.3) +
   geom_vline(aes(xintercept = median(SPAI), color = "Median"), size=1) +
   geom_vline(aes(xintercept = 2.79, color = "Cut-Off (Remission)"), size=1) +
@@ -135,7 +170,7 @@ plot_spai_exp1 <- ggplot(df_summary, aes(x = SPAI)) +
 # ggsave(file.path("Study 1", "Plots", "Distribution_SPAI.svg"),  width=1800, height=1000)
 
 
-# plot_sias <- ggplot(df_summary, aes(x = SIAS)) +
+# plot_sias <- ggplot(df_summary1, aes(x = SIAS)) +
 #   geom_histogram(aes(y = ..density..), binwdith=2, color="grey", size=0.3) +
 #   geom_vline(aes(xintercept = median(SIAS), color = "Median"), size=1) +
 #   geom_vline(aes(xintercept = 30, color = "Clinical Cut-Off"), size=1) +
@@ -147,7 +182,7 @@ plot_spai_exp1 <- ggplot(df_summary, aes(x = SPAI)) +
 # ggsave(file.path("Study 1", "Plots", "Distribution_SIAS.png"),  width=1800, height=1000, units="px")
 
 
-plot_stai_exp1 <- ggplot(df_summary, aes(x = STAI_T)) +
+plot_stai_exp1 <- ggplot(df_summary1, aes(x = STAI_T)) +
   geom_histogram(aes(y = ..density..), color="grey", size=0.3) +
   geom_vline(aes(xintercept = median(STAI_T), color = "Median"), size=1) +
   geom_vline(aes(xintercept = 40, color = "Clinical Cut-Off"), size=1) +
@@ -160,4 +195,3 @@ plot_stai_exp1 <- ggplot(df_summary, aes(x = STAI_T)) +
 
 # score_plot <- plot_grid(plot_spai, plot_stai, ncol = 2, labels=c("A", "B"), align="vh")
 # ggsave(file.path("Study 1", "Plots", "scores.png"), width=3500, height=1000, units="px")
-

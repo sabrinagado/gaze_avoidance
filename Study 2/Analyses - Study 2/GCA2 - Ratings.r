@@ -280,20 +280,57 @@ ratings <- ratings %>% mutate(condition = str_remove(condition, ",\nnew"),
                               condition = str_replace_all(condition, "\n", " "))
 
 ratings.summary <- ratings %>%
-  summarise(mean_rating = mean(rating), se_rating = se(rating), .by=c(phase, condition))
+  summarise(mean_rating = mean(rating), se_rating = se(rating), .by=c(phase, condition, condition_social, condition_threat))
 
-plot_ratings_exp2 <- ggplot(ratings.summary, aes(x = phase, y = mean_rating, group = condition, color=condition)) +
-  geom_point(data = ratings, aes(x = phase, y = rating, group = condition, color = condition), 
-             position = position_jitterdodge(jitter.width = 0.1, dodge.width = 0.7), alpha = 0.2, size=1) +
-  geom_line(position = position_dodge(width = 0.7), linewidth = 0.5) +
-  geom_point(position = position_dodge(width = 0.7), shape = "square", size=3) +
+plot_ratings_exp2 <- ggplot(ratings.summary %>%
+                              mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                                     condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>%
+                              mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+                            aes(x = phase, y = mean_rating, group = condition, shape = condition_social, linetype = condition_social, fill = condition_threat)) +
+  geom_point(data = ratings %>%
+               mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                      condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>%
+               mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+             aes(x = phase, y = rating, shape = condition_social),
+             position = position_jitterdodge(jitter.width = 0.1, jitter.height = 0.1, dodge.width = 0.6), alpha = 0.15, size=2) +
+  geom_line(data = ratings.summary %>% filter(phase != "Test - Novel") %>% 
+              mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                     condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>%
+              mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+            aes(x = phase, y = mean_rating, group = condition, linetype = condition_social, color=condition_threat), 
+            position = position_dodge(width = 0.7), linewidth = 0.5) +
   geom_errorbar(
     aes(ymin = mean_rating - se_rating, ymax = mean_rating + se_rating),
     position = position_dodge(width = 0.7),
-    width = 0.25, linewidth = 0.5) +
-  labs(y = "Rating", x = "") +
-  guides(color = guide_legend(title = ""), size="none") +
-  # theme_minimal() +
-  theme(legend.position="right") +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d()
+    width = 0.25, linewidth = 0.5, linetype = "solid") +
+  geom_point(position = position_dodge(width = 0.7), size=3) +
+  labs(y = "Rating", x = "", fill = "Conditioning", linetype = "Stimulus Type", shape = "Stimulus Type") + 
+  guides(fill = guide_legend(title = "Conditioning", override.aes = list(shape = 22))) +
+  theme(legend.position="right") + 
+  # theme(legend.title=element_blank()) +
+  scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) +
+  scale_color_viridis_d("Condition", end = 0.15, begin = 0.85) +
+  scale_shape_manual(values = c(21, 24))
+
+
+# plot_ratings_exp2 <- ggplot(ratings.summary %>% 
+#                               mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+#                                      condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>% 
+#                               mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))), aes(x = condition_social, y = mean_rating, group = condition_threat, color=condition_threat, fill = condition_threat)) +
+#   geom_point(data = ratings %>%
+#                mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+#                       condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>% 
+#                mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+#              aes(x = condition_social, y = rating, group = condition_threat, color = condition_threat), 
+#              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.7), alpha = 0.2, size=1, shape = 21) +
+#   geom_point(position = position_dodge(width = 0.6), shape = "square", size=3) +
+#   # geom_line(position = position_dodge(width = 0.6), linewidth = 0.5) +
+#   geom_errorbar(aes(ymin = mean_rating - se_rating, ymax = mean_rating + se_rating), position = position_dodge(width = 0.6), width = 0.25) +
+#   labs(y = "Rating", x = "") +
+#   # theme_minimal() +
+#   theme(legend.position="right") + 
+#   theme(legend.title=element_blank()) +
+#   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
+#   scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
+# 
+# plot_ratings_exp2 <- plot_ratings_exp2 + facet_grid(cols = vars(phase))

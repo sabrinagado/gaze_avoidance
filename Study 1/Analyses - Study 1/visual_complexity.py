@@ -6,6 +6,7 @@ from skimage import color
 import pywt
 from scipy import stats
 
+
 def gaussian_pyramid(image, levels=3):
     """Create a Gaussian pyramid of the image."""
     pyramid = [image]
