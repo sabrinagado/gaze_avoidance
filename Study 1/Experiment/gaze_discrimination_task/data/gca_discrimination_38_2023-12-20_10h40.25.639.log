@@ -1,0 +1,2580 @@
+13.5829 	INFO 	Loaded monitor calibration from ['2023_06_23 16:10']
+13.6184 	WARNING 	User requested fullscreen with size [2560 1440], but screen is actually [1920, 1080]. Using actual size
+14.0038 	EXP 	Created window1 = Window(allowGUI=True, allowStencil=False, autoLog=True, backendConf=UNKNOWN, bitsMode=UNKNOWN, blendMode='avg', bpc=(8, 8, 8), color=array([0, 0, 0]), colorSpace='rgb', depthBits=8, fullscr=<method-wrapper '__getattribute__' of attributeSetter object at 0x000001969B3980A0>, gamma=None, gammaErrorPolicy='raise', lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x000001969E2625B0>, multiSample=False, name='window1', numSamples=2, pos=(1680, -28), screen=1, size=array([1920, 1080]), stencilBits=0, stereo=False, units='norm', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+14.0039 	EXP 	window1: mouseVisible = True
+14.0039 	EXP 	window1: mouseVisible = False
+14.0039 	EXP 	window1: Attempting to measure frame rate of screen (1) ...
+14.0039 	EXP 	window1: recordFrameIntervals = False
+14.0729 	EXP 	window1: recordFrameIntervals = True
+14.1494 	EXP 	Screen (1) actual frame rate measured at 143.86Hz
+14.1495 	EXP 	window1: recordFrameIntervals = False
+15.6688 	INFO 	keyboard.Keyboard is using iohub backend.
+15.7278 	EXP 	Created textStart = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.06, italic=False, languageStyle='LTR', name='textStart', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text=str(...), units='norm', win=Window(...), wrapWidth=1)
+15.7278 	INFO 	keyboard.Keyboard is using iohub backend.
+15.7422 	EXP 	Created textStartExp = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.06, italic=False, languageStyle='LTR', name='textStartExp', opacity=1.0, ori=0.0, pos=array([0. , 0.4]), rgb=UNKNOWN, text=str(...), units='norm', win=Window(...), wrapWidth=1)
+15.7471 	EXP 	Created textExpImages = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.06, italic=False, languageStyle='LTR', name='textExpImages', opacity=1.0, ori=0.0, pos=array([0. , 0.2]), rgb=UNKNOWN, text='Diese Bilder werden präsentiert:', units='norm', win=Window(...), wrapWidth=1)
+15.7920 	EXP 	Created ImageLearning1 = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-3.0, flipHoriz=False, flipVert=False, image='stimuli/test1.png', interpolate=True, mask=None, maskParams=None, name='ImageLearning1', opacity=1.0, ori=0.0, pos=array([-0.1, -0.1]), size=array([0.221875, 0.416667]), texRes=128.0, units='norm', win=Window(...))
+15.8205 	EXP 	Created ImageLearning2 = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-4.0, flipHoriz=False, flipVert=False, image='stimuli/test2.png', interpolate=True, mask=None, maskParams=None, name='ImageLearning2', opacity=1.0, ori=0.0, pos=array([ 0.1, -0.1]), size=array([0.221875, 0.416667]), texRes=128.0, units='norm', win=Window(...))
+15.8293 	EXP 	Created textSpace = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-5.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.06, italic=False, languageStyle='LTR', name='textSpace', opacity=1.0, ori=0.0, pos=array([ 0. , -0.5]), rgb=UNKNOWN, text=str(...), units='norm', win=Window(...), wrapWidth=1)
+15.8293 	INFO 	keyboard.Keyboard is using iohub backend.
+15.8310 	EXP 	Created blankScreen = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.05, italic=False, languageStyle='LTR', name='blankScreen', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='', units='norm', win=Window(...), wrapWidth=1)
+15.8437 	EXP 	Created fixcross = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcross', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+15.8534 	EXP 	Created firstImage = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='firstImage', opacity=1.0, ori=0.0, pos=array([0., 0.]), size=array([1., 1.]), texRes=128.0, units='norm', win=Window(...))
+15.8568 	EXP 	Created fixcrossImage1 = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcrossImage1', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+15.8589 	EXP 	Created fixcrossITI = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcrossITI', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+15.8639 	EXP 	Created secondImage = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='secondImage', opacity=1.0, ori=0.0, pos=array([0., 0.]), size=array([1., 1.]), texRes=128.0, units='norm', win=Window(...))
+15.8660 	EXP 	Created fixcrossImage2 = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcrossImage2', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+15.8660 	INFO 	keyboard.Keyboard is using iohub backend.
+15.8666 	EXP 	Created feedbackText = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='feedbackText', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='', units='norm', win=Window(...), wrapWidth=1)
+15.8687 	EXP 	Created fixcrossEnd = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcrossEnd', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+15.8904 	EXP 	Created textStartTask = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.06, italic=False, languageStyle='LTR', name='textStartTask', opacity=1.0, ori=0.0, pos=array([0. , 0.4]), rgb=UNKNOWN, text=str(...), units='norm', win=Window(...), wrapWidth=1)
+15.8953 	EXP 	Created textTaskImages = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.06, italic=False, languageStyle='LTR', name='textTaskImages', opacity=1.0, ori=0.0, pos=array([0. , 0.2]), rgb=UNKNOWN, text='Diese Bilder werden präsentiert:', units='norm', win=Window(...), wrapWidth=1)
+15.9306 	EXP 	Created ImageTask1 = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-3.0, flipHoriz=False, flipVert=False, image='stimuli/Social1.png', interpolate=True, mask=None, maskParams=None, name='ImageTask1', opacity=1.0, ori=0.0, pos=array([-0.3, -0.1]), size=array([0.221875, 0.416667]), texRes=128.0, units='norm', win=Window(...))
+15.9640 	EXP 	Created ImageTask2 = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-4.0, flipHoriz=False, flipVert=False, image='stimuli/Social2.png', interpolate=True, mask=None, maskParams=None, name='ImageTask2', opacity=1.0, ori=0.0, pos=array([-0.1, -0.1]), size=array([0.221875, 0.416667]), texRes=128.0, units='norm', win=Window(...))
+16.0018 	EXP 	Created ImageTask3 = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-5.0, flipHoriz=False, flipVert=False, image='stimuli/Nonsocial1.png', interpolate=True, mask=None, maskParams=None, name='ImageTask3', opacity=1.0, ori=0.0, pos=array([ 0.1, -0.1]), size=array([0.221875, 0.416667]), texRes=128.0, units='norm', win=Window(...))
+16.0395 	EXP 	Created ImageTask4 = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-6.0, flipHoriz=False, flipVert=False, image='stimuli/Nonsocial2.png', interpolate=True, mask=None, maskParams=None, name='ImageTask4', opacity=1.0, ori=0.0, pos=array([ 0.3, -0.1]), size=array([0.221875, 0.416667]), texRes=128.0, units='norm', win=Window(...))
+16.0502 	EXP 	Created textTaskSpace = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-7.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.06, italic=False, languageStyle='LTR', name='textTaskSpace', opacity=1.0, ori=0.0, pos=array([ 0. , -0.5]), rgb=UNKNOWN, text=str(...), units='norm', win=Window(...), wrapWidth=1)
+16.0503 	INFO 	keyboard.Keyboard is using iohub backend.
+16.0515 	EXP 	Created blankScreen = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.05, italic=False, languageStyle='LTR', name='blankScreen', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='', units='norm', win=Window(...), wrapWidth=1)
+16.0535 	EXP 	Created fixcross = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcross', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+16.0588 	EXP 	Created firstImage = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='firstImage', opacity=1.0, ori=0.0, pos=array([0., 0.]), size=array([1., 1.]), texRes=128.0, units='norm', win=Window(...))
+16.0608 	EXP 	Created fixcrossImage1 = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcrossImage1', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+16.0629 	EXP 	Created fixcrossITI = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcrossITI', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+16.0687 	EXP 	Created secondImage = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, anchor=('center', 'center'), autoLog=True, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, image='sin', interpolate=True, mask=None, maskParams=None, name='secondImage', opacity=1.0, ori=0.0, pos=array([0., 0.]), size=array([1., 1.]), texRes=128.0, units='norm', win=Window(...))
+16.0707 	EXP 	Created fixcrossImage2 = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcrossImage2', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+16.0708 	INFO 	keyboard.Keyboard is using iohub backend.
+16.0728 	EXP 	Created fixcrossEnd = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='fixcrossEnd', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text='+', units='norm', win=Window(...), wrapWidth=1)
+16.0848 	EXP 	Created textEnd = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoDraw=False, autoLog=True, bold=False, color=array([1, 1, 1]), colorSpace='rgb', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Open Sans', fontFiles=[], height=0.06, italic=False, languageStyle='LTR', name='textEnd', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=UNKNOWN, text=str(...), units='norm', win=Window(...), wrapWidth=1)
+16.0937 	EXP 	textStart: autoDraw = True
+17.9354 	EXP 	Imported chooseBlockC.xlsx as conditions, 1 conditions, 9 params
+17.9358 	EXP 	Created sequence: random, trialTypes=1, nReps=1, seed=None
+17.9360 	EXP 	New trial (rep=0, index=0): {'posFile': 'positions.xlsx', 'stimFile': 'stimuli.xlsx', 'testFile': 'test.xlsx', 'cs_plus_s': 'stimuli/Social1.png', 'cs_minus_s': 'stimuli/Social2.png', 'cs_plus_ns': 'stimuli/Nonsocial2.png', 'cs_minus_ns': 'stimuli/Nonsocial1.png', 'test1': 'stimuli/Test1.png', 'test2': 'stimuli/Test2.png'}
+17.9362 	EXP 	window1: mouseVisible = False
+17.9381 	DATA 	Keypress: space
+17.9408 	EXP 	textStart: autoDraw = False
+17.9408 	EXP 	textStartExp: autoDraw = True
+17.9408 	EXP 	textExpImages: autoDraw = True
+17.9408 	EXP 	ImageLearning1: autoDraw = True
+17.9408 	EXP 	ImageLearning2: autoDraw = True
+17.9408 	EXP 	textSpace: autoDraw = True
+36.2330 	DATA 	Keypress: space
+36.2387 	EXP 	textStartExp: autoDraw = False
+36.2387 	EXP 	textExpImages: autoDraw = False
+36.2387 	EXP 	ImageLearning1: autoDraw = False
+36.2387 	EXP 	ImageLearning2: autoDraw = False
+36.2387 	EXP 	textSpace: autoDraw = False
+36.2387 	EXP 	blankScreen: text = ''
+36.2387 	EXP 	blankScreen: autoDraw = True
+37.7449 	EXP 	Imported test.xlsx as conditions, 14 conditions, 4 params
+37.7454 	EXP 	Created sequence: random, trialTypes=14, nReps=1, seed=None
+37.7457 	EXP 	New trial (rep=0, index=0): {'position1': (-0.7, -0.5), 'trialtype': 'test2', 'position2': (0.7, -0.5), 'comptype': 'test2'}
+37.7457 	INFO 	FixationCross
+37.7525 	EXP 	blankScreen: autoDraw = False
+37.7525 	EXP 	blankScreen: autoDraw = False
+37.7525 	EXP 	fixcross: autoDraw = True
+38.7594 	EXP 	fixcross: autoDraw = False
+38.7594 	EXP 	firstImage: image = 'stimuli/Test2.png'
+38.7594 	EXP 	firstImage: autoDraw = True
+38.7594 	EXP 	fixcrossImage1: autoDraw = True
+38.8914 	EXP 	firstImage: autoDraw = False
+38.8914 	EXP 	fixcrossImage1: autoDraw = False
+38.8914 	EXP 	fixcrossITI: autoDraw = True
+39.4052 	EXP 	fixcrossITI: autoDraw = False
+39.4052 	EXP 	secondImage: image = 'stimuli/Test2.png'
+39.4052 	EXP 	secondImage: autoDraw = True
+39.4052 	EXP 	fixcrossImage2: autoDraw = True
+39.5441 	EXP 	secondImage: autoDraw = False
+39.5441 	EXP 	fixcrossImage2: autoDraw = False
+40.5382 	INFO 	AnswerCorrect
+40.5458 	DATA 	KeyPress: ä
+40.5510 	EXP 	feedbackText: height = 0.1
+40.5510 	EXP 	feedbackText: height = 0.1
+40.5510 	EXP 	feedbackText: height = 0.1
+40.5510 	EXP 	feedbackText: text = 'Richtig!'
+40.5510 	EXP 	feedbackText: autoDraw = True
+42.5509 	EXP 	feedbackText: autoDraw = False
+42.5509 	EXP 	fixcrossEnd: autoDraw = True
+43.3223 	EXP 	New trial (rep=0, index=1): {'position1': (0.7, -0.5), 'trialtype': 'test2', 'position2': (-0.7, 0.5), 'comptype': 'test1'}
+43.3224 	INFO 	FixationCross
+43.3287 	EXP 	fixcrossEnd: autoDraw = False
+43.3287 	EXP 	fixcrossEnd: autoDraw = False
+43.3287 	EXP 	fixcross: autoDraw = True
+44.3287 	EXP 	fixcross: autoDraw = False
+44.3287 	EXP 	fixcross: autoDraw = False
+44.3287 	EXP 	firstImage: image = 'stimuli/Test2.png'
+44.3287 	EXP 	firstImage: autoDraw = True
+44.3287 	EXP 	fixcrossImage1: autoDraw = True
+44.4814 	EXP 	firstImage: autoDraw = False
+44.4814 	EXP 	fixcrossImage1: autoDraw = False
+44.4814 	EXP 	fixcrossITI: autoDraw = True
+44.9814 	EXP 	fixcrossITI: autoDraw = False
+44.9814 	EXP 	secondImage: image = 'stimuli/Test1.png'
+44.9814 	EXP 	secondImage: autoDraw = True
+44.9814 	EXP 	fixcrossImage2: autoDraw = True
+45.1342 	EXP 	secondImage: autoDraw = False
+45.1342 	EXP 	fixcrossImage2: autoDraw = False
+45.6559 	INFO 	AnswerCorrect
+45.6566 	DATA 	Keypress: l
+45.6619 	EXP 	feedbackText: text = 'Richtig!'
+45.6619 	EXP 	feedbackText: autoDraw = True
+47.6619 	EXP 	feedbackText: autoDraw = False
+47.6619 	EXP 	feedbackText: autoDraw = False
+47.6619 	EXP 	fixcrossEnd: autoDraw = True
+48.0859 	EXP 	New trial (rep=0, index=2): {'position1': (-0.7, 0.5), 'trialtype': 'test2', 'position2': (-0.7, -0.5), 'comptype': 'test2'}
+48.0860 	INFO 	FixationCross
+48.0924 	EXP 	fixcrossEnd: autoDraw = False
+48.0924 	EXP 	fixcrossEnd: autoDraw = False
+48.0924 	EXP 	fixcross: autoDraw = True
+49.0923 	EXP 	fixcross: autoDraw = False
+49.0923 	EXP 	fixcross: autoDraw = False
+49.0923 	EXP 	firstImage: image = 'stimuli/Test2.png'
+49.0923 	EXP 	firstImage: autoDraw = True
+49.0923 	EXP 	fixcrossImage1: autoDraw = True
+49.2451 	EXP 	firstImage: autoDraw = False
+49.2451 	EXP 	fixcrossImage1: autoDraw = False
+49.2451 	EXP 	fixcrossITI: autoDraw = True
+49.7451 	EXP 	fixcrossITI: autoDraw = False
+49.7451 	EXP 	secondImage: image = 'stimuli/Test2.png'
+49.7451 	EXP 	secondImage: autoDraw = True
+49.7451 	EXP 	fixcrossImage2: autoDraw = True
+49.8979 	EXP 	secondImage: autoDraw = False
+49.8979 	EXP 	fixcrossImage2: autoDraw = False
+50.5305 	INFO 	AnswerCorrect
+50.5313 	DATA 	KeyPress: ä
+50.5367 	EXP 	feedbackText: text = 'Richtig!'
+50.5367 	EXP 	feedbackText: autoDraw = True
+52.5367 	EXP 	feedbackText: autoDraw = False
+52.5367 	EXP 	feedbackText: autoDraw = False
+52.5367 	EXP 	fixcrossEnd: autoDraw = True
+52.7594 	EXP 	New trial (rep=0, index=3): {'position1': (0.7, -0.5), 'trialtype': 'test1', 'position2': (0.7, 0.5), 'comptype': 'test2'}
+52.7595 	INFO 	FixationCross
+52.7659 	EXP 	fixcrossEnd: autoDraw = False
+52.7659 	EXP 	fixcrossEnd: autoDraw = False
+52.7659 	EXP 	fixcross: autoDraw = True
+53.7658 	EXP 	fixcross: autoDraw = False
+53.7658 	EXP 	fixcross: autoDraw = False
+53.7658 	EXP 	firstImage: image = 'stimuli/Test1.png'
+53.7658 	EXP 	firstImage: autoDraw = True
+53.7658 	EXP 	fixcrossImage1: autoDraw = True
+53.9186 	EXP 	firstImage: autoDraw = False
+53.9186 	EXP 	fixcrossImage1: autoDraw = False
+53.9186 	EXP 	fixcrossITI: autoDraw = True
+54.4186 	EXP 	fixcrossITI: autoDraw = False
+54.4186 	EXP 	secondImage: image = 'stimuli/Test2.png'
+54.4186 	EXP 	secondImage: autoDraw = True
+54.4186 	EXP 	fixcrossImage2: autoDraw = True
+54.5713 	EXP 	secondImage: autoDraw = False
+54.5713 	EXP 	fixcrossImage2: autoDraw = False
+56.5165 	INFO 	AnswerCorrect
+56.5172 	DATA 	Keypress: l
+56.5226 	EXP 	feedbackText: text = 'Richtig!'
+56.5226 	EXP 	feedbackText: autoDraw = True
+58.5226 	EXP 	feedbackText: autoDraw = False
+58.5226 	EXP 	feedbackText: autoDraw = False
+58.5226 	EXP 	fixcrossEnd: autoDraw = True
+59.1341 	EXP 	New trial (rep=0, index=4): {'position1': (0.7, -0.5), 'trialtype': 'test1', 'position2': (0.7, 0.5), 'comptype': 'test1'}
+59.1342 	INFO 	FixationCross
+59.1406 	EXP 	fixcrossEnd: autoDraw = False
+59.1406 	EXP 	fixcrossEnd: autoDraw = False
+59.1406 	EXP 	fixcross: autoDraw = True
+60.1406 	EXP 	fixcross: autoDraw = False
+60.1406 	EXP 	fixcross: autoDraw = False
+60.1406 	EXP 	firstImage: image = 'stimuli/Test1.png'
+60.1406 	EXP 	firstImage: autoDraw = True
+60.1406 	EXP 	fixcrossImage1: autoDraw = True
+60.2933 	EXP 	firstImage: autoDraw = False
+60.2933 	EXP 	fixcrossImage1: autoDraw = False
+60.2933 	EXP 	fixcrossITI: autoDraw = True
+60.7933 	EXP 	fixcrossITI: autoDraw = False
+60.7933 	EXP 	secondImage: image = 'stimuli/Test1.png'
+60.7933 	EXP 	secondImage: autoDraw = True
+60.7933 	EXP 	fixcrossImage2: autoDraw = True
+60.9461 	EXP 	secondImage: autoDraw = False
+60.9461 	EXP 	fixcrossImage2: autoDraw = False
+62.1065 	INFO 	AnswerCorrect
+62.1072 	DATA 	KeyPress: ä
+62.1127 	EXP 	feedbackText: text = 'Richtig!'
+62.1127 	EXP 	feedbackText: autoDraw = True
+64.1126 	EXP 	feedbackText: autoDraw = False
+64.1126 	EXP 	feedbackText: autoDraw = False
+64.1126 	EXP 	fixcrossEnd: autoDraw = True
+64.1479 	EXP 	New trial (rep=0, index=5): {'position1': (-0.7, 0.5), 'trialtype': 'test2', 'position2': (0.7, -0.5), 'comptype': 'test1'}
+64.1479 	INFO 	FixationCross
+64.1543 	EXP 	fixcrossEnd: autoDraw = False
+64.1543 	EXP 	fixcrossEnd: autoDraw = False
+64.1543 	EXP 	fixcross: autoDraw = True
+65.1542 	EXP 	fixcross: autoDraw = False
+65.1542 	EXP 	fixcross: autoDraw = False
+65.1542 	EXP 	firstImage: image = 'stimuli/Test2.png'
+65.1542 	EXP 	firstImage: autoDraw = True
+65.1542 	EXP 	fixcrossImage1: autoDraw = True
+65.3070 	EXP 	firstImage: autoDraw = False
+65.3070 	EXP 	fixcrossImage1: autoDraw = False
+65.3070 	EXP 	fixcrossITI: autoDraw = True
+65.8070 	EXP 	fixcrossITI: autoDraw = False
+65.8070 	EXP 	secondImage: image = 'stimuli/Test1.png'
+65.8070 	EXP 	secondImage: autoDraw = True
+65.8070 	EXP 	fixcrossImage2: autoDraw = True
+65.9598 	EXP 	secondImage: autoDraw = False
+65.9598 	EXP 	fixcrossImage2: autoDraw = False
+66.5369 	INFO 	AnswerWrong
+66.5408 	DATA 	KeyPress: ä
+66.5431 	EXP 	feedbackText: height = 0.1
+66.5431 	EXP 	feedbackText: height = 0.1
+66.5431 	EXP 	feedbackText: height = 0.1
+66.5431 	EXP 	feedbackText: text = 'Falsch!'
+66.5431 	EXP 	feedbackText: autoDraw = True
+68.5430 	EXP 	feedbackText: autoDraw = False
+68.5430 	EXP 	feedbackText: autoDraw = False
+68.5430 	EXP 	fixcrossEnd: autoDraw = True
+68.9116 	EXP 	New trial (rep=0, index=6): {'position1': (-0.7, 0.5), 'trialtype': 'test2', 'position2': (0.7, 0.5), 'comptype': 'test1'}
+68.9117 	INFO 	FixationCross
+68.9180 	EXP 	fixcrossEnd: autoDraw = False
+68.9180 	EXP 	fixcrossEnd: autoDraw = False
+68.9180 	EXP 	fixcross: autoDraw = True
+69.9179 	EXP 	fixcross: autoDraw = False
+69.9179 	EXP 	fixcross: autoDraw = False
+69.9179 	EXP 	firstImage: image = 'stimuli/Test2.png'
+69.9179 	EXP 	firstImage: autoDraw = True
+69.9179 	EXP 	fixcrossImage1: autoDraw = True
+70.0707 	EXP 	firstImage: autoDraw = False
+70.0707 	EXP 	fixcrossImage1: autoDraw = False
+70.0707 	EXP 	fixcrossITI: autoDraw = True
+70.5707 	EXP 	fixcrossITI: autoDraw = False
+70.5707 	EXP 	secondImage: image = 'stimuli/Test1.png'
+70.5707 	EXP 	secondImage: autoDraw = True
+70.5707 	EXP 	fixcrossImage2: autoDraw = True
+70.7235 	EXP 	secondImage: autoDraw = False
+70.7235 	EXP 	fixcrossImage2: autoDraw = False
+71.6409 	INFO 	AnswerCorrect
+71.6443 	DATA 	Keypress: l
+71.6470 	EXP 	feedbackText: height = 0.1
+71.6470 	EXP 	feedbackText: height = 0.1
+71.6470 	EXP 	feedbackText: height = 0.1
+71.6470 	EXP 	feedbackText: text = 'Richtig!'
+71.6470 	EXP 	feedbackText: autoDraw = True
+73.6470 	EXP 	feedbackText: autoDraw = False
+73.6470 	EXP 	feedbackText: autoDraw = False
+73.6470 	EXP 	fixcrossEnd: autoDraw = True
+74.3419 	EXP 	New trial (rep=0, index=7): {'position1': (-0.7, 0.5), 'trialtype': 'test1', 'position2': (0.7, -0.5), 'comptype': 'test1'}
+74.3420 	INFO 	FixationCross
+74.3483 	EXP 	fixcrossEnd: autoDraw = False
+74.3483 	EXP 	fixcrossEnd: autoDraw = False
+74.3483 	EXP 	fixcross: autoDraw = True
+75.3552 	EXP 	fixcross: autoDraw = False
+75.3552 	EXP 	fixcross: autoDraw = False
+75.3552 	EXP 	firstImage: image = 'stimuli/Test1.png'
+75.3552 	EXP 	firstImage: autoDraw = True
+75.3552 	EXP 	fixcrossImage1: autoDraw = True
+75.5011 	EXP 	firstImage: autoDraw = False
+75.5011 	EXP 	fixcrossImage1: autoDraw = False
+75.5011 	EXP 	fixcrossITI: autoDraw = True
+76.0010 	EXP 	fixcrossITI: autoDraw = False
+76.0010 	EXP 	secondImage: image = 'stimuli/Test1.png'
+76.0010 	EXP 	secondImage: autoDraw = True
+76.0010 	EXP 	fixcrossImage2: autoDraw = True
+76.1538 	EXP 	secondImage: autoDraw = False
+76.1538 	EXP 	fixcrossImage2: autoDraw = False
+76.7864 	INFO 	AnswerCorrect
+76.7871 	DATA 	KeyPress: ä
+76.7927 	EXP 	feedbackText: text = 'Richtig!'
+76.7927 	EXP 	feedbackText: autoDraw = True
+78.7926 	EXP 	feedbackText: autoDraw = False
+78.7926 	EXP 	feedbackText: autoDraw = False
+78.7926 	EXP 	fixcrossEnd: autoDraw = True
+79.6264 	EXP 	New trial (rep=0, index=8): {'position1': (-0.7, -0.5), 'trialtype': 'test1', 'position2': (0.7, 0.5), 'comptype': 'test2'}
+79.6265 	INFO 	FixationCross
+79.6329 	EXP 	fixcrossEnd: autoDraw = False
+79.6329 	EXP 	fixcrossEnd: autoDraw = False
+79.6329 	EXP 	fixcross: autoDraw = True
+80.6328 	EXP 	fixcross: autoDraw = False
+80.6328 	EXP 	fixcross: autoDraw = False
+80.6328 	EXP 	firstImage: image = 'stimuli/Test1.png'
+80.6328 	EXP 	firstImage: autoDraw = True
+80.6328 	EXP 	fixcrossImage1: autoDraw = True
+80.7856 	EXP 	firstImage: autoDraw = False
+80.7856 	EXP 	fixcrossImage1: autoDraw = False
+80.7856 	EXP 	fixcrossITI: autoDraw = True
+81.2856 	EXP 	fixcrossITI: autoDraw = False
+81.2856 	EXP 	secondImage: image = 'stimuli/Test2.png'
+81.2856 	EXP 	secondImage: autoDraw = True
+81.2856 	EXP 	fixcrossImage2: autoDraw = True
+81.4383 	EXP 	secondImage: autoDraw = False
+81.4383 	EXP 	fixcrossImage2: autoDraw = False
+82.0016 	INFO 	AnswerCorrect
+82.0023 	DATA 	Keypress: l
+82.0078 	EXP 	feedbackText: text = 'Richtig!'
+82.0078 	EXP 	feedbackText: autoDraw = True
+84.0077 	EXP 	feedbackText: autoDraw = False
+84.0077 	EXP 	feedbackText: autoDraw = False
+84.0077 	EXP 	fixcrossEnd: autoDraw = True
+84.0915 	EXP 	New trial (rep=0, index=9): {'position1': (-0.7, -0.5), 'trialtype': 'test2', 'position2': (-0.7, 0.5), 'comptype': 'test2'}
+84.0915 	INFO 	FixationCross
+84.0980 	EXP 	fixcrossEnd: autoDraw = False
+84.0980 	EXP 	fixcrossEnd: autoDraw = False
+84.0980 	EXP 	fixcross: autoDraw = True
+85.1049 	EXP 	fixcross: autoDraw = False
+85.1049 	EXP 	fixcross: autoDraw = False
+85.1049 	EXP 	firstImage: image = 'stimuli/Test2.png'
+85.1049 	EXP 	firstImage: autoDraw = True
+85.1049 	EXP 	fixcrossImage1: autoDraw = True
+85.2507 	EXP 	firstImage: autoDraw = False
+85.2507 	EXP 	fixcrossImage1: autoDraw = False
+85.2507 	EXP 	fixcrossITI: autoDraw = True
+85.7506 	EXP 	fixcrossITI: autoDraw = False
+85.7506 	EXP 	secondImage: image = 'stimuli/Test2.png'
+85.7506 	EXP 	secondImage: autoDraw = True
+85.7506 	EXP 	fixcrossImage2: autoDraw = True
+85.9034 	EXP 	secondImage: autoDraw = False
+85.9034 	EXP 	fixcrossImage2: autoDraw = False
+86.6194 	INFO 	AnswerCorrect
+86.6201 	DATA 	KeyPress: ä
+86.6256 	EXP 	feedbackText: text = 'Richtig!'
+86.6256 	EXP 	feedbackText: autoDraw = True
+88.6255 	EXP 	feedbackText: autoDraw = False
+88.6255 	EXP 	feedbackText: autoDraw = False
+88.6255 	EXP 	fixcrossEnd: autoDraw = True
+88.9594 	EXP 	New trial (rep=0, index=10): {'position1': (-0.7, -0.5), 'trialtype': 'test2', 'position2': (0.7, 0.5), 'comptype': 'test2'}
+88.9595 	INFO 	FixationCross
+88.9658 	EXP 	fixcrossEnd: autoDraw = False
+88.9658 	EXP 	fixcrossEnd: autoDraw = False
+88.9658 	EXP 	fixcross: autoDraw = True
+89.9658 	EXP 	fixcross: autoDraw = False
+89.9658 	EXP 	fixcross: autoDraw = False
+89.9658 	EXP 	firstImage: image = 'stimuli/Test2.png'
+89.9658 	EXP 	firstImage: autoDraw = True
+89.9658 	EXP 	fixcrossImage1: autoDraw = True
+90.1185 	EXP 	firstImage: autoDraw = False
+90.1185 	EXP 	fixcrossImage1: autoDraw = False
+90.1185 	EXP 	fixcrossITI: autoDraw = True
+90.6185 	EXP 	fixcrossITI: autoDraw = False
+90.6185 	EXP 	secondImage: image = 'stimuli/Test2.png'
+90.6185 	EXP 	secondImage: autoDraw = True
+90.6185 	EXP 	fixcrossImage2: autoDraw = True
+90.7713 	EXP 	secondImage: autoDraw = False
+90.7713 	EXP 	fixcrossImage2: autoDraw = False
+91.2999 	INFO 	AnswerCorrect
+91.3006 	DATA 	KeyPress: ä
+91.3060 	EXP 	feedbackText: text = 'Richtig!'
+91.3060 	EXP 	feedbackText: autoDraw = True
+93.3059 	EXP 	feedbackText: autoDraw = False
+93.3059 	EXP 	feedbackText: autoDraw = False
+93.3059 	EXP 	fixcrossEnd: autoDraw = True
+93.6328 	EXP 	New trial (rep=0, index=11): {'position1': (0.7, 0.5), 'trialtype': 'test2', 'position2': (-0.7, 0.5), 'comptype': 'test1'}
+93.6329 	INFO 	FixationCross
+93.6392 	EXP 	fixcrossEnd: autoDraw = False
+93.6392 	EXP 	fixcrossEnd: autoDraw = False
+93.6392 	EXP 	fixcross: autoDraw = True
+94.6392 	EXP 	fixcross: autoDraw = False
+94.6392 	EXP 	fixcross: autoDraw = False
+94.6392 	EXP 	firstImage: image = 'stimuli/Test2.png'
+94.6392 	EXP 	firstImage: autoDraw = True
+94.6392 	EXP 	fixcrossImage1: autoDraw = True
+94.7920 	EXP 	firstImage: autoDraw = False
+94.7920 	EXP 	fixcrossImage1: autoDraw = False
+94.7920 	EXP 	fixcrossITI: autoDraw = True
+95.2920 	EXP 	fixcrossITI: autoDraw = False
+95.2920 	EXP 	secondImage: image = 'stimuli/Test1.png'
+95.2920 	EXP 	secondImage: autoDraw = True
+95.2920 	EXP 	fixcrossImage2: autoDraw = True
+95.4447 	EXP 	secondImage: autoDraw = False
+95.4447 	EXP 	fixcrossImage2: autoDraw = False
+95.9941 	INFO 	AnswerCorrect
+95.9949 	DATA 	Keypress: l
+96.0002 	EXP 	feedbackText: text = 'Richtig!'
+96.0002 	EXP 	feedbackText: autoDraw = True
+98.0002 	EXP 	feedbackText: autoDraw = False
+98.0002 	EXP 	feedbackText: autoDraw = False
+98.0002 	EXP 	fixcrossEnd: autoDraw = True
+98.8965 	EXP 	New trial (rep=0, index=12): {'position1': (0.7, 0.5), 'trialtype': 'test1', 'position2': (0.7, -0.5), 'comptype': 'test2'}
+98.8966 	INFO 	FixationCross
+98.9029 	EXP 	fixcrossEnd: autoDraw = False
+98.9029 	EXP 	fixcrossEnd: autoDraw = False
+98.9029 	EXP 	fixcross: autoDraw = True
+99.9029 	EXP 	fixcross: autoDraw = False
+99.9029 	EXP 	fixcross: autoDraw = False
+99.9029 	EXP 	firstImage: image = 'stimuli/Test1.png'
+99.9029 	EXP 	firstImage: autoDraw = True
+99.9029 	EXP 	fixcrossImage1: autoDraw = True
+100.0556 	EXP 	firstImage: autoDraw = False
+100.0556 	EXP 	fixcrossImage1: autoDraw = False
+100.0556 	EXP 	fixcrossITI: autoDraw = True
+100.5556 	EXP 	fixcrossITI: autoDraw = False
+100.5556 	EXP 	secondImage: image = 'stimuli/Test2.png'
+100.5556 	EXP 	secondImage: autoDraw = True
+100.5556 	EXP 	fixcrossImage2: autoDraw = True
+100.7084 	EXP 	secondImage: autoDraw = False
+100.7084 	EXP 	fixcrossImage2: autoDraw = False
+101.3967 	INFO 	AnswerCorrect
+101.3975 	DATA 	Keypress: l
+101.4028 	EXP 	feedbackText: text = 'Richtig!'
+101.4028 	EXP 	feedbackText: autoDraw = True
+103.4027 	EXP 	feedbackText: autoDraw = False
+103.4027 	EXP 	feedbackText: autoDraw = False
+103.4027 	EXP 	fixcrossEnd: autoDraw = True
+103.7782 	EXP 	New trial (rep=0, index=13): {'position1': (0.7, 0.5), 'trialtype': 'test2', 'position2': (0.7, -0.5), 'comptype': 'test1'}
+103.7783 	INFO 	FixationCross
+103.7847 	EXP 	fixcrossEnd: autoDraw = False
+103.7847 	EXP 	fixcrossEnd: autoDraw = False
+103.7847 	EXP 	fixcross: autoDraw = True
+104.7846 	EXP 	fixcross: autoDraw = False
+104.7846 	EXP 	fixcross: autoDraw = False
+104.7846 	EXP 	firstImage: image = 'stimuli/Test2.png'
+104.7846 	EXP 	firstImage: autoDraw = True
+104.7846 	EXP 	fixcrossImage1: autoDraw = True
+104.9374 	EXP 	firstImage: autoDraw = False
+104.9374 	EXP 	fixcrossImage1: autoDraw = False
+104.9374 	EXP 	fixcrossITI: autoDraw = True
+105.4374 	EXP 	fixcrossITI: autoDraw = False
+105.4374 	EXP 	secondImage: image = 'stimuli/Test1.png'
+105.4374 	EXP 	secondImage: autoDraw = True
+105.4374 	EXP 	fixcrossImage2: autoDraw = True
+105.5902 	EXP 	secondImage: autoDraw = False
+105.5902 	EXP 	fixcrossImage2: autoDraw = False
+106.1117 	INFO 	AnswerCorrect
+106.1123 	DATA 	Keypress: l
+106.1179 	EXP 	feedbackText: text = 'Richtig!'
+106.1179 	EXP 	feedbackText: autoDraw = True
+108.1178 	EXP 	feedbackText: autoDraw = False
+108.1178 	EXP 	feedbackText: autoDraw = False
+108.1178 	EXP 	fixcrossEnd: autoDraw = True
+108.9859 	EXP 	fixcrossEnd: autoDraw = False
+108.9859 	EXP 	fixcrossEnd: autoDraw = False
+108.9859 	EXP 	textStartTask: autoDraw = True
+108.9859 	EXP 	textTaskImages: autoDraw = True
+108.9859 	EXP 	ImageTask1: autoDraw = True
+108.9859 	EXP 	ImageTask2: autoDraw = True
+108.9859 	EXP 	ImageTask3: autoDraw = True
+108.9859 	EXP 	ImageTask4: autoDraw = True
+108.9859 	EXP 	textTaskSpace: autoDraw = True
+120.4032 	DATA 	Keypress: space
+120.4090 	EXP 	textStartTask: autoDraw = False
+120.4090 	EXP 	textTaskImages: autoDraw = False
+120.4090 	EXP 	ImageTask1: autoDraw = False
+120.4090 	EXP 	ImageTask2: autoDraw = False
+120.4090 	EXP 	ImageTask3: autoDraw = False
+120.4090 	EXP 	ImageTask4: autoDraw = False
+120.4090 	EXP 	textTaskSpace: autoDraw = False
+120.4090 	EXP 	blankScreen: text = ''
+120.4090 	EXP 	blankScreen: autoDraw = True
+122.3659 	EXP 	Imported positions.xlsx as conditions, 96 conditions, 4 params
+122.3672 	EXP 	Created sequence: random, trialTypes=96, nReps=1, seed=None
+122.3674 	EXP 	New trial (rep=0, index=0): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_s'}
+122.3674 	INFO 	FixationCross
+122.3742 	EXP 	blankScreen: autoDraw = False
+122.3742 	EXP 	blankScreen: autoDraw = False
+122.3742 	EXP 	fixcross: autoDraw = True
+123.3673 	EXP 	fixcross: autoDraw = False
+123.3673 	EXP 	firstImage: image = 'stimuli/Social1.png'
+123.3673 	EXP 	firstImage: autoDraw = True
+123.3673 	EXP 	fixcrossImage1: autoDraw = True
+123.5061 	EXP 	firstImage: autoDraw = False
+123.5061 	EXP 	fixcrossImage1: autoDraw = False
+123.5061 	EXP 	fixcrossITI: autoDraw = True
+124.0131 	EXP 	fixcrossITI: autoDraw = False
+124.0131 	EXP 	secondImage: image = 'stimuli/Social2.png'
+124.0131 	EXP 	secondImage: autoDraw = True
+124.0131 	EXP 	fixcrossImage2: autoDraw = True
+124.1589 	EXP 	secondImage: autoDraw = False
+124.1589 	EXP 	fixcrossImage2: autoDraw = False
+125.5071 	INFO 	AnswerWrong
+125.5078 	DATA 	KeyPress: ä
+125.5130 	EXP 	fixcrossEnd: autoDraw = True
+126.1037 	EXP 	New trial (rep=0, index=1): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_s'}
+126.1038 	INFO 	FixationCross
+126.1102 	EXP 	fixcrossEnd: autoDraw = False
+126.1102 	EXP 	fixcrossEnd: autoDraw = False
+126.1102 	EXP 	fixcross: autoDraw = True
+127.1171 	EXP 	fixcross: autoDraw = False
+127.1171 	EXP 	fixcross: autoDraw = False
+127.1171 	EXP 	firstImage: image = 'stimuli/Social2.png'
+127.1171 	EXP 	firstImage: autoDraw = True
+127.1171 	EXP 	fixcrossImage1: autoDraw = True
+127.2629 	EXP 	firstImage: autoDraw = False
+127.2629 	EXP 	fixcrossImage1: autoDraw = False
+127.2629 	EXP 	fixcrossITI: autoDraw = True
+127.7698 	EXP 	fixcrossITI: autoDraw = False
+127.7698 	EXP 	secondImage: image = 'stimuli/Social1.png'
+127.7698 	EXP 	secondImage: autoDraw = True
+127.7698 	EXP 	fixcrossImage2: autoDraw = True
+127.9157 	EXP 	secondImage: autoDraw = False
+127.9157 	EXP 	fixcrossImage2: autoDraw = False
+128.5484 	INFO 	AnswerWrong
+128.5491 	DATA 	KeyPress: ä
+128.5545 	EXP 	fixcrossEnd: autoDraw = True
+128.7634 	EXP 	New trial (rep=0, index=2): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_s'}
+128.7635 	INFO 	FixationCross
+128.7698 	EXP 	fixcrossEnd: autoDraw = False
+128.7698 	EXP 	fixcrossEnd: autoDraw = False
+128.7698 	EXP 	fixcross: autoDraw = True
+129.7767 	EXP 	fixcross: autoDraw = False
+129.7767 	EXP 	fixcross: autoDraw = False
+129.7767 	EXP 	firstImage: image = 'stimuli/Social2.png'
+129.7767 	EXP 	firstImage: autoDraw = True
+129.7767 	EXP 	fixcrossImage1: autoDraw = True
+129.9225 	EXP 	firstImage: autoDraw = False
+129.9225 	EXP 	fixcrossImage1: autoDraw = False
+129.9225 	EXP 	fixcrossITI: autoDraw = True
+130.4295 	EXP 	fixcrossITI: autoDraw = False
+130.4295 	EXP 	secondImage: image = 'stimuli/Social2.png'
+130.4295 	EXP 	secondImage: autoDraw = True
+130.4295 	EXP 	fixcrossImage2: autoDraw = True
+130.5753 	EXP 	secondImage: autoDraw = False
+130.5753 	EXP 	fixcrossImage2: autoDraw = False
+131.4442 	INFO 	AnswerCorrect
+131.4450 	DATA 	KeyPress: ä
+131.4503 	EXP 	fixcrossEnd: autoDraw = True
+132.2701 	EXP 	New trial (rep=0, index=3): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_s'}
+132.2702 	INFO 	FixationCross
+132.2766 	EXP 	fixcrossEnd: autoDraw = False
+132.2766 	EXP 	fixcrossEnd: autoDraw = False
+132.2766 	EXP 	fixcross: autoDraw = True
+133.2835 	EXP 	fixcross: autoDraw = False
+133.2835 	EXP 	fixcross: autoDraw = False
+133.2835 	EXP 	firstImage: image = 'stimuli/Social1.png'
+133.2835 	EXP 	firstImage: autoDraw = True
+133.2835 	EXP 	fixcrossImage1: autoDraw = True
+133.4293 	EXP 	firstImage: autoDraw = False
+133.4293 	EXP 	fixcrossImage1: autoDraw = False
+133.4293 	EXP 	fixcrossITI: autoDraw = True
+133.9363 	EXP 	fixcrossITI: autoDraw = False
+133.9363 	EXP 	secondImage: image = 'stimuli/Social1.png'
+133.9363 	EXP 	secondImage: autoDraw = True
+133.9363 	EXP 	fixcrossImage2: autoDraw = True
+134.0821 	EXP 	secondImage: autoDraw = False
+134.0821 	EXP 	fixcrossImage2: autoDraw = False
+134.8051 	INFO 	AnswerCorrect
+134.8059 	DATA 	KeyPress: ä
+134.8112 	EXP 	fixcrossEnd: autoDraw = True
+134.9437 	EXP 	New trial (rep=0, index=4): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_s'}
+134.9437 	INFO 	FixationCross
+134.9501 	EXP 	fixcrossEnd: autoDraw = False
+134.9501 	EXP 	fixcrossEnd: autoDraw = False
+134.9501 	EXP 	fixcross: autoDraw = True
+135.9570 	EXP 	fixcross: autoDraw = False
+135.9570 	EXP 	fixcross: autoDraw = False
+135.9570 	EXP 	firstImage: image = 'stimuli/Social2.png'
+135.9570 	EXP 	firstImage: autoDraw = True
+135.9570 	EXP 	fixcrossImage1: autoDraw = True
+136.1028 	EXP 	firstImage: autoDraw = False
+136.1028 	EXP 	fixcrossImage1: autoDraw = False
+136.1028 	EXP 	fixcrossITI: autoDraw = True
+136.6097 	EXP 	fixcrossITI: autoDraw = False
+136.6097 	EXP 	secondImage: image = 'stimuli/Social2.png'
+136.6097 	EXP 	secondImage: autoDraw = True
+136.6097 	EXP 	fixcrossImage2: autoDraw = True
+136.7556 	EXP 	secondImage: autoDraw = False
+136.7556 	EXP 	fixcrossImage2: autoDraw = False
+137.4438 	INFO 	AnswerCorrect
+137.4446 	DATA 	KeyPress: ä
+137.4500 	EXP 	fixcrossEnd: autoDraw = True
+137.7631 	EXP 	New trial (rep=0, index=5): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_s'}
+137.7632 	INFO 	FixationCross
+137.7695 	EXP 	fixcrossEnd: autoDraw = False
+137.7695 	EXP 	fixcrossEnd: autoDraw = False
+137.7695 	EXP 	fixcross: autoDraw = True
+138.7764 	EXP 	fixcross: autoDraw = False
+138.7764 	EXP 	fixcross: autoDraw = False
+138.7764 	EXP 	firstImage: image = 'stimuli/Social2.png'
+138.7764 	EXP 	firstImage: autoDraw = True
+138.7764 	EXP 	fixcrossImage1: autoDraw = True
+138.9222 	EXP 	firstImage: autoDraw = False
+138.9222 	EXP 	fixcrossImage1: autoDraw = False
+138.9222 	EXP 	fixcrossITI: autoDraw = True
+139.4291 	EXP 	fixcrossITI: autoDraw = False
+139.4291 	EXP 	secondImage: image = 'stimuli/Social2.png'
+139.4291 	EXP 	secondImage: autoDraw = True
+139.4291 	EXP 	fixcrossImage2: autoDraw = True
+139.5749 	EXP 	secondImage: autoDraw = False
+139.5749 	EXP 	fixcrossImage2: autoDraw = False
+140.0269 	INFO 	AnswerCorrect
+140.0276 	DATA 	KeyPress: ä
+140.0332 	EXP 	fixcrossEnd: autoDraw = True
+140.2143 	EXP 	New trial (rep=0, index=6): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_ns'}
+140.2144 	INFO 	FixationCross
+140.2207 	EXP 	fixcrossEnd: autoDraw = False
+140.2207 	EXP 	fixcrossEnd: autoDraw = False
+140.2207 	EXP 	fixcross: autoDraw = True
+141.2276 	EXP 	fixcross: autoDraw = False
+141.2276 	EXP 	fixcross: autoDraw = False
+141.2276 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+141.2276 	EXP 	firstImage: autoDraw = True
+141.2276 	EXP 	fixcrossImage1: autoDraw = True
+141.3735 	EXP 	firstImage: autoDraw = False
+141.3735 	EXP 	fixcrossImage1: autoDraw = False
+141.3735 	EXP 	fixcrossITI: autoDraw = True
+141.8804 	EXP 	fixcrossITI: autoDraw = False
+141.8804 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+141.8804 	EXP 	secondImage: autoDraw = True
+141.8804 	EXP 	fixcrossImage2: autoDraw = True
+142.0262 	EXP 	secondImage: autoDraw = False
+142.0262 	EXP 	fixcrossImage2: autoDraw = False
+143.6242 	INFO 	AnswerWrong
+143.6250 	DATA 	KeyPress: ä
+143.6303 	EXP 	fixcrossEnd: autoDraw = True
+144.1794 	EXP 	New trial (rep=0, index=7): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_ns'}
+144.1795 	INFO 	FixationCross
+144.1859 	EXP 	fixcrossEnd: autoDraw = False
+144.1859 	EXP 	fixcrossEnd: autoDraw = False
+144.1859 	EXP 	fixcross: autoDraw = True
+145.1928 	EXP 	fixcross: autoDraw = False
+145.1928 	EXP 	fixcross: autoDraw = False
+145.1928 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+145.1928 	EXP 	firstImage: autoDraw = True
+145.1928 	EXP 	fixcrossImage1: autoDraw = True
+145.3386 	EXP 	firstImage: autoDraw = False
+145.3386 	EXP 	fixcrossImage1: autoDraw = False
+145.3386 	EXP 	fixcrossITI: autoDraw = True
+145.8455 	EXP 	fixcrossITI: autoDraw = False
+145.8455 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+145.8455 	EXP 	secondImage: autoDraw = True
+145.8455 	EXP 	fixcrossImage2: autoDraw = True
+145.9914 	EXP 	secondImage: autoDraw = False
+145.9914 	EXP 	fixcrossImage2: autoDraw = False
+146.4227 	INFO 	AnswerCorrect
+146.4235 	DATA 	KeyPress: ä
+146.4288 	EXP 	fixcrossEnd: autoDraw = True
+146.7001 	EXP 	New trial (rep=0, index=8): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_s'}
+146.7002 	INFO 	FixationCross
+146.7066 	EXP 	fixcrossEnd: autoDraw = False
+146.7066 	EXP 	fixcrossEnd: autoDraw = False
+146.7066 	EXP 	fixcross: autoDraw = True
+147.7135 	EXP 	fixcross: autoDraw = False
+147.7135 	EXP 	fixcross: autoDraw = False
+147.7135 	EXP 	firstImage: image = 'stimuli/Social2.png'
+147.7135 	EXP 	firstImage: autoDraw = True
+147.7135 	EXP 	fixcrossImage1: autoDraw = True
+147.8593 	EXP 	firstImage: autoDraw = False
+147.8593 	EXP 	fixcrossImage1: autoDraw = False
+147.8593 	EXP 	fixcrossITI: autoDraw = True
+148.3663 	EXP 	fixcrossITI: autoDraw = False
+148.3663 	EXP 	secondImage: image = 'stimuli/Social2.png'
+148.3663 	EXP 	secondImage: autoDraw = True
+148.3663 	EXP 	fixcrossImage2: autoDraw = True
+148.5121 	EXP 	secondImage: autoDraw = False
+148.5121 	EXP 	fixcrossImage2: autoDraw = False
+149.3876 	INFO 	AnswerCorrect
+149.3883 	DATA 	KeyPress: ä
+149.3940 	EXP 	fixcrossEnd: autoDraw = True
+149.9917 	EXP 	New trial (rep=0, index=9): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_ns'}
+149.9918 	INFO 	FixationCross
+149.9981 	EXP 	fixcrossEnd: autoDraw = False
+149.9981 	EXP 	fixcrossEnd: autoDraw = False
+149.9981 	EXP 	fixcross: autoDraw = True
+151.0050 	EXP 	fixcross: autoDraw = False
+151.0050 	EXP 	fixcross: autoDraw = False
+151.0050 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+151.0050 	EXP 	firstImage: autoDraw = True
+151.0050 	EXP 	fixcrossImage1: autoDraw = True
+151.1509 	EXP 	firstImage: autoDraw = False
+151.1509 	EXP 	fixcrossImage1: autoDraw = False
+151.1509 	EXP 	fixcrossITI: autoDraw = True
+151.6578 	EXP 	fixcrossITI: autoDraw = False
+151.6578 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+151.6578 	EXP 	secondImage: autoDraw = True
+151.6578 	EXP 	fixcrossImage2: autoDraw = True
+151.8036 	EXP 	secondImage: autoDraw = False
+151.8036 	EXP 	fixcrossImage2: autoDraw = False
+152.5404 	INFO 	AnswerCorrect
+152.5412 	DATA 	Keypress: l
+152.5467 	EXP 	fixcrossEnd: autoDraw = True
+152.8944 	EXP 	New trial (rep=0, index=10): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_s'}
+152.8945 	INFO 	FixationCross
+152.9008 	EXP 	fixcrossEnd: autoDraw = False
+152.9008 	EXP 	fixcrossEnd: autoDraw = False
+152.9008 	EXP 	fixcross: autoDraw = True
+153.9078 	EXP 	fixcross: autoDraw = False
+153.9078 	EXP 	fixcross: autoDraw = False
+153.9078 	EXP 	firstImage: image = 'stimuli/Social1.png'
+153.9078 	EXP 	firstImage: autoDraw = True
+153.9078 	EXP 	fixcrossImage1: autoDraw = True
+154.0535 	EXP 	firstImage: autoDraw = False
+154.0535 	EXP 	fixcrossImage1: autoDraw = False
+154.0535 	EXP 	fixcrossITI: autoDraw = True
+154.5604 	EXP 	fixcrossITI: autoDraw = False
+154.5604 	EXP 	secondImage: image = 'stimuli/Social2.png'
+154.5604 	EXP 	secondImage: autoDraw = True
+154.5604 	EXP 	fixcrossImage2: autoDraw = True
+154.7063 	EXP 	secondImage: autoDraw = False
+154.7063 	EXP 	fixcrossImage2: autoDraw = False
+155.5268 	INFO 	AnswerCorrect
+155.5276 	DATA 	Keypress: l
+155.5326 	EXP 	fixcrossEnd: autoDraw = True
+155.9915 	EXP 	New trial (rep=0, index=11): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_s'}
+155.9916 	INFO 	FixationCross
+155.9979 	EXP 	fixcrossEnd: autoDraw = False
+155.9979 	EXP 	fixcrossEnd: autoDraw = False
+155.9979 	EXP 	fixcross: autoDraw = True
+157.0048 	EXP 	fixcross: autoDraw = False
+157.0048 	EXP 	fixcross: autoDraw = False
+157.0048 	EXP 	firstImage: image = 'stimuli/Social1.png'
+157.0048 	EXP 	firstImage: autoDraw = True
+157.0048 	EXP 	fixcrossImage1: autoDraw = True
+157.1507 	EXP 	firstImage: autoDraw = False
+157.1507 	EXP 	fixcrossImage1: autoDraw = False
+157.1507 	EXP 	fixcrossITI: autoDraw = True
+157.6575 	EXP 	fixcrossITI: autoDraw = False
+157.6575 	EXP 	secondImage: image = 'stimuli/Social1.png'
+157.6575 	EXP 	secondImage: autoDraw = True
+157.6575 	EXP 	fixcrossImage2: autoDraw = True
+157.8034 	EXP 	secondImage: autoDraw = False
+157.8034 	EXP 	fixcrossImage2: autoDraw = False
+158.3945 	INFO 	AnswerCorrect
+158.3952 	DATA 	KeyPress: ä
+158.4006 	EXP 	fixcrossEnd: autoDraw = True
+159.0747 	EXP 	New trial (rep=0, index=12): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_ns'}
+159.0748 	INFO 	FixationCross
+159.0811 	EXP 	fixcrossEnd: autoDraw = False
+159.0811 	EXP 	fixcrossEnd: autoDraw = False
+159.0811 	EXP 	fixcross: autoDraw = True
+160.0880 	EXP 	fixcross: autoDraw = False
+160.0880 	EXP 	fixcross: autoDraw = False
+160.0880 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+160.0880 	EXP 	firstImage: autoDraw = True
+160.0880 	EXP 	fixcrossImage1: autoDraw = True
+160.2338 	EXP 	firstImage: autoDraw = False
+160.2338 	EXP 	fixcrossImage1: autoDraw = False
+160.2338 	EXP 	fixcrossITI: autoDraw = True
+160.7408 	EXP 	fixcrossITI: autoDraw = False
+160.7408 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+160.7408 	EXP 	secondImage: autoDraw = True
+160.7408 	EXP 	fixcrossImage2: autoDraw = True
+160.8866 	EXP 	secondImage: autoDraw = False
+160.8866 	EXP 	fixcrossImage2: autoDraw = False
+161.6096 	INFO 	AnswerCorrect
+161.6104 	DATA 	Keypress: l
+161.6157 	EXP 	fixcrossEnd: autoDraw = True
+161.7414 	EXP 	New trial (rep=0, index=13): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_s'}
+161.7414 	INFO 	FixationCross
+161.7477 	EXP 	fixcrossEnd: autoDraw = False
+161.7477 	EXP 	fixcrossEnd: autoDraw = False
+161.7477 	EXP 	fixcross: autoDraw = True
+162.7546 	EXP 	fixcross: autoDraw = False
+162.7546 	EXP 	fixcross: autoDraw = False
+162.7546 	EXP 	firstImage: image = 'stimuli/Social2.png'
+162.7546 	EXP 	firstImage: autoDraw = True
+162.7546 	EXP 	fixcrossImage1: autoDraw = True
+162.9004 	EXP 	firstImage: autoDraw = False
+162.9004 	EXP 	fixcrossImage1: autoDraw = False
+162.9004 	EXP 	fixcrossITI: autoDraw = True
+163.4073 	EXP 	fixcrossITI: autoDraw = False
+163.4073 	EXP 	secondImage: image = 'stimuli/Social2.png'
+163.4073 	EXP 	secondImage: autoDraw = True
+163.4073 	EXP 	fixcrossImage2: autoDraw = True
+163.5532 	EXP 	secondImage: autoDraw = False
+163.5532 	EXP 	fixcrossImage2: autoDraw = False
+164.1163 	INFO 	AnswerCorrect
+164.1171 	DATA 	KeyPress: ä
+164.1226 	EXP 	fixcrossEnd: autoDraw = True
+164.4842 	EXP 	New trial (rep=0, index=14): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_s'}
+164.4842 	INFO 	FixationCross
+164.4906 	EXP 	fixcrossEnd: autoDraw = False
+164.4906 	EXP 	fixcrossEnd: autoDraw = False
+164.4906 	EXP 	fixcross: autoDraw = True
+165.4975 	EXP 	fixcross: autoDraw = False
+165.4975 	EXP 	fixcross: autoDraw = False
+165.4975 	EXP 	firstImage: image = 'stimuli/Social2.png'
+165.4975 	EXP 	firstImage: autoDraw = True
+165.4975 	EXP 	fixcrossImage1: autoDraw = True
+165.6434 	EXP 	firstImage: autoDraw = False
+165.6434 	EXP 	fixcrossImage1: autoDraw = False
+165.6434 	EXP 	fixcrossITI: autoDraw = True
+166.1503 	EXP 	fixcrossITI: autoDraw = False
+166.1503 	EXP 	secondImage: image = 'stimuli/Social1.png'
+166.1503 	EXP 	secondImage: autoDraw = True
+166.1503 	EXP 	fixcrossImage2: autoDraw = True
+166.2961 	EXP 	secondImage: autoDraw = False
+166.2961 	EXP 	fixcrossImage2: autoDraw = False
+166.9219 	INFO 	AnswerCorrect
+166.9227 	DATA 	Keypress: l
+166.9280 	EXP 	fixcrossEnd: autoDraw = True
+167.6786 	EXP 	New trial (rep=0, index=15): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_s'}
+167.6787 	INFO 	FixationCross
+167.6849 	EXP 	fixcrossEnd: autoDraw = False
+167.6849 	EXP 	fixcrossEnd: autoDraw = False
+167.6849 	EXP 	fixcross: autoDraw = True
+168.6918 	EXP 	fixcross: autoDraw = False
+168.6918 	EXP 	fixcross: autoDraw = False
+168.6918 	EXP 	firstImage: image = 'stimuli/Social2.png'
+168.6918 	EXP 	firstImage: autoDraw = True
+168.6918 	EXP 	fixcrossImage1: autoDraw = True
+168.8377 	EXP 	firstImage: autoDraw = False
+168.8377 	EXP 	fixcrossImage1: autoDraw = False
+168.8377 	EXP 	fixcrossITI: autoDraw = True
+169.3446 	EXP 	fixcrossITI: autoDraw = False
+169.3446 	EXP 	secondImage: image = 'stimuli/Social2.png'
+169.3446 	EXP 	secondImage: autoDraw = True
+169.3446 	EXP 	fixcrossImage2: autoDraw = True
+169.4904 	EXP 	secondImage: autoDraw = False
+169.4904 	EXP 	fixcrossImage2: autoDraw = False
+170.1162 	INFO 	AnswerCorrect
+170.1170 	DATA 	KeyPress: ä
+170.1223 	EXP 	fixcrossEnd: autoDraw = True
+170.7201 	EXP 	New trial (rep=0, index=16): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_ns'}
+170.7202 	INFO 	FixationCross
+170.7265 	EXP 	fixcrossEnd: autoDraw = False
+170.7265 	EXP 	fixcrossEnd: autoDraw = False
+170.7265 	EXP 	fixcross: autoDraw = True
+171.7334 	EXP 	fixcross: autoDraw = False
+171.7334 	EXP 	fixcross: autoDraw = False
+171.7334 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+171.7334 	EXP 	firstImage: autoDraw = True
+171.7334 	EXP 	fixcrossImage1: autoDraw = True
+171.8792 	EXP 	firstImage: autoDraw = False
+171.8792 	EXP 	fixcrossImage1: autoDraw = False
+171.8792 	EXP 	fixcrossITI: autoDraw = True
+172.3861 	EXP 	fixcrossITI: autoDraw = False
+172.3861 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+172.3861 	EXP 	secondImage: autoDraw = True
+172.3861 	EXP 	fixcrossImage2: autoDraw = True
+172.5319 	EXP 	secondImage: autoDraw = False
+172.5319 	EXP 	fixcrossImage2: autoDraw = False
+173.1369 	INFO 	AnswerCorrect
+173.1376 	DATA 	Keypress: l
+173.1430 	EXP 	fixcrossEnd: autoDraw = True
+173.6367 	EXP 	New trial (rep=0, index=17): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_ns'}
+173.6368 	INFO 	FixationCross
+173.6430 	EXP 	fixcrossEnd: autoDraw = False
+173.6430 	EXP 	fixcrossEnd: autoDraw = False
+173.6430 	EXP 	fixcross: autoDraw = True
+174.6500 	EXP 	fixcross: autoDraw = False
+174.6500 	EXP 	fixcross: autoDraw = False
+174.6500 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+174.6500 	EXP 	firstImage: autoDraw = True
+174.6500 	EXP 	fixcrossImage1: autoDraw = True
+174.7958 	EXP 	firstImage: autoDraw = False
+174.7958 	EXP 	fixcrossImage1: autoDraw = False
+174.7958 	EXP 	fixcrossITI: autoDraw = True
+175.3027 	EXP 	fixcrossITI: autoDraw = False
+175.3027 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+175.3027 	EXP 	secondImage: autoDraw = True
+175.3027 	EXP 	fixcrossImage2: autoDraw = True
+175.4486 	EXP 	secondImage: autoDraw = False
+175.4486 	EXP 	fixcrossImage2: autoDraw = False
+175.9701 	INFO 	AnswerCorrect
+175.9708 	DATA 	KeyPress: ä
+175.9763 	EXP 	fixcrossEnd: autoDraw = True
+176.0046 	EXP 	New trial (rep=0, index=18): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_s'}
+176.0047 	INFO 	FixationCross
+176.0110 	EXP 	fixcrossEnd: autoDraw = False
+176.0110 	EXP 	fixcrossEnd: autoDraw = False
+176.0110 	EXP 	fixcross: autoDraw = True
+177.0179 	EXP 	fixcross: autoDraw = False
+177.0179 	EXP 	fixcross: autoDraw = False
+177.0179 	EXP 	firstImage: image = 'stimuli/Social2.png'
+177.0179 	EXP 	firstImage: autoDraw = True
+177.0179 	EXP 	fixcrossImage1: autoDraw = True
+177.1638 	EXP 	firstImage: autoDraw = False
+177.1638 	EXP 	fixcrossImage1: autoDraw = False
+177.1638 	EXP 	fixcrossITI: autoDraw = True
+177.6707 	EXP 	fixcrossITI: autoDraw = False
+177.6707 	EXP 	secondImage: image = 'stimuli/Social1.png'
+177.6707 	EXP 	secondImage: autoDraw = True
+177.6707 	EXP 	fixcrossImage2: autoDraw = True
+177.8165 	EXP 	secondImage: autoDraw = False
+177.8165 	EXP 	fixcrossImage2: autoDraw = False
+178.4978 	INFO 	AnswerCorrect
+178.4986 	DATA 	Keypress: l
+178.5039 	EXP 	fixcrossEnd: autoDraw = True
+178.7128 	EXP 	New trial (rep=0, index=19): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_s'}
+178.7129 	INFO 	FixationCross
+178.7192 	EXP 	fixcrossEnd: autoDraw = False
+178.7192 	EXP 	fixcrossEnd: autoDraw = False
+178.7192 	EXP 	fixcross: autoDraw = True
+179.7262 	EXP 	fixcross: autoDraw = False
+179.7262 	EXP 	fixcross: autoDraw = False
+179.7262 	EXP 	firstImage: image = 'stimuli/Social1.png'
+179.7262 	EXP 	firstImage: autoDraw = True
+179.7262 	EXP 	fixcrossImage1: autoDraw = True
+179.8719 	EXP 	firstImage: autoDraw = False
+179.8719 	EXP 	fixcrossImage1: autoDraw = False
+179.8719 	EXP 	fixcrossITI: autoDraw = True
+180.3789 	EXP 	fixcrossITI: autoDraw = False
+180.3789 	EXP 	secondImage: image = 'stimuli/Social2.png'
+180.3789 	EXP 	secondImage: autoDraw = True
+180.3789 	EXP 	fixcrossImage2: autoDraw = True
+180.5248 	EXP 	secondImage: autoDraw = False
+180.5248 	EXP 	fixcrossImage2: autoDraw = False
+181.6298 	INFO 	AnswerCorrect
+181.6305 	DATA 	Keypress: l
+181.6358 	EXP 	fixcrossEnd: autoDraw = True
+182.3655 	EXP 	New trial (rep=0, index=20): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_s'}
+182.3656 	INFO 	FixationCross
+182.3719 	EXP 	fixcrossEnd: autoDraw = False
+182.3719 	EXP 	fixcrossEnd: autoDraw = False
+182.3719 	EXP 	fixcross: autoDraw = True
+183.3787 	EXP 	fixcross: autoDraw = False
+183.3787 	EXP 	fixcross: autoDraw = False
+183.3787 	EXP 	firstImage: image = 'stimuli/Social2.png'
+183.3787 	EXP 	firstImage: autoDraw = True
+183.3787 	EXP 	fixcrossImage1: autoDraw = True
+183.5246 	EXP 	firstImage: autoDraw = False
+183.5246 	EXP 	fixcrossImage1: autoDraw = False
+183.5246 	EXP 	fixcrossITI: autoDraw = True
+184.0315 	EXP 	fixcrossITI: autoDraw = False
+184.0315 	EXP 	secondImage: image = 'stimuli/Social2.png'
+184.0315 	EXP 	secondImage: autoDraw = True
+184.0315 	EXP 	fixcrossImage2: autoDraw = True
+184.1774 	EXP 	secondImage: autoDraw = False
+184.1774 	EXP 	fixcrossImage2: autoDraw = False
+184.4629 	DATA 	KeyPress: ä
+184.4698 	INFO 	AnswerCorrect
+184.4759 	EXP 	fixcrossEnd: autoDraw = True
+184.7960 	EXP 	New trial (rep=0, index=21): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_ns'}
+184.7961 	INFO 	FixationCross
+184.8023 	EXP 	fixcrossEnd: autoDraw = False
+184.8023 	EXP 	fixcrossEnd: autoDraw = False
+184.8023 	EXP 	fixcross: autoDraw = True
+185.8093 	EXP 	fixcross: autoDraw = False
+185.8093 	EXP 	fixcross: autoDraw = False
+185.8093 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+185.8093 	EXP 	firstImage: autoDraw = True
+185.8093 	EXP 	fixcrossImage1: autoDraw = True
+185.9551 	EXP 	firstImage: autoDraw = False
+185.9551 	EXP 	fixcrossImage1: autoDraw = False
+185.9551 	EXP 	fixcrossITI: autoDraw = True
+186.4620 	EXP 	fixcrossITI: autoDraw = False
+186.4620 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+186.4620 	EXP 	secondImage: autoDraw = True
+186.4620 	EXP 	fixcrossImage2: autoDraw = True
+186.6078 	EXP 	secondImage: autoDraw = False
+186.6078 	EXP 	fixcrossImage2: autoDraw = False
+187.0391 	INFO 	AnswerCorrect
+187.0398 	DATA 	Keypress: l
+187.0454 	EXP 	fixcrossEnd: autoDraw = True
+187.7402 	EXP 	New trial (rep=0, index=22): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_s'}
+187.7403 	INFO 	FixationCross
+187.7466 	EXP 	fixcrossEnd: autoDraw = False
+187.7466 	EXP 	fixcrossEnd: autoDraw = False
+187.7466 	EXP 	fixcross: autoDraw = True
+188.7535 	EXP 	fixcross: autoDraw = False
+188.7535 	EXP 	fixcross: autoDraw = False
+188.7535 	EXP 	firstImage: image = 'stimuli/Social1.png'
+188.7535 	EXP 	firstImage: autoDraw = True
+188.7535 	EXP 	fixcrossImage1: autoDraw = True
+188.8994 	EXP 	firstImage: autoDraw = False
+188.8994 	EXP 	fixcrossImage1: autoDraw = False
+188.8994 	EXP 	fixcrossITI: autoDraw = True
+189.4063 	EXP 	fixcrossITI: autoDraw = False
+189.4063 	EXP 	secondImage: image = 'stimuli/Social1.png'
+189.4063 	EXP 	secondImage: autoDraw = True
+189.4063 	EXP 	fixcrossImage2: autoDraw = True
+189.5522 	EXP 	secondImage: autoDraw = False
+189.5522 	EXP 	fixcrossImage2: autoDraw = False
+190.2405 	INFO 	AnswerCorrect
+190.2412 	DATA 	KeyPress: ä
+190.2465 	EXP 	fixcrossEnd: autoDraw = True
+191.1498 	EXP 	New trial (rep=0, index=23): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_ns'}
+191.1499 	INFO 	FixationCross
+191.1563 	EXP 	fixcrossEnd: autoDraw = False
+191.1563 	EXP 	fixcrossEnd: autoDraw = False
+191.1563 	EXP 	fixcross: autoDraw = True
+192.1632 	EXP 	fixcross: autoDraw = False
+192.1632 	EXP 	fixcross: autoDraw = False
+192.1632 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+192.1632 	EXP 	firstImage: autoDraw = True
+192.1632 	EXP 	fixcrossImage1: autoDraw = True
+192.3090 	EXP 	firstImage: autoDraw = False
+192.3090 	EXP 	fixcrossImage1: autoDraw = False
+192.3090 	EXP 	fixcrossITI: autoDraw = True
+192.8159 	EXP 	fixcrossITI: autoDraw = False
+192.8159 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+192.8159 	EXP 	secondImage: autoDraw = True
+192.8159 	EXP 	fixcrossImage2: autoDraw = True
+192.9617 	EXP 	secondImage: autoDraw = False
+192.9617 	EXP 	fixcrossImage2: autoDraw = False
+193.5041 	INFO 	AnswerCorrect
+193.5048 	DATA 	Keypress: l
+193.5103 	EXP 	fixcrossEnd: autoDraw = True
+194.4553 	EXP 	New trial (rep=0, index=24): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_s'}
+194.4553 	INFO 	FixationCross
+194.4617 	EXP 	fixcrossEnd: autoDraw = False
+194.4617 	EXP 	fixcrossEnd: autoDraw = False
+194.4617 	EXP 	fixcross: autoDraw = True
+195.4686 	EXP 	fixcross: autoDraw = False
+195.4686 	EXP 	fixcross: autoDraw = False
+195.4686 	EXP 	firstImage: image = 'stimuli/Social2.png'
+195.4686 	EXP 	firstImage: autoDraw = True
+195.4686 	EXP 	fixcrossImage1: autoDraw = True
+195.6144 	EXP 	firstImage: autoDraw = False
+195.6144 	EXP 	fixcrossImage1: autoDraw = False
+195.6144 	EXP 	fixcrossITI: autoDraw = True
+196.1213 	EXP 	fixcrossITI: autoDraw = False
+196.1213 	EXP 	secondImage: image = 'stimuli/Social2.png'
+196.1213 	EXP 	secondImage: autoDraw = True
+196.1213 	EXP 	fixcrossImage2: autoDraw = True
+196.2672 	EXP 	secondImage: autoDraw = False
+196.2672 	EXP 	fixcrossImage2: autoDraw = False
+196.8513 	INFO 	AnswerWrong
+196.8520 	DATA 	Keypress: l
+196.8574 	EXP 	fixcrossEnd: autoDraw = True
+197.4828 	EXP 	New trial (rep=0, index=25): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_ns'}
+197.4829 	INFO 	FixationCross
+197.4893 	EXP 	fixcrossEnd: autoDraw = False
+197.4893 	EXP 	fixcrossEnd: autoDraw = False
+197.4893 	EXP 	fixcross: autoDraw = True
+198.4962 	EXP 	fixcross: autoDraw = False
+198.4962 	EXP 	fixcross: autoDraw = False
+198.4962 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+198.4962 	EXP 	firstImage: autoDraw = True
+198.4962 	EXP 	fixcrossImage1: autoDraw = True
+198.6421 	EXP 	firstImage: autoDraw = False
+198.6421 	EXP 	fixcrossImage1: autoDraw = False
+198.6421 	EXP 	fixcrossITI: autoDraw = True
+199.1490 	EXP 	fixcrossITI: autoDraw = False
+199.1490 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+199.1490 	EXP 	secondImage: autoDraw = True
+199.1490 	EXP 	fixcrossImage2: autoDraw = True
+199.2948 	EXP 	secondImage: autoDraw = False
+199.2948 	EXP 	fixcrossImage2: autoDraw = False
+199.8237 	INFO 	AnswerCorrect
+199.8245 	DATA 	KeyPress: ä
+199.8295 	EXP 	fixcrossEnd: autoDraw = True
+200.3370 	EXP 	New trial (rep=0, index=26): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_ns'}
+200.3371 	INFO 	FixationCross
+200.3434 	EXP 	fixcrossEnd: autoDraw = False
+200.3434 	EXP 	fixcrossEnd: autoDraw = False
+200.3434 	EXP 	fixcross: autoDraw = True
+201.3503 	EXP 	fixcross: autoDraw = False
+201.3503 	EXP 	fixcross: autoDraw = False
+201.3503 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+201.3503 	EXP 	firstImage: autoDraw = True
+201.3503 	EXP 	fixcrossImage1: autoDraw = True
+201.4961 	EXP 	firstImage: autoDraw = False
+201.4961 	EXP 	fixcrossImage1: autoDraw = False
+201.4961 	EXP 	fixcrossITI: autoDraw = True
+202.0031 	EXP 	fixcrossITI: autoDraw = False
+202.0031 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+202.0031 	EXP 	secondImage: autoDraw = True
+202.0031 	EXP 	fixcrossImage2: autoDraw = True
+202.1489 	EXP 	secondImage: autoDraw = False
+202.1489 	EXP 	fixcrossImage2: autoDraw = False
+202.7469 	INFO 	AnswerWrong
+202.7477 	DATA 	Keypress: l
+202.7530 	EXP 	fixcrossEnd: autoDraw = True
+203.6494 	EXP 	New trial (rep=0, index=27): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_ns'}
+203.6495 	INFO 	FixationCross
+203.6558 	EXP 	fixcrossEnd: autoDraw = False
+203.6558 	EXP 	fixcrossEnd: autoDraw = False
+203.6558 	EXP 	fixcross: autoDraw = True
+204.6627 	EXP 	fixcross: autoDraw = False
+204.6627 	EXP 	fixcross: autoDraw = False
+204.6627 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+204.6627 	EXP 	firstImage: autoDraw = True
+204.6627 	EXP 	fixcrossImage1: autoDraw = True
+204.8085 	EXP 	firstImage: autoDraw = False
+204.8085 	EXP 	fixcrossImage1: autoDraw = False
+204.8085 	EXP 	fixcrossITI: autoDraw = True
+205.3154 	EXP 	fixcrossITI: autoDraw = False
+205.3154 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+205.3154 	EXP 	secondImage: autoDraw = True
+205.3154 	EXP 	fixcrossImage2: autoDraw = True
+205.4613 	EXP 	secondImage: autoDraw = False
+205.4613 	EXP 	fixcrossImage2: autoDraw = False
+205.9134 	INFO 	AnswerCorrect
+205.9141 	DATA 	KeyPress: ä
+205.9196 	EXP 	fixcrossEnd: autoDraw = True
+206.7673 	EXP 	New trial (rep=0, index=28): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_s'}
+206.7674 	INFO 	FixationCross
+206.7737 	EXP 	fixcrossEnd: autoDraw = False
+206.7737 	EXP 	fixcrossEnd: autoDraw = False
+206.7737 	EXP 	fixcross: autoDraw = True
+207.7806 	EXP 	fixcross: autoDraw = False
+207.7806 	EXP 	fixcross: autoDraw = False
+207.7806 	EXP 	firstImage: image = 'stimuli/Social1.png'
+207.7806 	EXP 	firstImage: autoDraw = True
+207.7806 	EXP 	fixcrossImage1: autoDraw = True
+207.9264 	EXP 	firstImage: autoDraw = False
+207.9264 	EXP 	fixcrossImage1: autoDraw = False
+207.9264 	EXP 	fixcrossITI: autoDraw = True
+208.4333 	EXP 	fixcrossITI: autoDraw = False
+208.4333 	EXP 	secondImage: image = 'stimuli/Social2.png'
+208.4333 	EXP 	secondImage: autoDraw = True
+208.4333 	EXP 	fixcrossImage2: autoDraw = True
+208.5792 	EXP 	secondImage: autoDraw = False
+208.5792 	EXP 	fixcrossImage2: autoDraw = False
+209.1842 	INFO 	AnswerCorrect
+209.1849 	DATA 	Keypress: l
+209.1903 	EXP 	fixcrossEnd: autoDraw = True
+210.1768 	EXP 	New trial (rep=0, index=29): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_ns'}
+210.1769 	INFO 	FixationCross
+210.1833 	EXP 	fixcrossEnd: autoDraw = False
+210.1833 	EXP 	fixcrossEnd: autoDraw = False
+210.1833 	EXP 	fixcross: autoDraw = True
+211.1902 	EXP 	fixcross: autoDraw = False
+211.1902 	EXP 	fixcross: autoDraw = False
+211.1902 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+211.1902 	EXP 	firstImage: autoDraw = True
+211.1902 	EXP 	fixcrossImage1: autoDraw = True
+211.3360 	EXP 	firstImage: autoDraw = False
+211.3360 	EXP 	fixcrossImage1: autoDraw = False
+211.3360 	EXP 	fixcrossITI: autoDraw = True
+211.8430 	EXP 	fixcrossITI: autoDraw = False
+211.8430 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+211.8430 	EXP 	secondImage: autoDraw = True
+211.8430 	EXP 	fixcrossImage2: autoDraw = True
+211.9888 	EXP 	secondImage: autoDraw = False
+211.9888 	EXP 	fixcrossImage2: autoDraw = False
+212.9618 	INFO 	AnswerCorrect
+212.9625 	DATA 	KeyPress: ä
+212.9679 	EXP 	fixcrossEnd: autoDraw = True
+213.1351 	EXP 	New trial (rep=0, index=30): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_ns'}
+213.1352 	INFO 	FixationCross
+213.1415 	EXP 	fixcrossEnd: autoDraw = False
+213.1415 	EXP 	fixcrossEnd: autoDraw = False
+213.1415 	EXP 	fixcross: autoDraw = True
+214.1484 	EXP 	fixcross: autoDraw = False
+214.1484 	EXP 	fixcross: autoDraw = False
+214.1484 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+214.1484 	EXP 	firstImage: autoDraw = True
+214.1484 	EXP 	fixcrossImage1: autoDraw = True
+214.2943 	EXP 	firstImage: autoDraw = False
+214.2943 	EXP 	fixcrossImage1: autoDraw = False
+214.2943 	EXP 	fixcrossITI: autoDraw = True
+214.8012 	EXP 	fixcrossITI: autoDraw = False
+214.8012 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+214.8012 	EXP 	secondImage: autoDraw = True
+214.8012 	EXP 	fixcrossImage2: autoDraw = True
+214.9470 	EXP 	secondImage: autoDraw = False
+214.9470 	EXP 	fixcrossImage2: autoDraw = False
+215.6284 	INFO 	AnswerCorrect
+215.6292 	DATA 	KeyPress: ä
+215.6345 	EXP 	fixcrossEnd: autoDraw = True
+215.8572 	EXP 	New trial (rep=0, index=31): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_ns'}
+215.8573 	INFO 	FixationCross
+215.8636 	EXP 	fixcrossEnd: autoDraw = False
+215.8636 	EXP 	fixcrossEnd: autoDraw = False
+215.8636 	EXP 	fixcross: autoDraw = True
+216.8705 	EXP 	fixcross: autoDraw = False
+216.8705 	EXP 	fixcross: autoDraw = False
+216.8705 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+216.8705 	EXP 	firstImage: autoDraw = True
+216.8705 	EXP 	fixcrossImage1: autoDraw = True
+217.0164 	EXP 	firstImage: autoDraw = False
+217.0164 	EXP 	fixcrossImage1: autoDraw = False
+217.0164 	EXP 	fixcrossITI: autoDraw = True
+217.5233 	EXP 	fixcrossITI: autoDraw = False
+217.5233 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+217.5233 	EXP 	secondImage: autoDraw = True
+217.5233 	EXP 	fixcrossImage2: autoDraw = True
+217.6691 	EXP 	secondImage: autoDraw = False
+217.6691 	EXP 	fixcrossImage2: autoDraw = False
+218.2809 	INFO 	AnswerCorrect
+218.2816 	DATA 	Keypress: l
+218.2871 	EXP 	fixcrossEnd: autoDraw = True
+218.4890 	EXP 	New trial (rep=0, index=32): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_ns'}
+218.4891 	INFO 	FixationCross
+218.4955 	EXP 	fixcrossEnd: autoDraw = False
+218.4955 	EXP 	fixcrossEnd: autoDraw = False
+218.4955 	EXP 	fixcross: autoDraw = True
+219.5024 	EXP 	fixcross: autoDraw = False
+219.5024 	EXP 	fixcross: autoDraw = False
+219.5024 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+219.5024 	EXP 	firstImage: autoDraw = True
+219.5024 	EXP 	fixcrossImage1: autoDraw = True
+219.6482 	EXP 	firstImage: autoDraw = False
+219.6482 	EXP 	fixcrossImage1: autoDraw = False
+219.6482 	EXP 	fixcrossITI: autoDraw = True
+220.1551 	EXP 	fixcrossITI: autoDraw = False
+220.1551 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+220.1551 	EXP 	secondImage: autoDraw = True
+220.1551 	EXP 	fixcrossImage2: autoDraw = True
+220.3010 	EXP 	secondImage: autoDraw = False
+220.3010 	EXP 	fixcrossImage2: autoDraw = False
+221.0379 	INFO 	AnswerCorrect
+221.0387 	DATA 	Keypress: l
+221.0440 	EXP 	fixcrossEnd: autoDraw = True
+221.7319 	EXP 	New trial (rep=0, index=33): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_s'}
+221.7320 	INFO 	FixationCross
+221.7384 	EXP 	fixcrossEnd: autoDraw = False
+221.7384 	EXP 	fixcrossEnd: autoDraw = False
+221.7384 	EXP 	fixcross: autoDraw = True
+222.7453 	EXP 	fixcross: autoDraw = False
+222.7453 	EXP 	fixcross: autoDraw = False
+222.7453 	EXP 	firstImage: image = 'stimuli/Social2.png'
+222.7453 	EXP 	firstImage: autoDraw = True
+222.7453 	EXP 	fixcrossImage1: autoDraw = True
+222.8912 	EXP 	firstImage: autoDraw = False
+222.8912 	EXP 	fixcrossImage1: autoDraw = False
+222.8912 	EXP 	fixcrossITI: autoDraw = True
+223.3981 	EXP 	fixcrossITI: autoDraw = False
+223.3981 	EXP 	secondImage: image = 'stimuli/Social1.png'
+223.3981 	EXP 	secondImage: autoDraw = True
+223.3981 	EXP 	fixcrossImage2: autoDraw = True
+223.5439 	EXP 	secondImage: autoDraw = False
+223.5439 	EXP 	fixcrossImage2: autoDraw = False
+224.1975 	INFO 	AnswerCorrect
+224.1982 	DATA 	Keypress: l
+224.2036 	EXP 	fixcrossEnd: autoDraw = True
+225.0582 	EXP 	New trial (rep=0, index=34): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_ns'}
+225.0583 	INFO 	FixationCross
+225.0647 	EXP 	fixcrossEnd: autoDraw = False
+225.0647 	EXP 	fixcrossEnd: autoDraw = False
+225.0647 	EXP 	fixcross: autoDraw = True
+226.0716 	EXP 	fixcross: autoDraw = False
+226.0716 	EXP 	fixcross: autoDraw = False
+226.0716 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+226.0716 	EXP 	firstImage: autoDraw = True
+226.0716 	EXP 	fixcrossImage1: autoDraw = True
+226.2174 	EXP 	firstImage: autoDraw = False
+226.2174 	EXP 	fixcrossImage1: autoDraw = False
+226.2174 	EXP 	fixcrossITI: autoDraw = True
+226.7243 	EXP 	fixcrossITI: autoDraw = False
+226.7243 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+226.7243 	EXP 	secondImage: autoDraw = True
+226.7243 	EXP 	fixcrossImage2: autoDraw = True
+226.8702 	EXP 	secondImage: autoDraw = False
+226.8702 	EXP 	fixcrossImage2: autoDraw = False
+227.3639 	INFO 	AnswerCorrect
+227.3646 	DATA 	Keypress: l
+227.3701 	EXP 	fixcrossEnd: autoDraw = True
+227.8081 	EXP 	New trial (rep=0, index=35): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_s'}
+227.8082 	INFO 	FixationCross
+227.8146 	EXP 	fixcrossEnd: autoDraw = False
+227.8146 	EXP 	fixcrossEnd: autoDraw = False
+227.8146 	EXP 	fixcross: autoDraw = True
+228.8215 	EXP 	fixcross: autoDraw = False
+228.8215 	EXP 	fixcross: autoDraw = False
+228.8215 	EXP 	firstImage: image = 'stimuli/Social1.png'
+228.8215 	EXP 	firstImage: autoDraw = True
+228.8215 	EXP 	fixcrossImage1: autoDraw = True
+228.9673 	EXP 	firstImage: autoDraw = False
+228.9673 	EXP 	fixcrossImage1: autoDraw = False
+228.9673 	EXP 	fixcrossITI: autoDraw = True
+229.4742 	EXP 	fixcrossITI: autoDraw = False
+229.4742 	EXP 	secondImage: image = 'stimuli/Social1.png'
+229.4742 	EXP 	secondImage: autoDraw = True
+229.4742 	EXP 	fixcrossImage2: autoDraw = True
+229.6200 	EXP 	secondImage: autoDraw = False
+229.6200 	EXP 	fixcrossImage2: autoDraw = False
+230.2319 	INFO 	AnswerCorrect
+230.2327 	DATA 	KeyPress: ä
+230.2381 	EXP 	fixcrossEnd: autoDraw = True
+231.0094 	EXP 	New trial (rep=0, index=36): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_ns'}
+231.0095 	INFO 	FixationCross
+231.0158 	EXP 	fixcrossEnd: autoDraw = False
+231.0158 	EXP 	fixcrossEnd: autoDraw = False
+231.0158 	EXP 	fixcross: autoDraw = True
+232.0227 	EXP 	fixcross: autoDraw = False
+232.0227 	EXP 	fixcross: autoDraw = False
+232.0227 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+232.0227 	EXP 	firstImage: autoDraw = True
+232.0227 	EXP 	fixcrossImage1: autoDraw = True
+232.1685 	EXP 	firstImage: autoDraw = False
+232.1685 	EXP 	fixcrossImage1: autoDraw = False
+232.1685 	EXP 	fixcrossITI: autoDraw = True
+232.6755 	EXP 	fixcrossITI: autoDraw = False
+232.6755 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+232.6755 	EXP 	secondImage: autoDraw = True
+232.6755 	EXP 	fixcrossImage2: autoDraw = True
+232.8213 	EXP 	secondImage: autoDraw = False
+232.8213 	EXP 	fixcrossImage2: autoDraw = False
+233.4888 	INFO 	AnswerCorrect
+233.4895 	DATA 	Keypress: l
+233.4949 	EXP 	fixcrossEnd: autoDraw = True
+233.5787 	EXP 	New trial (rep=0, index=37): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_ns'}
+233.5788 	INFO 	FixationCross
+233.5852 	EXP 	fixcrossEnd: autoDraw = False
+233.5852 	EXP 	fixcrossEnd: autoDraw = False
+233.5852 	EXP 	fixcross: autoDraw = True
+234.5921 	EXP 	fixcross: autoDraw = False
+234.5921 	EXP 	fixcross: autoDraw = False
+234.5921 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+234.5921 	EXP 	firstImage: autoDraw = True
+234.5921 	EXP 	fixcrossImage1: autoDraw = True
+234.7379 	EXP 	firstImage: autoDraw = False
+234.7379 	EXP 	fixcrossImage1: autoDraw = False
+234.7379 	EXP 	fixcrossITI: autoDraw = True
+235.2449 	EXP 	fixcrossITI: autoDraw = False
+235.2449 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+235.2449 	EXP 	secondImage: autoDraw = True
+235.2449 	EXP 	fixcrossImage2: autoDraw = True
+235.3907 	EXP 	secondImage: autoDraw = False
+235.3907 	EXP 	fixcrossImage2: autoDraw = False
+236.1067 	INFO 	AnswerCorrect
+236.1075 	DATA 	KeyPress: ä
+236.1129 	EXP 	fixcrossEnd: autoDraw = True
+236.5578 	EXP 	New trial (rep=0, index=38): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_ns'}
+236.5579 	INFO 	FixationCross
+236.5642 	EXP 	fixcrossEnd: autoDraw = False
+236.5642 	EXP 	fixcrossEnd: autoDraw = False
+236.5642 	EXP 	fixcross: autoDraw = True
+237.5711 	EXP 	fixcross: autoDraw = False
+237.5711 	EXP 	fixcross: autoDraw = False
+237.5711 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+237.5711 	EXP 	firstImage: autoDraw = True
+237.5711 	EXP 	fixcrossImage1: autoDraw = True
+237.7170 	EXP 	firstImage: autoDraw = False
+237.7170 	EXP 	fixcrossImage1: autoDraw = False
+237.7170 	EXP 	fixcrossITI: autoDraw = True
+238.2239 	EXP 	fixcrossITI: autoDraw = False
+238.2239 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+238.2239 	EXP 	secondImage: autoDraw = True
+238.2239 	EXP 	fixcrossImage2: autoDraw = True
+238.3697 	EXP 	secondImage: autoDraw = False
+238.3697 	EXP 	fixcrossImage2: autoDraw = False
+239.9052 	INFO 	AnswerWrong
+239.9061 	DATA 	KeyPress: ä
+239.9113 	EXP 	fixcrossEnd: autoDraw = True
+240.0160 	EXP 	New trial (rep=0, index=39): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_s'}
+240.0161 	INFO 	FixationCross
+240.0224 	EXP 	fixcrossEnd: autoDraw = False
+240.0224 	EXP 	fixcrossEnd: autoDraw = False
+240.0224 	EXP 	fixcross: autoDraw = True
+241.0293 	EXP 	fixcross: autoDraw = False
+241.0293 	EXP 	fixcross: autoDraw = False
+241.0293 	EXP 	firstImage: image = 'stimuli/Social2.png'
+241.0293 	EXP 	firstImage: autoDraw = True
+241.0293 	EXP 	fixcrossImage1: autoDraw = True
+241.1751 	EXP 	firstImage: autoDraw = False
+241.1751 	EXP 	fixcrossImage1: autoDraw = False
+241.1751 	EXP 	fixcrossITI: autoDraw = True
+241.6821 	EXP 	fixcrossITI: autoDraw = False
+241.6821 	EXP 	secondImage: image = 'stimuli/Social2.png'
+241.6821 	EXP 	secondImage: autoDraw = True
+241.6821 	EXP 	fixcrossImage2: autoDraw = True
+241.8279 	EXP 	secondImage: autoDraw = False
+241.8279 	EXP 	fixcrossImage2: autoDraw = False
+242.7384 	INFO 	AnswerCorrect
+242.7392 	DATA 	KeyPress: ä
+242.7445 	EXP 	fixcrossEnd: autoDraw = True
+243.0020 	EXP 	New trial (rep=0, index=40): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_ns'}
+243.0021 	INFO 	FixationCross
+243.0084 	EXP 	fixcrossEnd: autoDraw = False
+243.0084 	EXP 	fixcrossEnd: autoDraw = False
+243.0084 	EXP 	fixcross: autoDraw = True
+244.0153 	EXP 	fixcross: autoDraw = False
+244.0153 	EXP 	fixcross: autoDraw = False
+244.0153 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+244.0153 	EXP 	firstImage: autoDraw = True
+244.0153 	EXP 	fixcrossImage1: autoDraw = True
+244.1612 	EXP 	firstImage: autoDraw = False
+244.1612 	EXP 	fixcrossImage1: autoDraw = False
+244.1612 	EXP 	fixcrossITI: autoDraw = True
+244.6681 	EXP 	fixcrossITI: autoDraw = False
+244.6681 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+244.6681 	EXP 	secondImage: autoDraw = True
+244.6681 	EXP 	fixcrossImage2: autoDraw = True
+244.8139 	EXP 	secondImage: autoDraw = False
+244.8139 	EXP 	fixcrossImage2: autoDraw = False
+245.5647 	INFO 	AnswerCorrect
+245.5655 	DATA 	KeyPress: ä
+245.5708 	EXP 	fixcrossEnd: autoDraw = True
+246.1685 	EXP 	New trial (rep=0, index=41): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_ns'}
+246.1686 	INFO 	FixationCross
+246.1749 	EXP 	fixcrossEnd: autoDraw = False
+246.1749 	EXP 	fixcrossEnd: autoDraw = False
+246.1749 	EXP 	fixcross: autoDraw = True
+247.1819 	EXP 	fixcross: autoDraw = False
+247.1819 	EXP 	fixcross: autoDraw = False
+247.1819 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+247.1819 	EXP 	firstImage: autoDraw = True
+247.1819 	EXP 	fixcrossImage1: autoDraw = True
+247.3277 	EXP 	firstImage: autoDraw = False
+247.3277 	EXP 	fixcrossImage1: autoDraw = False
+247.3277 	EXP 	fixcrossITI: autoDraw = True
+247.8346 	EXP 	fixcrossITI: autoDraw = False
+247.8346 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+247.8346 	EXP 	secondImage: autoDraw = True
+247.8346 	EXP 	fixcrossImage2: autoDraw = True
+247.9805 	EXP 	secondImage: autoDraw = False
+247.9805 	EXP 	fixcrossImage2: autoDraw = False
+248.5715 	INFO 	AnswerCorrect
+248.5721 	DATA 	Keypress: l
+248.5776 	EXP 	fixcrossEnd: autoDraw = True
+249.2935 	EXP 	New trial (rep=0, index=42): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_s'}
+249.2936 	INFO 	FixationCross
+249.2999 	EXP 	fixcrossEnd: autoDraw = False
+249.2999 	EXP 	fixcrossEnd: autoDraw = False
+249.2999 	EXP 	fixcross: autoDraw = True
+250.3067 	EXP 	fixcross: autoDraw = False
+250.3067 	EXP 	fixcross: autoDraw = False
+250.3067 	EXP 	firstImage: image = 'stimuli/Social2.png'
+250.3067 	EXP 	firstImage: autoDraw = True
+250.3067 	EXP 	fixcrossImage1: autoDraw = True
+250.4526 	EXP 	firstImage: autoDraw = False
+250.4526 	EXP 	fixcrossImage1: autoDraw = False
+250.4526 	EXP 	fixcrossITI: autoDraw = True
+250.9595 	EXP 	fixcrossITI: autoDraw = False
+250.9595 	EXP 	secondImage: image = 'stimuli/Social2.png'
+250.9595 	EXP 	secondImage: autoDraw = True
+250.9595 	EXP 	fixcrossImage2: autoDraw = True
+251.1053 	EXP 	secondImage: autoDraw = False
+251.1053 	EXP 	fixcrossImage2: autoDraw = False
+251.5297 	INFO 	AnswerCorrect
+251.5305 	DATA 	KeyPress: ä
+251.5359 	EXP 	fixcrossEnd: autoDraw = True
+251.7724 	EXP 	New trial (rep=0, index=43): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_ns'}
+251.7726 	INFO 	FixationCross
+251.7789 	EXP 	fixcrossEnd: autoDraw = False
+251.7789 	EXP 	fixcrossEnd: autoDraw = False
+251.7789 	EXP 	fixcross: autoDraw = True
+252.7858 	EXP 	fixcross: autoDraw = False
+252.7858 	EXP 	fixcross: autoDraw = False
+252.7858 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+252.7858 	EXP 	firstImage: autoDraw = True
+252.7858 	EXP 	fixcrossImage1: autoDraw = True
+252.9316 	EXP 	firstImage: autoDraw = False
+252.9316 	EXP 	fixcrossImage1: autoDraw = False
+252.9316 	EXP 	fixcrossITI: autoDraw = True
+253.4385 	EXP 	fixcrossITI: autoDraw = False
+253.4385 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+253.4385 	EXP 	secondImage: autoDraw = True
+253.4385 	EXP 	fixcrossImage2: autoDraw = True
+253.5844 	EXP 	secondImage: autoDraw = False
+253.5844 	EXP 	fixcrossImage2: autoDraw = False
+253.9463 	INFO 	AnswerCorrect
+253.9470 	DATA 	KeyPress: ä
+253.9524 	EXP 	fixcrossEnd: autoDraw = True
+253.9530 	EXP 	New trial (rep=0, index=44): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_s'}
+253.9530 	INFO 	FixationCross
+253.9594 	EXP 	fixcrossEnd: autoDraw = False
+253.9594 	EXP 	fixcrossEnd: autoDraw = False
+253.9594 	EXP 	fixcross: autoDraw = True
+254.9662 	EXP 	fixcross: autoDraw = False
+254.9662 	EXP 	fixcross: autoDraw = False
+254.9662 	EXP 	firstImage: image = 'stimuli/Social2.png'
+254.9662 	EXP 	firstImage: autoDraw = True
+254.9662 	EXP 	fixcrossImage1: autoDraw = True
+255.1121 	EXP 	firstImage: autoDraw = False
+255.1121 	EXP 	fixcrossImage1: autoDraw = False
+255.1121 	EXP 	fixcrossITI: autoDraw = True
+255.6190 	EXP 	fixcrossITI: autoDraw = False
+255.6190 	EXP 	secondImage: image = 'stimuli/Social1.png'
+255.6190 	EXP 	secondImage: autoDraw = True
+255.6190 	EXP 	fixcrossImage2: autoDraw = True
+255.7649 	EXP 	secondImage: autoDraw = False
+255.7649 	EXP 	fixcrossImage2: autoDraw = False
+256.2031 	INFO 	AnswerCorrect
+256.2039 	DATA 	Keypress: l
+256.2093 	EXP 	fixcrossEnd: autoDraw = True
+256.5364 	EXP 	New trial (rep=0, index=45): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_ns'}
+256.5365 	INFO 	FixationCross
+256.5426 	EXP 	fixcrossEnd: autoDraw = False
+256.5426 	EXP 	fixcrossEnd: autoDraw = False
+256.5426 	EXP 	fixcross: autoDraw = True
+257.5495 	EXP 	fixcross: autoDraw = False
+257.5495 	EXP 	fixcross: autoDraw = False
+257.5495 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+257.5495 	EXP 	firstImage: autoDraw = True
+257.5495 	EXP 	fixcrossImage1: autoDraw = True
+257.6953 	EXP 	firstImage: autoDraw = False
+257.6953 	EXP 	fixcrossImage1: autoDraw = False
+257.6953 	EXP 	fixcrossITI: autoDraw = True
+258.2023 	EXP 	fixcrossITI: autoDraw = False
+258.2023 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+258.2023 	EXP 	secondImage: autoDraw = True
+258.2023 	EXP 	fixcrossImage2: autoDraw = True
+258.3481 	EXP 	secondImage: autoDraw = False
+258.3481 	EXP 	fixcrossImage2: autoDraw = False
+258.6822 	INFO 	AnswerCorrect
+258.6829 	DATA 	KeyPress: ä
+258.6884 	EXP 	fixcrossEnd: autoDraw = True
+259.2305 	EXP 	New trial (rep=0, index=46): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_s'}
+259.2306 	INFO 	FixationCross
+259.2370 	EXP 	fixcrossEnd: autoDraw = False
+259.2370 	EXP 	fixcrossEnd: autoDraw = False
+259.2370 	EXP 	fixcross: autoDraw = True
+260.2439 	EXP 	fixcross: autoDraw = False
+260.2439 	EXP 	fixcross: autoDraw = False
+260.2439 	EXP 	firstImage: image = 'stimuli/Social2.png'
+260.2439 	EXP 	firstImage: autoDraw = True
+260.2439 	EXP 	fixcrossImage1: autoDraw = True
+260.3897 	EXP 	firstImage: autoDraw = False
+260.3897 	EXP 	fixcrossImage1: autoDraw = False
+260.3897 	EXP 	fixcrossITI: autoDraw = True
+260.8966 	EXP 	fixcrossITI: autoDraw = False
+260.8966 	EXP 	secondImage: image = 'stimuli/Social1.png'
+260.8966 	EXP 	secondImage: autoDraw = True
+260.8966 	EXP 	fixcrossImage2: autoDraw = True
+261.0424 	EXP 	secondImage: autoDraw = False
+261.0424 	EXP 	fixcrossImage2: autoDraw = False
+261.6683 	INFO 	AnswerCorrect
+261.6690 	DATA 	Keypress: l
+261.6743 	EXP 	fixcrossEnd: autoDraw = True
+262.2096 	EXP 	New trial (rep=0, index=47): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_s'}
+262.2097 	INFO 	FixationCross
+262.2160 	EXP 	fixcrossEnd: autoDraw = False
+262.2160 	EXP 	fixcrossEnd: autoDraw = False
+262.2160 	EXP 	fixcross: autoDraw = True
+263.2229 	EXP 	fixcross: autoDraw = False
+263.2229 	EXP 	fixcross: autoDraw = False
+263.2229 	EXP 	firstImage: image = 'stimuli/Social1.png'
+263.2229 	EXP 	firstImage: autoDraw = True
+263.2229 	EXP 	fixcrossImage1: autoDraw = True
+263.3687 	EXP 	firstImage: autoDraw = False
+263.3687 	EXP 	fixcrossImage1: autoDraw = False
+263.3687 	EXP 	fixcrossITI: autoDraw = True
+263.8757 	EXP 	fixcrossITI: autoDraw = False
+263.8757 	EXP 	secondImage: image = 'stimuli/Social2.png'
+263.8757 	EXP 	secondImage: autoDraw = True
+263.8757 	EXP 	fixcrossImage2: autoDraw = True
+264.0215 	EXP 	secondImage: autoDraw = False
+264.0215 	EXP 	fixcrossImage2: autoDraw = False
+264.6333 	INFO 	AnswerCorrect
+264.6339 	DATA 	Keypress: l
+264.6395 	EXP 	fixcrossEnd: autoDraw = True
+265.2372 	EXP 	New trial (rep=0, index=48): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_s'}
+265.2373 	INFO 	FixationCross
+265.2437 	EXP 	fixcrossEnd: autoDraw = False
+265.2437 	EXP 	fixcrossEnd: autoDraw = False
+265.2437 	EXP 	fixcross: autoDraw = True
+266.2506 	EXP 	fixcross: autoDraw = False
+266.2506 	EXP 	fixcross: autoDraw = False
+266.2506 	EXP 	firstImage: image = 'stimuli/Social2.png'
+266.2506 	EXP 	firstImage: autoDraw = True
+266.2506 	EXP 	fixcrossImage1: autoDraw = True
+266.3964 	EXP 	firstImage: autoDraw = False
+266.3964 	EXP 	fixcrossImage1: autoDraw = False
+266.3964 	EXP 	fixcrossITI: autoDraw = True
+266.9033 	EXP 	fixcrossITI: autoDraw = False
+266.9033 	EXP 	secondImage: image = 'stimuli/Social1.png'
+266.9033 	EXP 	secondImage: autoDraw = True
+266.9033 	EXP 	fixcrossImage2: autoDraw = True
+267.0491 	EXP 	secondImage: autoDraw = False
+267.0491 	EXP 	fixcrossImage2: autoDraw = False
+267.8554 	INFO 	AnswerCorrect
+267.8561 	DATA 	Keypress: l
+267.8616 	EXP 	fixcrossEnd: autoDraw = True
+268.4107 	EXP 	New trial (rep=0, index=49): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_ns'}
+268.4108 	INFO 	FixationCross
+268.4171 	EXP 	fixcrossEnd: autoDraw = False
+268.4171 	EXP 	fixcrossEnd: autoDraw = False
+268.4171 	EXP 	fixcross: autoDraw = True
+269.4240 	EXP 	fixcross: autoDraw = False
+269.4240 	EXP 	fixcross: autoDraw = False
+269.4240 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+269.4240 	EXP 	firstImage: autoDraw = True
+269.4240 	EXP 	fixcrossImage1: autoDraw = True
+269.5698 	EXP 	firstImage: autoDraw = False
+269.5698 	EXP 	fixcrossImage1: autoDraw = False
+269.5698 	EXP 	fixcrossITI: autoDraw = True
+270.0768 	EXP 	fixcrossITI: autoDraw = False
+270.0768 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+270.0768 	EXP 	secondImage: autoDraw = True
+270.0768 	EXP 	fixcrossImage2: autoDraw = True
+270.2226 	EXP 	secondImage: autoDraw = False
+270.2226 	EXP 	fixcrossImage2: autoDraw = False
+270.6886 	INFO 	AnswerCorrect
+270.6894 	DATA 	KeyPress: ä
+270.6948 	EXP 	fixcrossEnd: autoDraw = True
+271.1120 	EXP 	New trial (rep=0, index=50): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_ns'}
+271.1121 	INFO 	FixationCross
+271.1184 	EXP 	fixcrossEnd: autoDraw = False
+271.1184 	EXP 	fixcrossEnd: autoDraw = False
+271.1184 	EXP 	fixcross: autoDraw = True
+272.1253 	EXP 	fixcross: autoDraw = False
+272.1253 	EXP 	fixcross: autoDraw = False
+272.1253 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+272.1253 	EXP 	firstImage: autoDraw = True
+272.1253 	EXP 	fixcrossImage1: autoDraw = True
+272.2712 	EXP 	firstImage: autoDraw = False
+272.2712 	EXP 	fixcrossImage1: autoDraw = False
+272.2712 	EXP 	fixcrossITI: autoDraw = True
+272.7781 	EXP 	fixcrossITI: autoDraw = False
+272.7781 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+272.7781 	EXP 	secondImage: autoDraw = True
+272.7781 	EXP 	fixcrossImage2: autoDraw = True
+272.9239 	EXP 	secondImage: autoDraw = False
+272.9239 	EXP 	fixcrossImage2: autoDraw = False
+273.5705 	INFO 	AnswerCorrect
+273.5712 	DATA 	Keypress: l
+273.5767 	EXP 	fixcrossEnd: autoDraw = True
+274.5286 	EXP 	New trial (rep=0, index=51): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_s'}
+274.5287 	INFO 	FixationCross
+274.5350 	EXP 	fixcrossEnd: autoDraw = False
+274.5350 	EXP 	fixcrossEnd: autoDraw = False
+274.5350 	EXP 	fixcross: autoDraw = True
+275.5418 	EXP 	fixcross: autoDraw = False
+275.5418 	EXP 	fixcross: autoDraw = False
+275.5418 	EXP 	firstImage: image = 'stimuli/Social2.png'
+275.5418 	EXP 	firstImage: autoDraw = True
+275.5418 	EXP 	fixcrossImage1: autoDraw = True
+275.6877 	EXP 	firstImage: autoDraw = False
+275.6877 	EXP 	fixcrossImage1: autoDraw = False
+275.6877 	EXP 	fixcrossITI: autoDraw = True
+276.1946 	EXP 	fixcrossITI: autoDraw = False
+276.1946 	EXP 	secondImage: image = 'stimuli/Social1.png'
+276.1946 	EXP 	secondImage: autoDraw = True
+276.1946 	EXP 	fixcrossImage2: autoDraw = True
+276.3405 	EXP 	secondImage: autoDraw = False
+276.3405 	EXP 	fixcrossImage2: autoDraw = False
+277.0426 	INFO 	AnswerCorrect
+277.0433 	DATA 	Keypress: l
+277.0487 	EXP 	fixcrossEnd: autoDraw = True
+277.1882 	EXP 	New trial (rep=0, index=52): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_s'}
+277.1882 	INFO 	FixationCross
+277.1946 	EXP 	fixcrossEnd: autoDraw = False
+277.1946 	EXP 	fixcrossEnd: autoDraw = False
+277.1946 	EXP 	fixcross: autoDraw = True
+278.2015 	EXP 	fixcross: autoDraw = False
+278.2015 	EXP 	fixcross: autoDraw = False
+278.2015 	EXP 	firstImage: image = 'stimuli/Social1.png'
+278.2015 	EXP 	firstImage: autoDraw = True
+278.2015 	EXP 	fixcrossImage1: autoDraw = True
+278.3473 	EXP 	firstImage: autoDraw = False
+278.3473 	EXP 	fixcrossImage1: autoDraw = False
+278.3473 	EXP 	fixcrossITI: autoDraw = True
+278.8542 	EXP 	fixcrossITI: autoDraw = False
+278.8542 	EXP 	secondImage: image = 'stimuli/Social2.png'
+278.8542 	EXP 	secondImage: autoDraw = True
+278.8542 	EXP 	fixcrossImage2: autoDraw = True
+279.0001 	EXP 	secondImage: autoDraw = False
+279.0001 	EXP 	fixcrossImage2: autoDraw = False
+279.6677 	INFO 	AnswerCorrect
+279.6685 	DATA 	Keypress: l
+279.6736 	EXP 	fixcrossEnd: autoDraw = True
+280.1186 	EXP 	New trial (rep=0, index=53): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_ns'}
+280.1187 	INFO 	FixationCross
+280.1250 	EXP 	fixcrossEnd: autoDraw = False
+280.1250 	EXP 	fixcrossEnd: autoDraw = False
+280.1250 	EXP 	fixcross: autoDraw = True
+281.1319 	EXP 	fixcross: autoDraw = False
+281.1319 	EXP 	fixcross: autoDraw = False
+281.1319 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+281.1319 	EXP 	firstImage: autoDraw = True
+281.1319 	EXP 	fixcrossImage1: autoDraw = True
+281.2778 	EXP 	firstImage: autoDraw = False
+281.2778 	EXP 	fixcrossImage1: autoDraw = False
+281.2778 	EXP 	fixcrossITI: autoDraw = True
+281.7847 	EXP 	fixcrossITI: autoDraw = False
+281.7847 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+281.7847 	EXP 	secondImage: autoDraw = True
+281.7847 	EXP 	fixcrossImage2: autoDraw = True
+281.9305 	EXP 	secondImage: autoDraw = False
+281.9305 	EXP 	fixcrossImage2: autoDraw = False
+282.5075 	INFO 	AnswerCorrect
+282.5082 	DATA 	Keypress: l
+282.5138 	EXP 	fixcrossEnd: autoDraw = True
+282.8893 	EXP 	New trial (rep=0, index=54): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_ns'}
+282.8893 	INFO 	FixationCross
+282.8958 	EXP 	fixcrossEnd: autoDraw = False
+282.8958 	EXP 	fixcrossEnd: autoDraw = False
+282.8958 	EXP 	fixcross: autoDraw = True
+283.9027 	EXP 	fixcross: autoDraw = False
+283.9027 	EXP 	fixcross: autoDraw = False
+283.9027 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+283.9027 	EXP 	firstImage: autoDraw = True
+283.9027 	EXP 	fixcrossImage1: autoDraw = True
+284.0485 	EXP 	firstImage: autoDraw = False
+284.0485 	EXP 	fixcrossImage1: autoDraw = False
+284.0485 	EXP 	fixcrossITI: autoDraw = True
+284.5554 	EXP 	fixcrossITI: autoDraw = False
+284.5554 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+284.5554 	EXP 	secondImage: autoDraw = True
+284.5554 	EXP 	fixcrossImage2: autoDraw = True
+284.7012 	EXP 	secondImage: autoDraw = False
+284.7012 	EXP 	fixcrossImage2: autoDraw = False
+285.3547 	INFO 	AnswerCorrect
+285.3554 	DATA 	Keypress: l
+285.3609 	EXP 	fixcrossEnd: autoDraw = True
+285.7989 	EXP 	New trial (rep=0, index=55): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_ns'}
+285.7990 	INFO 	FixationCross
+285.8054 	EXP 	fixcrossEnd: autoDraw = False
+285.8054 	EXP 	fixcrossEnd: autoDraw = False
+285.8054 	EXP 	fixcross: autoDraw = True
+286.8122 	EXP 	fixcross: autoDraw = False
+286.8122 	EXP 	fixcross: autoDraw = False
+286.8122 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+286.8122 	EXP 	firstImage: autoDraw = True
+286.8122 	EXP 	fixcrossImage1: autoDraw = True
+286.9581 	EXP 	firstImage: autoDraw = False
+286.9581 	EXP 	fixcrossImage1: autoDraw = False
+286.9581 	EXP 	fixcrossITI: autoDraw = True
+287.4650 	EXP 	fixcrossITI: autoDraw = False
+287.4650 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+287.4650 	EXP 	secondImage: autoDraw = True
+287.4650 	EXP 	fixcrossImage2: autoDraw = True
+287.6109 	EXP 	secondImage: autoDraw = False
+287.6109 	EXP 	fixcrossImage2: autoDraw = False
+288.1881 	INFO 	AnswerCorrect
+288.1889 	DATA 	KeyPress: ä
+288.1942 	EXP 	fixcrossEnd: autoDraw = True
+289.0279 	EXP 	New trial (rep=0, index=56): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_ns'}
+289.0281 	INFO 	FixationCross
+289.0344 	EXP 	fixcrossEnd: autoDraw = False
+289.0344 	EXP 	fixcrossEnd: autoDraw = False
+289.0344 	EXP 	fixcross: autoDraw = True
+290.0413 	EXP 	fixcross: autoDraw = False
+290.0413 	EXP 	fixcross: autoDraw = False
+290.0413 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+290.0413 	EXP 	firstImage: autoDraw = True
+290.0413 	EXP 	fixcrossImage1: autoDraw = True
+290.1871 	EXP 	firstImage: autoDraw = False
+290.1871 	EXP 	fixcrossImage1: autoDraw = False
+290.1871 	EXP 	fixcrossITI: autoDraw = True
+290.6940 	EXP 	fixcrossITI: autoDraw = False
+290.6940 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+290.6940 	EXP 	secondImage: autoDraw = True
+290.6940 	EXP 	fixcrossImage2: autoDraw = True
+290.8398 	EXP 	secondImage: autoDraw = False
+290.8398 	EXP 	fixcrossImage2: autoDraw = False
+291.4586 	INFO 	AnswerCorrect
+291.4594 	DATA 	Keypress: l
+291.4648 	EXP 	fixcrossEnd: autoDraw = True
+292.0625 	EXP 	New trial (rep=0, index=57): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_s'}
+292.0626 	INFO 	FixationCross
+292.0690 	EXP 	fixcrossEnd: autoDraw = False
+292.0690 	EXP 	fixcrossEnd: autoDraw = False
+292.0690 	EXP 	fixcross: autoDraw = True
+293.0759 	EXP 	fixcross: autoDraw = False
+293.0759 	EXP 	fixcross: autoDraw = False
+293.0759 	EXP 	firstImage: image = 'stimuli/Social2.png'
+293.0759 	EXP 	firstImage: autoDraw = True
+293.0759 	EXP 	fixcrossImage1: autoDraw = True
+293.2218 	EXP 	firstImage: autoDraw = False
+293.2218 	EXP 	fixcrossImage1: autoDraw = False
+293.2218 	EXP 	fixcrossITI: autoDraw = True
+293.7287 	EXP 	fixcrossITI: autoDraw = False
+293.7287 	EXP 	secondImage: image = 'stimuli/Social1.png'
+293.7287 	EXP 	secondImage: autoDraw = True
+293.7287 	EXP 	fixcrossImage2: autoDraw = True
+293.8745 	EXP 	secondImage: autoDraw = False
+293.8745 	EXP 	fixcrossImage2: autoDraw = False
+294.5003 	INFO 	AnswerCorrect
+294.5009 	DATA 	Keypress: l
+294.5064 	EXP 	fixcrossEnd: autoDraw = True
+295.4166 	EXP 	New trial (rep=0, index=58): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_s'}
+295.4167 	INFO 	FixationCross
+295.4230 	EXP 	fixcrossEnd: autoDraw = False
+295.4230 	EXP 	fixcrossEnd: autoDraw = False
+295.4230 	EXP 	fixcross: autoDraw = True
+296.4299 	EXP 	fixcross: autoDraw = False
+296.4299 	EXP 	fixcross: autoDraw = False
+296.4299 	EXP 	firstImage: image = 'stimuli/Social2.png'
+296.4299 	EXP 	firstImage: autoDraw = True
+296.4299 	EXP 	fixcrossImage1: autoDraw = True
+296.5758 	EXP 	firstImage: autoDraw = False
+296.5758 	EXP 	fixcrossImage1: autoDraw = False
+296.5758 	EXP 	fixcrossITI: autoDraw = True
+297.0827 	EXP 	fixcrossITI: autoDraw = False
+297.0827 	EXP 	secondImage: image = 'stimuli/Social1.png'
+297.0827 	EXP 	secondImage: autoDraw = True
+297.0827 	EXP 	fixcrossImage2: autoDraw = True
+297.2285 	EXP 	secondImage: autoDraw = False
+297.2285 	EXP 	fixcrossImage2: autoDraw = False
+297.6598 	INFO 	AnswerCorrect
+297.6605 	DATA 	Keypress: l
+297.6660 	EXP 	fixcrossEnd: autoDraw = True
+297.6735 	EXP 	New trial (rep=0, index=59): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_ns'}
+297.6735 	INFO 	FixationCross
+297.6799 	EXP 	fixcrossEnd: autoDraw = False
+297.6799 	EXP 	fixcrossEnd: autoDraw = False
+297.6799 	EXP 	fixcross: autoDraw = True
+298.6868 	EXP 	fixcross: autoDraw = False
+298.6868 	EXP 	fixcross: autoDraw = False
+298.6868 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+298.6868 	EXP 	firstImage: autoDraw = True
+298.6868 	EXP 	fixcrossImage1: autoDraw = True
+298.8326 	EXP 	firstImage: autoDraw = False
+298.8326 	EXP 	fixcrossImage1: autoDraw = False
+298.8326 	EXP 	fixcrossITI: autoDraw = True
+299.3396 	EXP 	fixcrossITI: autoDraw = False
+299.3396 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+299.3396 	EXP 	secondImage: autoDraw = True
+299.3396 	EXP 	fixcrossImage2: autoDraw = True
+299.4854 	EXP 	secondImage: autoDraw = False
+299.4854 	EXP 	fixcrossImage2: autoDraw = False
+299.7778 	INFO 	AnswerCorrect
+299.7785 	DATA 	Keypress: l
+299.7840 	EXP 	fixcrossEnd: autoDraw = True
+299.9580 	EXP 	New trial (rep=0, index=60): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_s'}
+299.9581 	INFO 	FixationCross
+299.9646 	EXP 	fixcrossEnd: autoDraw = False
+299.9646 	EXP 	fixcrossEnd: autoDraw = False
+299.9646 	EXP 	fixcross: autoDraw = True
+300.9714 	EXP 	fixcross: autoDraw = False
+300.9714 	EXP 	fixcross: autoDraw = False
+300.9714 	EXP 	firstImage: image = 'stimuli/Social1.png'
+300.9714 	EXP 	firstImage: autoDraw = True
+300.9714 	EXP 	fixcrossImage1: autoDraw = True
+301.1173 	EXP 	firstImage: autoDraw = False
+301.1173 	EXP 	fixcrossImage1: autoDraw = False
+301.1173 	EXP 	fixcrossITI: autoDraw = True
+301.6242 	EXP 	fixcrossITI: autoDraw = False
+301.6242 	EXP 	secondImage: image = 'stimuli/Social1.png'
+301.6242 	EXP 	secondImage: autoDraw = True
+301.6242 	EXP 	fixcrossImage2: autoDraw = True
+301.7700 	EXP 	secondImage: autoDraw = False
+301.7700 	EXP 	fixcrossImage2: autoDraw = False
+302.3472 	INFO 	AnswerCorrect
+302.3479 	DATA 	KeyPress: ä
+302.3533 	EXP 	fixcrossEnd: autoDraw = True
+303.3331 	EXP 	New trial (rep=0, index=61): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_s'}
+303.3332 	INFO 	FixationCross
+303.3394 	EXP 	fixcrossEnd: autoDraw = False
+303.3394 	EXP 	fixcrossEnd: autoDraw = False
+303.3394 	EXP 	fixcross: autoDraw = True
+304.3463 	EXP 	fixcross: autoDraw = False
+304.3463 	EXP 	fixcross: autoDraw = False
+304.3463 	EXP 	firstImage: image = 'stimuli/Social1.png'
+304.3463 	EXP 	firstImage: autoDraw = True
+304.3463 	EXP 	fixcrossImage1: autoDraw = True
+304.4921 	EXP 	firstImage: autoDraw = False
+304.4921 	EXP 	fixcrossImage1: autoDraw = False
+304.4921 	EXP 	fixcrossITI: autoDraw = True
+304.9990 	EXP 	fixcrossITI: autoDraw = False
+304.9990 	EXP 	secondImage: image = 'stimuli/Social1.png'
+304.9990 	EXP 	secondImage: autoDraw = True
+304.9990 	EXP 	fixcrossImage2: autoDraw = True
+305.1449 	EXP 	secondImage: autoDraw = False
+305.1449 	EXP 	fixcrossImage2: autoDraw = False
+305.5277 	INFO 	AnswerCorrect
+305.5284 	DATA 	KeyPress: ä
+305.5337 	EXP 	fixcrossEnd: autoDraw = True
+305.5621 	EXP 	New trial (rep=0, index=62): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_ns'}
+305.5622 	INFO 	FixationCross
+305.5685 	EXP 	fixcrossEnd: autoDraw = False
+305.5685 	EXP 	fixcrossEnd: autoDraw = False
+305.5685 	EXP 	fixcross: autoDraw = True
+306.5753 	EXP 	fixcross: autoDraw = False
+306.5753 	EXP 	fixcross: autoDraw = False
+306.5753 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+306.5753 	EXP 	firstImage: autoDraw = True
+306.5753 	EXP 	fixcrossImage1: autoDraw = True
+306.7212 	EXP 	firstImage: autoDraw = False
+306.7212 	EXP 	fixcrossImage1: autoDraw = False
+306.7212 	EXP 	fixcrossITI: autoDraw = True
+307.2281 	EXP 	fixcrossITI: autoDraw = False
+307.2281 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+307.2281 	EXP 	secondImage: autoDraw = True
+307.2281 	EXP 	fixcrossImage2: autoDraw = True
+307.3739 	EXP 	secondImage: autoDraw = False
+307.3739 	EXP 	fixcrossImage2: autoDraw = False
+307.6525 	INFO 	AnswerCorrect
+307.6532 	DATA 	KeyPress: ä
+307.6586 	EXP 	fixcrossEnd: autoDraw = True
+308.0342 	EXP 	New trial (rep=0, index=63): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_plus_s'}
+308.0343 	INFO 	FixationCross
+308.0406 	EXP 	fixcrossEnd: autoDraw = False
+308.0406 	EXP 	fixcrossEnd: autoDraw = False
+308.0406 	EXP 	fixcross: autoDraw = True
+309.0475 	EXP 	fixcross: autoDraw = False
+309.0475 	EXP 	fixcross: autoDraw = False
+309.0475 	EXP 	firstImage: image = 'stimuli/Social1.png'
+309.0475 	EXP 	firstImage: autoDraw = True
+309.0475 	EXP 	fixcrossImage1: autoDraw = True
+309.1933 	EXP 	firstImage: autoDraw = False
+309.1933 	EXP 	fixcrossImage1: autoDraw = False
+309.1933 	EXP 	fixcrossITI: autoDraw = True
+309.7002 	EXP 	fixcrossITI: autoDraw = False
+309.7002 	EXP 	secondImage: image = 'stimuli/Social1.png'
+309.7002 	EXP 	secondImage: autoDraw = True
+309.7002 	EXP 	fixcrossImage2: autoDraw = True
+309.8461 	EXP 	secondImage: autoDraw = False
+309.8461 	EXP 	fixcrossImage2: autoDraw = False
+310.1039 	INFO 	AnswerCorrect
+310.1047 	DATA 	KeyPress: ä
+310.1100 	EXP 	fixcrossEnd: autoDraw = True
+310.5619 	EXP 	New trial (rep=0, index=64): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_ns'}
+310.5620 	INFO 	FixationCross
+310.5683 	EXP 	fixcrossEnd: autoDraw = False
+310.5683 	EXP 	fixcrossEnd: autoDraw = False
+310.5683 	EXP 	fixcross: autoDraw = True
+311.5752 	EXP 	fixcross: autoDraw = False
+311.5752 	EXP 	fixcross: autoDraw = False
+311.5752 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+311.5752 	EXP 	firstImage: autoDraw = True
+311.5752 	EXP 	fixcrossImage1: autoDraw = True
+311.7210 	EXP 	firstImage: autoDraw = False
+311.7210 	EXP 	fixcrossImage1: autoDraw = False
+311.7210 	EXP 	fixcrossITI: autoDraw = True
+312.2280 	EXP 	fixcrossITI: autoDraw = False
+312.2280 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+312.2280 	EXP 	secondImage: autoDraw = True
+312.2280 	EXP 	fixcrossImage2: autoDraw = True
+312.3738 	EXP 	secondImage: autoDraw = False
+312.3738 	EXP 	fixcrossImage2: autoDraw = False
+312.9857 	INFO 	AnswerWrong
+312.9864 	DATA 	Keypress: l
+312.9918 	EXP 	fixcrossEnd: autoDraw = True
+313.8325 	EXP 	New trial (rep=0, index=65): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_ns'}
+313.8326 	INFO 	FixationCross
+313.8390 	EXP 	fixcrossEnd: autoDraw = False
+313.8390 	EXP 	fixcrossEnd: autoDraw = False
+313.8390 	EXP 	fixcross: autoDraw = True
+314.8459 	EXP 	fixcross: autoDraw = False
+314.8459 	EXP 	fixcross: autoDraw = False
+314.8459 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+314.8459 	EXP 	firstImage: autoDraw = True
+314.8459 	EXP 	fixcrossImage1: autoDraw = True
+314.9917 	EXP 	firstImage: autoDraw = False
+314.9917 	EXP 	fixcrossImage1: autoDraw = False
+314.9917 	EXP 	fixcrossITI: autoDraw = True
+315.4987 	EXP 	fixcrossITI: autoDraw = False
+315.4987 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+315.4987 	EXP 	secondImage: autoDraw = True
+315.4987 	EXP 	fixcrossImage2: autoDraw = True
+315.6445 	EXP 	secondImage: autoDraw = False
+315.6445 	EXP 	fixcrossImage2: autoDraw = False
+316.1870 	INFO 	AnswerCorrect
+316.1878 	DATA 	Keypress: l
+316.1930 	EXP 	fixcrossEnd: autoDraw = True
+317.1519 	EXP 	New trial (rep=0, index=66): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_ns'}
+317.1520 	INFO 	FixationCross
+317.1583 	EXP 	fixcrossEnd: autoDraw = False
+317.1583 	EXP 	fixcrossEnd: autoDraw = False
+317.1583 	EXP 	fixcross: autoDraw = True
+318.1652 	EXP 	fixcross: autoDraw = False
+318.1652 	EXP 	fixcross: autoDraw = False
+318.1652 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+318.1652 	EXP 	firstImage: autoDraw = True
+318.1652 	EXP 	fixcrossImage1: autoDraw = True
+318.3110 	EXP 	firstImage: autoDraw = False
+318.3110 	EXP 	fixcrossImage1: autoDraw = False
+318.3110 	EXP 	fixcrossITI: autoDraw = True
+318.8180 	EXP 	fixcrossITI: autoDraw = False
+318.8180 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+318.8180 	EXP 	secondImage: autoDraw = True
+318.8180 	EXP 	fixcrossImage2: autoDraw = True
+318.9638 	EXP 	secondImage: autoDraw = False
+318.9638 	EXP 	fixcrossImage2: autoDraw = False
+319.4715 	INFO 	AnswerCorrect
+319.4723 	DATA 	KeyPress: ä
+319.4776 	EXP 	fixcrossEnd: autoDraw = True
+319.6449 	EXP 	New trial (rep=0, index=67): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_ns'}
+319.6450 	INFO 	FixationCross
+319.6513 	EXP 	fixcrossEnd: autoDraw = False
+319.6513 	EXP 	fixcrossEnd: autoDraw = False
+319.6513 	EXP 	fixcross: autoDraw = True
+320.6582 	EXP 	fixcross: autoDraw = False
+320.6582 	EXP 	fixcross: autoDraw = False
+320.6582 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+320.6582 	EXP 	firstImage: autoDraw = True
+320.6582 	EXP 	fixcrossImage1: autoDraw = True
+320.8040 	EXP 	firstImage: autoDraw = False
+320.8040 	EXP 	fixcrossImage1: autoDraw = False
+320.8040 	EXP 	fixcrossITI: autoDraw = True
+321.3109 	EXP 	fixcrossITI: autoDraw = False
+321.3109 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+321.3109 	EXP 	secondImage: autoDraw = True
+321.3109 	EXP 	fixcrossImage2: autoDraw = True
+321.4567 	EXP 	secondImage: autoDraw = False
+321.4567 	EXP 	fixcrossImage2: autoDraw = False
+321.9575 	INFO 	AnswerWrong
+321.9583 	DATA 	Keypress: l
+321.9636 	EXP 	fixcrossEnd: autoDraw = True
+322.5823 	EXP 	New trial (rep=0, index=68): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_ns'}
+322.5824 	INFO 	FixationCross
+322.5886 	EXP 	fixcrossEnd: autoDraw = False
+322.5886 	EXP 	fixcrossEnd: autoDraw = False
+322.5886 	EXP 	fixcross: autoDraw = True
+323.5955 	EXP 	fixcross: autoDraw = False
+323.5955 	EXP 	fixcross: autoDraw = False
+323.5955 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+323.5955 	EXP 	firstImage: autoDraw = True
+323.5955 	EXP 	fixcrossImage1: autoDraw = True
+323.7414 	EXP 	firstImage: autoDraw = False
+323.7414 	EXP 	fixcrossImage1: autoDraw = False
+323.7414 	EXP 	fixcrossITI: autoDraw = True
+324.2483 	EXP 	fixcrossITI: autoDraw = False
+324.2483 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+324.2483 	EXP 	secondImage: autoDraw = True
+324.2483 	EXP 	fixcrossImage2: autoDraw = True
+324.3942 	EXP 	secondImage: autoDraw = False
+324.3942 	EXP 	fixcrossImage2: autoDraw = False
+324.8740 	INFO 	AnswerCorrect
+324.8747 	DATA 	Keypress: l
+324.8802 	EXP 	fixcrossEnd: autoDraw = True
+324.9085 	EXP 	New trial (rep=0, index=69): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_ns'}
+324.9086 	INFO 	FixationCross
+324.9149 	EXP 	fixcrossEnd: autoDraw = False
+324.9149 	EXP 	fixcrossEnd: autoDraw = False
+324.9149 	EXP 	fixcross: autoDraw = True
+325.9218 	EXP 	fixcross: autoDraw = False
+325.9218 	EXP 	fixcross: autoDraw = False
+325.9218 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+325.9218 	EXP 	firstImage: autoDraw = True
+325.9218 	EXP 	fixcrossImage1: autoDraw = True
+326.0677 	EXP 	firstImage: autoDraw = False
+326.0677 	EXP 	fixcrossImage1: autoDraw = False
+326.0677 	EXP 	fixcrossITI: autoDraw = True
+326.5746 	EXP 	fixcrossITI: autoDraw = False
+326.5746 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+326.5746 	EXP 	secondImage: autoDraw = True
+326.5746 	EXP 	fixcrossImage2: autoDraw = True
+326.7204 	EXP 	secondImage: autoDraw = False
+326.7204 	EXP 	fixcrossImage2: autoDraw = False
+327.1864 	INFO 	AnswerCorrect
+327.1886 	DATA 	KeyPress: ä
+327.1926 	EXP 	fixcrossEnd: autoDraw = True
+327.9361 	EXP 	New trial (rep=0, index=70): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_s'}
+327.9362 	INFO 	FixationCross
+327.9426 	EXP 	fixcrossEnd: autoDraw = False
+327.9426 	EXP 	fixcrossEnd: autoDraw = False
+327.9426 	EXP 	fixcross: autoDraw = True
+328.9495 	EXP 	fixcross: autoDraw = False
+328.9495 	EXP 	fixcross: autoDraw = False
+328.9495 	EXP 	firstImage: image = 'stimuli/Social1.png'
+328.9495 	EXP 	firstImage: autoDraw = True
+328.9495 	EXP 	fixcrossImage1: autoDraw = True
+329.0953 	EXP 	firstImage: autoDraw = False
+329.0953 	EXP 	fixcrossImage1: autoDraw = False
+329.0953 	EXP 	fixcrossITI: autoDraw = True
+329.6022 	EXP 	fixcrossITI: autoDraw = False
+329.6022 	EXP 	secondImage: image = 'stimuli/Social2.png'
+329.6022 	EXP 	secondImage: autoDraw = True
+329.6022 	EXP 	fixcrossImage2: autoDraw = True
+329.7481 	EXP 	secondImage: autoDraw = False
+329.7481 	EXP 	fixcrossImage2: autoDraw = False
+330.1654 	INFO 	AnswerCorrect
+330.1661 	DATA 	Keypress: l
+330.1716 	EXP 	fixcrossEnd: autoDraw = True
+330.4569 	EXP 	New trial (rep=0, index=71): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_s'}
+330.4570 	INFO 	FixationCross
+330.4634 	EXP 	fixcrossEnd: autoDraw = False
+330.4634 	EXP 	fixcrossEnd: autoDraw = False
+330.4634 	EXP 	fixcross: autoDraw = True
+331.4703 	EXP 	fixcross: autoDraw = False
+331.4703 	EXP 	fixcross: autoDraw = False
+331.4703 	EXP 	firstImage: image = 'stimuli/Social2.png'
+331.4703 	EXP 	firstImage: autoDraw = True
+331.4703 	EXP 	fixcrossImage1: autoDraw = True
+331.6161 	EXP 	firstImage: autoDraw = False
+331.6161 	EXP 	fixcrossImage1: autoDraw = False
+331.6161 	EXP 	fixcrossITI: autoDraw = True
+332.1230 	EXP 	fixcrossITI: autoDraw = False
+332.1230 	EXP 	secondImage: image = 'stimuli/Social2.png'
+332.1230 	EXP 	secondImage: autoDraw = True
+332.1230 	EXP 	fixcrossImage2: autoDraw = True
+332.2688 	EXP 	secondImage: autoDraw = False
+332.2688 	EXP 	fixcrossImage2: autoDraw = False
+332.7625 	INFO 	AnswerCorrect
+332.7632 	DATA 	KeyPress: ä
+332.7688 	EXP 	fixcrossEnd: autoDraw = True
+333.4985 	EXP 	New trial (rep=0, index=72): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_ns'}
+333.4986 	INFO 	FixationCross
+333.5049 	EXP 	fixcrossEnd: autoDraw = False
+333.5049 	EXP 	fixcrossEnd: autoDraw = False
+333.5049 	EXP 	fixcross: autoDraw = True
+334.5118 	EXP 	fixcross: autoDraw = False
+334.5118 	EXP 	fixcross: autoDraw = False
+334.5118 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+334.5118 	EXP 	firstImage: autoDraw = True
+334.5118 	EXP 	fixcrossImage1: autoDraw = True
+334.6576 	EXP 	firstImage: autoDraw = False
+334.6576 	EXP 	fixcrossImage1: autoDraw = False
+334.6576 	EXP 	fixcrossITI: autoDraw = True
+335.1645 	EXP 	fixcrossITI: autoDraw = False
+335.1645 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+335.1645 	EXP 	secondImage: autoDraw = True
+335.1645 	EXP 	fixcrossImage2: autoDraw = True
+335.3104 	EXP 	secondImage: autoDraw = False
+335.3104 	EXP 	fixcrossImage2: autoDraw = False
+335.6930 	INFO 	AnswerCorrect
+335.6937 	DATA 	KeyPress: ä
+335.6992 	EXP 	fixcrossEnd: autoDraw = True
+335.7205 	EXP 	New trial (rep=0, index=73): {'position1': (-0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_s'}
+335.7206 	INFO 	FixationCross
+335.7270 	EXP 	fixcrossEnd: autoDraw = False
+335.7270 	EXP 	fixcrossEnd: autoDraw = False
+335.7270 	EXP 	fixcross: autoDraw = True
+336.7339 	EXP 	fixcross: autoDraw = False
+336.7339 	EXP 	fixcross: autoDraw = False
+336.7339 	EXP 	firstImage: image = 'stimuli/Social2.png'
+336.7339 	EXP 	firstImage: autoDraw = True
+336.7339 	EXP 	fixcrossImage1: autoDraw = True
+336.8797 	EXP 	firstImage: autoDraw = False
+336.8797 	EXP 	fixcrossImage1: autoDraw = False
+336.8797 	EXP 	fixcrossITI: autoDraw = True
+337.3867 	EXP 	fixcrossITI: autoDraw = False
+337.3867 	EXP 	secondImage: image = 'stimuli/Social1.png'
+337.3867 	EXP 	secondImage: autoDraw = True
+337.3867 	EXP 	fixcrossImage2: autoDraw = True
+337.5325 	EXP 	secondImage: autoDraw = False
+337.5325 	EXP 	fixcrossImage2: autoDraw = False
+338.0820 	INFO 	AnswerCorrect
+338.0827 	DATA 	Keypress: l
+338.0880 	EXP 	fixcrossEnd: autoDraw = True
+338.6441 	EXP 	New trial (rep=0, index=74): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_ns'}
+338.6442 	INFO 	FixationCross
+338.6505 	EXP 	fixcrossEnd: autoDraw = False
+338.6505 	EXP 	fixcrossEnd: autoDraw = False
+338.6505 	EXP 	fixcross: autoDraw = True
+339.6574 	EXP 	fixcross: autoDraw = False
+339.6574 	EXP 	fixcross: autoDraw = False
+339.6574 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+339.6574 	EXP 	firstImage: autoDraw = True
+339.6574 	EXP 	fixcrossImage1: autoDraw = True
+339.8032 	EXP 	firstImage: autoDraw = False
+339.8032 	EXP 	fixcrossImage1: autoDraw = False
+339.8032 	EXP 	fixcrossITI: autoDraw = True
+340.3102 	EXP 	fixcrossITI: autoDraw = False
+340.3102 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+340.3102 	EXP 	secondImage: autoDraw = True
+340.3102 	EXP 	fixcrossImage2: autoDraw = True
+340.4560 	EXP 	secondImage: autoDraw = False
+340.4560 	EXP 	fixcrossImage2: autoDraw = False
+340.7624 	INFO 	AnswerCorrect
+340.7631 	DATA 	KeyPress: ä
+340.7685 	EXP 	fixcrossEnd: autoDraw = True
+340.8038 	EXP 	New trial (rep=0, index=75): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_s'}
+340.8038 	INFO 	FixationCross
+340.8102 	EXP 	fixcrossEnd: autoDraw = False
+340.8102 	EXP 	fixcrossEnd: autoDraw = False
+340.8102 	EXP 	fixcross: autoDraw = True
+341.8171 	EXP 	fixcross: autoDraw = False
+341.8171 	EXP 	fixcross: autoDraw = False
+341.8171 	EXP 	firstImage: image = 'stimuli/Social1.png'
+341.8171 	EXP 	firstImage: autoDraw = True
+341.8171 	EXP 	fixcrossImage1: autoDraw = True
+341.9629 	EXP 	firstImage: autoDraw = False
+341.9629 	EXP 	fixcrossImage1: autoDraw = False
+341.9629 	EXP 	fixcrossITI: autoDraw = True
+342.4698 	EXP 	fixcrossITI: autoDraw = False
+342.4698 	EXP 	secondImage: image = 'stimuli/Social1.png'
+342.4698 	EXP 	secondImage: autoDraw = True
+342.4698 	EXP 	fixcrossImage2: autoDraw = True
+342.6156 	EXP 	secondImage: autoDraw = False
+342.6156 	EXP 	fixcrossImage2: autoDraw = False
+343.6165 	INFO 	AnswerCorrect
+343.6173 	DATA 	KeyPress: ä
+343.6225 	EXP 	fixcrossEnd: autoDraw = True
+344.1369 	EXP 	New trial (rep=0, index=76): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_ns'}
+344.1370 	INFO 	FixationCross
+344.1434 	EXP 	fixcrossEnd: autoDraw = False
+344.1434 	EXP 	fixcrossEnd: autoDraw = False
+344.1434 	EXP 	fixcross: autoDraw = True
+345.1503 	EXP 	fixcross: autoDraw = False
+345.1503 	EXP 	fixcross: autoDraw = False
+345.1503 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+345.1503 	EXP 	firstImage: autoDraw = True
+345.1503 	EXP 	fixcrossImage1: autoDraw = True
+345.2960 	EXP 	firstImage: autoDraw = False
+345.2960 	EXP 	fixcrossImage1: autoDraw = False
+345.2960 	EXP 	fixcrossITI: autoDraw = True
+345.8030 	EXP 	fixcrossITI: autoDraw = False
+345.8030 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+345.8030 	EXP 	secondImage: autoDraw = True
+345.8030 	EXP 	fixcrossImage2: autoDraw = True
+345.9489 	EXP 	secondImage: autoDraw = False
+345.9489 	EXP 	fixcrossImage2: autoDraw = False
+346.4497 	INFO 	AnswerCorrect
+346.4505 	DATA 	Keypress: l
+346.4557 	EXP 	fixcrossEnd: autoDraw = True
+346.6021 	EXP 	New trial (rep=0, index=77): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_ns'}
+346.6022 	INFO 	FixationCross
+346.6085 	EXP 	fixcrossEnd: autoDraw = False
+346.6085 	EXP 	fixcrossEnd: autoDraw = False
+346.6085 	EXP 	fixcross: autoDraw = True
+347.6155 	EXP 	fixcross: autoDraw = False
+347.6155 	EXP 	fixcross: autoDraw = False
+347.6155 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+347.6155 	EXP 	firstImage: autoDraw = True
+347.6155 	EXP 	fixcrossImage1: autoDraw = True
+347.7613 	EXP 	firstImage: autoDraw = False
+347.7613 	EXP 	fixcrossImage1: autoDraw = False
+347.7613 	EXP 	fixcrossITI: autoDraw = True
+348.2682 	EXP 	fixcrossITI: autoDraw = False
+348.2682 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+348.2682 	EXP 	secondImage: autoDraw = True
+348.2682 	EXP 	fixcrossImage2: autoDraw = True
+348.4140 	EXP 	secondImage: autoDraw = False
+348.4140 	EXP 	fixcrossImage2: autoDraw = False
+348.6232 	INFO 	AnswerWrong
+348.6239 	DATA 	Keypress: l
+348.6293 	EXP 	fixcrossEnd: autoDraw = True
+348.6576 	EXP 	New trial (rep=0, index=78): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, 0.5), 'comptype': 'cs_minus_s'}
+348.6577 	INFO 	FixationCross
+348.6640 	EXP 	fixcrossEnd: autoDraw = False
+348.6640 	EXP 	fixcrossEnd: autoDraw = False
+348.6640 	EXP 	fixcross: autoDraw = True
+349.6709 	EXP 	fixcross: autoDraw = False
+349.6709 	EXP 	fixcross: autoDraw = False
+349.6709 	EXP 	firstImage: image = 'stimuli/Social1.png'
+349.6709 	EXP 	firstImage: autoDraw = True
+349.6709 	EXP 	fixcrossImage1: autoDraw = True
+349.8168 	EXP 	firstImage: autoDraw = False
+349.8168 	EXP 	fixcrossImage1: autoDraw = False
+349.8168 	EXP 	fixcrossITI: autoDraw = True
+350.3237 	EXP 	fixcrossITI: autoDraw = False
+350.3237 	EXP 	secondImage: image = 'stimuli/Social2.png'
+350.3237 	EXP 	secondImage: autoDraw = True
+350.3237 	EXP 	fixcrossImage2: autoDraw = True
+350.4695 	EXP 	secondImage: autoDraw = False
+350.4695 	EXP 	fixcrossImage2: autoDraw = False
+351.0397 	INFO 	AnswerCorrect
+351.0404 	DATA 	Keypress: l
+351.0459 	EXP 	fixcrossEnd: autoDraw = True
+351.0880 	EXP 	New trial (rep=0, index=79): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_ns'}
+351.0881 	INFO 	FixationCross
+351.0945 	EXP 	fixcrossEnd: autoDraw = False
+351.0945 	EXP 	fixcrossEnd: autoDraw = False
+351.0945 	EXP 	fixcross: autoDraw = True
+352.1013 	EXP 	fixcross: autoDraw = False
+352.1013 	EXP 	fixcross: autoDraw = False
+352.1013 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+352.1013 	EXP 	firstImage: autoDraw = True
+352.1013 	EXP 	fixcrossImage1: autoDraw = True
+352.2472 	EXP 	firstImage: autoDraw = False
+352.2472 	EXP 	fixcrossImage1: autoDraw = False
+352.2472 	EXP 	fixcrossITI: autoDraw = True
+352.7542 	EXP 	fixcrossITI: autoDraw = False
+352.7542 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+352.7542 	EXP 	secondImage: autoDraw = True
+352.7542 	EXP 	fixcrossImage2: autoDraw = True
+352.9000 	EXP 	secondImage: autoDraw = False
+352.9000 	EXP 	fixcrossImage2: autoDraw = False
+353.1230 	INFO 	AnswerCorrect
+353.1237 	DATA 	KeyPress: ä
+353.1291 	EXP 	fixcrossEnd: autoDraw = True
+353.5324 	EXP 	New trial (rep=0, index=80): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (-0.7, -0.5), 'comptype': 'cs_plus_s'}
+353.5325 	INFO 	FixationCross
+353.5388 	EXP 	fixcrossEnd: autoDraw = False
+353.5388 	EXP 	fixcrossEnd: autoDraw = False
+353.5388 	EXP 	fixcross: autoDraw = True
+354.5457 	EXP 	fixcross: autoDraw = False
+354.5457 	EXP 	fixcross: autoDraw = False
+354.5457 	EXP 	firstImage: image = 'stimuli/Social1.png'
+354.5457 	EXP 	firstImage: autoDraw = True
+354.5457 	EXP 	fixcrossImage1: autoDraw = True
+354.6916 	EXP 	firstImage: autoDraw = False
+354.6916 	EXP 	fixcrossImage1: autoDraw = False
+354.6916 	EXP 	fixcrossITI: autoDraw = True
+355.1985 	EXP 	fixcrossITI: autoDraw = False
+355.1985 	EXP 	secondImage: image = 'stimuli/Social1.png'
+355.1985 	EXP 	secondImage: autoDraw = True
+355.1985 	EXP 	fixcrossImage2: autoDraw = True
+355.3443 	EXP 	secondImage: autoDraw = False
+355.3443 	EXP 	fixcrossImage2: autoDraw = False
+355.7478 	INFO 	AnswerCorrect
+355.7486 	DATA 	KeyPress: ä
+355.7540 	EXP 	fixcrossEnd: autoDraw = True
+356.1780 	EXP 	New trial (rep=0, index=81): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_s'}
+356.1781 	INFO 	FixationCross
+356.1846 	EXP 	fixcrossEnd: autoDraw = False
+356.1846 	EXP 	fixcrossEnd: autoDraw = False
+356.1846 	EXP 	fixcross: autoDraw = True
+357.1914 	EXP 	fixcross: autoDraw = False
+357.1914 	EXP 	fixcross: autoDraw = False
+357.1914 	EXP 	firstImage: image = 'stimuli/Social1.png'
+357.1914 	EXP 	firstImage: autoDraw = True
+357.1914 	EXP 	fixcrossImage1: autoDraw = True
+357.3373 	EXP 	firstImage: autoDraw = False
+357.3373 	EXP 	fixcrossImage1: autoDraw = False
+357.3373 	EXP 	fixcrossITI: autoDraw = True
+357.8442 	EXP 	fixcrossITI: autoDraw = False
+357.8442 	EXP 	secondImage: image = 'stimuli/Social1.png'
+357.8442 	EXP 	secondImage: autoDraw = True
+357.8442 	EXP 	fixcrossImage2: autoDraw = True
+357.9901 	EXP 	secondImage: autoDraw = False
+357.9901 	EXP 	fixcrossImage2: autoDraw = False
+358.1992 	INFO 	AnswerCorrect
+358.1999 	DATA 	KeyPress: ä
+358.2053 	EXP 	fixcrossEnd: autoDraw = True
+358.7405 	EXP 	New trial (rep=0, index=82): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_s'}
+358.7406 	INFO 	FixationCross
+358.7470 	EXP 	fixcrossEnd: autoDraw = False
+358.7470 	EXP 	fixcrossEnd: autoDraw = False
+358.7470 	EXP 	fixcross: autoDraw = True
+359.7539 	EXP 	fixcross: autoDraw = False
+359.7539 	EXP 	fixcross: autoDraw = False
+359.7539 	EXP 	firstImage: image = 'stimuli/Social1.png'
+359.7539 	EXP 	firstImage: autoDraw = True
+359.7539 	EXP 	fixcrossImage1: autoDraw = True
+359.8997 	EXP 	firstImage: autoDraw = False
+359.8997 	EXP 	fixcrossImage1: autoDraw = False
+359.8997 	EXP 	fixcrossITI: autoDraw = True
+360.4066 	EXP 	fixcrossITI: autoDraw = False
+360.4066 	EXP 	secondImage: image = 'stimuli/Social1.png'
+360.4066 	EXP 	secondImage: autoDraw = True
+360.4066 	EXP 	fixcrossImage2: autoDraw = True
+360.5524 	EXP 	secondImage: autoDraw = False
+360.5524 	EXP 	fixcrossImage2: autoDraw = False
+361.0254 	INFO 	AnswerCorrect
+361.0261 	DATA 	KeyPress: ä
+361.0316 	EXP 	fixcrossEnd: autoDraw = True
+361.2058 	EXP 	New trial (rep=0, index=83): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_s'}
+361.2059 	INFO 	FixationCross
+361.2121 	EXP 	fixcrossEnd: autoDraw = False
+361.2121 	EXP 	fixcrossEnd: autoDraw = False
+361.2121 	EXP 	fixcross: autoDraw = True
+362.2190 	EXP 	fixcross: autoDraw = False
+362.2190 	EXP 	fixcross: autoDraw = False
+362.2190 	EXP 	firstImage: image = 'stimuli/Social1.png'
+362.2190 	EXP 	firstImage: autoDraw = True
+362.2190 	EXP 	fixcrossImage1: autoDraw = True
+362.3648 	EXP 	firstImage: autoDraw = False
+362.3648 	EXP 	fixcrossImage1: autoDraw = False
+362.3648 	EXP 	fixcrossITI: autoDraw = True
+362.8718 	EXP 	fixcrossITI: autoDraw = False
+362.8718 	EXP 	secondImage: image = 'stimuli/Social2.png'
+362.8718 	EXP 	secondImage: autoDraw = True
+362.8718 	EXP 	fixcrossImage2: autoDraw = True
+363.0176 	EXP 	secondImage: autoDraw = False
+363.0176 	EXP 	fixcrossImage2: autoDraw = False
+363.5600 	INFO 	AnswerCorrect
+363.5608 	DATA 	Keypress: l
+363.5662 	EXP 	fixcrossEnd: autoDraw = True
+363.9903 	EXP 	New trial (rep=0, index=84): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_s'}
+363.9904 	INFO 	FixationCross
+363.9968 	EXP 	fixcrossEnd: autoDraw = False
+363.9968 	EXP 	fixcrossEnd: autoDraw = False
+363.9968 	EXP 	fixcross: autoDraw = True
+365.0037 	EXP 	fixcross: autoDraw = False
+365.0037 	EXP 	fixcross: autoDraw = False
+365.0037 	EXP 	firstImage: image = 'stimuli/Social1.png'
+365.0037 	EXP 	firstImage: autoDraw = True
+365.0037 	EXP 	fixcrossImage1: autoDraw = True
+365.1495 	EXP 	firstImage: autoDraw = False
+365.1495 	EXP 	fixcrossImage1: autoDraw = False
+365.1495 	EXP 	fixcrossITI: autoDraw = True
+365.6564 	EXP 	fixcrossITI: autoDraw = False
+365.6564 	EXP 	secondImage: image = 'stimuli/Social1.png'
+365.6564 	EXP 	secondImage: autoDraw = True
+365.6564 	EXP 	fixcrossImage2: autoDraw = True
+365.8022 	EXP 	secondImage: autoDraw = False
+365.8022 	EXP 	fixcrossImage2: autoDraw = False
+366.3933 	INFO 	AnswerCorrect
+366.3940 	DATA 	KeyPress: ä
+366.3994 	EXP 	fixcrossEnd: autoDraw = True
+367.3304 	EXP 	New trial (rep=0, index=85): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_ns'}
+367.3305 	INFO 	FixationCross
+367.3369 	EXP 	fixcrossEnd: autoDraw = False
+367.3369 	EXP 	fixcrossEnd: autoDraw = False
+367.3369 	EXP 	fixcross: autoDraw = True
+368.3438 	EXP 	fixcross: autoDraw = False
+368.3438 	EXP 	fixcross: autoDraw = False
+368.3438 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+368.3438 	EXP 	firstImage: autoDraw = True
+368.3438 	EXP 	fixcrossImage1: autoDraw = True
+368.4896 	EXP 	firstImage: autoDraw = False
+368.4896 	EXP 	fixcrossImage1: autoDraw = False
+368.4896 	EXP 	fixcrossITI: autoDraw = True
+368.9966 	EXP 	fixcrossITI: autoDraw = False
+368.9966 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+368.9966 	EXP 	secondImage: autoDraw = True
+368.9966 	EXP 	fixcrossImage2: autoDraw = True
+369.1424 	EXP 	secondImage: autoDraw = False
+369.1424 	EXP 	fixcrossImage2: autoDraw = False
+369.6848 	INFO 	AnswerCorrect
+369.6856 	DATA 	KeyPress: ä
+369.6910 	EXP 	fixcrossEnd: autoDraw = True
+370.4832 	EXP 	New trial (rep=0, index=86): {'position1': (0.7, -0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_plus_s'}
+370.4833 	INFO 	FixationCross
+370.4895 	EXP 	fixcrossEnd: autoDraw = False
+370.4895 	EXP 	fixcrossEnd: autoDraw = False
+370.4895 	EXP 	fixcross: autoDraw = True
+371.4965 	EXP 	fixcross: autoDraw = False
+371.4965 	EXP 	fixcross: autoDraw = False
+371.4965 	EXP 	firstImage: image = 'stimuli/Social2.png'
+371.4965 	EXP 	firstImage: autoDraw = True
+371.4965 	EXP 	fixcrossImage1: autoDraw = True
+371.6423 	EXP 	firstImage: autoDraw = False
+371.6423 	EXP 	fixcrossImage1: autoDraw = False
+371.6423 	EXP 	fixcrossITI: autoDraw = True
+372.1492 	EXP 	fixcrossITI: autoDraw = False
+372.1492 	EXP 	secondImage: image = 'stimuli/Social1.png'
+372.1492 	EXP 	secondImage: autoDraw = True
+372.1492 	EXP 	fixcrossImage2: autoDraw = True
+372.2950 	EXP 	secondImage: autoDraw = False
+372.2950 	EXP 	fixcrossImage2: autoDraw = False
+372.8652 	INFO 	AnswerCorrect
+372.8659 	DATA 	Keypress: l
+372.8714 	EXP 	fixcrossEnd: autoDraw = True
+373.4274 	EXP 	New trial (rep=0, index=87): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_ns'}
+373.4275 	INFO 	FixationCross
+373.4339 	EXP 	fixcrossEnd: autoDraw = False
+373.4339 	EXP 	fixcrossEnd: autoDraw = False
+373.4339 	EXP 	fixcross: autoDraw = True
+374.4408 	EXP 	fixcross: autoDraw = False
+374.4408 	EXP 	fixcross: autoDraw = False
+374.4408 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+374.4408 	EXP 	firstImage: autoDraw = True
+374.4408 	EXP 	fixcrossImage1: autoDraw = True
+374.5866 	EXP 	firstImage: autoDraw = False
+374.5866 	EXP 	fixcrossImage1: autoDraw = False
+374.5866 	EXP 	fixcrossITI: autoDraw = True
+375.0935 	EXP 	fixcrossITI: autoDraw = False
+375.0935 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+375.0935 	EXP 	secondImage: autoDraw = True
+375.0935 	EXP 	fixcrossImage2: autoDraw = True
+375.2394 	EXP 	secondImage: autoDraw = False
+375.2394 	EXP 	fixcrossImage2: autoDraw = False
+375.7887 	INFO 	AnswerCorrect
+375.7893 	DATA 	Keypress: l
+375.7949 	EXP 	fixcrossEnd: autoDraw = True
+376.1843 	EXP 	New trial (rep=0, index=88): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_s'}
+376.1844 	INFO 	FixationCross
+376.1907 	EXP 	fixcrossEnd: autoDraw = False
+376.1907 	EXP 	fixcrossEnd: autoDraw = False
+376.1907 	EXP 	fixcross: autoDraw = True
+377.1976 	EXP 	fixcross: autoDraw = False
+377.1976 	EXP 	fixcross: autoDraw = False
+377.1976 	EXP 	firstImage: image = 'stimuli/Social2.png'
+377.1976 	EXP 	firstImage: autoDraw = True
+377.1976 	EXP 	fixcrossImage1: autoDraw = True
+377.3434 	EXP 	firstImage: autoDraw = False
+377.3434 	EXP 	fixcrossImage1: autoDraw = False
+377.3434 	EXP 	fixcrossITI: autoDraw = True
+377.8504 	EXP 	fixcrossITI: autoDraw = False
+377.8504 	EXP 	secondImage: image = 'stimuli/Social2.png'
+377.8504 	EXP 	secondImage: autoDraw = True
+377.8504 	EXP 	fixcrossImage2: autoDraw = True
+377.9962 	EXP 	secondImage: autoDraw = False
+377.9962 	EXP 	fixcrossImage2: autoDraw = False
+378.3234 	INFO 	AnswerCorrect
+378.3242 	DATA 	KeyPress: ä
+378.3295 	EXP 	fixcrossEnd: autoDraw = True
+379.1009 	EXP 	New trial (rep=0, index=89): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_s'}
+379.1010 	INFO 	FixationCross
+379.1073 	EXP 	fixcrossEnd: autoDraw = False
+379.1073 	EXP 	fixcrossEnd: autoDraw = False
+379.1073 	EXP 	fixcross: autoDraw = True
+380.1142 	EXP 	fixcross: autoDraw = False
+380.1142 	EXP 	fixcross: autoDraw = False
+380.1142 	EXP 	firstImage: image = 'stimuli/Social1.png'
+380.1142 	EXP 	firstImage: autoDraw = True
+380.1142 	EXP 	fixcrossImage1: autoDraw = True
+380.2600 	EXP 	firstImage: autoDraw = False
+380.2600 	EXP 	fixcrossImage1: autoDraw = False
+380.2600 	EXP 	fixcrossITI: autoDraw = True
+380.7670 	EXP 	fixcrossITI: autoDraw = False
+380.7670 	EXP 	secondImage: image = 'stimuli/Social2.png'
+380.7670 	EXP 	secondImage: autoDraw = True
+380.7670 	EXP 	fixcrossImage2: autoDraw = True
+380.9128 	EXP 	secondImage: autoDraw = False
+380.9128 	EXP 	fixcrossImage2: autoDraw = False
+381.3302 	INFO 	AnswerCorrect
+381.3309 	DATA 	Keypress: l
+381.3364 	EXP 	fixcrossEnd: autoDraw = True
+382.1841 	EXP 	New trial (rep=0, index=90): {'position1': (0.7, 0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_s'}
+382.1841 	INFO 	FixationCross
+382.1905 	EXP 	fixcrossEnd: autoDraw = False
+382.1905 	EXP 	fixcrossEnd: autoDraw = False
+382.1905 	EXP 	fixcross: autoDraw = True
+383.1974 	EXP 	fixcross: autoDraw = False
+383.1974 	EXP 	fixcross: autoDraw = False
+383.1974 	EXP 	firstImage: image = 'stimuli/Social1.png'
+383.1974 	EXP 	firstImage: autoDraw = True
+383.1974 	EXP 	fixcrossImage1: autoDraw = True
+383.3432 	EXP 	firstImage: autoDraw = False
+383.3432 	EXP 	fixcrossImage1: autoDraw = False
+383.3432 	EXP 	fixcrossITI: autoDraw = True
+383.8502 	EXP 	fixcrossITI: autoDraw = False
+383.8502 	EXP 	secondImage: image = 'stimuli/Social2.png'
+383.8502 	EXP 	secondImage: autoDraw = True
+383.8502 	EXP 	fixcrossImage2: autoDraw = True
+383.9960 	EXP 	secondImage: autoDraw = False
+383.9960 	EXP 	fixcrossImage2: autoDraw = False
+384.4897 	INFO 	AnswerCorrect
+384.4904 	DATA 	Keypress: l
+384.4960 	EXP 	fixcrossEnd: autoDraw = True
+384.8575 	EXP 	New trial (rep=0, index=91): {'position1': (-0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_plus_ns'}
+384.8576 	INFO 	FixationCross
+384.8640 	EXP 	fixcrossEnd: autoDraw = False
+384.8640 	EXP 	fixcrossEnd: autoDraw = False
+384.8640 	EXP 	fixcross: autoDraw = True
+385.8709 	EXP 	fixcross: autoDraw = False
+385.8709 	EXP 	fixcross: autoDraw = False
+385.8709 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+385.8709 	EXP 	firstImage: autoDraw = True
+385.8709 	EXP 	fixcrossImage1: autoDraw = True
+386.0167 	EXP 	firstImage: autoDraw = False
+386.0167 	EXP 	fixcrossImage1: autoDraw = False
+386.0167 	EXP 	fixcrossITI: autoDraw = True
+386.5236 	EXP 	fixcrossITI: autoDraw = False
+386.5236 	EXP 	secondImage: image = 'stimuli/Nonsocial2.png'
+386.5236 	EXP 	secondImage: autoDraw = True
+386.5236 	EXP 	fixcrossImage2: autoDraw = True
+386.6695 	EXP 	secondImage: autoDraw = False
+386.6695 	EXP 	fixcrossImage2: autoDraw = False
+387.1633 	INFO 	AnswerCorrect
+387.1641 	DATA 	Keypress: l
+387.1695 	EXP 	fixcrossEnd: autoDraw = True
+388.1353 	EXP 	New trial (rep=0, index=92): {'position1': (-0.7, 0.5), 'trialtype': 'cs_plus_ns', 'position2': (0.7, 0.5), 'comptype': 'cs_minus_ns'}
+388.1354 	INFO 	FixationCross
+388.1416 	EXP 	fixcrossEnd: autoDraw = False
+388.1416 	EXP 	fixcrossEnd: autoDraw = False
+388.1416 	EXP 	fixcross: autoDraw = True
+389.1486 	EXP 	fixcross: autoDraw = False
+389.1486 	EXP 	fixcross: autoDraw = False
+389.1486 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+389.1486 	EXP 	firstImage: autoDraw = True
+389.1486 	EXP 	fixcrossImage1: autoDraw = True
+389.2944 	EXP 	firstImage: autoDraw = False
+389.2944 	EXP 	fixcrossImage1: autoDraw = False
+389.2944 	EXP 	fixcrossITI: autoDraw = True
+389.8013 	EXP 	fixcrossITI: autoDraw = False
+389.8013 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+389.8013 	EXP 	secondImage: autoDraw = True
+389.8013 	EXP 	fixcrossImage2: autoDraw = True
+389.9471 	EXP 	secondImage: autoDraw = False
+389.9471 	EXP 	fixcrossImage2: autoDraw = False
+390.4479 	INFO 	AnswerCorrect
+390.4486 	DATA 	Keypress: l
+390.4540 	EXP 	fixcrossEnd: autoDraw = True
+391.1768 	EXP 	New trial (rep=0, index=93): {'position1': (-0.7, -0.5), 'trialtype': 'cs_plus_s', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_s'}
+391.1768 	INFO 	FixationCross
+391.1832 	EXP 	fixcrossEnd: autoDraw = False
+391.1832 	EXP 	fixcrossEnd: autoDraw = False
+391.1832 	EXP 	fixcross: autoDraw = True
+392.1902 	EXP 	fixcross: autoDraw = False
+392.1902 	EXP 	fixcross: autoDraw = False
+392.1902 	EXP 	firstImage: image = 'stimuli/Social1.png'
+392.1902 	EXP 	firstImage: autoDraw = True
+392.1902 	EXP 	fixcrossImage1: autoDraw = True
+392.3360 	EXP 	firstImage: autoDraw = False
+392.3360 	EXP 	fixcrossImage1: autoDraw = False
+392.3360 	EXP 	fixcrossITI: autoDraw = True
+392.8428 	EXP 	fixcrossITI: autoDraw = False
+392.8428 	EXP 	secondImage: image = 'stimuli/Social2.png'
+392.8428 	EXP 	secondImage: autoDraw = True
+392.8428 	EXP 	fixcrossImage2: autoDraw = True
+392.9887 	EXP 	secondImage: autoDraw = False
+392.9887 	EXP 	fixcrossImage2: autoDraw = False
+393.5033 	INFO 	AnswerCorrect
+393.5040 	DATA 	Keypress: l
+393.5095 	EXP 	fixcrossEnd: autoDraw = True
+393.5517 	EXP 	New trial (rep=0, index=94): {'position1': (0.7, 0.5), 'trialtype': 'cs_minus_ns', 'position2': (0.7, -0.5), 'comptype': 'cs_minus_ns'}
+393.5518 	INFO 	FixationCross
+393.5581 	EXP 	fixcrossEnd: autoDraw = False
+393.5581 	EXP 	fixcrossEnd: autoDraw = False
+393.5581 	EXP 	fixcross: autoDraw = True
+394.5650 	EXP 	fixcross: autoDraw = False
+394.5650 	EXP 	fixcross: autoDraw = False
+394.5650 	EXP 	firstImage: image = 'stimuli/Nonsocial1.png'
+394.5650 	EXP 	firstImage: autoDraw = True
+394.5650 	EXP 	fixcrossImage1: autoDraw = True
+394.7108 	EXP 	firstImage: autoDraw = False
+394.7108 	EXP 	fixcrossImage1: autoDraw = False
+394.7108 	EXP 	fixcrossITI: autoDraw = True
+395.2178 	EXP 	fixcrossITI: autoDraw = False
+395.2178 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+395.2178 	EXP 	secondImage: autoDraw = True
+395.2178 	EXP 	fixcrossImage2: autoDraw = True
+395.3636 	EXP 	secondImage: autoDraw = False
+395.3636 	EXP 	fixcrossImage2: autoDraw = False
+395.8991 	INFO 	AnswerCorrect
+395.8999 	DATA 	KeyPress: ä
+395.9052 	EXP 	fixcrossEnd: autoDraw = True
+396.2738 	EXP 	New trial (rep=0, index=95): {'position1': (0.7, -0.5), 'trialtype': 'cs_plus_ns', 'position2': (-0.7, -0.5), 'comptype': 'cs_minus_ns'}
+396.2739 	INFO 	FixationCross
+396.2802 	EXP 	fixcrossEnd: autoDraw = False
+396.2802 	EXP 	fixcrossEnd: autoDraw = False
+396.2802 	EXP 	fixcross: autoDraw = True
+397.2871 	EXP 	fixcross: autoDraw = False
+397.2871 	EXP 	fixcross: autoDraw = False
+397.2871 	EXP 	firstImage: image = 'stimuli/Nonsocial2.png'
+397.2871 	EXP 	firstImage: autoDraw = True
+397.2871 	EXP 	fixcrossImage1: autoDraw = True
+397.4330 	EXP 	firstImage: autoDraw = False
+397.4330 	EXP 	fixcrossImage1: autoDraw = False
+397.4330 	EXP 	fixcrossITI: autoDraw = True
+397.9398 	EXP 	fixcrossITI: autoDraw = False
+397.9398 	EXP 	secondImage: image = 'stimuli/Nonsocial1.png'
+397.9398 	EXP 	secondImage: autoDraw = True
+397.9398 	EXP 	fixcrossImage2: autoDraw = True
+398.0857 	EXP 	secondImage: autoDraw = False
+398.0857 	EXP 	fixcrossImage2: autoDraw = False
+398.6907 	INFO 	AnswerCorrect
+398.6914 	DATA 	Keypress: l
+398.6968 	EXP 	fixcrossEnd: autoDraw = True
+399.1412 	EXP 	fixcrossEnd: autoDraw = False
+399.1412 	EXP 	fixcrossEnd: autoDraw = False
+399.1412 	EXP 	textEnd: autoDraw = True
+404.1410 	EXP 	textEnd: autoDraw = False
+404.1410 	EXP 	textEnd: autoDraw = False
+404.1480 	INFO 	saved data to 'C:\\Users\\Public\\Documents\\Projects\\GCA\\gca_avoidance\\gaze_discrimination_task\\data/gca_discrimination_38_2023-12-20_10h40.25.639.csv'
+404.1504 	INFO 	saved data to C:\Users\Public\Documents\Projects\GCA\gca_avoidance\gaze_discrimination_task\data/gca_discrimination_38_2023-12-20_10h40.25.639.psydat
+404.2363 	EXP 	window1: mouseVisible = True
