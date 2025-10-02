@@ -237,7 +237,7 @@ def add_gray_background(image, background_color=(128, 128, 128)):
 print("Stimuli of Experiment 1")
 scores_exp1 = pd.DataFrame()
 path = os.path.join('Study 1', 'Experiment', 'gaze_avoidance_task', 'stimuli')
-files = [file for file in os.listdir(path) if file.endswith(".png")]
+files = [file for file in os.listdir(path) if file.endswith(".png") and not "Kopie" in file]
 for image_file in files:
     # image_file = files[0]
     image = cv2.imread(os.path.join(path, image_file), cv2.IMREAD_UNCHANGED)
@@ -250,6 +250,7 @@ for image_file in files:
                                               "entropy_score": [compute_subband_entropy(image)],
                                               "luminance": [compute_luminance(image)],
                                               "contrast": [compute_contrast(image)]})])
+
 t_clutter, p_clutter = stats.ttest_ind(scores_exp1.loc[scores_exp1["file"].str.contains("Nonsocial"), "clutter_score"], scores_exp1.loc[~scores_exp1["file"].str.contains("Nonsocial"), "clutter_score"])
 print(f"Clutter: t = {t_clutter}, p = {p_clutter}")
 t_entropy, p_entropy = stats.ttest_ind(scores_exp1.loc[scores_exp1["file"].str.contains("Nonsocial"), "entropy_score"], scores_exp1.loc[~scores_exp1["file"].str.contains("Nonsocial"), "entropy_score"])
@@ -263,7 +264,7 @@ print(f"Contrast: t = {t_contrast}, p = {p_contrast}")
 print("Stimuli of Experiment 2")
 scores_exp2 = pd.DataFrame()
 path = os.path.join('Study 2', 'Experiment', 'attentional_competition_task', 'stimuli')
-files = [file for file in os.listdir(path) if file.endswith(".png")]
+files = [file for file in os.listdir(path) if file.endswith(".png") and not "Kopie" in file]
 for image_file in files:
     # image_file = files[0]
     image = cv2.imread(os.path.join(path, image_file), cv2.IMREAD_UNCHANGED)
@@ -277,11 +278,11 @@ for image_file in files:
                                               "luminance": [compute_luminance(image)],
                                               "contrast": [compute_contrast(image)]})])
 
-t_clutter, p_clutter = stats.ttest_ind(scores_exp2.loc[scores_exp2["file"].str.contains("Nonsocial"), "clutter_score"], scores_exp2.loc[~scores_exp2["file"].str.contains("Nonsocial"), "clutter_score"])
+t_clutter, p_clutter = stats.ttest_ind(scores_exp2.loc[scores_exp2["file"].str.contains("DALLE"), "clutter_score"], scores_exp2.loc[~scores_exp2["file"].str.contains("DALLE"), "clutter_score"])
 print(f"Clutter: t = {t_clutter}, p = {p_clutter}")
-t_entropy, p_entropy = stats.ttest_ind(scores_exp2.loc[scores_exp2["file"].str.contains("Nonsocial"), "entropy_score"], scores_exp2.loc[~scores_exp2["file"].str.contains("Nonsocial"), "entropy_score"])
+t_entropy, p_entropy = stats.ttest_ind(scores_exp2.loc[scores_exp2["file"].str.contains("DALLE"), "entropy_score"], scores_exp2.loc[~scores_exp2["file"].str.contains("DALLE"), "entropy_score"])
 print(f"Entropy: t = {t_entropy}, p = {p_entropy}")
-t_luminance, p_luminance = stats.ttest_ind(scores_exp2.loc[scores_exp2["file"].str.contains("Nonsocial"), "luminance"], scores_exp2.loc[~scores_exp2["file"].str.contains("Nonsocial"), "luminance"])
+t_luminance, p_luminance = stats.ttest_ind(scores_exp2.loc[scores_exp2["file"].str.contains("DALLE"), "luminance"], scores_exp2.loc[~scores_exp2["file"].str.contains("DALLE"), "luminance"])
 print(f"Luminance: t = {t_luminance}, p = {p_luminance}")
-t_contrast, p_contrast = stats.ttest_ind(scores_exp2.loc[scores_exp2["file"].str.contains("Nonsocial"), "contrast"], scores_exp2.loc[~scores_exp2["file"].str.contains("Nonsocial"), "contrast"])
+t_contrast, p_contrast = stats.ttest_ind(scores_exp2.loc[scores_exp2["file"].str.contains("DALLE"), "contrast"], scores_exp2.loc[~scores_exp2["file"].str.contains("DALLE"), "contrast"])
 print(f"Contrast: t = {t_contrast}, p = {p_contrast}")

@@ -87,21 +87,21 @@ vps_summary_grouped.test <- vps_summary_grouped %>%
   pivot_wider(id_cols = participant, names_from = social, values_from = correct_mean)
 apa::t_test(vps_summary_grouped.test$social, vps_summary_grouped.test$nonsocial, alternative = "two.sided", paired=TRUE) %>% apa::t_apa()
 
-vps_summary_grouped %>% 
+vps_summary_grouped %>%   
   group_by(social) %>%
   summarise(correct = mean(correct_mean, na.rm = T), se = se(correct_mean)) %>% 
   ggplot(aes(x = social, y = correct, fill = social)) +
-  geom_hline(yintercept = 0.5, linetype = 2, color = "red") + 
-  geom_col(position = position_dodge()) +
+  geom_hline(yintercept = 0.5, linetype = 2, color = "black") + 
+  geom_col(position = position_dodge(), alpha=0.5) +
   geom_errorbar(aes(ymax = correct + se, ymin = correct - se), width = 0.4) +
-  geom_point(data = vps_summary_grouped, aes(x = social, y = correct_mean), size = 2, shape = 21, color = "black", alpha=0.3, position = position_jitter(width=0.2, height=0.005)) +
+  geom_point(data = vps_summary_grouped, aes(x = social, y = correct_mean), size = 2, shape = 21, color = "black", alpha=0.5, position = position_jitter(width=0.2, height=0.005)) +
   # geom_beeswarm(data = vps_summary, aes(x = social, y = correct_mean), alpha = 0.5, mapping = aes(x = social)) + 
-  labs(title = paste("Proportion of Correct Discrimination (N = ", n_distinct(vps_summary_grouped$participant), ")", sep=""), x = "Category", y = "% correct") +
+  labs(x = "Category", y = "% correct") + # title = paste("Proportion of Correct Discrimination (N = ", n_distinct(vps_summary_grouped$participant), ")", sep=""), 
   # scale_y_continuous("% correct", expand = c(0,0), limits = c(0,1.05)) +
-  scale_x_discrete(NULL, labels = c("non-social","social")) +
-  scale_fill_viridis_d("Condition", end = 0.25, begin = 0.25, guide = "none" ) + 
-  # theme_minimal() +
-  scale_color_viridis_d() +
+  scale_x_discrete(NULL, labels = c("Non-Social","Social")) +
+  # scale_fill_viridis_d("Condition", end = 0.25, begin = 0.25, guide = "none" ) + 
+  # theme_minimal() + 
+  # scale_color_viridis_d() +
   theme(legend.position = "none")
 ggsave(file.path("Study 2", "Plots", "Discrimination", "ga_correct.png"), width=1600, height=1600, units="px")
 

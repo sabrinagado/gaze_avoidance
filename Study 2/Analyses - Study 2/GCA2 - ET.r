@@ -985,6 +985,34 @@ plot_saccades_acq_exp2 <- ggplot(saccades.acq.roi.summary %>%
   # scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
   scale_color_manual(values = rep("black"))
 
+
+plot_saccades_acq_exp2_bar <- ggplot(saccades.acq.roi.summary %>%
+                                       mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                                              condition_threat = recode(condition_threat, "pos" = "CSpos", "neg" = "CSneg")) %>%
+                                       mutate(condition_social = factor(condition_social, level=c("Non-Social", "Social")),
+                                              condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+                                     aes(x = condition_social, y = Mean, group = condition, fill = condition_threat)) +
+  geom_col(position = position_dodge(width = 0.9), color = "black", alpha = 0.5) +
+  geom_point(data = saccades.acq.prop %>%
+               mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                      condition_threat = recode(condition_threat, "pos" = "CSpos", "neg" = "CSneg")) %>%
+               mutate(condition_social = factor(condition_social, level=c("Non-Social", "Social")),
+                      condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+             aes(x = condition_social, y = relative_frequency_ROI, group = condition, fill = condition_threat, color = condition_threat),
+             position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.9), alpha = 0.5, size=2.5, shape = 21) +
+  geom_errorbar(
+    aes(ymin = Mean - SE, ymax = Mean + SE),
+    position = position_dodge(width = 0.9),
+    width = 0.25, linewidth = 0.5, linetype = "solid") +
+  labs(y = "Proportion of Approach Trials", x = "", fill = "Conditioning") + 
+  #guides(fill = guide_legend(title = "Conditioning", override.aes = list(shape = 22))) +
+  theme(legend.position="right") + 
+  theme(legend.title=element_blank()) +
+  scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) +
+  scale_color_viridis_d("Condition", end = 0.15, begin = 0.85) +
+  scale_shape_manual(values = c(21, 24))
+
+
 # ggsave(file.path("Study 2", "Plots", "Gaze", "acquisition", "saccades_proportion_roi_wo_lines.png"), width=1800, height=1400, units="px")
 
 cat("\n\n", "Analyses of the proportion of trials with a saccade towards the stimuli in the acquisition phase", "\n")
@@ -1037,16 +1065,19 @@ avoidance_corr.acq.prop <- avoidance_corr.acq.prop %>%
 cat("\n\n", "Correlation between performance in task (correct avoidance) and discrimination performance", "\n")
 cor.test(avoidance_corr.acq.prop$relative_frequency_corr, avoidance_corr.acq.prop$discrimination) %>% apa::cor_apa()
 
-ggplot(avoidance_corr.acq.prop, aes(x = discrimination, y = relative_frequency_corr, color = Category, fill = Category)) +
-  geom_point(shape = 1, size = 2, color = "black", alpha=0.1) +
-  geom_smooth(method = "lm", aes(fill=Category), alpha = 0.45) +
+ggplot(avoidance_corr.acq.prop %>% mutate(Category = recode(Category, "non-social" = "Non-Social", "social" = "Social")), aes(x = discrimination, y = relative_frequency_corr, color = Category, fill = Category)) +
+  geom_point(alpha = 0.5, size=2.5, shape = 21) +
+  geom_smooth(method = "lm", aes(fill=Category), alpha = 0.5, fullrange=TRUE) +
   # labs(title = paste("Correlation of Discrimination and Avoidance Performance (N = ", n_distinct(avoidance_corr.acq.prop$subject), ")", sep=""), x = "Discrimination Score", y = "Performance Score") +
-  labs(title = "Correlation of Discrimination and Performance", x = "Discrimination Score", y = "Performance Score") +
+  labs(x = "Discrimination Score", y = "Performance Score") + # title = "Correlation of Discrimination and Performance", 
   # theme_minimal() +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d() +
+  # scale_fill_viridis_d() +
+  # scale_color_viridis_d() +
+  scale_x_continuous(limits=c(0, 1)) + 
+  # scale_y_continuous(limits=c(0, 1)) + 
   theme(legend.position="top", legend.box = "horizontal", legend.title=element_blank())
-ggsave(file.path("Study 2", "Plots", "Gaze", "acquisition", "corr_discrimination_avoidance.png"), width=1600, height=1600, units="px")
+
+# ggsave(file.path("Study 2", "Plots", "Gaze", "acquisition", "corr_discrimination_avoidance.png"), width=1600, height=1600, units="px")
 
 saccades.acq.prop2 <- saccades.acq.prop
 
@@ -1106,6 +1137,31 @@ anova %>% apa::anova_apa()
 print(anova$ANOVA[2,] %>% partial_eta_squared_ci()) # threat
 print(anova$ANOVA[3,] %>% partial_eta_squared_ci()) # social
 print(anova$ANOVA[4,] %>% partial_eta_squared_ci()) # threat x social
+
+
+cat("\n\n", "Correlation of latency for saccade towards social CSneg and SPAI", "\n")
+saccades.acq.lat.roi %>%
+  filter((condition_threat == "neg") & (condition_social == "social")) %>%
+  cor.test(x=.$latency, y=.$SPAI, method="pearson", alternative = "two.sided") %>%
+  apa::cor_apa()
+
+
+plot_corr <- ggplot(saccades.acq.lat.roi %>%
+                      mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                             condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>%
+                      mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))), aes(x = SPAI, y = latency, color = condition_threat, fill = condition_threat)) +
+  geom_point(aes(fill = condition_threat), alpha = 0.5, size=2.5, shape = 21) +
+  geom_smooth(method = "lm", aes(fill=condition_threat), alpha = 0.5) +
+  # labs(title = paste("Correlation of Discrimination and Avoidance Performance (N = ", n_distinct(avoidance_corr.acq.prop$subject), ")", sep=""), x = "Discrimination Score", y = "Performance Score") +
+  labs(x = "Social Anxiety (SPAI)", y = "Latency [ms]") +  # title = "Correlation of Social Anxiety and Latency to social CSneg",
+  # theme_minimal() +
+  scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) +
+  scale_color_viridis_d("Condition", end = 0.15, begin = 0.85) +
+  scale_y_continuous(limits=c(0, 1500)) +
+  theme(legend.position="right") +
+  theme(legend.title=element_blank())
+
+plot_corr <- plot_corr + facet_grid(cols = vars(condition_social))
 
 
 # Average amplitudes of saccades going towards the stimuli
@@ -1430,6 +1486,29 @@ saccades.test.analysis <- saccades.test.analysis %>%
 
 write.csv2(saccades.test.analysis, file.path("Study 2", "Gaze", "saccades_test.csv"), row.names=FALSE, quote=FALSE)
 
+# Get first Saccades
+firstsaccades.test.analysis <- saccades.test.analysis %>% 
+  # filter(motivation_points > 4) %>%  # Filter for Motivation
+  # filter ((trial > acq2End) & (trial <= test1End)) %>%
+  # filter(!(str_detect(stim1, "new") | str_detect(stim2, "new") | str_detect(stim3, "new") | str_detect(stim4, "new"))) %>%
+  mutate(condition = ifelse(angle < 1, NA, condition)) %>% 
+  filter(blok) %>%
+  filter(!contains_blink) %>%
+  mutate(condition = as.factor(condition)) %>% 
+  group_by(subject, trial) %>% 
+  drop_na(condition) %>% 
+  mutate(new_trial = ifelse((trial != lag(trial)), TRUE, FALSE)) %>% 
+  mutate(new_trial = ifelse(is.na(new_trial), TRUE, new_trial)) %>% 
+  filter(new_trial) %>% 
+  select(-new_trial) %>%
+  ungroup
+
+firstsaccades.test.analysis <- firstsaccades.test.analysis %>% 
+  mutate(left = if_else(end_x_corr < 1920/2, TRUE, FALSE),
+         up = if_else(end_y_corr > 1080/2, TRUE, FALSE)) %>% 
+  mutate(upperleft = ifelse(left & up, TRUE, FALSE)) %>%
+  # filter(trial < 71) %>% 
+  summarise(rel_freq_left = mean(left), rel_freq_up = mean(up), rel_freq_upperleft = mean(upperleft))
 
 ###############################################################################
 # Trials without novel stimuli ----
@@ -1490,6 +1569,33 @@ plot_prop_sacc_familiar_exp2 <- ggplot(saccades.test1.roi.summary %>%
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
   # scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
   scale_color_manual(values = rep("black"))
+
+# plot_saccades_comp_exp2_bar <- ggplot(saccades.test1.roi.summary %>%
+#                                        mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+#                                               condition_threat = recode(condition_threat, "pos" = "CSpos", "neg" = "CSneg")) %>%
+#                                        mutate(condition_social = factor(condition_social, level=c("Non-Social", "Social")),
+#                                               condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+#                                      aes(x = condition_social, y = Mean, group = condition, fill = condition_threat)) +
+#   geom_col(position = position_dodge(width = 0.9), color = "black", alpha = 0.5) +
+#   geom_point(data = saccades.test1.prop %>%
+#                mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+#                       condition_threat = recode(condition_threat, "pos" = "CSpos", "neg" = "CSneg")) %>%
+#                mutate(condition_social = factor(condition_social, level=c("Non-Social", "Social")),
+#                       condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+#              aes(x = condition_social, y = rel_freq, group = condition, fill = condition_threat, color = condition_threat),
+#              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.9), alpha = 0.5, size=2.5, shape = 21) +
+#   geom_errorbar(
+#     aes(ymin = Mean - SE, ymax = Mean + SE),
+#     position = position_dodge(width = 0.9),
+#     width = 0.25, linewidth = 0.5, linetype = "solid") +
+#   labs(y = "Proportion of Saccades", x = "", fill = "Conditioning") + 
+#   #guides(fill = guide_legend(title = "Conditioning", override.aes = list(shape = 22))) +
+#   theme(legend.position="right") + 
+#   theme(legend.title=element_blank()) +
+#   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) +
+#   scale_color_viridis_d("Condition", end = 0.15, begin = 0.85) +
+#   scale_shape_manual(values = c(21, 24))
+
 
 cat("\n\n", "Analyses of the proportion of all saccades towards each stimulus category (trials WITHOUT novel stimuli) during the whole trial in the attentional-competition phase", "\n")
 anova <- saccades.test1.prop %>%
@@ -1648,6 +1754,32 @@ plot_lat_sacc_familiar_exp2 <- ggplot(saccades.test.lat.roi.summary %>%
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
   # scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
   scale_color_manual(values = rep("black"))
+# 
+# plot_lat_comp_exp2_bar <- ggplot(saccades.test.lat.roi.summary %>%
+#                                         mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+#                                                condition_threat = recode(condition_threat, "pos" = "CSpos", "neg" = "CSneg")) %>%
+#                                         mutate(condition_social = factor(condition_social, level=c("Non-Social", "Social")),
+#                                                condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+#                                       aes(x = condition_social, y = Mean, group = condition, fill = condition_threat)) +
+#   geom_col(position = position_dodge(width = 0.9), color = "black", alpha = 0.5) +
+#   geom_point(data = saccades.test.lat.roi %>%
+#                mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+#                       condition_threat = recode(condition_threat, "pos" = "CSpos", "neg" = "CSneg")) %>%
+#                mutate(condition_social = factor(condition_social, level=c("Non-Social", "Social")),
+#                       condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+#              aes(x = condition_social, y = latency, group = condition, fill = condition_threat, color = condition_threat),
+#              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.9), alpha = 0.5, size=2.5, shape = 21) +
+#   geom_errorbar(
+#     aes(ymin = Mean - SE, ymax = Mean + SE),
+#     position = position_dodge(width = 0.9),
+#     width = 0.25, linewidth = 0.5, linetype = "solid") +
+#   labs(y = "Latency of First Saccade [ms]", x = "", fill = "Conditioning") + 
+#   #guides(fill = guide_legend(title = "Conditioning", override.aes = list(shape = 22))) +
+#   theme(legend.position="right") + 
+#   theme(legend.title=element_blank()) +
+#   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) +
+#   scale_color_viridis_d("Condition", end = 0.15, begin = 0.85) +
+#   scale_shape_manual(values = c(21, 24))
 
 
 cat("\n\n", "Analyses of the latencies of the first saccade towards the stimuli in the attentional-competition phase", "\n")
@@ -1680,6 +1812,30 @@ saccades.test.lat.roi.test <- saccades.test.lat.roi %>%
   summarise(latency = mean(latency), .by=c(condition_social, subject)) %>% 
   pivot_wider(id_cols = subject, names_from = condition_social, values_from = latency)
 apa::t_test(saccades.test.lat.roi.test$social, saccades.test.lat.roi.test$nonsocial, alternative = "two.sided", paired=TRUE) %>% apa::t_apa()
+
+# Social Anxiety
+cat("\n\n", "Correlation of latency for saccade towards social CSneg and SPAI", "\n")
+saccades.test.lat.roi %>%
+  filter((condition_threat == "neg") & (condition_social == "social") & (latency < 1500)) %>%
+  cor.test(x=.$latency, y=.$SPAI, method="pearson", alternative = "two.sided") %>%
+  apa::cor_apa()
+
+plot_corr <- ggplot(saccades.test.lat.roi %>%
+                      mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+                             condition_threat = recode(condition_threat, "neg" = "CSneg", "pos" = "CSpos")) %>%
+                      mutate(condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))), aes(x = SPAI, y = latency, color = condition_threat, fill = condition_threat)) +
+  geom_point(aes(fill = condition_threat), alpha = 0.5, size=2.5, shape = 21) +
+  geom_smooth(method = "lm", aes(fill=condition_threat), alpha = 0.5) +
+  # labs(title = paste("Correlation of Discrimination and Avoidance Performance (N = ", n_distinct(avoidance_corr.acq.prop$subject), ")", sep=""), x = "Discrimination Score", y = "Performance Score") +
+  labs(x = "Social Anxiety (SPAI)", y = "Latency [ms]") +  # title = "Correlation of Social Anxiety and Latency to social CSneg",
+  # theme_minimal() +
+  scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) +
+  scale_color_viridis_d("Condition", end = 0.15, begin = 0.85) +
+  scale_y_continuous(limits=c(0, 1500)) +
+  theme(legend.position="right") +
+  theme(legend.title=element_blank())
+
+plot_corr <- plot_corr + facet_grid(cols = vars(condition_social))
 
 
 # Mean Dwell Time on stimuli
@@ -1731,6 +1887,33 @@ plot_fix_test_familiar_exp2 <- ggplot(fixations.test.roi.summary %>%
   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) + 
   # scale_color_viridis_d("Condition", end = 0.15, begin = 0.85)
   scale_color_manual(values = rep("black"))
+
+
+# plot_fix_comp_exp2_bar <- ggplot(fixations.test.roi.summary %>%
+#                                    mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+#                                           condition_threat = recode(condition_threat, "pos" = "CSpos", "neg" = "CSneg")) %>%
+#                                    mutate(condition_social = factor(condition_social, level=c("Non-Social", "Social")),
+#                                           condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+#                                  aes(x = condition_social, y = Mean, group = condition, fill = condition_threat)) +
+#   geom_col(position = position_dodge(width = 0.9), color = "black", alpha = 0.5) +
+#   geom_point(data = fixations.test.dwell %>%
+#                mutate(condition_social = recode(condition_social, "non-social" = "Non-Social", "social" = "Social"),
+#                       condition_threat = recode(condition_threat, "pos" = "CSpos", "neg" = "CSneg")) %>%
+#                mutate(condition_social = factor(condition_social, level=c("Non-Social", "Social")),
+#                       condition_threat = factor(condition_threat, level=c("CSpos", "CSneg"))),
+#              aes(x = condition_social, y = mean_dwell_time, group = condition, fill = condition_threat, color = condition_threat),
+#              position = position_jitterdodge(jitter.width = 0.25, jitter.height = 0.005, dodge.width = 0.9), alpha = 0.5, size=2.5, shape = 21) +
+#   geom_errorbar(
+#     aes(ymin = Mean - SE, ymax = Mean + SE),
+#     position = position_dodge(width = 0.9),
+#     width = 0.25, linewidth = 0.5, linetype = "solid") +
+#   labs(y = "Dwell Time [ms]", x = "", fill = "Conditioning") + 
+#   #guides(fill = guide_legend(title = "Conditioning", override.aes = list(shape = 22))) +
+#   theme(legend.position="right") + 
+#   theme(legend.title=element_blank()) +
+#   scale_fill_viridis_d("Condition", end = 0.15, begin = 0.85) +
+#   scale_color_viridis_d("Condition", end = 0.15, begin = 0.85) +
+#   scale_shape_manual(values = c(21, 24))
 
 # ggsave(file.path("Study 2", "Plots", "Gaze", "test", "dwell_time_test.png"), width=2800, height=2000, units="px")
 

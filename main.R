@@ -291,7 +291,7 @@ ggsave(file.path("Plots", "pupil.svg"), plot_pupil_cluster, width=6, height=4)
 
 
 ##############################################################################
-# Distance on Screen to Visual Ancle
+# Distance on Screen to Visual Angle
 ###############################################################################
 
 # Define monitor and viewing parameters
